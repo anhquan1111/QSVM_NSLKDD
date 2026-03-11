@@ -245,6 +245,29 @@ def load_environment() -> dict:
     qsvm: SVC = joblib.load(_MODELS_DIR / "qsvm_model.pkl")
     csvm: SVC = joblib.load(_MODELS_DIR / "csvm_model.pkl")
 
+
+
+    qsvm_file_id = 'https://drive.google.com/file/d/1i7oHcLcWoaYZFhmENmgQeKtw14-l8vV4/view?usp=sharing'
+    csvm_file_id = 'https://drive.google.com/file/d/1JalfCdNkcaiawxn3_63hzQNCpDgMT5AX/view?usp=drive_link'
+
+    if not qsvm_model_path.exists():
+        import streamlit as st
+        with st.spinner('Đang tải mô hình Lượng tử từ Google Drive...'):
+            gdown.download(f'https://drive.google.com/uc?id={qsvm_file_id}', str(qsvm_model_path), quiet=False)
+
+    if not csvm_model_path.exists():
+        import streamlit as st
+        with st.spinner('Đang tải mô hình Cổ điển từ Google Drive...'):
+            gdown.download(f'https://drive.google.com/uc?id={csvm_file_id}', str(csvm_model_path), quiet=False)
+
+    qsvm: SVC = joblib.load(qsvm_model_path)
+    csvm: SVC = joblib.load(csvm_model_path)
+
+    # ---- Load fitted preprocessing transformers ----------------------------------------
+    # These objects recreate the exact Hybrid Feature Selection pipeline from Phase 1.
+    qsvm: SVC = joblib.load(qsvm_model_path)
+    csvm: SVC = joblib.load(csvm_model_path)
+    
     # ---- Load fitted preprocessing transformers ----------------------------------------
     # These objects recreate the exact Hybrid Feature Selection pipeline from Phase 1.
     # They are held in the environment dict for two purposes:
