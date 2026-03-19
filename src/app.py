@@ -241,50 +241,35 @@ def load_environment() -> dict:
         enforce_psd=True,
     )
 
-    # ---- Load trained models ----
+# ---- 1. Đảm bảo thư mục tồn tại trên Cloud ----
+    _MODELS_DIR.mkdir(parents=True, exist_ok=True)
+
+    # ---- 2. Tự động tải Models và Transformers (Chỉ tải nếu CHƯA CÓ) ----
+    import gdown
+    import streamlit as st
+    
+    drive_files = {
+        "qsvm_model.pkl":          "1i7oHcLcWoaYZFhmENmgQeKtw14-l8vV4",
+        "csvm_model.pkl":          "1JalfCdNkcaiawxn3_63hzQNCpDgMT5AX",
+        "scaler_minmax_pi.joblib": "1VdVci6owFOXmfO-NNFswmyHv28KUPCuL",
+        "feature_selector.joblib": "133cy71t2qrAM24nWHvVzSIGr-B0a-jd6",
+        "pca_4components.joblib":  "1indGQgR1Qin6upnceciqJWMQ1Im4nHvE"
+    }
+
+    for filename, file_id in drive_files.items():
+        file_path = _MODELS_DIR / filename
+        # Nếu file CHƯA CÓ mặt trên ổ cứng, thì mới tải từ Drive
+        if not file_path.exists():
+            with st.spinner(f'Đang tải {filename} từ Google Drive...'):
+                gdown.download(id=file_id, output=str(file_path), quiet=False)
+
+    # ---- 3. Load 5 file vào bộ nhớ ----
     qsvm: SVC = joblib.load(_MODELS_DIR / "qsvm_model.pkl")
     csvm: SVC = joblib.load(_MODELS_DIR / "csvm_model.pkl")
-
-
-
-    qsvm_file_id = 'https://drive.google.com/file/d/1i7oHcLcWoaYZFhmENmgQeKtw14-l8vV4/view?usp=sharing'
-    csvm_file_id = 'https://drive.google.com/file/d/1JalfCdNkcaiawxn3_63hzQNCpDgMT5AX/view?usp=drive_link'
-
-    if not qsvm_model_path.exists():
-        import streamlit as st
-        with st.spinner('Đang tải mô hình Lượng tử từ Google Drive...'):
-            gdown.download(f'https://drive.google.com/uc?id={qsvm_file_id}', str(qsvm_model_path), quiet=False)
-
-    if not csvm_model_path.exists():
-        import streamlit as st
-        with st.spinner('Đang tải mô hình Cổ điển từ Google Drive...'):
-            gdown.download(f'https://drive.google.com/uc?id={csvm_file_id}', str(csvm_model_path), quiet=False)
-
-    qsvm: SVC = joblib.load(qsvm_model_path)
-    csvm: SVC = joblib.load(csvm_model_path)
-
-    # ---- Load fitted preprocessing transformers ----------------------------------------
-    # These objects recreate the exact Hybrid Feature Selection pipeline from Phase 1.
-    qsvm: SVC = joblib.load(qsvm_model_path)
-    csvm: SVC = joblib.load(csvm_model_path)
     
-    # ---- Load fitted preprocessing transformers ----------------------------------------
-    # These objects recreate the exact Hybrid Feature Selection pipeline from Phase 1.
-    # They are held in the environment dict for two purposes:
-    #   1. Transparency: the inference pipeline is fully documented in one place.
-    #   2. Deployment: apply_preprocessing_pipeline() uses them to process raw
-    #      post-OHE feature vectors before QSVM inference.
-    #
-    # Transformation sequence (matches data_preprocessing.py exactly):
-    #   raw OHE features (~122-D)
-    #       └→ scaler.transform()    →  MinMaxScaler [0, π]  (122-D)
-    #       └→ selector.transform()  →  SelectKBest(f_classif, k=15)  (15-D)  ← NEW
-    #       └→ pca.transform()       →  PCA(n_components=4)  (4-D)
-    #       └→ QSVM predict()        →  label ∈ {0, 1}
     scaler:   MinMaxScaler = joblib.load(_MODELS_DIR / "scaler_minmax_pi.joblib")
     selector: SelectKBest  = joblib.load(_MODELS_DIR / "feature_selector.joblib")
     pca:      PCA          = joblib.load(_MODELS_DIR / "pca_4components.joblib")
-
     return {
         "X_train_sub":    X_train_sub,
         "y_train_sub":    y_train_sub,
