@@ -1,0 +1,58 @@
+{
+  "quantum": {
+    "n_sv": 59,
+    "sv_per_class": [
+      27,
+      32
+    ],
+    "sv_ratio": 0.59,
+    "margin_mean": 0.9709613165088288,
+    "margin_std": 0.23145112259134398,
+    "sv_class_dist": [
+      27,
+      32
+    ]
+  },
+  "linear": {
+    "n_sv": 37,
+    "sv_per_class": [
+      19,
+      18
+    ],
+    "sv_ratio": 0.37,
+    "margin_mean": 1.2740887666458938,
+    "margin_std": 0.6316185791344137,
+    "sv_class_dist": [
+      19,
+      18
+    ]
+  },
+  "poly": {
+    "n_sv": 36,
+    "sv_per_class": [
+      19,
+      17
+    ],
+    "sv_ratio": 0.36,
+    "margin_mean": 1.6110784558286182,
+    "margin_std": 1.1223675778756232,
+    "sv_class_dist": [
+      19,
+      17
+    ]
+  },
+  "rbf": {
+    "n_sv": 34,
+    "sv_per_class": [
+      17,
+      17
+    ],
+    "sv_ratio": 0.34,
+    "margin_mean": 1.4072741317305062,
+    "margin_std": 0.5942190678090354,
+    "sv_class_dist": [
+      17,
+      17
+    ]
+  }
+}

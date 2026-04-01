@@ -1,0 +1,16 @@
+{
+  "quantum_z": {
+    "n_sv": 62,
+    "sv_per_class": [
+      32,
+      30
+    ],
+    "sv_ratio": 0.62,
+    "margin_mean": 0.8956882508042923,
+    "margin_std": 0.34804924074707555,
+    "sv_class_dist": [
+      32,
+      30
+    ]
+  }
+}
