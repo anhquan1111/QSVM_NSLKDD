@@ -4,111 +4,88 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-QSVM_NSLKDD is a Quantum Support Vector Machine (QSVM) applied to network intrusion detection using the NSL-KDD dataset. It demonstrates quantum kernel methods for binary classification (normal vs. attack traffic), benchmarked against classical RBF SVM.
+**QSVM-IDS NISQ** — A scientific framework applying Quantum Support Vector Machines (QSVM) to network intrusion detection (NSL-KDD dataset) under real NISQ hardware constraints (4 qubits, high error rates). The goal is not just benchmarking but producing 6 verifiable scientific contributions (C1–C6) explaining *why* and *how* QSVM works for this task.
 
-## Commands
+The pipeline: `NSL-KDD (41 features) → One-Hot Encoding (122D) → SelectKBest (25D) → PCA (4D) → MinMax[0,π] → QSVM (ZZFeatureMap, 4-qubit kernel)`
 
-### Environment Setup
+## Environment Setup
+
 ```bash
-python -m venv venv
-source venv/Scripts/activate  # Windows
-pip install -r requirements.txt        # core
-pip install -r requirements-dev.txt    # full dev environment
+# Activate the virtual environment (already present at project root)
+source venv/Scripts/activate
+
+# Install dependencies
+pip install -r requirements.txt
+pip install -r requirements-dev.txt  # Adds Jupyter, streamlit, gdown
 ```
 
-### Run Pipeline (sequential phases)
+## Running Notebooks
+
+Notebooks are the primary executables. They must be run in this order for C1:
+
 ```bash
-# Phase 1: Preprocess raw NSL-KDD → 4D quantum-ready features
-python src/data_preprocessing.py
-
-# Phase 2: Train QSVM + classical SVM baseline (~2+ hours, kernel O(N²))
-python src/train_qsvm.py
-
-# Phase 3: Evaluate, tune hyperparameters, generate reports
-python src/evaluate_models.py
-
-# Phase 4: Launch Streamlit dashboard (QEMS)
-streamlit run src/app.py
+jupyter notebook notebooks/preprocess.ipynb           # OHE + zero-leakage validation
+jupyter notebook notebooks/selectkbest_nslkdd.ipynb   # C1: SelectKBest K=25 optimization + ablation
+jupyter notebook notebooks/pca.ipynb                  # C1: Pareto-optimal PCA n=4
+jupyter notebook notebooks/c2_quantum_kernel_expressibility.ipynb  # C2: Kernel theory (ZZFeatureMap expressibility)
+jupyter notebook notebooks/c3_kernel_geometry_v3.ipynb             # C3: Kernel geometry, KTA, decision boundaries
 ```
 
-### Run Notebooks
-```bash
-jupyter notebook notebooks/
-```
+The `runners/` scripts (`run_c1_pipeline.py`, `run_c2_analysis.py`, `run_c3_geometry.py`) are empty stubs — not yet implemented.
 
 ## Architecture
 
-### 4-Phase Pipeline
+### Six Scientific Contributions
 
-**Phase 1 — `src/data_preprocessing.py`**
-Converts raw NSL-KDD (43 features, 125,973 samples) → 4D NumPy arrays in `data/processed/`. Steps:
-1. Drop `difficulty_level` column; binarize 23-class labels to 0 (normal) / 1 (attack)
-2. One-hot encode 3 categorical columns (protocol_type, service, flag) → ~85 features
-3. `SelectKBest(k=15)` via ANOVA F-statistic
-4. `PCA(n_components=4)` — **hard constraint driven by the 4-qubit circuit**
-5. `MinMaxScaler([0, π])` — maps to quantum gate rotation angle domain
-6. Saves arrays to `data/processed/*.npy` and fitted transformers to `models/*.joblib`
-
-**Phase 2 — `src/train_qsvm.py`**
-Trains quantum kernel SVM. Key design points:
-- Stratified subsample to 2,500 train / 500 test (full 125K → 7.93B circuit evaluations; intractable)
-- Quantum kernel: `ZZFeatureMap(4 qubits, reps=3, full entanglement)` + `ComputeUncompute` fidelity → K(x,z) = |⟨φ(x)|φ(z)⟩|²
-- Simulator: `StatevectorSampler` (noiseless, exact)
-- Pre-computes full Gram matrix (2500×2500), then fits `SVC(kernel='precomputed')`
-- Also trains classical RBF SVM for comparison
-- Outputs: `models/qsvm_model.pkl`, `models/csvm_model.pkl`
-
-**Phase 3 — `src/evaluate_models.py`**
-Hyperparameter tuning and visual evaluation:
-- Only tunes classical SVM via `GridSearchCV` (QSVM tuning is intractable: 80 Gram matrix computations × ~75 min = ~100 hours)
-- Primary metric is **Recall** (minimize false negatives in IDS context)
-- Outputs confusion matrices and ROC curves to `reports/`
-- Critical: QSVM uses precomputed kernel with integer support vector indices; must reconstruct the exact 2,500-sample training subsample
-
-**Phase 4 — `src/app.py`**
-Streamlit QEMS (Quantum-Enhanced Monitoring System) dashboard:
-- `@st.cache_resource` loads full training data and reconstructs the quantum kernel object on startup
-- Inference: maps a (1, 4) feature vector → (1, 2500) kernel row → `qsvm.predict()`
-- UI: dark cybersecurity theme, sidebar packet controls, KPI metrics, real-time streaming demo
-- IBM Quantum stub (shows cloud QPU integration path, falls back to local simulator)
+| ID | Focus | Status |
+|----|-------|--------|
+| C1 | Two-stage dimensionality reduction (SelectKBest + Pareto PCA) with hardware cost | Complete |
+| C2 | Quantum kernel expressibility — why ZZFeatureMap outperforms classical kernels | Complete |
+| C3 | Kernel geometry + decision boundary analysis + ablation studies | Complete |
+| C4 | Robustness under distribution shift (temporal, perturbation, class prior) | Planned |
+| C5 | Confidence calibration + rare attack analysis (U2R, R2L < 1%) | Planned |
+| C6 | Learning curves and sample complexity in low-data regime | Planned |
 
 ### Key Design Constraints
 
-| Constraint | Reason |
-|---|---|
-| PCA → exactly 4 components | Matches 4-qubit ZZFeatureMap circuit |
-| Scale features to [0, π] | Maximizes Bloch sphere utilization for RY gates |
-| SelectKBest k=15 before PCA | Reduces ~85 OHE features to 15 for cleaner PCA signal |
-| Subsample 2,500 training points | O(N²) kernel computation; 125K is intractable locally |
-| QSVM tuning disabled | Each Gram matrix recomputation ≈ 75 min on CPU |
-| ZZFeatureMap reps=3 | Moderate depth avoids Barren Plateau while encoding feature products |
+- **Zero-leakage contract**: All transformers (OHE, SelectKBest, PCA, MinMax) are `fit()` only on training data, then `transform()` on test. This is non-negotiable.
+- **Hardware constraint**: Must stay at 4 features = 4 qubits for NISQ compatibility.
+- **ZZFeatureMap config**: `reps=2`, `entanglement='full'`.
+- **Validation**: 5-fold stratified cross-validation everywhere. Report mean ± std. Use McNemar test for classifier comparisons, Cohen's d for effect sizes.
 
-### Data Flow
+### C1 Key Result
 
-```
-data/raw/KDDTrain+.txt
-        │
-        ▼ Phase 1 (data_preprocessing.py)
-data/processed/{X,y}_{train,test}.npy  +  models/{scaler,pca,selector}.joblib
-        │
-        ▼ Phase 2 (train_qsvm.py)
-models/{qsvm,csvm}_model.pkl  +  data/processed/K_test_baseline.npy
-        │
-        ▼ Phase 3 (evaluate_models.py)
-reports/{confusion_matrix,roc_curve}.png
-        │
-        ▼ Phase 4 (app.py)
-Streamlit dashboard at localhost:8501
-```
+SelectKBest(K=25) + PCA(4D) → F1=0.8989 vs PCA(4D) alone → F1=0.8577. The K=25 → 4D path is validated empirically, not arbitrary.
 
-### Exploratory Notebooks (`notebooks/`)
+### Pre-trained Artifacts
 
-- `01_EDA_and_PCA_Baseline.ipynb` — EDA, PCA scree plots, classical baseline
-- `02_Quantum_Circuit_Architecture.ipynb` — ZZFeatureMap design, Hilbert space geometry
-- `03_Evaluation_Metrics_Baseline.ipynb` — Confusion matrices, ROC, metric calculations
+- `models/qsvm_model.pkl` — Trained QSVM (4-qubit ZZFeatureMap)
+- `models/csvm_model.pkl` — Classical SVM baseline
+- `models/feature_selector_k20.joblib` — SelectKBest transformer
+- `models/pca_4components.joblib` — PCA transformer
+- `models/scaler_minmax_pi.joblib` — MinMax scaler to [0, π]
+- `models/qsvm_cache/` — Cached kernel matrices (expensive to recompute)
+- `data/processed_data/` — C3 metrics (CSV) and visualizations (PNG)
 
-Src-level notebooks (`src/*.ipynb`) are experimental: `c3_noise_robustness.ipynb` (Conb3), `pca.ipynb`, `preprocess.ipynb`, `selectkbest_nslkdd.ipynb`.
+### Source Files in `src/`
 
-### Streamlit Configuration
+- `src/__init__.py` — Empty package marker
+- `src/preprocess.py`, `src/features.py`, `src/metrics.py`, `src/quantum_core.py` — New modular source files (check current state before modifying)
 
-`.streamlit/config.toml` sets dark cybersecurity theme (primary color `#00d4ff`, monospace font, port 8501).
+## Dependencies
+
+Core: `numpy==2.4.3`, `pandas==2.3.3`, `scikit-learn==1.8.0`, `qiskit==2.3.0`, `qiskit-machine-learning==0.9.0`, `scipy==1.17.1`, `matplotlib==3.10.8`, `seaborn==0.13.2`, `joblib==1.5.3`
+
+## Important Context
+
+- `PROJECT_BRIEF.md` contains the full research framework in Vietnamese — read it for contribution-level context before modifying any analysis logic.
+- `docs/PROJECT_CONTEXT_QSVM_IDS.md` has detailed English-language project context.
+- NSL-KDD raw data auto-downloads via `gdown` from Google Drive when notebooks run (no manual download needed if `gdown` is installed).
+- Kernel matrix computation is very slow (hours on CPU); always check `models/qsvm_cache/` before recomputing.
+
+## Language & Coding Guidelines
+
+- **Code Logic:** All variable names, function names, and class names MUST be written in English following standard PEP 8 conventions.
+- **Comments & Documentation:** ALL inline comments and docstrings within `.py` files MUST be written in Vietnamese.
+- **Jupyter Notebooks:** If generating or modifying `.ipynb` files, ALL Markdown cells and text explanations MUST be written in Vietnamese.
+- **File I/O Encoding:** ALL Python file operations (reading/writing `.json`, `.ipynb`, `.py`, etc.) MUST explicitly include `encoding='utf-8'` in the `open()` function. Windows defaults to `cp1252`, which causes `UnicodeDecodeError`/`UnicodeEncodeError` when processing Vietnamese characters in notebooks. Never use `open(file)` without specifying the utf-8 encoding.
