@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python -c \"import json; nb=json.load\\(open\\('notebooks/preprocess.ipynb'\\)\\); [print\\(f'=== Cell {i} \\({c[\\\\\"cell_type\\\\\"]}\\) ==='\\); print\\(''.join\\(c['source']\\)\\) for i,c in enumerate\\(nb['cells']\\)]\")",
+      "Bash(python -c ':*)",
+      "Bash(rm:*)",
+      "Bash(python:*)"
+    ]
+  }
+}
