@@ -1,0 +1,180 @@
+{
+  "contribution": "C5",
+  "title": "Confidence Calibration va Phan Tich Tan Cong Hiem",
+  "config": {
+    "config_tag": "r2_full_cq1.0_cs10.0_s512_n100_t100_km100",
+    "test_size": 99,
+    "train_size": 99,
+    "calibration_method": "Platt Scaling (LogisticRegression C=1e10)",
+    "binning_strategy": "Adaptive Equal-Frequency Binning",
+    "n_bins_full": 10,
+    "n_bins_rare": 5,
+    "rare_classes": [
+      "U2R",
+      "R2L"
+    ],
+    "n_rare_test": 10,
+    "models": {
+      "QSVM": {
+        "type": "QSVC",
+        "n_support": [
+          27,
+          32
+        ]
+      },
+      "SVM-RBF": {
+        "type": "SVC",
+        "kernel": "rbf",
+        "C": 10.0,
+        "n_support": [
+          17,
+          17
+        ]
+      },
+      "SVM-Poly": {
+        "type": "SVC",
+        "kernel": "poly",
+        "degree": 2,
+        "n_support": [
+          19,
+          17
+        ]
+      }
+    }
+  },
+  "platt_params": {
+    "QSVM": {
+      "A": 6.64415,
+      "B": -0.75389
+    },
+    "SVM-RBF": {
+      "A": 2.79524,
+      "B": -0.67887
+    },
+    "SVM-Poly": {
+      "A": 2.10188,
+      "B": -0.13608
+    }
+  },
+  "calibration": {
+    "QSVM": {
+      "ece_full": 0.1065,
+      "mce_full": 0.48486,
+      "ece_rare": 0.43366,
+      "mce_rare": 0.97848
+    },
+    "SVM-RBF": {
+      "ece_full": 0.12194,
+      "mce_full": 0.44222,
+      "ece_rare": 0.47066,
+      "mce_rare": 0.94096
+    },
+    "SVM-Poly": {
+      "ece_full": 0.098,
+      "mce_full": 0.43568,
+      "ece_rare": 0.61909,
+      "mce_rare": 0.89957
+    }
+  },
+  "binary_performance": {
+    "QSVM": {
+      "f1": 0.85981,
+      "acc": 0.84848
+    },
+    "SVM-RBF": {
+      "f1": 0.86957,
+      "acc": 0.84848
+    },
+    "SVM-Poly": {
+      "f1": 0.81633,
+      "acc": 0.81818
+    }
+  },
+  "per_group_accuracy": {
+    "Normal": {
+      "QSVM": 0.86364,
+      "SVM-RBF": 0.77273,
+      "SVM-Poly": 0.93182
+    },
+    "DoS": {
+      "QSVM": 0.82353,
+      "SVM-RBF": 0.91176,
+      "SVM-Poly": 0.79412
+    },
+    "Probe": {
+      "QSVM": 1.0,
+      "SVM-RBF": 1.0,
+      "SVM-Poly": 0.81818
+    },
+    "U2R": {
+      "QSVM": 0.8,
+      "SVM-RBF": 0.6,
+      "SVM-Poly": 0.2
+    },
+    "R2L": {
+      "QSVM": 0.6,
+      "SVM-RBF": 1.0,
+      "SVM-Poly": 0.6
+    }
+  },
+  "roc_auc": {
+    "QSVM": 0.95744,
+    "SVM-RBF": 0.94091,
+    "SVM-Poly": 0.92562
+  },
+  "pr_auc_binary": {
+    "QSVM": 0.96559,
+    "SVM-RBF": 0.95519,
+    "SVM-Poly": 0.95077
+  },
+  "pr_auc_per_class": {
+    "Normal": {
+      "QSVM": 0.95587,
+      "SVM-RBF": 0.93582,
+      "SVM-Poly": 0.85781
+    },
+    "DoS": {
+      "QSVM": 0.7416,
+      "SVM-RBF": 0.73859,
+      "SVM-Poly": 0.79734
+    },
+    "Probe": {
+      "QSVM": 0.25398,
+      "SVM-RBF": 0.28687,
+      "SVM-Poly": 0.21421
+    },
+    "U2R": {
+      "QSVM": 0.06648,
+      "SVM-RBF": 0.05215,
+      "SVM-Poly": 0.05123
+    },
+    "R2L": {
+      "QSVM": 0.05683,
+      "SVM-RBF": 0.062,
+      "SVM-Poly": 0.06354
+    }
+  },
+  "complementarity_rare": {
+    "qsvm_wins": 1,
+    "rbf_wins": 2,
+    "both_correct": 6,
+    "both_wrong": 1
+  },
+  "statistical_tests": {
+    "mcnemar_chi2": 0.0,
+    "mcnemar_p_value": 1.0,
+    "cohens_d_margin_rare": -0.68048
+  },
+  "reports_generated": [
+    "reports/c5_class_distribution.png",
+    "reports/c5_probability_distributions.png",
+    "reports/c5_reliability_diagrams_full.png",
+    "reports/c5_reliability_diagrams_rare.png",
+    "reports/c5_margin_histograms.png",
+    "reports/c5_roc_curves.png",
+    "reports/c5_pr_curves.png",
+    "reports/c5_perclass_prauc_heatmap.png",
+    "reports/c5_confusion_matrices.png",
+    "reports/c5_complementarity_table.png"
+  ]
+}
