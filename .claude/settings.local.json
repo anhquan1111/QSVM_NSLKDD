@@ -4,7 +4,17 @@
       "Bash(python -c \"import json; nb=json.load\\(open\\('notebooks/preprocess.ipynb'\\)\\); [print\\(f'=== Cell {i} \\({c[\\\\\"cell_type\\\\\"]}\\) ==='\\); print\\(''.join\\(c['source']\\)\\) for i,c in enumerate\\(nb['cells']\\)]\")",
       "Bash(python -c ':*)",
       "Bash(rm:*)",
-      "Bash(python:*)"
+      "Bash(python:*)",
+      "Bash(python3:*)",
+      "Bash(venv/Scripts/python.exe -c ':*)",
+      "Bash(venv/Scripts/pip.exe show:*)",
+      "Bash(venv/Scripts/pip.exe install:*)",
+      "Bash(venv/Scripts/python.exe gen_c5_notebook.py)",
+      "Bash(venv/Scripts/python.exe validate_c5.py)",
+      "Bash(ls reports/c5_*.png)",
+      "Bash(rm gen_c5_notebook.py validate_c5.py)",
+      "Bash(ls notebooks/c5_*.ipynb)",
+      "Bash(ls:*)"
     ]
   }
 }
