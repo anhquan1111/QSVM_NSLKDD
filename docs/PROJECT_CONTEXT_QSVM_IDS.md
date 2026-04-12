@@ -1,6 +1,6 @@
 # PROJECT CONTEXT: QSVM-IDS NISQ Research
 > File này dùng để cung cấp context cho AI khi làm việc với dự án nghiên cứu QSVM.
-> Cập nhật lần cuối: 2025 (sync với Khung_Nghien_Cuu_QSVM_IDS_NISQ_Final_v3.docx)
+> Cập nhật lần cuối: 2025 (sync với Khung_Nghien_Cuu_QSVM_IDS_NISQ_Final_v4.docx + kết quả C4 thực tế)
 
 ---
 
@@ -173,31 +173,87 @@ Tóm tắt narrative xuyên suốt: **C1 tối ưu nhúng → C2 giải thích l
 
 ---
 
-### C4 — Đánh giá Robustness dưới Data Distribution Shift (DỰ TÍNH)
+### C4 — Đánh giá Robustness dưới Data Distribution Shift (ĐÃ HOÀN THÀNH)
 
 **Câu hỏi nghiên cứu:** QSVM có bền vững dưới các dạng distribution shift thực tế trong triển khai IDS không?
 
 **Lý do chọn distribution shift thay vì quantum noise:** Trên circuit 4-qubit nông, quantum noise không đáng kể trong thực tế. Vấn đề lớn nhất trong triển khai IDS thực tế là *distribution shift* — thay đổi phân phối dữ liệu theo thời gian (concept drift), biến đổi đặc trưng mạng, thay đổi tỷ lệ giữa các loại traffic.
 
-**Ba thực nghiệm chính:**
+**Config thực thi:**
+- QSVM: ZZFeatureMap | reps=2 | entanglement=full | C=3.0 | FidelityStatevectorKernel (noiseless)
+- Train: 998 mẫu stratified (Normal=48.6%, DoS=33.1%, Probe=8.3%, R2L=5.0%, U2R=5.0%)
+- Baselines: SVM-RBF (C=0.1), SVM-Poly2 (C=0.1), SVM-Linear (C=0.1)
 
-**Thực nghiệm 1 — Temporal split evaluation:**
-- Huấn luyện trên KDDTrain+, đánh giá tuần tự trên KDDTest+ (chuẩn) và KDDTest-21 (tập khó hơn — loại bỏ các mẫu dễ phân loại, tạo distribution shift tự nhiên).
-- Protocol chuẩn trong IDS community nhưng ít QSVM paper thực hiện đúng.
+---
 
-**Thực nghiệm 2 — Feature perturbation robustness:**
-- Thêm nhiễu Gaussian vào feature space (sau pipeline C1) với σ ∈ {0.01, 0.05, 0.1, 0.2}.
-- Đo F1-macro degradation curve theo σ; so sánh slope giữa QSVM, SVM-RBF, SVM-Poly.
-- Mô phỏng sensor noise trong thiết bị mạng thực tế (jitter, quantization error, packet sampling).
-- Significance test (McNemar) ở mỗi mức σ.
+**Thực nghiệm 1 — Temporal Split Evaluation (E1):**
+- Train trên KDDTrain+, evaluate trên KDDTest+ (n=499) và KDDTest-21 thực (n=499 — hard set, loại bỏ mẫu dễ phân loại, distribution shift tự nhiên).
+- KDDTest-21 có phân phối lệch mạnh: DoS=36.7%, R2L=24.3%, Probe=20.3%, Normal=18.2% — khác xa KDDTrain+.
 
-**Thực nghiệm 3 — Class prior shift:**
-- Huấn luyện trên phân phối gốc NSL-KDD (Normal ~53%), đánh giá trên: (a) 50-50 Normal vs Attack, (b) Attack chiếm 70%, (c) chỉ DoS và Normal (binary).
-- Kiểm tra xem margin của QSVM có generalize tốt hơn khi prior shift không.
+| Classifier  | F1_Standard | F1_Hard | ΔF1    | Drop%  |
+|-------------|-------------|---------|--------|--------|
+| QSVM (ZZ)   | 0.8672      | 0.6494  | +0.2178 | 25.11% |
+| SVM-RBF     | 0.8255      | 0.6228  | +0.2027 | 24.55% |
+| SVM-Poly2   | 0.8087      | 0.6380  | +0.1707 | 21.11% |
+| SVM-Linear  | 0.8192      | 0.6359  | +0.1833 | 22.38% |
 
-**Ý nghĩa:** Trực tiếp trả lời câu hỏi "QSVM có dùng được trong thực tế không?" thay vì chỉ trong môi trường benchmark sạch. Reuse hoàn toàn pipeline và model từ C1–C3, chỉ thay đổi dữ liệu đầu vào.
+**Kết luận E1:** QSVM có F1_standard cao nhất (0.8672) và F1_hard cao nhất (0.6494), nhưng ΔF1 lớn nhất (+0.2178 = 25.11% drop). QSVM **không robust hơn** các SVM classical về mức độ suy giảm tương đối khi gặp temporal shift. SVM-Poly2 có drop nhỏ nhất (21.11%). McNemar test: QSVM vs SVM-RBF (p=0.0708, ns), QSVM vs SVM-Poly2 (p=0.2728, ns), QSVM vs SVM-Linear (p=0.2101, ns) — không có sự khác biệt thống kê đáng kể trên hard test set.
 
-> ⚠️ **DỰ TÍNH** — Đang cân nhắc scope và phương pháp phân tích cụ thể.
+---
+
+**Thực nghiệm 2 — Feature Perturbation Robustness (E2):**
+- Thêm nhiễu Gaussian N(0, σ²) vào feature space (sau pipeline C1) với σ ∈ {0.0, 0.01, 0.05, 0.1, 0.2}.
+- Base test: 399 mẫu stratified từ KDDTest+.
+
+| Classifier | F1@σ=0 | F1@σ=0.05 | F1@σ=0.2 | Slope (F1/σ) |
+|------------|--------|-----------|----------|--------------|
+| QSVM (ZZ)  | 0.8445 | 0.8294    | 0.6125   | **-1.1591**  |
+| SVM-RBF    | 0.7994 | 0.7943    | 0.7868   | -0.0594      |
+| SVM-Poly2  | 0.8070 | 0.8070    | 0.7920   | -0.0663      |
+| SVM-Linear | 0.7995 | 0.8020    | 0.7945   | -0.0262      |
+
+**Kết luận E2:** QSVM **kém robust nhất** với feature noise — degradation slope (-1.1591 F1/σ) cao hơn ~20× so với SVM-RBF (-0.0594). Trong vùng noise thực tế (σ ≤ 0.05): QSVM vẫn dẫn đầu (F1=0.8294) và degradation nhỏ (−1.8%). Nhưng tại σ=0.2 (noise cao), QSVM sụt giảm nghiêm trọng xuống F1=0.6125 trong khi SVM-RBF vẫn giữ 0.7868. McNemar significant tại σ=0.01 (p=0.016, **) và σ=0.20 (p≈0, **).
+
+**Nguyên nhân:** Kernel lượng tử nhạy với perturbation trong angle-encoded feature space — nhiễu trong [0, π] làm thay đổi fidelity ⟨φ(x)|φ(z)⟩ mạnh hơn so với RBF kernel.
+
+---
+
+**Thực nghiệm 3 — Class Prior Shift (E3):**
+- Train trên phân phối gốc (Normal~48.6%), evaluate trên 3 phân phối test:
+  - (a) Balanced 50-50: n=272
+  - (b) Attack-heavy 70%: n=299
+  - (c) DoS-only binary: n=300
+
+| Classifier | Balanced | Atk70% | DoS-only | Mean   | Std    |
+|------------|----------|--------|----------|--------|--------|
+| QSVM (ZZ)  | 0.8417   | 0.8430 | 0.8766   | **0.8537** | 0.0161 |
+| SVM-RBF    | 0.8009   | 0.7771 | 0.7877   | 0.7886 | 0.0098 |
+| SVM-Poly2  | 0.8013   | 0.8092 | 0.7591   | 0.7899 | 0.0220 |
+| SVM-Linear | 0.8086   | 0.8068 | 0.7783   | 0.7979 | 0.0138 |
+
+**Kết luận E3:** QSVM **vượt trội rõ rệt** — F1 cao nhất ở cả 3 phân phối và mean F1 cao nhất (0.8537). Std của QSVM (0.0161) ở mức trung bình — ổn định hơn SVM-Poly2 (0.0220) nhưng kém SVM-RBF (0.0098). Effect size lớn: Cohen's d QSVM vs SVM-RBF = +3.99 (large), QSVM vs SVM-Poly2 = +2.70 (large), QSVM vs SVM-Linear = +3.03 (large).
+
+---
+
+**Tổng hợp kết luận C4:**
+
+| Experiment | Metric chính | QSVM so với SVM classical |
+|------------|-------------|--------------------------|
+| E1: Temporal split | F1_hard, ΔF1 | F1_hard cao nhất nhưng drop % lớn nhất; không significant theo McNemar |
+| E2: Feature noise | Degradation slope | Yếu nhất (slope -1.16); robust trong practical range (σ≤0.05) nhưng sụt mạnh ở σ=0.2 |
+| E3: Prior shift | Mean F1, std | Vượt trội rõ rệt (effect size large) — đây là điểm mạnh nhất của C4 |
+
+**Điểm mạnh có thể claim:** QSVM generalize tốt nhất dưới **class prior shift** (E3) — phù hợp với luận điểm margin lượng tử ổn định hơn khi phân phối class thay đổi.
+
+**Điểm cần thận trọng khi viết paper:** E2 cho thấy QSVM nhạy với Gaussian noise trong feature space — cần framing đúng: "robust trong practical noise range (σ≤0.05) nhưng không phù hợp với môi trường noise rất cao." E1 không cho thấy ưu thế robustness rõ ràng so với SVM-Poly2/Linear.
+
+**Technical stack C4:**
+- Qiskit 2.3.0, Qiskit ML 0.9.0, FidelityStatevectorKernel (noiseless)
+- McNemar test (Edwards continuity correction), Cohen's d effect size
+- Stratified sampling (stratified_sample_for_qsvm) đảm bảo U2R/R2L có đại diện tối thiểu
+- Tất cả pipeline transformers reuse từ C1 (zero-leakage contract)
+- Cache artifacts: `results_cache/c4/`, test samples tại `data/processed_data/NSL_KDD_Test_C4_*.csv`
+- Output figures: `reports/c4_e1_temporal_split.png`, `c4_e2_perturbation_robustness.png`, `c4_e3_prior_shift.png`, `c4_robustness_summary.png`
 
 ---
 
@@ -318,4 +374,3 @@ project_root/
 └── src/
     └── data_preprocessing.py
 ```
-
