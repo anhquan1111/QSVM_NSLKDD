@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 **QSVM-IDS NISQ** — A scientific framework applying Quantum Support Vector Machines (QSVM) to network intrusion detection (NSL-KDD dataset) under real NISQ hardware constraints (4 qubits, high error rates). The goal is not just benchmarking but producing 6 verifiable scientific contributions (C1–C6) explaining *why* and *how* QSVM works for this task.
 
-The pipeline: `NSL-KDD (41 features) → One-Hot Encoding (122D) → SelectKBest (25D) → PCA (4D) → MinMax[0,π] → QSVM (ZZFeatureMap, 4-qubit kernel)`
+The pipeline: `NSL-KDD (41 features) → One-Hot Encoding (122D) → SelectKBest (20D) → PCA (4D) → MinMax[0,π] → QSVM (ZZFeatureMap, 4-qubit kernel)`
 
 ## Environment Setup
 
@@ -25,10 +25,11 @@ Notebooks are the primary executables. They must be run in this order for C1:
 
 ```bash
 jupyter notebook notebooks/preprocess.ipynb           # OHE + zero-leakage validation
-jupyter notebook notebooks/selectkbest_nslkdd.ipynb   # C1: SelectKBest K=25 optimization + ablation
+jupyter notebook notebooks/selectkbest_nslkdd.ipynb   # C1: SelectKBest K=20 optimization + ablation
 jupyter notebook notebooks/pca.ipynb                  # C1: Pareto-optimal PCA n=4
 jupyter notebook notebooks/c2_quantum_kernel_expressibility.ipynb  # C2: Kernel theory (ZZFeatureMap expressibility)
 jupyter notebook notebooks/c3_kernel_geometry_v3.ipynb             # C3: Kernel geometry, KTA, decision boundaries
+jupyter notebook notebooks/c4_robustness_distribution_shift.ipynb             # C4: Robustness under distribution shift
 jupyter notebook notebooks/c5_confidence_calibration.ipynb                    # C5: Confidence calibration, adaptive binning & rare attacks
 ```
 
@@ -43,9 +44,9 @@ The `runners/` scripts (`run_c1_pipeline.py`, `run_c2_analysis.py`, `run_c3_geom
 | C1 | Two-stage dimensionality reduction (SelectKBest + Pareto PCA) with hardware cost | Complete |
 | C2 | Quantum kernel expressibility — why ZZFeatureMap outperforms classical kernels | Complete |
 | C3 | Kernel geometry + decision boundary analysis + ablation studies | Complete |
-| C4 | Robustness under distribution shift (temporal, perturbation, class prior) | Planned |
+| C4 | Robustness under distribution shift (temporal, perturbation, class prior) | Complete |
 | C5 | Confidence calibration + rare attack analysis (U2R, R2L < 1%) | Complete |
-| C6 | Learning curves and sample complexity in low-data regime | Planned |
+| C6 | Learning curves and sample complexity in low-data regime | Complete |
 
 ### Key Design Constraints
 
@@ -56,10 +57,13 @@ The `runners/` scripts (`run_c1_pipeline.py`, `run_c2_analysis.py`, `run_c3_geom
 
 ### C1 Key Result
 
-SelectKBest(K=25) + PCA(4D) → F1=0.8989 vs PCA(4D) alone → F1=0.8577. The K=25 → 4D path is validated empirically, not arbitrary.
+SelectKBest(K=20) + PCA(4D) → F1=0.8989 vs PCA(4D) alone → F1=0.8577. The K=20 → 4D path is validated empirically, not arbitrary.
 
 ### C5 Key Result
 QSVM demonstrates superior confidence calibration on rare attacks (ECE_rare=0.4337 vs classical SVM-RBF ECE_rare=0.4707) and achieves the highest overall AUC-PR (0.9656). While overall detection counts on rare classes show statistical parity (McNemar p=1.000), Cohen's d (-0.6805) proves the quantum decision margin is significantly tighter and more stable. Complementarity analysis confirms QSVM captures distinct rare attack patterns that classical models miss, strongly justifying a Hybrid Quantum-Classical Ensemble approach for production IDS.
+
+### C6 Key Result
+QSVM outperformed classical baselines in the low-data regime (N=100 to 1000). At N=500, QSVM achieved a significantly higher mean decision margin (0.6538) compared to SVM-RBF (0.5070) on rare attacks (U2R/R2L). The calculated Cohen's d of 0.4043 confirms a statistically meaningful advantage in feature separation when training data is scarce.
 
 ### Pre-trained Artifacts
 
