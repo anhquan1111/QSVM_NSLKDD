@@ -15,7 +15,13 @@
       "Bash(rm gen_c5_notebook.py validate_c5.py)",
       "Bash(ls notebooks/c5_*.ipynb)",
       "Bash(ls:*)",
-      "Bash(venv/Scripts/python.exe:*)"
+      "Bash(venv/Scripts/python.exe:*)",
+      "Bash(rm -rf ../data/unsw_nb15/processed_data/multi_run)",
+      "Bash(rm -f ../data/unsw_nb15/processed_data/UNSW_*.parquet ../data/unsw_nb15/processed_data/minmax_scaler.joblib ../data/unsw_nb15/processed_data/feature_columns.csv ../data/unsw_nb15/processed_data/label_distribution.png)",
+      "Bash(jupyter nbconvert *)",
+      "Bash(D:/QSVM_NSLKDD/venv/Scripts/python.exe _build_c2_nb.py)",
+      "Bash(D:/QSVM_NSLKDD/venv/Scripts/python.exe -m jupyter nbconvert --to notebook --execute c2_quantum_kernel_expressibility.ipynb --output c2_quantum_kernel_expressibility.ipynb --ExecutePreprocessor.timeout=1200)",
+      "Bash(D:/QSVM_NSLKDD/venv/Scripts/python.exe *)"
     ]
   }
 }

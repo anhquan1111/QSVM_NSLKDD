@@ -1,0 +1,144 @@
+{
+  "metadata": {
+    "notebook": "notebooks_unsw/c3_kernel_geometry_statevector.ipynb",
+    "dataset": "UNSW-NB15",
+    "train_parquet": "../data/unsw_nb15/processed_data/UNSW_Train_PCA4D.parquet",
+    "test_parquet": "../data/unsw_nb15/processed_data/UNSW_Test_PCA4D.parquet",
+    "n_qubits": 4,
+    "n_train": 500,
+    "n_test": 300,
+    "subsample_balance_train": {
+      "n_normal": 160,
+      "n_attack": 340,
+      "frac_attack": 0.68
+    },
+    "subsample_balance_test": {
+      "n_normal": 135,
+      "n_attack": 165,
+      "frac_attack": 0.55
+    },
+    "zz_reps": 2,
+    "zz_entanglement": "full",
+    "svc_C": 1.0,
+    "poly_degree": 2,
+    "random_state": 42
+  },
+  "kta_scores": {
+    "quantum": 0.15941541513014215,
+    "rbf": 0.19697899630898155,
+    "poly": 0.04505390625682723,
+    "linear": 0.08162641354911324
+  },
+  "metrics": {
+    "quantum": {
+      "f1": 0.7505439054117164,
+      "accuracy": 0.7566666666666667,
+      "precision": 0.7577295585770162,
+      "recall": 0.7484848484848485,
+      "n_sv": 244,
+      "n_sv_class": [
+        117,
+        127
+      ],
+      "sv_ratio": 0.488,
+      "fit_time_s": 0.004000186920166016,
+      "kta": 0.15941541513014215
+    },
+    "linear": {
+      "f1": 0.7441077441077442,
+      "accuracy": 0.7466666666666667,
+      "precision": 0.7441077441077442,
+      "recall": 0.7441077441077442,
+      "n_sv": 255,
+      "n_sv_class": [
+        127,
+        128
+      ],
+      "sv_ratio": 0.51,
+      "fit_time_s": 0.004036903381347656,
+      "kta": 0.08162641354911324
+    },
+    "poly": {
+      "f1": 0.7649008105324437,
+      "accuracy": 0.7666666666666667,
+      "precision": 0.7644220027704545,
+      "recall": 0.7656565656565657,
+      "n_sv": 239,
+      "n_sv_class": [
+        119,
+        120
+      ],
+      "sv_ratio": 0.478,
+      "fit_time_s": 0.003999233245849609,
+      "kta": 0.04505390625682723
+    },
+    "rbf": {
+      "f1": 0.7649008105324437,
+      "accuracy": 0.7666666666666667,
+      "precision": 0.7644220027704545,
+      "recall": 0.7656565656565657,
+      "n_sv": 251,
+      "n_sv_class": [
+        123,
+        128
+      ],
+      "sv_ratio": 0.502,
+      "fit_time_s": 0.008093595504760742,
+      "kta": 0.19697899630898155
+    },
+    "_comparison": {
+      "mcnemar_b": 21,
+      "mcnemar_c": 18,
+      "mcnemar_p_value": 0.7492586247608418,
+      "mcnemar_verdict": "Khac biet KHONG co y nghia thong ke (p=0.749)",
+      "cohens_d_margin_q_vs_rbf": -0.39878535464033,
+      "cohens_d_effect_size": "small"
+    }
+  },
+  "comparison_qsvm_vs_rbf": {
+    "mcnemar_b": 21,
+    "mcnemar_c": 18,
+    "mcnemar_p_value": 0.7492586247608418,
+    "mcnemar_verdict": "Khac biet KHONG co y nghia thong ke (p=0.749)",
+    "cohens_d_margin_q_vs_rbf": -0.39878535464033,
+    "cohens_d_effect_size": "small"
+  },
+  "nsl_kdd_reference": {
+    "n_train": 100,
+    "kta": {
+      "quantum": 0.21617,
+      "linear": 0.06509,
+      "poly": 0.13164,
+      "rbf": 0.28966
+    },
+    "f1": {
+      "quantum": 0.85788,
+      "rbf": 0.86601,
+      "poly": 0.85682,
+      "linear": 0.78779
+    },
+    "n_sv": {
+      "quantum": 59,
+      "rbf": 34,
+      "poly": 30,
+      "linear": 37
+    },
+    "cross_dataset_delta_kta": {
+      "quantum": -0.05675458486985785,
+      "rbf": -0.09268100369101842,
+      "poly": -0.08658609374317278,
+      "linear": 0.01653641354911324
+    },
+    "cross_dataset_delta_f1": {
+      "quantum": -0.10733609458828353,
+      "rbf": -0.1011091894675562,
+      "poly": -0.09191918946755628,
+      "linear": -0.04368225589225583
+    }
+  },
+  "outputs": {
+    "csv": "../reports_unsw\\c3_unsw_kernel_comparison.csv",
+    "kernel_heatmap": "../reports_unsw\\unsw_c3_kernel_matrix.png",
+    "kta_bar_chart": "../reports_unsw\\unsw_c3_kta_comparison.png"
+  }
+}
