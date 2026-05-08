@@ -1,0 +1,80 @@
+{
+  "metadata": {
+    "notebook": "notebooks_unsw/c2_quantum_kernel_expressibility.ipynb",
+    "dataset": "UNSW-NB15",
+    "input_file": "../data/unsw_nb15/processed_data/UNSW_Train_PCA4D.parquet",
+    "n_qubits": 4,
+    "n_subsample": 500,
+    "n_expr_pairs": 2000,
+    "zz_reps": 2,
+    "zz_entanglement": "full",
+    "random_state": 42,
+    "subsample_balance": {
+      "n_normal": 160,
+      "n_attack": 340,
+      "frac_attack": 0.68
+    }
+  },
+  "expressibility": {
+    "kl_divergence_from_haar": {
+      "ZZ_reps1": 0.022972791107225395,
+      "ZZ_reps2": 0.022095996572171157,
+      "ZZ_reps3": 0.03551196165685622,
+      "Z_reps2": 0.9182745984045015
+    },
+    "h1_monotonic_strict": false,
+    "h1_reps2_better_than_reps1": true,
+    "z_minus_zz_gap": 0.8961786018323303
+  },
+  "eigenspectrum_zz_reps2": {
+    "effective_rank": 10.450523212450591,
+    "top5_singular": [
+      105.65234706739972,
+      69.07277534406016,
+      53.214462468736535,
+      32.782859421581854,
+      31.49252228626012
+    ],
+    "n_for_90pct_var": 16,
+    "n_for_99pct_var": 38,
+    "kernel_trace": 499.9999999999986
+  },
+  "entanglement_entropy_zz_reps2": {
+    "S_normal_mean": 1.0898938071470428,
+    "S_normal_std": 0.30057087249053277,
+    "S_attack_mean": 1.263834344007363,
+    "S_attack_std": 0.2929019795935533,
+    "delta_mean": 0.17394053686032018,
+    "mannwhitney_U": 35566.5,
+    "mannwhitney_p": 1.4179912382753978e-08,
+    "h2_supported": true
+  },
+  "outputs": {
+    "expressibility_plot": "../reports_unsw\\unsw_expressibility_kl.png",
+    "eigenspectrum_plot": "../reports_unsw\\unsw_eigenspectrum.png",
+    "entropy_plot": "../reports_unsw\\unsw_entropy_violin.png"
+  },
+  "nsl_kdd_reference": {
+    "source_file": "../data/processed_data/c2_results.json",
+    "n_subsample_NSL_KDD": 300,
+    "expressibility_kl": {
+      "reps_1": 0.02605664551223434,
+      "reps_2": 0.01562715614680018,
+      "reps_3": 0.04217010087984184
+    },
+    "effective_rank_zz": 17.101038870191736,
+    "entanglement_entropy": {
+      "S_normal_mean": 0.7496601849582905,
+      "S_attack_mean": 1.2144850923536095,
+      "mannwhitney_p": 2.4778754947446887e-22
+    },
+    "cross_dataset_delta": {
+      "kl_zz_reps2_UNSW_minus_NSL": 0.006468840425370978,
+      "eff_rank_UNSW_minus_NSL": -6.6505156577411455,
+      "S_normal_UNSW_minus_NSL": 0.3402336221887523,
+      "S_attack_UNSW_minus_NSL": 0.04934925165375348,
+      "gap_UNSW_minus_NSL": -0.2908843705349988
+    },
+    "comment": "Cross-dataset benchmark: UNSW expressibility (KL=0.0221) vs NSL-KDD (KL=0.0156). Both <0.05 -> generalization SUCCESSFUL."
+  }
+}
