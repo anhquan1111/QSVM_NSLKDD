@@ -1,0 +1,65 @@
+{
+  "config": {
+    "n_qubits": 4,
+    "reps": 2,
+    "entanglement": "full",
+    "C_svm": 3.0,
+    "train_size": 100,
+    "test_size": 100,
+    "n_seeds": 3,
+    "shots_grid": [
+      128,
+      512,
+      2048,
+      8192
+    ],
+    "config_tag": "r2_full_c3.0_n100_t100_seeds3"
+  },
+  "statevector_baseline": {
+    "f1_macro": 0.8574074074074074,
+    "accuracy": 0.8585858585858586,
+    "n_sv": 47,
+    "kta": 0.21567373764644288
+  },
+  "shot_results": {
+    "128": {
+      "f1_macro_mean": 0.86053,
+      "f1_macro_std": 0.01541,
+      "f1_delta": -0.0031225925925926212,
+      "fro_sim_mean": 0.99743,
+      "entry_mae_mean": 0.01539,
+      "kta_mean": 0.22691
+    },
+    "512": {
+      "f1_macro_mean": 0.8541,
+      "f1_macro_std": 0.00573,
+      "f1_delta": 0.0033074074074074256,
+      "fro_sim_mean": 0.99923,
+      "entry_mae_mean": 0.00855,
+      "kta_mean": 0.21969
+    },
+    "2048": {
+      "f1_macro_mean": 0.8508,
+      "f1_macro_std": 0.00573,
+      "f1_delta": 0.006607407407407395,
+      "fro_sim_mean": 0.99963,
+      "entry_mae_mean": 0.00605,
+      "kta_mean": 0.21999
+    },
+    "8192": {
+      "f1_macro_mean": 0.85741,
+      "f1_macro_std": 0.0,
+      "f1_delta": -2.592592592609577e-06,
+      "fro_sim_mean": 0.99996,
+      "entry_mae_mean": 0.00186,
+      "kta_mean": 0.21649
+    }
+  },
+  "timing_available": true,
+  "timing_summary": {
+    "128": 65.91231489181519,
+    "512": 76.20087830225627,
+    "2048": 119.96031339963277,
+    "8192": 298.9157400925954
+  }
+}
