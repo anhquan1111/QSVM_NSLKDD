@@ -124,12 +124,13 @@ Tôi response template:
 
 ## 6. Known state (cập nhật mỗi lần verify xong)
 
-**Last update**: 2026-05-15 (session đầu Plan & 1.1 verify)
+**Last update**: 2026-05-15 (1.2.5 verified PASS)
 
 - ✅ 1.1 done — C2 cell 24 patched, 3 PNG generated, Pearson max|off-diag|=2.36e-07
 - ✅ 1.2 written — c5_confidence_calibration_multirun.ipynb 25 cells, AST clean. **Chưa chạy** sinh JSON+PNG (background task)
-- ⏳ **1.2.5 BLOCKER** — UNSW preprocess.ipynb bug `int(remaining * weight)` floor → parquet 96-98 thay vì 100. PHẢI fix trước 1.3
-- ⛔ 1.3-1.7 — block bởi 1.2.5
+- ✅ 1.2.5 done — preprocess.ipynb cell 15 patched LRM, 10/10 parquet shape (100,189), 6 unit tests PASS, mỗi run đủ 10 attack cats, 4 rare cats (Analysis/Backdoor/Shellcode/Worms) đều 5 mẫu
+- ⏭️ **1.3 NEXT** — UNSW C tuning notebook (clone từ c3_c_tuning_statevector.ipynb NSL-KDD)
+- ⛔ 1.4-1.7 — block bởi 1.3
 - ⏸️ Phase 2 (báo cáo) — chưa bắt đầu, đợi Phase 1 xong
 
 **Friend's contributions**:
