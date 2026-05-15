@@ -105,7 +105,7 @@ Mỗi khi hoàn thành 1 bước, cập nhật ô tương ứng:
 
 - [x] 1.1 — C2 mục 4.3.1 (Pearson trên full train)
 - [x] 1.2 — C5 multi-run + narrative Cohen's d (đã viết notebook, chờ chạy sinh PNG/JSON)
-- [ ] **1.2.5 — Fix UNSW preprocess bug + regen multi_run parquets** (BLOCKER cho 1.3+)
+- [x] 1.2.5 — Fix UNSW preprocess bug + regen multi_run parquets (LRM, 10/10 parquet (100,189))
 - [ ] 1.3 — UNSW C tuning notebook
 - [ ] 1.4a — UNSW C3 multi-run statevector
 - [ ] 1.4b — UNSW C3 multi-run shots
