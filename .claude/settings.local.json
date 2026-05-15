@@ -21,7 +21,11 @@
       "Bash(jupyter nbconvert *)",
       "Bash(D:/QSVM_NSLKDD/venv/Scripts/python.exe _build_c2_nb.py)",
       "Bash(D:/QSVM_NSLKDD/venv/Scripts/python.exe -m jupyter nbconvert --to notebook --execute c2_quantum_kernel_expressibility.ipynb --output c2_quantum_kernel_expressibility.ipynb --ExecutePreprocessor.timeout=1200)",
-      "Bash(D:/QSVM_NSLKDD/venv/Scripts/python.exe *)"
+      "Bash(D:/QSVM_NSLKDD/venv/Scripts/python.exe *)",
+      "Bash(git fetch *)"
+    ],
+    "additionalDirectories": [
+      "d:\\QSVM_NSLKDD"
     ]
   }
 }
