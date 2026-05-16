@@ -107,7 +107,7 @@ Mỗi khi hoàn thành 1 bước, cập nhật ô tương ứng:
 - [x] 1.2 — C5 multi-run + narrative Cohen's d (đã viết notebook, chờ chạy sinh PNG/JSON)
 - [x] 1.2.5 — Fix UNSW preprocess bug + regen multi_run parquets (LRM, 10/10 parquet (100,189))
 - [x] 1.3 — UNSW C tuning notebook (q=0.01/0.8504, lin/poly=0.1/0.8813, rbf=1.0/0.8813)
-- [ ] 1.4a — UNSW C3 multi-run statevector
+- [x] 1.4a — UNSW C3 multi-run statevector (QSVM 0.776±0.004 < linear 0.810 < poly 0.806 < rbf 0.801; McNemar combined p=6.57e-5 favoring RBF)
 - [ ] 1.4b — UNSW C3 multi-run shots
 - [ ] 1.5 — UNSW C4 multi-run
 - [ ] 1.6 — UNSW C1 multi-run (optional)

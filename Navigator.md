@@ -124,19 +124,22 @@ Tôi response template:
 
 ## 6. Known state (cập nhật mỗi lần verify xong)
 
-**Last update**: 2026-05-16 (1.3 verified PASS)
+**Last update**: 2026-05-16 (1.4a verified PASS)
 
 - ✅ 1.1 done — C2 cell 24 patched, 3 PNG generated, Pearson max|off-diag|=2.36e-07
 - ✅ 1.2 written — c5_confidence_calibration_multirun.ipynb 25 cells, AST clean. **Chưa chạy** sinh JSON+PNG (background task)
 - ✅ 1.2.5 done — preprocess.ipynb cell 15 patched LRM, 10/10 parquet shape (100,189), 6 unit tests PASS
-- ✅ 1.3 done — c_tuning_statevector.ipynb (8 cells), c_tuning_results.json. C_best: quantum=0.01 (F1=0.8504±0.0150), linear/poly=0.1 (0.8813±0.0349), rbf=1.0 (0.8813±0.0349). Pipeline: K_select=35 → PCA=4 (zero-leakage trong fold). config_tag=`r2_full_k35_p4_cv5_sf1_run1`
-- ⏭️ **1.4a NEXT** — UNSW C3 multi-run statevector (5 runs × 4 kernels × C tuned)
-- ⛔ 1.4b-1.7 — sequential
+- ✅ 1.3 done — c_tuning_statevector.ipynb (8 cells), C_best: quantum=0.01 (F1=0.8504±0.0150), linear/poly=0.1 (0.8813±0.0349), rbf=1.0 (0.8813±0.0349). config_tag=`r2_full_k35_p4_cv5_sf1_run1`
+- ✅ 1.4a done — c3_kernel_geometry_multirun_statevector.ipynb (25 cells), 3 PNG, JSON + cache. **F1**: q=0.776±0.004 < lin=0.810±0.022, poly=0.806±0.020, rbf=0.801±0.021. **KTA**: rbf=0.234 > q=0.193 > lin=0.158 > poly=0.117. **McNemar combined**: b=69 (Q wrong, R right), c=29 (Q right, R wrong), exact binomial p=6.57e-5 → **RBF beats QSVM** (per-run: 4/5 favor RBF, run3/4 p<0.05)
+- ⏭️ **1.4b NEXT** — UNSW C3 multi-run shots (FidelityQuantumKernel shots=4096) để so sánh ideal vs realistic
+- ⛔ 1.5-1.7 — sequential sau 1.4b
 
-**Notes from 1.3 (cần nhớ khi viết báo cáo Phase 2)**:
-- K_select=35 (UNSW) ≠ K=20 (NSL-KDD CLAUDE.md). UNSW có 186 raw features (vs NSL 122) → K cao hơn hợp lý nhưng cần justify trong báo cáo
-- Quantum C_best=0.01 ở mép trái grid (C=0.01 và C=0.1 tied F1=0.8504, argmax_cv_mean lấy nhỏ nhất). Nếu cần độ chắc chắn cao hơn, mở rộng grid xuống [0.001, 0.0001] — không blocking 1.4
-- Linear/poly/rbf identical F1=0.8813 → pattern low-data convergent, KHÔNG phải bug
+**Notes 1.4a (CỰC KỲ QUAN TRỌNG cho báo cáo Phase 2)**:
+- **Quantum predicts all-positive degenerately ở C=0.01** trên test: confusion matrix run1 cho thấy QSVM TN=0, FP=36, FN=0, TP=64 → recall=1.0 nhưng precision=0.64 (chỉ predict tất cả là Attack). Đây không phải bug — là HẬU QUẢ của C=0.01 over-regularize trên test distribution (trong CV thì F1=0.85). Linear/Poly tốt hơn vì TN=8 (catch được 8/36 normals), RBF TN=3
+- **CV-test gap quantum**: 0.85 (CV in 1.3) vs 0.78 (test in 1.4a) — 7pp gap, không bất thường nhưng cần ghi trong báo cáo
+- **KTA UNSW khớp memory `project_unsw_nb15_port`**: RBF KTA > QSVM KTA. Thứ tự KTA gần khớp F1 cho classical (rbf > lin > poly), nhưng QSVM có KTA cao thứ 2 mà F1 thấp nhất → kernel structure ổn nhưng C=0.01 phá performance
+- **JSON `b/c` không có description field** — semantic ngầm theo cell 16 docstring (`a sai, b đúng`). Recommend thêm `b_meaning`/`c_meaning` ở 1.4b để JSON tự document
+- **Verdict tổng quát**: QSVM dominant ở NSL-KDD nhưng INFERIOR trên UNSW statevector. Phải xem 1.4b (shots) và 1.7 (calibration UNSW) có tìm được advantage angle nào không. Nếu không, narrative báo cáo cần explicit về limitation
 - ⏸️ Phase 2 (báo cáo) — chưa bắt đầu, đợi Phase 1 xong
 
 **Friend's contributions**:
