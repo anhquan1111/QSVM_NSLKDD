@@ -1,0 +1,609 @@
+{
+  "per_run": [
+    {
+      "run": 1,
+      "quantum": {
+        "C": 1.0,
+        "f1": 0.7950310559006211,
+        "precision": 0.6597938144329897,
+        "recall": 1.0,
+        "accuracy": 0.67,
+        "ece_rare": 0.21032954757504477,
+        "auc_pr_overall": 0.8414907482821975,
+        "auc_pr_rare": 0.4052083861028127,
+        "per_group_acc": {
+          "Analysis": 1.0,
+          "Backdoor": 1.0,
+          "Shellcode": 1.0,
+          "Worms": 1.0
+        },
+        "rare_margin_mean": 0.9778806530392027,
+        "rare_margin_std": 0.09659043422488893,
+        "n_rare_test": 20
+      },
+      "linear": {
+        "C": 1.0,
+        "f1": 0.8205128205128205,
+        "precision": 0.6956521739130435,
+        "recall": 1.0,
+        "accuracy": 0.72,
+        "ece_rare": 0.13211642826261646,
+        "auc_pr_overall": 0.8807610507807228,
+        "auc_pr_rare": 0.34062987323598537,
+        "per_group_acc": {
+          "Analysis": 1.0,
+          "Backdoor": 1.0,
+          "Shellcode": 1.0,
+          "Worms": 1.0
+        },
+        "rare_margin_mean": 1.4362294281952503,
+        "rare_margin_std": 0.39867002931430456,
+        "n_rare_test": 20
+      },
+      "poly": {
+        "C": 1.0,
+        "f1": 0.7950310559006211,
+        "precision": 0.6597938144329897,
+        "recall": 1.0,
+        "accuracy": 0.67,
+        "ece_rare": 0.13599941090193046,
+        "auc_pr_overall": 0.8968578581854697,
+        "auc_pr_rare": 0.434089075032555,
+        "per_group_acc": {
+          "Analysis": 1.0,
+          "Backdoor": 1.0,
+          "Shellcode": 1.0,
+          "Worms": 1.0
+        },
+        "rare_margin_mean": 1.3681939854306913,
+        "rare_margin_std": 0.32509660679012853,
+        "n_rare_test": 20
+      },
+      "rbf": {
+        "C": 1.0,
+        "f1": 0.7950310559006211,
+        "precision": 0.6597938144329897,
+        "recall": 1.0,
+        "accuracy": 0.67,
+        "ece_rare": 0.2112590742566942,
+        "auc_pr_overall": 0.9330420706380895,
+        "auc_pr_rare": 0.28554135027256666,
+        "per_group_acc": {
+          "Analysis": 1.0,
+          "Backdoor": 1.0,
+          "Shellcode": 1.0,
+          "Worms": 1.0
+        },
+        "rare_margin_mean": 1.0085384514980755,
+        "rare_margin_std": 0.01765722036843366,
+        "n_rare_test": 20
+      }
+    },
+    {
+      "run": 2,
+      "quantum": {
+        "C": 1.0,
+        "f1": 0.7692307692307693,
+        "precision": 0.6875,
+        "recall": 0.873015873015873,
+        "accuracy": 0.67,
+        "ece_rare": 0.2334490041644585,
+        "auc_pr_overall": 0.8883422420778904,
+        "auc_pr_rare": 0.257392138193855,
+        "per_group_acc": {
+          "Analysis": 1.0,
+          "Backdoor": 1.0,
+          "Shellcode": 0.8,
+          "Worms": 1.0
+        },
+        "rare_margin_mean": 0.9119820581404559,
+        "rare_margin_std": 0.2687302232272039,
+        "n_rare_test": 20
+      },
+      "linear": {
+        "C": 1.0,
+        "f1": 0.7716535433070866,
+        "precision": 0.765625,
+        "recall": 0.7777777777777778,
+        "accuracy": 0.71,
+        "ece_rare": 0.23745890451861898,
+        "auc_pr_overall": 0.8692313689434963,
+        "auc_pr_rare": 0.3118695002161895,
+        "per_group_acc": {
+          "Analysis": 0.8,
+          "Backdoor": 1.0,
+          "Shellcode": 0.6,
+          "Worms": 1.0
+        },
+        "rare_margin_mean": 1.6374509281424192,
+        "rare_margin_std": 1.0683396034466448,
+        "n_rare_test": 20
+      },
+      "poly": {
+        "C": 1.0,
+        "f1": 0.7716535433070866,
+        "precision": 0.765625,
+        "recall": 0.7777777777777778,
+        "accuracy": 0.71,
+        "ece_rare": 0.22437466388979874,
+        "auc_pr_overall": 0.8504796408967576,
+        "auc_pr_rare": 0.5151368129777176,
+        "per_group_acc": {
+          "Analysis": 0.8,
+          "Backdoor": 1.0,
+          "Shellcode": 0.6,
+          "Worms": 1.0
+        },
+        "rare_margin_mean": 1.207997854767863,
+        "rare_margin_std": 0.3884903445762881,
+        "n_rare_test": 20
+      },
+      "rbf": {
+        "C": 1.0,
+        "f1": 0.7716535433070866,
+        "precision": 0.765625,
+        "recall": 0.7777777777777778,
+        "accuracy": 0.71,
+        "ece_rare": 0.24396894245035058,
+        "auc_pr_overall": 0.8087744272294812,
+        "auc_pr_rare": 0.25954948043278425,
+        "per_group_acc": {
+          "Analysis": 0.8,
+          "Backdoor": 1.0,
+          "Shellcode": 0.6,
+          "Worms": 1.0
+        },
+        "rare_margin_mean": 0.9862929361722994,
+        "rare_margin_std": 0.034741244770354986,
+        "n_rare_test": 20
+      }
+    },
+    {
+      "run": 3,
+      "quantum": {
+        "C": 1.0,
+        "f1": 0.802547770700637,
+        "precision": 0.6702127659574468,
+        "recall": 1.0,
+        "accuracy": 0.69,
+        "ece_rare": 0.18636181960297993,
+        "auc_pr_overall": 0.8223742677926031,
+        "auc_pr_rare": 0.22337096465174122,
+        "per_group_acc": {
+          "Analysis": 1.0,
+          "Backdoor": 1.0,
+          "Shellcode": 1.0,
+          "Worms": 1.0
+        },
+        "rare_margin_mean": 0.9563426206504838,
+        "rare_margin_std": 0.19550783864038665,
+        "n_rare_test": 20
+      },
+      "linear": {
+        "C": 1.0,
+        "f1": 0.8235294117647058,
+        "precision": 0.7,
+        "recall": 1.0,
+        "accuracy": 0.73,
+        "ece_rare": 0.21015692420733256,
+        "auc_pr_overall": 0.9069576908194146,
+        "auc_pr_rare": 0.2912804828565215,
+        "per_group_acc": {
+          "Analysis": 1.0,
+          "Backdoor": 1.0,
+          "Shellcode": 1.0,
+          "Worms": 1.0
+        },
+        "rare_margin_mean": 1.5228799629411522,
+        "rare_margin_std": 1.2593268192396294,
+        "n_rare_test": 20
+      },
+      "poly": {
+        "C": 1.0,
+        "f1": 0.7924528301886793,
+        "precision": 0.65625,
+        "recall": 1.0,
+        "accuracy": 0.67,
+        "ece_rare": 0.2319852632951997,
+        "auc_pr_overall": 0.9072372208223034,
+        "auc_pr_rare": 0.2873201333537735,
+        "per_group_acc": {
+          "Analysis": 1.0,
+          "Backdoor": 1.0,
+          "Shellcode": 1.0,
+          "Worms": 1.0
+        },
+        "rare_margin_mean": 1.1100366156175991,
+        "rare_margin_std": 0.23781925086811476,
+        "n_rare_test": 20
+      },
+      "rbf": {
+        "C": 1.0,
+        "f1": 0.802547770700637,
+        "precision": 0.6702127659574468,
+        "recall": 1.0,
+        "accuracy": 0.69,
+        "ece_rare": 0.197748363104269,
+        "auc_pr_overall": 0.8951800798057505,
+        "auc_pr_rare": 0.24473968056685091,
+        "per_group_acc": {
+          "Analysis": 1.0,
+          "Backdoor": 1.0,
+          "Shellcode": 1.0,
+          "Worms": 1.0
+        },
+        "rare_margin_mean": 1.0177570769584066,
+        "rare_margin_std": 0.026839979183233043,
+        "n_rare_test": 20
+      }
+    },
+    {
+      "run": 4,
+      "quantum": {
+        "C": 1.0,
+        "f1": 0.7922077922077922,
+        "precision": 0.6703296703296703,
+        "recall": 0.9682539682539683,
+        "accuracy": 0.68,
+        "ece_rare": 0.105389258219348,
+        "auc_pr_overall": 0.8549015078683493,
+        "auc_pr_rare": 0.42045298327970276,
+        "per_group_acc": {
+          "Analysis": 1.0,
+          "Backdoor": 1.0,
+          "Shellcode": 1.0,
+          "Worms": 1.0
+        },
+        "rare_margin_mean": 1.0706879648275687,
+        "rare_margin_std": 0.08770578199679882,
+        "n_rare_test": 20
+      },
+      "linear": {
+        "C": 1.0,
+        "f1": 0.8181818181818182,
+        "precision": 0.6923076923076923,
+        "recall": 1.0,
+        "accuracy": 0.72,
+        "ece_rare": 0.14114923529666784,
+        "auc_pr_overall": 0.9235004684782795,
+        "auc_pr_rare": 0.378163845150352,
+        "per_group_acc": {
+          "Analysis": 1.0,
+          "Backdoor": 1.0,
+          "Shellcode": 1.0,
+          "Worms": 1.0
+        },
+        "rare_margin_mean": 1.2838088767701903,
+        "rare_margin_std": 0.32411384844066743,
+        "n_rare_test": 20
+      },
+      "poly": {
+        "C": 1.0,
+        "f1": 0.8076923076923077,
+        "precision": 0.6774193548387096,
+        "recall": 1.0,
+        "accuracy": 0.7,
+        "ece_rare": 0.1557770165942328,
+        "auc_pr_overall": 0.8707688340053379,
+        "auc_pr_rare": 0.4222847787163753,
+        "per_group_acc": {
+          "Analysis": 1.0,
+          "Backdoor": 1.0,
+          "Shellcode": 1.0,
+          "Worms": 1.0
+        },
+        "rare_margin_mean": 1.1739960208829954,
+        "rare_margin_std": 0.19718514747163168,
+        "n_rare_test": 20
+      },
+      "rbf": {
+        "C": 1.0,
+        "f1": 0.8076923076923077,
+        "precision": 0.6774193548387096,
+        "recall": 1.0,
+        "accuracy": 0.7,
+        "ece_rare": 0.16218295612931108,
+        "auc_pr_overall": 0.7605067089099495,
+        "auc_pr_rare": 0.23538202375490921,
+        "per_group_acc": {
+          "Analysis": 1.0,
+          "Backdoor": 1.0,
+          "Shellcode": 1.0,
+          "Worms": 1.0
+        },
+        "rare_margin_mean": 1.005722603473257,
+        "rare_margin_std": 0.00751339115845939,
+        "n_rare_test": 20
+      }
+    },
+    {
+      "run": 5,
+      "quantum": {
+        "C": 1.0,
+        "f1": 0.8296296296296296,
+        "precision": 0.7887323943661971,
+        "recall": 0.875,
+        "accuracy": 0.77,
+        "ece_rare": 0.2319763480613031,
+        "auc_pr_overall": 0.9181901556725016,
+        "auc_pr_rare": 0.3711323485836518,
+        "per_group_acc": {
+          "Analysis": 0.8,
+          "Backdoor": 1.0,
+          "Shellcode": 0.6,
+          "Worms": 0.8
+        },
+        "rare_margin_mean": 0.9063418815662052,
+        "rare_margin_std": 0.3179018381152912,
+        "n_rare_test": 20
+      },
+      "linear": {
+        "C": 1.0,
+        "f1": 0.8305084745762712,
+        "precision": 0.9074074074074074,
+        "recall": 0.765625,
+        "accuracy": 0.8,
+        "ece_rare": 0.1909732399801749,
+        "auc_pr_overall": 0.8871633129389176,
+        "auc_pr_rare": 0.40258843467913685,
+        "per_group_acc": {
+          "Analysis": 0.8,
+          "Backdoor": 1.0,
+          "Shellcode": 0.4,
+          "Worms": 0.8
+        },
+        "rare_margin_mean": 1.5890896344484966,
+        "rare_margin_std": 0.6867758433175618,
+        "n_rare_test": 20
+      },
+      "poly": {
+        "C": 1.0,
+        "f1": 0.8188976377952756,
+        "precision": 0.8253968253968254,
+        "recall": 0.8125,
+        "accuracy": 0.77,
+        "ece_rare": 0.21572595828571273,
+        "auc_pr_overall": 0.9012297872984458,
+        "auc_pr_rare": 0.38065489733693864,
+        "per_group_acc": {
+          "Analysis": 0.8,
+          "Backdoor": 1.0,
+          "Shellcode": 0.4,
+          "Worms": 0.8
+        },
+        "rare_margin_mean": 1.0574123758966296,
+        "rare_margin_std": 0.17672130981974232,
+        "n_rare_test": 20
+      },
+      "rbf": {
+        "C": 1.0,
+        "f1": 0.8305084745762712,
+        "precision": 0.9074074074074074,
+        "recall": 0.765625,
+        "accuracy": 0.8,
+        "ece_rare": 0.20853930503060342,
+        "auc_pr_overall": 0.8934305510387577,
+        "auc_pr_rare": 0.20638589783670153,
+        "per_group_acc": {
+          "Analysis": 0.8,
+          "Backdoor": 1.0,
+          "Shellcode": 0.4,
+          "Worms": 0.8
+        },
+        "rare_margin_mean": 0.9984561221220856,
+        "rare_margin_std": 0.016331628275696,
+        "n_rare_test": 20
+      }
+    }
+  ],
+  "summary": {
+    "quantum": {
+      "f1_mean": 0.7977294035338898,
+      "f1_std": 0.021741564547212096,
+      "ece_rare_mean": 0.19350119552462683,
+      "ece_rare_std": 0.052853671572601985,
+      "auc_pr_overall_mean": 0.8650597843387084,
+      "auc_pr_overall_std": 0.03822843366112696,
+      "auc_pr_rare_mean": 0.3355113641623527,
+      "auc_pr_rare_std": 0.08947023349291248,
+      "rare_margin_mean": 0.9646470356447832,
+      "per_group_acc_mean": {
+        "Analysis": 0.96,
+        "Backdoor": 1.0,
+        "Shellcode": 0.8799999999999999,
+        "Worms": 0.96
+      },
+      "C": 1.0
+    },
+    "linear": {
+      "f1_mean": 0.8128772136685406,
+      "f1_std": 0.023506185379964024,
+      "ece_rare_mean": 0.18237094645308213,
+      "ece_rare_std": 0.045015245214079985,
+      "auc_pr_overall_mean": 0.8935227783921661,
+      "auc_pr_overall_std": 0.021636403584639235,
+      "auc_pr_rare_mean": 0.3449064272276371,
+      "auc_pr_rare_std": 0.04587684383384009,
+      "rare_margin_mean": 1.493891766099502,
+      "per_group_acc_mean": {
+        "Analysis": 0.9199999999999999,
+        "Backdoor": 1.0,
+        "Shellcode": 0.8,
+        "Worms": 0.96
+      },
+      "C": 1.0
+    },
+    "poly": {
+      "f1_mean": 0.7971454749767941,
+      "f1_std": 0.01775332737123452,
+      "ece_rare_mean": 0.1927724625933749,
+      "ece_rare_std": 0.04374656630295044,
+      "auc_pr_overall_mean": 0.8853146682416628,
+      "auc_pr_overall_std": 0.023938436582577122,
+      "auc_pr_rare_mean": 0.40789713948347206,
+      "auc_pr_rare_std": 0.08317800698806688,
+      "rare_margin_mean": 1.1835273705191556,
+      "per_group_acc_mean": {
+        "Analysis": 0.9199999999999999,
+        "Backdoor": 1.0,
+        "Shellcode": 0.8,
+        "Worms": 0.96
+      },
+      "C": 1.0
+    },
+    "rbf": {
+      "f1_mean": 0.8014866304353848,
+      "f1_std": 0.021293141010640344,
+      "ece_rare_mean": 0.20473972819424566,
+      "ece_rare_std": 0.0293931452160911,
+      "auc_pr_overall_mean": 0.8581867675244059,
+      "auc_pr_overall_std": 0.07105793245398098,
+      "auc_pr_rare_mean": 0.24631968657276251,
+      "auc_pr_rare_std": 0.029283966255748736,
+      "rare_margin_mean": 1.0033534380448248,
+      "per_group_acc_mean": {
+        "Analysis": 0.9199999999999999,
+        "Backdoor": 1.0,
+        "Shellcode": 0.8,
+        "Worms": 0.96
+      },
+      "C": 1.0
+    }
+  },
+  "cohen_d_qsvm_vs_rbf": {
+    "per_run": [
+      {
+        "run": 1,
+        "d": -0.4303736773030138,
+        "interpretation": "small (RBF > QSVM)",
+        "n_rare": 20
+      },
+      {
+        "run": 2,
+        "d": -0.37801885722573264,
+        "interpretation": "small (RBF > QSVM)",
+        "n_rare": 20
+      },
+      {
+        "run": 3,
+        "d": -0.42897186546018423,
+        "interpretation": "small (RBF > QSVM)",
+        "n_rare": 20
+      },
+      {
+        "run": 4,
+        "d": 1.0172851089734345,
+        "interpretation": "large (QSVM > RBF)",
+        "n_rare": 20
+      },
+      {
+        "run": 5,
+        "d": -0.398876266789273,
+        "interpretation": "small (RBF > QSVM)",
+        "n_rare": 20
+      }
+    ],
+    "combined_d": -0.2439144465625912,
+    "interpretation": "small (RBF > QSVM)",
+    "pooled_n_rare": 100,
+    "qsvm_margin_mean": 0.9646470356447829,
+    "qsvm_margin_std": 0.2218939855649214,
+    "rbf_margin_mean": 1.003353438044825,
+    "rbf_margin_std": 0.024969163708082547
+  },
+  "mcnemar_per_rare_cat": {
+    "Analysis": {
+      "b": 0,
+      "c": 1,
+      "n_samples": 25,
+      "p_value": 1.0,
+      "b_meaning": "QSVM wrong & RBF correct",
+      "c_meaning": "QSVM correct & RBF wrong"
+    },
+    "Backdoor": {
+      "b": 0,
+      "c": 0,
+      "n_samples": 25,
+      "p_value": 1.0,
+      "b_meaning": "QSVM wrong & RBF correct",
+      "c_meaning": "QSVM correct & RBF wrong"
+    },
+    "Shellcode": {
+      "b": 0,
+      "c": 2,
+      "n_samples": 25,
+      "p_value": 0.5,
+      "b_meaning": "QSVM wrong & RBF correct",
+      "c_meaning": "QSVM correct & RBF wrong"
+    },
+    "Worms": {
+      "b": 0,
+      "c": 0,
+      "n_samples": 25,
+      "p_value": 1.0,
+      "b_meaning": "QSVM wrong & RBF correct",
+      "c_meaning": "QSVM correct & RBF wrong"
+    }
+  },
+  "metadata": {
+    "regime": "statevector",
+    "backend": "FidelityStatevectorKernel",
+    "n_runs": 5,
+    "C_strategy": "neutral_C1_no_retune",
+    "C_by_kernel": {
+      "quantum": 1.0,
+      "linear": 1.0,
+      "poly": 1.0,
+      "rbf": 1.0
+    },
+    "cache_reused_from": "../models_unsw/qsvm_cache/multirun",
+    "compared_against_nsl": "../data/processed_data/c5_results.json",
+    "rare_categories": [
+      "Analysis",
+      "Backdoor",
+      "Shellcode",
+      "Worms"
+    ],
+    "n_rare_per_test": 20,
+    "ece_n_bins": 10,
+    "config_tag": "r2_full_k35_p4_cv5_sf1_run1",
+    "k_select": 35,
+    "pca_n": 4,
+    "poly_degree": 2,
+    "kernels": [
+      "quantum",
+      "linear",
+      "poly",
+      "rbf"
+    ],
+    "platt_scaling": "SVC(probability=True) internal 5-fold CV",
+    "date": "2026-05-16",
+    "reports": [
+      "../reports_unsw/c5_calibration_curves.png",
+      "../reports_unsw/c5_auc_pr_curves.png",
+      "../reports_unsw/c5_margin_distribution.png",
+      "../reports_unsw/c5_per_group_accuracy.png"
+    ],
+    "rationale": "1.7 measures calibration + rare-class metrics for QSVM vs classical kernels on UNSW. C=1.0 neutral (consistent with 1.4a-redo/1.5-redo). Reuses quantum kernel cache 100% from multirun/. Goal: check if QSVM has an advantage angle beyond raw F1 (NSL-KDD pattern: QSVM ECE_rare=0.434 < RBF=0.471)."
+  },
+  "comparison_vs_nsl_kdd": {
+    "nsl_path": "../data/processed_data/c5_results.json",
+    "ece_rare": {
+      "nsl_qsvm": 0.43366,
+      "nsl_rbf": 0.47066,
+      "unsw_qsvm": 0.19350119552462683,
+      "unsw_rbf": 0.20473972819424566
+    },
+    "auc_pr_rare": {
+      "nsl_qsvm": 0.061655,
+      "nsl_rbf": 0.057075,
+      "unsw_qsvm": 0.3355113641623527,
+      "unsw_rbf": 0.24631968657276251
+    },
+    "cohens_d_rare": {
+      "nsl": -0.68048,
+      "unsw": -0.2439144465625912
+    },
+    "note": "NSL AUC-PR rare = avg(U2R, R2L) per_class; UNSW AUC-PR rare = rare-membership scoring (Analysis+Backdoor+Shellcode+Worms vs others)."
+  }
+}

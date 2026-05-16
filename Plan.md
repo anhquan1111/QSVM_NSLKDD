@@ -113,5 +113,5 @@ Mỗi khi hoàn thành 1 bước, cập nhật ô tương ứng:
 - [x] 1.5 — UNSW C4 multi-run C tuned (degenerate, lịch sử). Số liệu artifact: perturbation invariant, prior khớp công thức degenerate
 - [x] **1.5-redo** — UNSW C4 multi-run C=1.0 neutral. **3 verdict thực**: (E1 temporal) 4 kernels tie F1~0.80 trong biên std; (E2 perturbation) QSVM SENSITIVE với noise (F1 0.798→0.779 khi σ 0.05→0.20) — weakness thật; (E3 prior 1:9) QSVM dẫn nhẹ +0.02 vs RBF, deg_dist 0.01 → 0.04 (thoát công thức). File: `c4_results_C1.json` + `c4_*_C1.png`
 - [x] 1.6 — UNSW C1 K-sweep + degeneracy probe. **PHÁT HIỆN KEY**: QSVM degeneracy 1.4a/1.5 là artifact của C=0.01 (tuned). Với C=1.0 fixed, QSVM thoát degeneracy 0/5 ở MỌI K; plateau F1=0.811 (K≥80) competitive linear=0.812 > poly/rbf. Xem [[unsw-c1-dimreduction-degeneracy-is-c-artifact]]
-- [ ] 1.7 — UNSW C5 multi-run (optional)
+- [x] 1.7 — UNSW C5 calibration multirun (statevector, C=1.0). QSVM ECE_rare=0.194 < RBF=0.205 (tied linear 0.182); AUC-PR rare QSVM=0.336 > RBF=0.246 (poly 0.408 cao nhất); Cohen's d combined -0.244 (small RBF>QSVM, run4 outlier +1.02); per-group QSVM dẫn Analysis (0.96) + Shellcode (0.88). 2 caveat: (a) calibration plot degenerate vì pool rare-only; (b) NSL vs UNSW AUC-PR khác metric definition, không so absolute
 - [ ] 2.1–2.5 — Hoàn thiện báo cáo (sau khi Phase 1 xong)
