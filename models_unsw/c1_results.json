@@ -1,0 +1,2103 @@
+{
+  "k_sweep": [
+    {
+      "K": 10,
+      "n_pca": 4,
+      "per_run": [
+        {
+          "run": 1,
+          "quantum": {
+            "f1": 0.7814569536423841,
+            "tn": 8,
+            "fp": 28,
+            "fn": 5,
+            "tp": 59,
+            "kta": 0.27534759892126004,
+            "is_degenerate": false,
+            "degeneracy_distance": 0.0009691487643354035,
+            "attack_ratio_test": 0.64,
+            "f1_predict_all_attack": 0.7804878048780487
+          },
+          "linear": {
+            "f1": 0.8205128205128205,
+            "tn": 8,
+            "fp": 28,
+            "fn": 0,
+            "tp": 64,
+            "kta": 0.27943387851701446,
+            "is_degenerate": false,
+            "degeneracy_distance": 0.04002501563477179,
+            "attack_ratio_test": 0.64,
+            "f1_predict_all_attack": 0.7804878048780487
+          },
+          "poly": {
+            "f1": 0.8205128205128205,
+            "tn": 8,
+            "fp": 28,
+            "fn": 0,
+            "tp": 64,
+            "kta": 0.2973266541501854,
+            "is_degenerate": false,
+            "degeneracy_distance": 0.04002501563477179,
+            "attack_ratio_test": 0.64,
+            "f1_predict_all_attack": 0.7804878048780487
+          },
+          "rbf": {
+            "f1": 0.8152866242038217,
+            "tn": 7,
+            "fp": 29,
+            "fn": 0,
+            "tp": 64,
+            "kta": 0.3040610054310738,
+            "is_degenerate": false,
+            "degeneracy_distance": 0.034798819325773,
+            "attack_ratio_test": 0.64,
+            "f1_predict_all_attack": 0.7804878048780487
+          }
+        },
+        {
+          "run": 2,
+          "quantum": {
+            "f1": 0.7808219178082192,
+            "tn": 11,
+            "fp": 26,
+            "fn": 6,
+            "tp": 57,
+            "kta": 0.3908357534151213,
+            "is_degenerate": false,
+            "degeneracy_distance": 0.007815782838893948,
+            "attack_ratio_test": 0.63,
+            "f1_predict_all_attack": 0.7730061349693252
+          },
+          "linear": {
+            "f1": 0.7564102564102564,
+            "tn": 3,
+            "fp": 34,
+            "fn": 4,
+            "tp": 59,
+            "kta": 0.16381208151302296,
+            "is_degenerate": false,
+            "degeneracy_distance": 0.016595878559068855,
+            "attack_ratio_test": 0.63,
+            "f1_predict_all_attack": 0.7730061349693252
+          },
+          "poly": {
+            "f1": 0.7564102564102564,
+            "tn": 3,
+            "fp": 34,
+            "fn": 4,
+            "tp": 59,
+            "kta": 0.08969223541921617,
+            "is_degenerate": false,
+            "degeneracy_distance": 0.016595878559068855,
+            "attack_ratio_test": 0.63,
+            "f1_predict_all_attack": 0.7730061349693252
+          },
+          "rbf": {
+            "f1": 0.7564102564102564,
+            "tn": 3,
+            "fp": 34,
+            "fn": 4,
+            "tp": 59,
+            "kta": 0.35203989810754577,
+            "is_degenerate": false,
+            "degeneracy_distance": 0.016595878559068855,
+            "attack_ratio_test": 0.63,
+            "f1_predict_all_attack": 0.7730061349693252
+          }
+        },
+        {
+          "run": 3,
+          "quantum": {
+            "f1": 0.7651006711409396,
+            "tn": 8,
+            "fp": 29,
+            "fn": 6,
+            "tp": 57,
+            "kta": 0.24914058151869584,
+            "is_degenerate": false,
+            "degeneracy_distance": 0.00790546382838564,
+            "attack_ratio_test": 0.63,
+            "f1_predict_all_attack": 0.7730061349693252
+          },
+          "linear": {
+            "f1": 0.8076923076923077,
+            "tn": 7,
+            "fp": 30,
+            "fn": 0,
+            "tp": 63,
+            "kta": 0.10129605709241198,
+            "is_degenerate": false,
+            "degeneracy_distance": 0.03468617272298247,
+            "attack_ratio_test": 0.63,
+            "f1_predict_all_attack": 0.7730061349693252
+          },
+          "poly": {
+            "f1": 0.7974683544303798,
+            "tn": 5,
+            "fp": 32,
+            "fn": 0,
+            "tp": 63,
+            "kta": 0.03819680734390471,
+            "is_degenerate": false,
+            "degeneracy_distance": 0.024462219461054535,
+            "attack_ratio_test": 0.63,
+            "f1_predict_all_attack": 0.7730061349693252
+          },
+          "rbf": {
+            "f1": 0.802547770700637,
+            "tn": 6,
+            "fp": 31,
+            "fn": 0,
+            "tp": 63,
+            "kta": 0.3284502148999361,
+            "is_degenerate": false,
+            "degeneracy_distance": 0.029541635731311744,
+            "attack_ratio_test": 0.63,
+            "f1_predict_all_attack": 0.7730061349693252
+          }
+        },
+        {
+          "run": 4,
+          "quantum": {
+            "f1": 0.8344370860927153,
+            "tn": 12,
+            "fp": 25,
+            "fn": 0,
+            "tp": 63,
+            "kta": 0.2573983688479276,
+            "is_degenerate": false,
+            "degeneracy_distance": 0.06143095112339003,
+            "attack_ratio_test": 0.63,
+            "f1_predict_all_attack": 0.7730061349693252
+          },
+          "linear": {
+            "f1": 0.8181818181818182,
+            "tn": 9,
+            "fp": 28,
+            "fn": 0,
+            "tp": 63,
+            "kta": 0.21013728294568726,
+            "is_degenerate": false,
+            "degeneracy_distance": 0.04517568321249299,
+            "attack_ratio_test": 0.63,
+            "f1_predict_all_attack": 0.7730061349693252
+          },
+          "poly": {
+            "f1": 0.8181818181818182,
+            "tn": 9,
+            "fp": 28,
+            "fn": 0,
+            "tp": 63,
+            "kta": 0.14162000083174187,
+            "is_degenerate": false,
+            "degeneracy_distance": 0.04517568321249299,
+            "attack_ratio_test": 0.63,
+            "f1_predict_all_attack": 0.7730061349693252
+          },
+          "rbf": {
+            "f1": 0.8181818181818182,
+            "tn": 9,
+            "fp": 28,
+            "fn": 0,
+            "tp": 63,
+            "kta": 0.321659254388059,
+            "is_degenerate": false,
+            "degeneracy_distance": 0.04517568321249299,
+            "attack_ratio_test": 0.63,
+            "f1_predict_all_attack": 0.7730061349693252
+          }
+        },
+        {
+          "run": 5,
+          "quantum": {
+            "f1": 0.7702702702702703,
+            "tn": 9,
+            "fp": 27,
+            "fn": 7,
+            "tp": 57,
+            "kta": 0.295277742842218,
+            "is_degenerate": false,
+            "degeneracy_distance": 0.010217534607778411,
+            "attack_ratio_test": 0.64,
+            "f1_predict_all_attack": 0.7804878048780487
+          },
+          "linear": {
+            "f1": 0.7299270072992701,
+            "tn": 13,
+            "fp": 23,
+            "fn": 14,
+            "tp": 50,
+            "kta": 0.17808776575428764,
+            "is_degenerate": false,
+            "degeneracy_distance": 0.05056079757877863,
+            "attack_ratio_test": 0.64,
+            "f1_predict_all_attack": 0.7804878048780487
+          },
+          "poly": {
+            "f1": 0.7412587412587412,
+            "tn": 10,
+            "fp": 26,
+            "fn": 11,
+            "tp": 53,
+            "kta": 0.10077077812675661,
+            "is_degenerate": false,
+            "degeneracy_distance": 0.03922906361930745,
+            "attack_ratio_test": 0.64,
+            "f1_predict_all_attack": 0.7804878048780487
+          },
+          "rbf": {
+            "f1": 0.7352941176470589,
+            "tn": 14,
+            "fp": 22,
+            "fn": 14,
+            "tp": 50,
+            "kta": 0.3539955881357372,
+            "is_degenerate": false,
+            "degeneracy_distance": 0.04519368723098982,
+            "attack_ratio_test": 0.64,
+            "f1_predict_all_attack": 0.7804878048780487
+          }
+        }
+      ],
+      "summary": {
+        "quantum": {
+          "f1_mean": 0.7864173797909058,
+          "f1_std": 0.02773507900306763,
+          "kta_mean": 0.29360000910904455,
+          "kta_std": 0.05717944276170432,
+          "n_runs_degenerate": 0,
+          "mean_degeneracy_distance": 0.017667776232556685
+        },
+        "linear": {
+          "f1_mean": 0.7865448420192946,
+          "f1_std": 0.04097441148524424,
+          "kta_mean": 0.18655341316448487,
+          "kta_std": 0.06526988561678913,
+          "n_runs_degenerate": 0,
+          "mean_degeneracy_distance": 0.03740870954161894
+        },
+        "poly": {
+          "f1_mean": 0.7867663981588032,
+          "f1_std": 0.036168783789853,
+          "kta_mean": 0.13352129517436095,
+          "kta_std": 0.09871439293305698,
+          "n_runs_degenerate": 0,
+          "mean_degeneracy_distance": 0.03309757209733912
+        },
+        "rbf": {
+          "f1_mean": 0.7855441174287184,
+          "f1_std": 0.037459327210347185,
+          "kta_mean": 0.33204119219247036,
+          "kta_std": 0.021127673447425537,
+          "n_runs_degenerate": 0,
+          "mean_degeneracy_distance": 0.034261140811927285
+        }
+      }
+    },
+    {
+      "K": 20,
+      "n_pca": 4,
+      "per_run": [
+        {
+          "run": 1,
+          "quantum": {
+            "f1": 0.7870967741935484,
+            "tn": 6,
+            "fp": 30,
+            "fn": 3,
+            "tp": 61,
+            "kta": 0.2597082787736063,
+            "is_degenerate": false,
+            "degeneracy_distance": 0.006608969315499702,
+            "attack_ratio_test": 0.64,
+            "f1_predict_all_attack": 0.7804878048780487
+          },
+          "linear": {
+            "f1": 0.8205128205128205,
+            "tn": 8,
+            "fp": 28,
+            "fn": 0,
+            "tp": 64,
+            "kta": 0.10206368314929813,
+            "is_degenerate": false,
+            "degeneracy_distance": 0.04002501563477179,
+            "attack_ratio_test": 0.64,
+            "f1_predict_all_attack": 0.7804878048780487
+          },
+          "poly": {
+            "f1": 0.8,
+            "tn": 4,
+            "fp": 32,
+            "fn": 0,
+            "tp": 64,
+            "kta": 0.04564693733508781,
+            "is_degenerate": false,
+            "degeneracy_distance": 0.019512195121951348,
+            "attack_ratio_test": 0.64,
+            "f1_predict_all_attack": 0.7804878048780487
+          },
+          "rbf": {
+            "f1": 0.7950310559006211,
+            "tn": 3,
+            "fp": 33,
+            "fn": 0,
+            "tp": 64,
+            "kta": 0.25350453790602373,
+            "is_degenerate": false,
+            "degeneracy_distance": 0.014543251022572368,
+            "attack_ratio_test": 0.64,
+            "f1_predict_all_attack": 0.7804878048780487
+          }
+        },
+        {
+          "run": 2,
+          "quantum": {
+            "f1": 0.7581699346405228,
+            "tn": 5,
+            "fp": 32,
+            "fn": 5,
+            "tp": 58,
+            "kta": 0.19712755152412872,
+            "is_degenerate": false,
+            "degeneracy_distance": 0.014836200328802396,
+            "attack_ratio_test": 0.63,
+            "f1_predict_all_attack": 0.7730061349693252
+          },
+          "linear": {
+            "f1": 0.7730061349693251,
+            "tn": 0,
+            "fp": 37,
+            "fn": 0,
+            "tp": 63,
+            "kta": 0.1768640685583664,
+            "is_degenerate": true,
+            "degeneracy_distance": 1.1102230246251565e-16,
+            "attack_ratio_test": 0.63,
+            "f1_predict_all_attack": 0.7730061349693252
+          },
+          "poly": {
+            "f1": 0.7730061349693251,
+            "tn": 0,
+            "fp": 37,
+            "fn": 0,
+            "tp": 63,
+            "kta": 0.1273240932029557,
+            "is_degenerate": true,
+            "degeneracy_distance": 1.1102230246251565e-16,
+            "attack_ratio_test": 0.63,
+            "f1_predict_all_attack": 0.7730061349693252
+          },
+          "rbf": {
+            "f1": 0.7730061349693251,
+            "tn": 0,
+            "fp": 37,
+            "fn": 0,
+            "tp": 63,
+            "kta": 0.15754564943611585,
+            "is_degenerate": true,
+            "degeneracy_distance": 1.1102230246251565e-16,
+            "attack_ratio_test": 0.63,
+            "f1_predict_all_attack": 0.7730061349693252
+          }
+        },
+        {
+          "run": 3,
+          "quantum": {
+            "f1": 0.802547770700637,
+            "tn": 6,
+            "fp": 31,
+            "fn": 0,
+            "tp": 63,
+            "kta": 0.19609646025066313,
+            "is_degenerate": false,
+            "degeneracy_distance": 0.029541635731311744,
+            "attack_ratio_test": 0.63,
+            "f1_predict_all_attack": 0.7730061349693252
+          },
+          "linear": {
+            "f1": 0.8181818181818182,
+            "tn": 9,
+            "fp": 28,
+            "fn": 0,
+            "tp": 63,
+            "kta": 0.1732967995040699,
+            "is_degenerate": false,
+            "degeneracy_distance": 0.04517568321249299,
+            "attack_ratio_test": 0.63,
+            "f1_predict_all_attack": 0.7730061349693252
+          },
+          "poly": {
+            "f1": 0.7924528301886793,
+            "tn": 4,
+            "fp": 33,
+            "fn": 0,
+            "tp": 63,
+            "kta": 0.11123435362447043,
+            "is_degenerate": false,
+            "degeneracy_distance": 0.01944669521935405,
+            "attack_ratio_test": 0.63,
+            "f1_predict_all_attack": 0.7730061349693252
+          },
+          "rbf": {
+            "f1": 0.802547770700637,
+            "tn": 6,
+            "fp": 31,
+            "fn": 0,
+            "tp": 63,
+            "kta": 0.24121400074176075,
+            "is_degenerate": false,
+            "degeneracy_distance": 0.029541635731311744,
+            "attack_ratio_test": 0.63,
+            "f1_predict_all_attack": 0.7730061349693252
+          }
+        },
+        {
+          "run": 4,
+          "quantum": {
+            "f1": 0.8026315789473685,
+            "tn": 9,
+            "fp": 28,
+            "fn": 2,
+            "tp": 61,
+            "kta": 0.22879029187228744,
+            "is_degenerate": false,
+            "degeneracy_distance": 0.02962544397804323,
+            "attack_ratio_test": 0.63,
+            "f1_predict_all_attack": 0.7730061349693252
+          },
+          "linear": {
+            "f1": 0.8181818181818182,
+            "tn": 9,
+            "fp": 28,
+            "fn": 0,
+            "tp": 63,
+            "kta": 0.12258971647723624,
+            "is_degenerate": false,
+            "degeneracy_distance": 0.04517568321249299,
+            "attack_ratio_test": 0.63,
+            "f1_predict_all_attack": 0.7730061349693252
+          },
+          "poly": {
+            "f1": 0.8181818181818182,
+            "tn": 9,
+            "fp": 28,
+            "fn": 0,
+            "tp": 63,
+            "kta": 0.06287815854304742,
+            "is_degenerate": false,
+            "degeneracy_distance": 0.04517568321249299,
+            "attack_ratio_test": 0.63,
+            "f1_predict_all_attack": 0.7730061349693252
+          },
+          "rbf": {
+            "f1": 0.8076923076923077,
+            "tn": 7,
+            "fp": 30,
+            "fn": 0,
+            "tp": 63,
+            "kta": 0.29669012761761254,
+            "is_degenerate": false,
+            "degeneracy_distance": 0.03468617272298247,
+            "attack_ratio_test": 0.63,
+            "f1_predict_all_attack": 0.7730061349693252
+          }
+        },
+        {
+          "run": 5,
+          "quantum": {
+            "f1": 0.7724137931034483,
+            "tn": 11,
+            "fp": 25,
+            "fn": 8,
+            "tp": 56,
+            "kta": 0.27541444395145176,
+            "is_degenerate": false,
+            "degeneracy_distance": 0.008074011774600431,
+            "attack_ratio_test": 0.64,
+            "f1_predict_all_attack": 0.7804878048780487
+          },
+          "linear": {
+            "f1": 0.8,
+            "tn": 4,
+            "fp": 32,
+            "fn": 0,
+            "tp": 64,
+            "kta": 0.11038007921122896,
+            "is_degenerate": false,
+            "degeneracy_distance": 0.019512195121951348,
+            "attack_ratio_test": 0.64,
+            "f1_predict_all_attack": 0.7804878048780487
+          },
+          "poly": {
+            "f1": 0.8,
+            "tn": 4,
+            "fp": 32,
+            "fn": 0,
+            "tp": 64,
+            "kta": 0.0336095750598896,
+            "is_degenerate": false,
+            "degeneracy_distance": 0.019512195121951348,
+            "attack_ratio_test": 0.64,
+            "f1_predict_all_attack": 0.7804878048780487
+          },
+          "rbf": {
+            "f1": 0.8,
+            "tn": 4,
+            "fp": 32,
+            "fn": 0,
+            "tp": 64,
+            "kta": 0.2892172436491885,
+            "is_degenerate": false,
+            "degeneracy_distance": 0.019512195121951348,
+            "attack_ratio_test": 0.64,
+            "f1_predict_all_attack": 0.7804878048780487
+          }
+        }
+      ],
+      "summary": {
+        "quantum": {
+          "f1_mean": 0.7845719703171051,
+          "f1_std": 0.019368416681207954,
+          "kta_mean": 0.23142740527442748,
+          "kta_std": 0.03593875828444298,
+          "n_runs_degenerate": 0,
+          "mean_degeneracy_distance": 0.0177372522256515
+        },
+        "linear": {
+          "f1_mean": 0.8059765183691564,
+          "f1_std": 0.02019905765372825,
+          "kta_mean": 0.13703886938003992,
+          "kta_std": 0.035508508667715044,
+          "n_runs_degenerate": 1,
+          "mean_degeneracy_distance": 0.029977715436341847
+        },
+        "poly": {
+          "f1_mean": 0.7967281566679645,
+          "f1_std": 0.01629940366934458,
+          "kta_mean": 0.07613862355309019,
+          "kta_std": 0.04112774428216669,
+          "n_runs_degenerate": 1,
+          "mean_degeneracy_distance": 0.020729353735149968
+        },
+        "rbf": {
+          "f1_mean": 0.7956554538525781,
+          "f1_std": 0.013459629283507555,
+          "kta_mean": 0.2476343118701403,
+          "kta_std": 0.05551409803338267,
+          "n_runs_degenerate": 1,
+          "mean_degeneracy_distance": 0.019656650919763607
+        }
+      }
+    },
+    {
+      "K": 35,
+      "n_pca": 4,
+      "per_run": [
+        {
+          "run": 1,
+          "quantum": {
+            "f1": 0.7950310559006211,
+            "tn": 3,
+            "fp": 33,
+            "fn": 0,
+            "tp": 64,
+            "kta": 0.12922235120403627,
+            "is_degenerate": false,
+            "degeneracy_distance": 0.014543251022572368,
+            "attack_ratio_test": 0.64,
+            "f1_predict_all_attack": 0.7804878048780487
+          },
+          "linear": {
+            "f1": 0.8205128205128205,
+            "tn": 8,
+            "fp": 28,
+            "fn": 0,
+            "tp": 64,
+            "kta": 0.12058115511579728,
+            "is_degenerate": false,
+            "degeneracy_distance": 0.04002501563477179,
+            "attack_ratio_test": 0.64,
+            "f1_predict_all_attack": 0.7804878048780487
+          },
+          "poly": {
+            "f1": 0.7950310559006211,
+            "tn": 3,
+            "fp": 33,
+            "fn": 0,
+            "tp": 64,
+            "kta": 0.06072024576564829,
+            "is_degenerate": false,
+            "degeneracy_distance": 0.014543251022572368,
+            "attack_ratio_test": 0.64,
+            "f1_predict_all_attack": 0.7804878048780487
+          },
+          "rbf": {
+            "f1": 0.7950310559006211,
+            "tn": 3,
+            "fp": 33,
+            "fn": 0,
+            "tp": 64,
+            "kta": 0.17206228802469986,
+            "is_degenerate": false,
+            "degeneracy_distance": 0.014543251022572368,
+            "attack_ratio_test": 0.64,
+            "f1_predict_all_attack": 0.7804878048780487
+          }
+        },
+        {
+          "run": 2,
+          "quantum": {
+            "f1": 0.7692307692307693,
+            "tn": 12,
+            "fp": 25,
+            "fn": 8,
+            "tp": 55,
+            "kta": 0.17635041391196482,
+            "is_degenerate": false,
+            "degeneracy_distance": 0.003775365738555969,
+            "attack_ratio_test": 0.63,
+            "f1_predict_all_attack": 0.7730061349693252
+          },
+          "linear": {
+            "f1": 0.7716535433070866,
+            "tn": 22,
+            "fp": 15,
+            "fn": 14,
+            "tp": 49,
+            "kta": 0.17822536196196312,
+            "is_degenerate": false,
+            "degeneracy_distance": 0.001352591662238667,
+            "attack_ratio_test": 0.63,
+            "f1_predict_all_attack": 0.7730061349693252
+          },
+          "poly": {
+            "f1": 0.7716535433070866,
+            "tn": 22,
+            "fp": 15,
+            "fn": 14,
+            "tp": 49,
+            "kta": 0.1490909034949428,
+            "is_degenerate": false,
+            "degeneracy_distance": 0.001352591662238667,
+            "attack_ratio_test": 0.63,
+            "f1_predict_all_attack": 0.7730061349693252
+          },
+          "rbf": {
+            "f1": 0.7716535433070866,
+            "tn": 22,
+            "fp": 15,
+            "fn": 14,
+            "tp": 49,
+            "kta": 0.18672634651141498,
+            "is_degenerate": false,
+            "degeneracy_distance": 0.001352591662238667,
+            "attack_ratio_test": 0.63,
+            "f1_predict_all_attack": 0.7730061349693252
+          }
+        },
+        {
+          "run": 3,
+          "quantum": {
+            "f1": 0.802547770700637,
+            "tn": 6,
+            "fp": 31,
+            "fn": 0,
+            "tp": 63,
+            "kta": 0.20274981712391746,
+            "is_degenerate": false,
+            "degeneracy_distance": 0.029541635731311744,
+            "attack_ratio_test": 0.63,
+            "f1_predict_all_attack": 0.7730061349693252
+          },
+          "linear": {
+            "f1": 0.8235294117647058,
+            "tn": 10,
+            "fp": 27,
+            "fn": 0,
+            "tp": 63,
+            "kta": 0.17710913425946748,
+            "is_degenerate": false,
+            "degeneracy_distance": 0.0505232767953806,
+            "attack_ratio_test": 0.63,
+            "f1_predict_all_attack": 0.7730061349693252
+          },
+          "poly": {
+            "f1": 0.7924528301886793,
+            "tn": 4,
+            "fp": 33,
+            "fn": 0,
+            "tp": 63,
+            "kta": 0.11730842647152354,
+            "is_degenerate": false,
+            "degeneracy_distance": 0.01944669521935405,
+            "attack_ratio_test": 0.63,
+            "f1_predict_all_attack": 0.7730061349693252
+          },
+          "rbf": {
+            "f1": 0.802547770700637,
+            "tn": 6,
+            "fp": 31,
+            "fn": 0,
+            "tp": 63,
+            "kta": 0.2389259281600561,
+            "is_degenerate": false,
+            "degeneracy_distance": 0.029541635731311744,
+            "attack_ratio_test": 0.63,
+            "f1_predict_all_attack": 0.7730061349693252
+          }
+        },
+        {
+          "run": 4,
+          "quantum": {
+            "f1": 0.7922077922077922,
+            "tn": 7,
+            "fp": 30,
+            "fn": 2,
+            "tp": 61,
+            "kta": 0.1924001733065193,
+            "is_degenerate": false,
+            "degeneracy_distance": 0.019201657238467007,
+            "attack_ratio_test": 0.63,
+            "f1_predict_all_attack": 0.7730061349693252
+          },
+          "linear": {
+            "f1": 0.8181818181818182,
+            "tn": 9,
+            "fp": 28,
+            "fn": 0,
+            "tp": 63,
+            "kta": 0.0950708180051189,
+            "is_degenerate": false,
+            "degeneracy_distance": 0.04517568321249299,
+            "attack_ratio_test": 0.63,
+            "f1_predict_all_attack": 0.7730061349693252
+          },
+          "poly": {
+            "f1": 0.8076923076923077,
+            "tn": 7,
+            "fp": 30,
+            "fn": 0,
+            "tp": 63,
+            "kta": 0.063249180041562,
+            "is_degenerate": false,
+            "degeneracy_distance": 0.03468617272298247,
+            "attack_ratio_test": 0.63,
+            "f1_predict_all_attack": 0.7730061349693252
+          },
+          "rbf": {
+            "f1": 0.8076923076923077,
+            "tn": 7,
+            "fp": 30,
+            "fn": 0,
+            "tp": 63,
+            "kta": 0.28958784457125636,
+            "is_degenerate": false,
+            "degeneracy_distance": 0.03468617272298247,
+            "attack_ratio_test": 0.63,
+            "f1_predict_all_attack": 0.7730061349693252
+          }
+        },
+        {
+          "run": 5,
+          "quantum": {
+            "f1": 0.8296296296296296,
+            "tn": 21,
+            "fp": 15,
+            "fn": 8,
+            "tp": 56,
+            "kta": 0.266252575520019,
+            "is_degenerate": false,
+            "degeneracy_distance": 0.04914182475158091,
+            "attack_ratio_test": 0.64,
+            "f1_predict_all_attack": 0.7804878048780487
+          },
+          "linear": {
+            "f1": 0.8305084745762712,
+            "tn": 31,
+            "fp": 5,
+            "fn": 15,
+            "tp": 49,
+            "kta": 0.2181887722091541,
+            "is_degenerate": false,
+            "degeneracy_distance": 0.0500206696982225,
+            "attack_ratio_test": 0.64,
+            "f1_predict_all_attack": 0.7804878048780487
+          },
+          "poly": {
+            "f1": 0.8188976377952756,
+            "tn": 25,
+            "fp": 11,
+            "fn": 12,
+            "tp": 52,
+            "kta": 0.19628991131506504,
+            "is_degenerate": false,
+            "degeneracy_distance": 0.03840983291722688,
+            "attack_ratio_test": 0.64,
+            "f1_predict_all_attack": 0.7804878048780487
+          },
+          "rbf": {
+            "f1": 0.8305084745762712,
+            "tn": 31,
+            "fp": 5,
+            "fn": 15,
+            "tp": 49,
+            "kta": 0.28437399127212737,
+            "is_degenerate": false,
+            "degeneracy_distance": 0.0500206696982225,
+            "attack_ratio_test": 0.64,
+            "f1_predict_all_attack": 0.7804878048780487
+          }
+        }
+      ],
+      "summary": {
+        "quantum": {
+          "f1_mean": 0.7977294035338898,
+          "f1_std": 0.021741564547212096,
+          "kta_mean": 0.19339506621329136,
+          "kta_std": 0.049511047662637635,
+          "n_runs_degenerate": 0,
+          "mean_degeneracy_distance": 0.023240746896497598
+        },
+        "linear": {
+          "f1_mean": 0.8128772136685406,
+          "f1_std": 0.023506185379964024,
+          "kta_mean": 0.15783504831030018,
+          "kta_std": 0.04938883586499442,
+          "n_runs_degenerate": 0,
+          "mean_degeneracy_distance": 0.03741944740062131
+        },
+        "poly": {
+          "f1_mean": 0.7971454749767941,
+          "f1_std": 0.01775332737123452,
+          "kta_mean": 0.11733173341774832,
+          "kta_std": 0.057820460042147144,
+          "n_runs_degenerate": 0,
+          "mean_degeneracy_distance": 0.021687708708874886
+        },
+        "rbf": {
+          "f1_mean": 0.8014866304353848,
+          "f1_std": 0.021293141010640344,
+          "kta_mean": 0.23433527970791096,
+          "kta_std": 0.05413485163340229,
+          "n_runs_degenerate": 0,
+          "mean_degeneracy_distance": 0.026028864167465547
+        }
+      }
+    },
+    {
+      "K": 50,
+      "n_pca": 4,
+      "per_run": [
+        {
+          "run": 1,
+          "quantum": {
+            "f1": 0.8,
+            "tn": 7,
+            "fp": 29,
+            "fn": 2,
+            "tp": 62,
+            "kta": 0.16399134250243397,
+            "is_degenerate": false,
+            "degeneracy_distance": 0.019512195121951348,
+            "attack_ratio_test": 0.64,
+            "f1_predict_all_attack": 0.7804878048780487
+          },
+          "linear": {
+            "f1": 0.8205128205128205,
+            "tn": 8,
+            "fp": 28,
+            "fn": 0,
+            "tp": 64,
+            "kta": 0.21072301546169617,
+            "is_degenerate": false,
+            "degeneracy_distance": 0.04002501563477179,
+            "attack_ratio_test": 0.64,
+            "f1_predict_all_attack": 0.7804878048780487
+          },
+          "poly": {
+            "f1": 0.8205128205128205,
+            "tn": 8,
+            "fp": 28,
+            "fn": 0,
+            "tp": 64,
+            "kta": 0.17818483151650746,
+            "is_degenerate": false,
+            "degeneracy_distance": 0.04002501563477179,
+            "attack_ratio_test": 0.64,
+            "f1_predict_all_attack": 0.7804878048780487
+          },
+          "rbf": {
+            "f1": 0.7950310559006211,
+            "tn": 3,
+            "fp": 33,
+            "fn": 0,
+            "tp": 64,
+            "kta": 0.23383325882738423,
+            "is_degenerate": false,
+            "degeneracy_distance": 0.014543251022572368,
+            "attack_ratio_test": 0.64,
+            "f1_predict_all_attack": 0.7804878048780487
+          }
+        },
+        {
+          "run": 2,
+          "quantum": {
+            "f1": 0.8,
+            "tn": 13,
+            "fp": 24,
+            "fn": 5,
+            "tp": 58,
+            "kta": 0.18705475424005333,
+            "is_degenerate": false,
+            "degeneracy_distance": 0.026993865030674802,
+            "attack_ratio_test": 0.63,
+            "f1_predict_all_attack": 0.7730061349693252
+          },
+          "linear": {
+            "f1": 0.7716535433070866,
+            "tn": 22,
+            "fp": 15,
+            "fn": 14,
+            "tp": 49,
+            "kta": 0.1800384413862652,
+            "is_degenerate": false,
+            "degeneracy_distance": 0.001352591662238667,
+            "attack_ratio_test": 0.63,
+            "f1_predict_all_attack": 0.7730061349693252
+          },
+          "poly": {
+            "f1": 0.7716535433070866,
+            "tn": 22,
+            "fp": 15,
+            "fn": 14,
+            "tp": 49,
+            "kta": 0.14937491970344965,
+            "is_degenerate": false,
+            "degeneracy_distance": 0.001352591662238667,
+            "attack_ratio_test": 0.63,
+            "f1_predict_all_attack": 0.7730061349693252
+          },
+          "rbf": {
+            "f1": 0.7716535433070866,
+            "tn": 22,
+            "fp": 15,
+            "fn": 14,
+            "tp": 49,
+            "kta": 0.191915586138488,
+            "is_degenerate": false,
+            "degeneracy_distance": 0.001352591662238667,
+            "attack_ratio_test": 0.63,
+            "f1_predict_all_attack": 0.7730061349693252
+          }
+        },
+        {
+          "run": 3,
+          "quantum": {
+            "f1": 0.802547770700637,
+            "tn": 6,
+            "fp": 31,
+            "fn": 0,
+            "tp": 63,
+            "kta": 0.18840984887436688,
+            "is_degenerate": false,
+            "degeneracy_distance": 0.029541635731311744,
+            "attack_ratio_test": 0.63,
+            "f1_predict_all_attack": 0.7730061349693252
+          },
+          "linear": {
+            "f1": 0.8235294117647058,
+            "tn": 10,
+            "fp": 27,
+            "fn": 0,
+            "tp": 63,
+            "kta": 0.17407935536512006,
+            "is_degenerate": false,
+            "degeneracy_distance": 0.0505232767953806,
+            "attack_ratio_test": 0.63,
+            "f1_predict_all_attack": 0.7730061349693252
+          },
+          "poly": {
+            "f1": 0.7924528301886793,
+            "tn": 4,
+            "fp": 33,
+            "fn": 0,
+            "tp": 63,
+            "kta": 0.11490241385317412,
+            "is_degenerate": false,
+            "degeneracy_distance": 0.01944669521935405,
+            "attack_ratio_test": 0.63,
+            "f1_predict_all_attack": 0.7730061349693252
+          },
+          "rbf": {
+            "f1": 0.802547770700637,
+            "tn": 6,
+            "fp": 31,
+            "fn": 0,
+            "tp": 63,
+            "kta": 0.2319553894351472,
+            "is_degenerate": false,
+            "degeneracy_distance": 0.029541635731311744,
+            "attack_ratio_test": 0.63,
+            "f1_predict_all_attack": 0.7730061349693252
+          }
+        },
+        {
+          "run": 4,
+          "quantum": {
+            "f1": 0.8181818181818182,
+            "tn": 9,
+            "fp": 28,
+            "fn": 0,
+            "tp": 63,
+            "kta": 0.20882388266530605,
+            "is_degenerate": false,
+            "degeneracy_distance": 0.04517568321249299,
+            "attack_ratio_test": 0.63,
+            "f1_predict_all_attack": 0.7730061349693252
+          },
+          "linear": {
+            "f1": 0.8289473684210527,
+            "tn": 11,
+            "fp": 26,
+            "fn": 0,
+            "tp": 63,
+            "kta": 0.21044235069881911,
+            "is_degenerate": false,
+            "degeneracy_distance": 0.05594123345172741,
+            "attack_ratio_test": 0.63,
+            "f1_predict_all_attack": 0.7730061349693252
+          },
+          "poly": {
+            "f1": 0.8076923076923077,
+            "tn": 7,
+            "fp": 30,
+            "fn": 0,
+            "tp": 63,
+            "kta": 0.16058859693691532,
+            "is_degenerate": false,
+            "degeneracy_distance": 0.03468617272298247,
+            "attack_ratio_test": 0.63,
+            "f1_predict_all_attack": 0.7730061349693252
+          },
+          "rbf": {
+            "f1": 0.8076923076923077,
+            "tn": 7,
+            "fp": 30,
+            "fn": 0,
+            "tp": 63,
+            "kta": 0.27145890400577233,
+            "is_degenerate": false,
+            "degeneracy_distance": 0.03468617272298247,
+            "attack_ratio_test": 0.63,
+            "f1_predict_all_attack": 0.7730061349693252
+          }
+        },
+        {
+          "run": 5,
+          "quantum": {
+            "f1": 0.8244274809160306,
+            "tn": 23,
+            "fp": 13,
+            "fn": 10,
+            "tp": 54,
+            "kta": 0.259893701824436,
+            "is_degenerate": false,
+            "degeneracy_distance": 0.04393967603798188,
+            "attack_ratio_test": 0.64,
+            "f1_predict_all_attack": 0.7804878048780487
+          },
+          "linear": {
+            "f1": 0.8305084745762712,
+            "tn": 31,
+            "fp": 5,
+            "fn": 15,
+            "tp": 49,
+            "kta": 0.2181072910830819,
+            "is_degenerate": false,
+            "degeneracy_distance": 0.0500206696982225,
+            "attack_ratio_test": 0.64,
+            "f1_predict_all_attack": 0.7804878048780487
+          },
+          "poly": {
+            "f1": 0.8188976377952756,
+            "tn": 25,
+            "fp": 11,
+            "fn": 12,
+            "tp": 52,
+            "kta": 0.19648680739776658,
+            "is_degenerate": false,
+            "degeneracy_distance": 0.03840983291722688,
+            "attack_ratio_test": 0.64,
+            "f1_predict_all_attack": 0.7804878048780487
+          },
+          "rbf": {
+            "f1": 0.8305084745762712,
+            "tn": 31,
+            "fp": 5,
+            "fn": 15,
+            "tp": 49,
+            "kta": 0.28374214649168333,
+            "is_degenerate": false,
+            "degeneracy_distance": 0.0500206696982225,
+            "attack_ratio_test": 0.64,
+            "f1_predict_all_attack": 0.7804878048780487
+          }
+        }
+      ],
+      "summary": {
+        "quantum": {
+          "f1_mean": 0.8090314139596971,
+          "f1_std": 0.011466683056639495,
+          "kta_mean": 0.20163470602131922,
+          "kta_std": 0.03622944075721533,
+          "n_runs_degenerate": 0,
+          "mean_degeneracy_distance": 0.033032611026882555
+        },
+        "linear": {
+          "f1_mean": 0.8150303237163874,
+          "f1_std": 0.02458197833172528,
+          "kta_mean": 0.1986780907989965,
+          "kta_std": 0.020084236106802593,
+          "n_runs_degenerate": 0,
+          "mean_degeneracy_distance": 0.039572557448468194
+        },
+        "poly": {
+          "f1_mean": 0.802241827899234,
+          "f1_std": 0.020447619267416943,
+          "kta_mean": 0.15990751388156263,
+          "kta_std": 0.03085840038339491,
+          "n_runs_degenerate": 0,
+          "mean_degeneracy_distance": 0.02678406163131477
+        },
+        "rbf": {
+          "f1_mean": 0.8014866304353848,
+          "f1_std": 0.021293141010640344,
+          "kta_mean": 0.24258105697969504,
+          "kta_std": 0.03634757233130386,
+          "n_runs_degenerate": 0,
+          "mean_degeneracy_distance": 0.026028864167465547
+        }
+      }
+    },
+    {
+      "K": 80,
+      "n_pca": 4,
+      "per_run": [
+        {
+          "run": 1,
+          "quantum": {
+            "f1": 0.8,
+            "tn": 7,
+            "fp": 29,
+            "fn": 2,
+            "tp": 62,
+            "kta": 0.16399134250243427,
+            "is_degenerate": false,
+            "degeneracy_distance": 0.019512195121951348,
+            "attack_ratio_test": 0.64,
+            "f1_predict_all_attack": 0.7804878048780487
+          },
+          "linear": {
+            "f1": 0.8205128205128205,
+            "tn": 8,
+            "fp": 28,
+            "fn": 0,
+            "tp": 64,
+            "kta": 0.21072301546169617,
+            "is_degenerate": false,
+            "degeneracy_distance": 0.04002501563477179,
+            "attack_ratio_test": 0.64,
+            "f1_predict_all_attack": 0.7804878048780487
+          },
+          "poly": {
+            "f1": 0.8205128205128205,
+            "tn": 8,
+            "fp": 28,
+            "fn": 0,
+            "tp": 64,
+            "kta": 0.17818483151650744,
+            "is_degenerate": false,
+            "degeneracy_distance": 0.04002501563477179,
+            "attack_ratio_test": 0.64,
+            "f1_predict_all_attack": 0.7804878048780487
+          },
+          "rbf": {
+            "f1": 0.7950310559006211,
+            "tn": 3,
+            "fp": 33,
+            "fn": 0,
+            "tp": 64,
+            "kta": 0.2338332588273843,
+            "is_degenerate": false,
+            "degeneracy_distance": 0.014543251022572368,
+            "attack_ratio_test": 0.64,
+            "f1_predict_all_attack": 0.7804878048780487
+          }
+        },
+        {
+          "run": 2,
+          "quantum": {
+            "f1": 0.8,
+            "tn": 13,
+            "fp": 24,
+            "fn": 5,
+            "tp": 58,
+            "kta": 0.18705473439378859,
+            "is_degenerate": false,
+            "degeneracy_distance": 0.026993865030674802,
+            "attack_ratio_test": 0.63,
+            "f1_predict_all_attack": 0.7730061349693252
+          },
+          "linear": {
+            "f1": 0.7716535433070866,
+            "tn": 22,
+            "fp": 15,
+            "fn": 14,
+            "tp": 49,
+            "kta": 0.18003772196888065,
+            "is_degenerate": false,
+            "degeneracy_distance": 0.001352591662238667,
+            "attack_ratio_test": 0.63,
+            "f1_predict_all_attack": 0.7730061349693252
+          },
+          "poly": {
+            "f1": 0.7716535433070866,
+            "tn": 22,
+            "fp": 15,
+            "fn": 14,
+            "tp": 49,
+            "kta": 0.149374269800519,
+            "is_degenerate": false,
+            "degeneracy_distance": 0.001352591662238667,
+            "attack_ratio_test": 0.63,
+            "f1_predict_all_attack": 0.7730061349693252
+          },
+          "rbf": {
+            "f1": 0.7716535433070866,
+            "tn": 22,
+            "fp": 15,
+            "fn": 14,
+            "tp": 49,
+            "kta": 0.1919161612294044,
+            "is_degenerate": false,
+            "degeneracy_distance": 0.001352591662238667,
+            "attack_ratio_test": 0.63,
+            "f1_predict_all_attack": 0.7730061349693252
+          }
+        },
+        {
+          "run": 3,
+          "quantum": {
+            "f1": 0.8211920529801324,
+            "tn": 11,
+            "fp": 26,
+            "fn": 1,
+            "tp": 62,
+            "kta": 0.19031067142676555,
+            "is_degenerate": false,
+            "degeneracy_distance": 0.04818591801080718,
+            "attack_ratio_test": 0.63,
+            "f1_predict_all_attack": 0.7730061349693252
+          },
+          "linear": {
+            "f1": 0.8076923076923077,
+            "tn": 7,
+            "fp": 30,
+            "fn": 0,
+            "tp": 63,
+            "kta": 0.11782817502966059,
+            "is_degenerate": false,
+            "degeneracy_distance": 0.03468617272298247,
+            "attack_ratio_test": 0.63,
+            "f1_predict_all_attack": 0.7730061349693252
+          },
+          "poly": {
+            "f1": 0.7924528301886793,
+            "tn": 4,
+            "fp": 33,
+            "fn": 0,
+            "tp": 63,
+            "kta": 0.08422711369809588,
+            "is_degenerate": false,
+            "degeneracy_distance": 0.01944669521935405,
+            "attack_ratio_test": 0.63,
+            "f1_predict_all_attack": 0.7730061349693252
+          },
+          "rbf": {
+            "f1": 0.7924528301886793,
+            "tn": 4,
+            "fp": 33,
+            "fn": 0,
+            "tp": 63,
+            "kta": 0.25795742843964437,
+            "is_degenerate": false,
+            "degeneracy_distance": 0.01944669521935405,
+            "attack_ratio_test": 0.63,
+            "f1_predict_all_attack": 0.7730061349693252
+          }
+        },
+        {
+          "run": 4,
+          "quantum": {
+            "f1": 0.8076923076923077,
+            "tn": 7,
+            "fp": 30,
+            "fn": 0,
+            "tp": 63,
+            "kta": 0.2220028930116693,
+            "is_degenerate": false,
+            "degeneracy_distance": 0.03468617272298247,
+            "attack_ratio_test": 0.63,
+            "f1_predict_all_attack": 0.7730061349693252
+          },
+          "linear": {
+            "f1": 0.8289473684210527,
+            "tn": 11,
+            "fp": 26,
+            "fn": 0,
+            "tp": 63,
+            "kta": 0.2011041356797692,
+            "is_degenerate": false,
+            "degeneracy_distance": 0.05594123345172741,
+            "attack_ratio_test": 0.63,
+            "f1_predict_all_attack": 0.7730061349693252
+          },
+          "poly": {
+            "f1": 0.8076923076923077,
+            "tn": 7,
+            "fp": 30,
+            "fn": 0,
+            "tp": 63,
+            "kta": 0.15280966009816338,
+            "is_degenerate": false,
+            "degeneracy_distance": 0.03468617272298247,
+            "attack_ratio_test": 0.63,
+            "f1_predict_all_attack": 0.7730061349693252
+          },
+          "rbf": {
+            "f1": 0.8076923076923077,
+            "tn": 7,
+            "fp": 30,
+            "fn": 0,
+            "tp": 63,
+            "kta": 0.26696541156644343,
+            "is_degenerate": false,
+            "degeneracy_distance": 0.03468617272298247,
+            "attack_ratio_test": 0.63,
+            "f1_predict_all_attack": 0.7730061349693252
+          }
+        },
+        {
+          "run": 5,
+          "quantum": {
+            "f1": 0.8244274809160306,
+            "tn": 23,
+            "fp": 13,
+            "fn": 10,
+            "tp": 54,
+            "kta": 0.25831506590007025,
+            "is_degenerate": false,
+            "degeneracy_distance": 0.04393967603798188,
+            "attack_ratio_test": 0.64,
+            "f1_predict_all_attack": 0.7804878048780487
+          },
+          "linear": {
+            "f1": 0.8305084745762712,
+            "tn": 31,
+            "fp": 5,
+            "fn": 15,
+            "tp": 49,
+            "kta": 0.21819485050144966,
+            "is_degenerate": false,
+            "degeneracy_distance": 0.0500206696982225,
+            "attack_ratio_test": 0.64,
+            "f1_predict_all_attack": 0.7804878048780487
+          },
+          "poly": {
+            "f1": 0.8188976377952756,
+            "tn": 25,
+            "fp": 11,
+            "fn": 12,
+            "tp": 52,
+            "kta": 0.19672506104156165,
+            "is_degenerate": false,
+            "degeneracy_distance": 0.03840983291722688,
+            "attack_ratio_test": 0.64,
+            "f1_predict_all_attack": 0.7804878048780487
+          },
+          "rbf": {
+            "f1": 0.8305084745762712,
+            "tn": 31,
+            "fp": 5,
+            "fn": 15,
+            "tp": 49,
+            "kta": 0.28308032077068396,
+            "is_degenerate": false,
+            "degeneracy_distance": 0.0500206696982225,
+            "attack_ratio_test": 0.64,
+            "f1_predict_all_attack": 0.7804878048780487
+          }
+        }
+      ],
+      "summary": {
+        "quantum": {
+          "f1_mean": 0.8106623683176941,
+          "f1_std": 0.011581731739447182,
+          "kta_mean": 0.2043349414469456,
+          "kta_std": 0.036568094117901205,
+          "n_runs_degenerate": 0,
+          "mean_degeneracy_distance": 0.03466356538487954
+        },
+        "linear": {
+          "f1_mean": 0.8118629029019078,
+          "f1_std": 0.02423088856832447,
+          "kta_mean": 0.18557757972829125,
+          "kta_std": 0.04049050842987788,
+          "n_runs_degenerate": 0,
+          "mean_degeneracy_distance": 0.03640513663398857
+        },
+        "poly": {
+          "f1_mean": 0.802241827899234,
+          "f1_std": 0.020447619267416943,
+          "kta_mean": 0.15226418723096946,
+          "kta_std": 0.04268003525801058,
+          "n_runs_degenerate": 0,
+          "mean_degeneracy_distance": 0.02678406163131477
+        },
+        "rbf": {
+          "f1_mean": 0.7994676423329932,
+          "f1_std": 0.02164309000491206,
+          "kta_mean": 0.24675051616671212,
+          "kta_std": 0.03545332706474498,
+          "n_runs_degenerate": 0,
+          "mean_degeneracy_distance": 0.024009876065074008
+        }
+      }
+    },
+    {
+      "K": 120,
+      "n_pca": 4,
+      "per_run": [
+        {
+          "run": 1,
+          "quantum": {
+            "f1": 0.8,
+            "tn": 7,
+            "fp": 29,
+            "fn": 2,
+            "tp": 62,
+            "kta": 0.1639913425024338,
+            "is_degenerate": false,
+            "degeneracy_distance": 0.019512195121951348,
+            "attack_ratio_test": 0.64,
+            "f1_predict_all_attack": 0.7804878048780487
+          },
+          "linear": {
+            "f1": 0.8205128205128205,
+            "tn": 8,
+            "fp": 28,
+            "fn": 0,
+            "tp": 64,
+            "kta": 0.21072301546169697,
+            "is_degenerate": false,
+            "degeneracy_distance": 0.04002501563477179,
+            "attack_ratio_test": 0.64,
+            "f1_predict_all_attack": 0.7804878048780487
+          },
+          "poly": {
+            "f1": 0.8205128205128205,
+            "tn": 8,
+            "fp": 28,
+            "fn": 0,
+            "tp": 64,
+            "kta": 0.1781848315165083,
+            "is_degenerate": false,
+            "degeneracy_distance": 0.04002501563477179,
+            "attack_ratio_test": 0.64,
+            "f1_predict_all_attack": 0.7804878048780487
+          },
+          "rbf": {
+            "f1": 0.7950310559006211,
+            "tn": 3,
+            "fp": 33,
+            "fn": 0,
+            "tp": 64,
+            "kta": 0.23383325882738437,
+            "is_degenerate": false,
+            "degeneracy_distance": 0.014543251022572368,
+            "attack_ratio_test": 0.64,
+            "f1_predict_all_attack": 0.7804878048780487
+          }
+        },
+        {
+          "run": 2,
+          "quantum": {
+            "f1": 0.8,
+            "tn": 13,
+            "fp": 24,
+            "fn": 5,
+            "tp": 58,
+            "kta": 0.18705473439379275,
+            "is_degenerate": false,
+            "degeneracy_distance": 0.026993865030674802,
+            "attack_ratio_test": 0.63,
+            "f1_predict_all_attack": 0.7730061349693252
+          },
+          "linear": {
+            "f1": 0.7716535433070866,
+            "tn": 22,
+            "fp": 15,
+            "fn": 14,
+            "tp": 49,
+            "kta": 0.1800377219688798,
+            "is_degenerate": false,
+            "degeneracy_distance": 0.001352591662238667,
+            "attack_ratio_test": 0.63,
+            "f1_predict_all_attack": 0.7730061349693252
+          },
+          "poly": {
+            "f1": 0.7716535433070866,
+            "tn": 22,
+            "fp": 15,
+            "fn": 14,
+            "tp": 49,
+            "kta": 0.1493742698005177,
+            "is_degenerate": false,
+            "degeneracy_distance": 0.001352591662238667,
+            "attack_ratio_test": 0.63,
+            "f1_predict_all_attack": 0.7730061349693252
+          },
+          "rbf": {
+            "f1": 0.7716535433070866,
+            "tn": 22,
+            "fp": 15,
+            "fn": 14,
+            "tp": 49,
+            "kta": 0.19191616122940452,
+            "is_degenerate": false,
+            "degeneracy_distance": 0.001352591662238667,
+            "attack_ratio_test": 0.63,
+            "f1_predict_all_attack": 0.7730061349693252
+          }
+        },
+        {
+          "run": 3,
+          "quantum": {
+            "f1": 0.8211920529801324,
+            "tn": 11,
+            "fp": 26,
+            "fn": 1,
+            "tp": 62,
+            "kta": 0.19031067142676625,
+            "is_degenerate": false,
+            "degeneracy_distance": 0.04818591801080718,
+            "attack_ratio_test": 0.63,
+            "f1_predict_all_attack": 0.7730061349693252
+          },
+          "linear": {
+            "f1": 0.8076923076923077,
+            "tn": 7,
+            "fp": 30,
+            "fn": 0,
+            "tp": 63,
+            "kta": 0.11782817502966059,
+            "is_degenerate": false,
+            "degeneracy_distance": 0.03468617272298247,
+            "attack_ratio_test": 0.63,
+            "f1_predict_all_attack": 0.7730061349693252
+          },
+          "poly": {
+            "f1": 0.7924528301886793,
+            "tn": 4,
+            "fp": 33,
+            "fn": 0,
+            "tp": 63,
+            "kta": 0.08422711369809587,
+            "is_degenerate": false,
+            "degeneracy_distance": 0.01944669521935405,
+            "attack_ratio_test": 0.63,
+            "f1_predict_all_attack": 0.7730061349693252
+          },
+          "rbf": {
+            "f1": 0.7924528301886793,
+            "tn": 4,
+            "fp": 33,
+            "fn": 0,
+            "tp": 63,
+            "kta": 0.25795742843964437,
+            "is_degenerate": false,
+            "degeneracy_distance": 0.01944669521935405,
+            "attack_ratio_test": 0.63,
+            "f1_predict_all_attack": 0.7730061349693252
+          }
+        },
+        {
+          "run": 4,
+          "quantum": {
+            "f1": 0.8076923076923077,
+            "tn": 7,
+            "fp": 30,
+            "fn": 0,
+            "tp": 63,
+            "kta": 0.2220028930116743,
+            "is_degenerate": false,
+            "degeneracy_distance": 0.03468617272298247,
+            "attack_ratio_test": 0.63,
+            "f1_predict_all_attack": 0.7730061349693252
+          },
+          "linear": {
+            "f1": 0.8289473684210527,
+            "tn": 11,
+            "fp": 26,
+            "fn": 0,
+            "tp": 63,
+            "kta": 0.2011041356797695,
+            "is_degenerate": false,
+            "degeneracy_distance": 0.05594123345172741,
+            "attack_ratio_test": 0.63,
+            "f1_predict_all_attack": 0.7730061349693252
+          },
+          "poly": {
+            "f1": 0.8076923076923077,
+            "tn": 7,
+            "fp": 30,
+            "fn": 0,
+            "tp": 63,
+            "kta": 0.15280966009816352,
+            "is_degenerate": false,
+            "degeneracy_distance": 0.03468617272298247,
+            "attack_ratio_test": 0.63,
+            "f1_predict_all_attack": 0.7730061349693252
+          },
+          "rbf": {
+            "f1": 0.8076923076923077,
+            "tn": 7,
+            "fp": 30,
+            "fn": 0,
+            "tp": 63,
+            "kta": 0.26696541156644366,
+            "is_degenerate": false,
+            "degeneracy_distance": 0.03468617272298247,
+            "attack_ratio_test": 0.63,
+            "f1_predict_all_attack": 0.7730061349693252
+          }
+        },
+        {
+          "run": 5,
+          "quantum": {
+            "f1": 0.8244274809160306,
+            "tn": 23,
+            "fp": 13,
+            "fn": 10,
+            "tp": 54,
+            "kta": 0.25831506590007663,
+            "is_degenerate": false,
+            "degeneracy_distance": 0.04393967603798188,
+            "attack_ratio_test": 0.64,
+            "f1_predict_all_attack": 0.7804878048780487
+          },
+          "linear": {
+            "f1": 0.8305084745762712,
+            "tn": 31,
+            "fp": 5,
+            "fn": 15,
+            "tp": 49,
+            "kta": 0.21819485050145024,
+            "is_degenerate": false,
+            "degeneracy_distance": 0.0500206696982225,
+            "attack_ratio_test": 0.64,
+            "f1_predict_all_attack": 0.7804878048780487
+          },
+          "poly": {
+            "f1": 0.8188976377952756,
+            "tn": 25,
+            "fp": 11,
+            "fn": 12,
+            "tp": 52,
+            "kta": 0.19672506104156307,
+            "is_degenerate": false,
+            "degeneracy_distance": 0.03840983291722688,
+            "attack_ratio_test": 0.64,
+            "f1_predict_all_attack": 0.7804878048780487
+          },
+          "rbf": {
+            "f1": 0.8305084745762712,
+            "tn": 31,
+            "fp": 5,
+            "fn": 15,
+            "tp": 49,
+            "kta": 0.2830803207706834,
+            "is_degenerate": false,
+            "degeneracy_distance": 0.0500206696982225,
+            "attack_ratio_test": 0.64,
+            "f1_predict_all_attack": 0.7804878048780487
+          }
+        }
+      ],
+      "summary": {
+        "quantum": {
+          "f1_mean": 0.8106623683176941,
+          "f1_std": 0.011581731739447182,
+          "kta_mean": 0.20433494144694878,
+          "kta_std": 0.03656809411790374,
+          "n_runs_degenerate": 0,
+          "mean_degeneracy_distance": 0.03466356538487954
+        },
+        "linear": {
+          "f1_mean": 0.8118629029019078,
+          "f1_std": 0.02423088856832447,
+          "kta_mean": 0.18557757972829142,
+          "kta_std": 0.040490508429878176,
+          "n_runs_degenerate": 0,
+          "mean_degeneracy_distance": 0.03640513663398857
+        },
+        "poly": {
+          "f1_mean": 0.802241827899234,
+          "f1_std": 0.020447619267416943,
+          "kta_mean": 0.1522641872309697,
+          "kta_std": 0.04268003525801112,
+          "n_runs_degenerate": 0,
+          "mean_degeneracy_distance": 0.02678406163131477
+        },
+        "rbf": {
+          "f1_mean": 0.7994676423329932,
+          "f1_std": 0.02164309000491206,
+          "kta_mean": 0.24675051616671206,
+          "kta_std": 0.035453327064744806,
+          "n_runs_degenerate": 0,
+          "mean_degeneracy_distance": 0.024009876065074008
+        }
+      }
+    },
+    {
+      "K": 186,
+      "n_pca": 4,
+      "per_run": [
+        {
+          "run": 1,
+          "quantum": {
+            "f1": 0.8,
+            "tn": 7,
+            "fp": 29,
+            "fn": 2,
+            "tp": 62,
+            "kta": 0.16399134250243402,
+            "is_degenerate": false,
+            "degeneracy_distance": 0.019512195121951348,
+            "attack_ratio_test": 0.64,
+            "f1_predict_all_attack": 0.7804878048780487
+          },
+          "linear": {
+            "f1": 0.8205128205128205,
+            "tn": 8,
+            "fp": 28,
+            "fn": 0,
+            "tp": 64,
+            "kta": 0.21072301546169708,
+            "is_degenerate": false,
+            "degeneracy_distance": 0.04002501563477179,
+            "attack_ratio_test": 0.64,
+            "f1_predict_all_attack": 0.7804878048780487
+          },
+          "poly": {
+            "f1": 0.8205128205128205,
+            "tn": 8,
+            "fp": 28,
+            "fn": 0,
+            "tp": 64,
+            "kta": 0.1781848315165085,
+            "is_degenerate": false,
+            "degeneracy_distance": 0.04002501563477179,
+            "attack_ratio_test": 0.64,
+            "f1_predict_all_attack": 0.7804878048780487
+          },
+          "rbf": {
+            "f1": 0.7950310559006211,
+            "tn": 3,
+            "fp": 33,
+            "fn": 0,
+            "tp": 64,
+            "kta": 0.23383325882738443,
+            "is_degenerate": false,
+            "degeneracy_distance": 0.014543251022572368,
+            "attack_ratio_test": 0.64,
+            "f1_predict_all_attack": 0.7804878048780487
+          }
+        },
+        {
+          "run": 2,
+          "quantum": {
+            "f1": 0.8,
+            "tn": 13,
+            "fp": 24,
+            "fn": 5,
+            "tp": 58,
+            "kta": 0.18705473439379267,
+            "is_degenerate": false,
+            "degeneracy_distance": 0.026993865030674802,
+            "attack_ratio_test": 0.63,
+            "f1_predict_all_attack": 0.7730061349693252
+          },
+          "linear": {
+            "f1": 0.7716535433070866,
+            "tn": 22,
+            "fp": 15,
+            "fn": 14,
+            "tp": 49,
+            "kta": 0.1800377219688798,
+            "is_degenerate": false,
+            "degeneracy_distance": 0.001352591662238667,
+            "attack_ratio_test": 0.63,
+            "f1_predict_all_attack": 0.7730061349693252
+          },
+          "poly": {
+            "f1": 0.7716535433070866,
+            "tn": 22,
+            "fp": 15,
+            "fn": 14,
+            "tp": 49,
+            "kta": 0.14937426980051774,
+            "is_degenerate": false,
+            "degeneracy_distance": 0.001352591662238667,
+            "attack_ratio_test": 0.63,
+            "f1_predict_all_attack": 0.7730061349693252
+          },
+          "rbf": {
+            "f1": 0.7716535433070866,
+            "tn": 22,
+            "fp": 15,
+            "fn": 14,
+            "tp": 49,
+            "kta": 0.19191616122940447,
+            "is_degenerate": false,
+            "degeneracy_distance": 0.001352591662238667,
+            "attack_ratio_test": 0.63,
+            "f1_predict_all_attack": 0.7730061349693252
+          }
+        },
+        {
+          "run": 3,
+          "quantum": {
+            "f1": 0.8211920529801324,
+            "tn": 11,
+            "fp": 26,
+            "fn": 1,
+            "tp": 62,
+            "kta": 0.1903106714267656,
+            "is_degenerate": false,
+            "degeneracy_distance": 0.04818591801080718,
+            "attack_ratio_test": 0.63,
+            "f1_predict_all_attack": 0.7730061349693252
+          },
+          "linear": {
+            "f1": 0.8076923076923077,
+            "tn": 7,
+            "fp": 30,
+            "fn": 0,
+            "tp": 63,
+            "kta": 0.11782817502966055,
+            "is_degenerate": false,
+            "degeneracy_distance": 0.03468617272298247,
+            "attack_ratio_test": 0.63,
+            "f1_predict_all_attack": 0.7730061349693252
+          },
+          "poly": {
+            "f1": 0.7924528301886793,
+            "tn": 4,
+            "fp": 33,
+            "fn": 0,
+            "tp": 63,
+            "kta": 0.08422711369809582,
+            "is_degenerate": false,
+            "degeneracy_distance": 0.01944669521935405,
+            "attack_ratio_test": 0.63,
+            "f1_predict_all_attack": 0.7730061349693252
+          },
+          "rbf": {
+            "f1": 0.7924528301886793,
+            "tn": 4,
+            "fp": 33,
+            "fn": 0,
+            "tp": 63,
+            "kta": 0.25795742843964437,
+            "is_degenerate": false,
+            "degeneracy_distance": 0.01944669521935405,
+            "attack_ratio_test": 0.63,
+            "f1_predict_all_attack": 0.7730061349693252
+          }
+        },
+        {
+          "run": 4,
+          "quantum": {
+            "f1": 0.8076923076923077,
+            "tn": 7,
+            "fp": 30,
+            "fn": 0,
+            "tp": 63,
+            "kta": 0.22200289301167186,
+            "is_degenerate": false,
+            "degeneracy_distance": 0.03468617272298247,
+            "attack_ratio_test": 0.63,
+            "f1_predict_all_attack": 0.7730061349693252
+          },
+          "linear": {
+            "f1": 0.8289473684210527,
+            "tn": 11,
+            "fp": 26,
+            "fn": 0,
+            "tp": 63,
+            "kta": 0.20110413567976995,
+            "is_degenerate": false,
+            "degeneracy_distance": 0.05594123345172741,
+            "attack_ratio_test": 0.63,
+            "f1_predict_all_attack": 0.7730061349693252
+          },
+          "poly": {
+            "f1": 0.8076923076923077,
+            "tn": 7,
+            "fp": 30,
+            "fn": 0,
+            "tp": 63,
+            "kta": 0.15280966009816374,
+            "is_degenerate": false,
+            "degeneracy_distance": 0.03468617272298247,
+            "attack_ratio_test": 0.63,
+            "f1_predict_all_attack": 0.7730061349693252
+          },
+          "rbf": {
+            "f1": 0.8076923076923077,
+            "tn": 7,
+            "fp": 30,
+            "fn": 0,
+            "tp": 63,
+            "kta": 0.2669654115664439,
+            "is_degenerate": false,
+            "degeneracy_distance": 0.03468617272298247,
+            "attack_ratio_test": 0.63,
+            "f1_predict_all_attack": 0.7730061349693252
+          }
+        },
+        {
+          "run": 5,
+          "quantum": {
+            "f1": 0.8244274809160306,
+            "tn": 23,
+            "fp": 13,
+            "fn": 10,
+            "tp": 54,
+            "kta": 0.2583150659000762,
+            "is_degenerate": false,
+            "degeneracy_distance": 0.04393967603798188,
+            "attack_ratio_test": 0.64,
+            "f1_predict_all_attack": 0.7804878048780487
+          },
+          "linear": {
+            "f1": 0.8305084745762712,
+            "tn": 31,
+            "fp": 5,
+            "fn": 15,
+            "tp": 49,
+            "kta": 0.21819485050145046,
+            "is_degenerate": false,
+            "degeneracy_distance": 0.0500206696982225,
+            "attack_ratio_test": 0.64,
+            "f1_predict_all_attack": 0.7804878048780487
+          },
+          "poly": {
+            "f1": 0.8188976377952756,
+            "tn": 25,
+            "fp": 11,
+            "fn": 12,
+            "tp": 52,
+            "kta": 0.1967250610415633,
+            "is_degenerate": false,
+            "degeneracy_distance": 0.03840983291722688,
+            "attack_ratio_test": 0.64,
+            "f1_predict_all_attack": 0.7804878048780487
+          },
+          "rbf": {
+            "f1": 0.8305084745762712,
+            "tn": 31,
+            "fp": 5,
+            "fn": 15,
+            "tp": 49,
+            "kta": 0.28308032077068346,
+            "is_degenerate": false,
+            "degeneracy_distance": 0.0500206696982225,
+            "attack_ratio_test": 0.64,
+            "f1_predict_all_attack": 0.7804878048780487
+          }
+        }
+      ],
+      "summary": {
+        "quantum": {
+          "f1_mean": 0.8106623683176941,
+          "f1_std": 0.011581731739447182,
+          "kta_mean": 0.20433494144694805,
+          "kta_std": 0.03656809411790329,
+          "n_runs_degenerate": 0,
+          "mean_degeneracy_distance": 0.03466356538487954
+        },
+        "linear": {
+          "f1_mean": 0.8118629029019078,
+          "f1_std": 0.02423088856832447,
+          "kta_mean": 0.18557757972829156,
+          "kta_std": 0.0404905084298783,
+          "n_runs_degenerate": 0,
+          "mean_degeneracy_distance": 0.03640513663398857
+        },
+        "poly": {
+          "f1_mean": 0.802241827899234,
+          "f1_std": 0.020447619267416943,
+          "kta_mean": 0.15226418723096982,
+          "kta_std": 0.04268003525801122,
+          "n_runs_degenerate": 0,
+          "mean_degeneracy_distance": 0.02678406163131477
+        },
+        "rbf": {
+          "f1_mean": 0.7994676423329932,
+          "f1_std": 0.02164309000491206,
+          "kta_mean": 0.24675051616671215,
+          "kta_std": 0.03545332706474487,
+          "n_runs_degenerate": 0,
+          "mean_degeneracy_distance": 0.024009876065074008
+        }
+      }
+    }
+  ],
+  "best_qsvm_non_degenerate_config": {
+    "K": 80,
+    "n_pca": 4,
+    "f1_mean": 0.8106623683176941,
+    "degeneracy_distance_mean": 0.03466356538487954,
+    "n_runs_non_degenerate": 5
+  },
+  "metadata": {
+    "regime": "statevector",
+    "n_runs": 5,
+    "K_sweep": [
+      10,
+      20,
+      35,
+      50,
+      80,
+      120,
+      186
+    ],
+    "n_pca_fixed": 4,
+    "C_for_all": 1.0,
+    "C_strategy": "default_neutral_no_retune",
+    "purpose": "Pareto + escape_degeneracy_probe",
+    "config_tag_base": "neutral_C1_p4",
+    "reuse_1_4a_cache_at_K35": true,
+    "pipeline": {
+      "angle_max": 3.141592653589793,
+      "zz_reps": 2,
+      "zz_entanglement": "full",
+      "n_qubits": 4
+    },
+    "random_state": 42,
+    "date": "2026-05-16"
+  }
+}
