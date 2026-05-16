@@ -124,13 +124,19 @@ Tôi response template:
 
 ## 6. Known state (cập nhật mỗi lần verify xong)
 
-**Last update**: 2026-05-15 (1.2.5 verified PASS)
+**Last update**: 2026-05-16 (1.3 verified PASS)
 
 - ✅ 1.1 done — C2 cell 24 patched, 3 PNG generated, Pearson max|off-diag|=2.36e-07
 - ✅ 1.2 written — c5_confidence_calibration_multirun.ipynb 25 cells, AST clean. **Chưa chạy** sinh JSON+PNG (background task)
-- ✅ 1.2.5 done — preprocess.ipynb cell 15 patched LRM, 10/10 parquet shape (100,189), 6 unit tests PASS, mỗi run đủ 10 attack cats, 4 rare cats (Analysis/Backdoor/Shellcode/Worms) đều 5 mẫu
-- ⏭️ **1.3 NEXT** — UNSW C tuning notebook (clone từ c3_c_tuning_statevector.ipynb NSL-KDD)
-- ⛔ 1.4-1.7 — block bởi 1.3
+- ✅ 1.2.5 done — preprocess.ipynb cell 15 patched LRM, 10/10 parquet shape (100,189), 6 unit tests PASS
+- ✅ 1.3 done — c_tuning_statevector.ipynb (8 cells), c_tuning_results.json. C_best: quantum=0.01 (F1=0.8504±0.0150), linear/poly=0.1 (0.8813±0.0349), rbf=1.0 (0.8813±0.0349). Pipeline: K_select=35 → PCA=4 (zero-leakage trong fold). config_tag=`r2_full_k35_p4_cv5_sf1_run1`
+- ⏭️ **1.4a NEXT** — UNSW C3 multi-run statevector (5 runs × 4 kernels × C tuned)
+- ⛔ 1.4b-1.7 — sequential
+
+**Notes from 1.3 (cần nhớ khi viết báo cáo Phase 2)**:
+- K_select=35 (UNSW) ≠ K=20 (NSL-KDD CLAUDE.md). UNSW có 186 raw features (vs NSL 122) → K cao hơn hợp lý nhưng cần justify trong báo cáo
+- Quantum C_best=0.01 ở mép trái grid (C=0.01 và C=0.1 tied F1=0.8504, argmax_cv_mean lấy nhỏ nhất). Nếu cần độ chắc chắn cao hơn, mở rộng grid xuống [0.001, 0.0001] — không blocking 1.4
+- Linear/poly/rbf identical F1=0.8813 → pattern low-data convergent, KHÔNG phải bug
 - ⏸️ Phase 2 (báo cáo) — chưa bắt đầu, đợi Phase 1 xong
 
 **Friend's contributions**:
