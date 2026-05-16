@@ -107,9 +107,11 @@ Mỗi khi hoàn thành 1 bước, cập nhật ô tương ứng:
 - [x] 1.2 — C5 multi-run + narrative Cohen's d (đã viết notebook, chờ chạy sinh PNG/JSON)
 - [x] 1.2.5 — Fix UNSW preprocess bug + regen multi_run parquets (LRM, 10/10 parquet (100,189))
 - [x] 1.3 — UNSW C tuning notebook (q=0.01/0.8504, lin/poly=0.1/0.8813, rbf=1.0/0.8813)
-- [x] 1.4a — UNSW C3 multi-run statevector (QSVM 0.776±0.004 < linear 0.810 < poly 0.806 < rbf 0.801; McNemar combined p=6.57e-5 favoring RBF)
-- [ ] 1.4b — UNSW C3 multi-run shots
-- [ ] 1.5 — UNSW C4 multi-run
-- [ ] 1.6 — UNSW C1 multi-run (optional)
+- [x] 1.4a — UNSW C3 multi-run statevector (C tuned, QSVM degenerate). Số liệu lịch sử: q=0.776 < lin=0.810/poly=0.806/rbf=0.801, McNemar p=6.57e-5 favoring RBF
+- [x] **1.4a-redo** — UNSW C3 multi-run statevector C=1.0 neutral (fix degeneracy). QSVM 0.798±0.022 ≈ rbf 0.802 ≈ poly 0.797 ≤ linear 0.813 (4-way tie within std). McNemar p=0.1996 (tie). KTA unchanged. File: `c3_results_statevector_C1.json` + `c3_multirun_statevector_C1_*.png` (1.4a gốc giữ nguyên cho contrast)
+- [~] 1.4b — UNSW C3 multi-run shots — **SKIPPED 2026-05-16** (chốt với bạn cùng đồ án: chỉ chạy ideal statevector, shots tốn 30-90 phút mà chỉ confirm QSVM tệ hơn do nhiễu, không thêm insight)
+- [x] 1.5 — UNSW C4 multi-run C tuned (degenerate, lịch sử). Số liệu artifact: perturbation invariant, prior khớp công thức degenerate
+- [x] **1.5-redo** — UNSW C4 multi-run C=1.0 neutral. **3 verdict thực**: (E1 temporal) 4 kernels tie F1~0.80 trong biên std; (E2 perturbation) QSVM SENSITIVE với noise (F1 0.798→0.779 khi σ 0.05→0.20) — weakness thật; (E3 prior 1:9) QSVM dẫn nhẹ +0.02 vs RBF, deg_dist 0.01 → 0.04 (thoát công thức). File: `c4_results_C1.json` + `c4_*_C1.png`
+- [x] 1.6 — UNSW C1 K-sweep + degeneracy probe. **PHÁT HIỆN KEY**: QSVM degeneracy 1.4a/1.5 là artifact của C=0.01 (tuned). Với C=1.0 fixed, QSVM thoát degeneracy 0/5 ở MỌI K; plateau F1=0.811 (K≥80) competitive linear=0.812 > poly/rbf. Xem [[unsw-c1-dimreduction-degeneracy-is-c-artifact]]
 - [ ] 1.7 — UNSW C5 multi-run (optional)
 - [ ] 2.1–2.5 — Hoàn thiện báo cáo (sau khi Phase 1 xong)

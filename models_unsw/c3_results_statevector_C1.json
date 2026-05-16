@@ -1,0 +1,361 @@
+{
+  "per_run": [
+    {
+      "run": 1,
+      "quantum": {
+        "f1": 0.7950310559006211,
+        "precision": 0.6597938144329897,
+        "recall": 1.0,
+        "accuracy": 0.67,
+        "kta": 0.12922235120403627,
+        "n_sv": 61,
+        "C": 1.0
+      },
+      "linear": {
+        "f1": 0.8205128205128205,
+        "precision": 0.6956521739130435,
+        "recall": 1.0,
+        "accuracy": 0.72,
+        "kta": 0.12058115511579728,
+        "n_sv": 43,
+        "C": 1.0
+      },
+      "poly": {
+        "f1": 0.7950310559006211,
+        "precision": 0.6597938144329897,
+        "recall": 1.0,
+        "accuracy": 0.67,
+        "kta": 0.06072024576564829,
+        "n_sv": 45,
+        "C": 1.0
+      },
+      "rbf": {
+        "f1": 0.7950310559006211,
+        "precision": 0.6597938144329897,
+        "recall": 1.0,
+        "accuracy": 0.67,
+        "kta": 0.1720622880246999,
+        "n_sv": 52,
+        "C": 1.0
+      }
+    },
+    {
+      "run": 2,
+      "quantum": {
+        "f1": 0.7692307692307693,
+        "precision": 0.6875,
+        "recall": 0.873015873015873,
+        "accuracy": 0.67,
+        "kta": 0.17635041391196482,
+        "n_sv": 63,
+        "C": 1.0
+      },
+      "linear": {
+        "f1": 0.7716535433070866,
+        "precision": 0.765625,
+        "recall": 0.7777777777777778,
+        "accuracy": 0.71,
+        "kta": 0.17822536196196312,
+        "n_sv": 52,
+        "C": 1.0
+      },
+      "poly": {
+        "f1": 0.7716535433070866,
+        "precision": 0.765625,
+        "recall": 0.7777777777777778,
+        "accuracy": 0.71,
+        "kta": 0.1490909034949428,
+        "n_sv": 51,
+        "C": 1.0
+      },
+      "rbf": {
+        "f1": 0.7716535433070866,
+        "precision": 0.765625,
+        "recall": 0.7777777777777778,
+        "accuracy": 0.71,
+        "kta": 0.186726346511415,
+        "n_sv": 58,
+        "C": 1.0
+      }
+    },
+    {
+      "run": 3,
+      "quantum": {
+        "f1": 0.802547770700637,
+        "precision": 0.6702127659574468,
+        "recall": 1.0,
+        "accuracy": 0.69,
+        "kta": 0.20274981712391746,
+        "n_sv": 55,
+        "C": 1.0
+      },
+      "linear": {
+        "f1": 0.8235294117647058,
+        "precision": 0.7,
+        "recall": 1.0,
+        "accuracy": 0.73,
+        "kta": 0.17710913425946748,
+        "n_sv": 44,
+        "C": 1.0
+      },
+      "poly": {
+        "f1": 0.7924528301886793,
+        "precision": 0.65625,
+        "recall": 1.0,
+        "accuracy": 0.67,
+        "kta": 0.11730842647152354,
+        "n_sv": 46,
+        "C": 1.0
+      },
+      "rbf": {
+        "f1": 0.802547770700637,
+        "precision": 0.6702127659574468,
+        "recall": 1.0,
+        "accuracy": 0.69,
+        "kta": 0.2389259281600561,
+        "n_sv": 50,
+        "C": 1.0
+      }
+    },
+    {
+      "run": 4,
+      "quantum": {
+        "f1": 0.7922077922077922,
+        "precision": 0.6703296703296703,
+        "recall": 0.9682539682539683,
+        "accuracy": 0.68,
+        "kta": 0.1924001733065193,
+        "n_sv": 47,
+        "C": 1.0
+      },
+      "linear": {
+        "f1": 0.8181818181818182,
+        "precision": 0.6923076923076923,
+        "recall": 1.0,
+        "accuracy": 0.72,
+        "kta": 0.0950708180051189,
+        "n_sv": 36,
+        "C": 1.0
+      },
+      "poly": {
+        "f1": 0.8076923076923077,
+        "precision": 0.6774193548387096,
+        "recall": 1.0,
+        "accuracy": 0.7,
+        "kta": 0.063249180041562,
+        "n_sv": 36,
+        "C": 1.0
+      },
+      "rbf": {
+        "f1": 0.8076923076923077,
+        "precision": 0.6774193548387096,
+        "recall": 1.0,
+        "accuracy": 0.7,
+        "kta": 0.28958784457125636,
+        "n_sv": 42,
+        "C": 1.0
+      }
+    },
+    {
+      "run": 5,
+      "quantum": {
+        "f1": 0.8296296296296296,
+        "precision": 0.7887323943661971,
+        "recall": 0.875,
+        "accuracy": 0.77,
+        "kta": 0.266252575520019,
+        "n_sv": 51,
+        "C": 1.0
+      },
+      "linear": {
+        "f1": 0.8305084745762712,
+        "precision": 0.9074074074074074,
+        "recall": 0.765625,
+        "accuracy": 0.8,
+        "kta": 0.2181887722091541,
+        "n_sv": 38,
+        "C": 1.0
+      },
+      "poly": {
+        "f1": 0.8188976377952756,
+        "precision": 0.8253968253968254,
+        "recall": 0.8125,
+        "accuracy": 0.77,
+        "kta": 0.19628991131506504,
+        "n_sv": 37,
+        "C": 1.0
+      },
+      "rbf": {
+        "f1": 0.8305084745762712,
+        "precision": 0.9074074074074074,
+        "recall": 0.765625,
+        "accuracy": 0.8,
+        "kta": 0.28437399127212737,
+        "n_sv": 41,
+        "C": 1.0
+      }
+    }
+  ],
+  "summary": {
+    "quantum": {
+      "f1_mean": 0.7977294035338899,
+      "f1_std": 0.021741564547212076,
+      "precision_mean": 0.6953137290172607,
+      "precision_std": 0.05316019954778381,
+      "recall_mean": 0.9432539682539682,
+      "recall_std": 0.0645314234364405,
+      "accuracy_mean": 0.696,
+      "accuracy_std": 0.042190046219457995,
+      "kta_mean": 0.19339506621329136,
+      "kta_std": 0.04951104766263764,
+      "n_sv_mean": 55.4,
+      "n_sv_std": 6.693280212272604,
+      "C": 1.0
+    },
+    "linear": {
+      "f1_mean": 0.8128772136685404,
+      "f1_std": 0.023506185379964017,
+      "precision_mean": 0.7521984547256286,
+      "precision_std": 0.09189553183242961,
+      "recall_mean": 0.9086805555555555,
+      "recall_std": 0.12511809621930475,
+      "accuracy_mean": 0.736,
+      "accuracy_std": 0.03646916505762097,
+      "kta_mean": 0.15783504831030018,
+      "kta_std": 0.04938883586499442,
+      "n_sv_mean": 42.6,
+      "n_sv_std": 6.228964600958975,
+      "C": 1.0
+    },
+    "poly": {
+      "f1_mean": 0.7971454749767941,
+      "f1_std": 0.01775332737123449,
+      "precision_mean": 0.716896998933705,
+      "precision_std": 0.07523952912785069,
+      "recall_mean": 0.9180555555555555,
+      "recall_std": 0.1128765987404381,
+      "accuracy_mean": 0.704,
+      "accuracy_std": 0.0409878030638384,
+      "kta_mean": 0.11733173341774834,
+      "kta_std": 0.05782046004214715,
+      "n_sv_mean": 43.0,
+      "n_sv_std": 6.3639610306789285,
+      "C": 1.0
+    },
+    "rbf": {
+      "f1_mean": 0.8014866304353847,
+      "f1_std": 0.02129314101064033,
+      "precision_mean": 0.7360916685273107,
+      "precision_std": 0.10467226565892558,
+      "recall_mean": 0.9086805555555555,
+      "recall_std": 0.12511809621930475,
+      "accuracy_mean": 0.714,
+      "accuracy_std": 0.05029910535983722,
+      "kta_mean": 0.23433527970791096,
+      "kta_std": 0.05413485163340227,
+      "n_sv_mean": 48.6,
+      "n_sv_std": 7.1274118724821856,
+      "C": 1.0
+    }
+  },
+  "mcnemar_qsvm_vs_rbf": {
+    "per_run": [
+      {
+        "run": 1,
+        "b": 0,
+        "c": 0,
+        "p_value": 1.0,
+        "b_meaning": "QSVM wrong, RBF right",
+        "c_meaning": "QSVM right, RBF wrong"
+      },
+      {
+        "run": 2,
+        "b": 12,
+        "c": 8,
+        "p_value": 0.5034446716308594,
+        "b_meaning": "QSVM wrong, RBF right",
+        "c_meaning": "QSVM right, RBF wrong"
+      },
+      {
+        "run": 3,
+        "b": 0,
+        "c": 0,
+        "p_value": 1.0,
+        "b_meaning": "QSVM wrong, RBF right",
+        "c_meaning": "QSVM right, RBF wrong"
+      },
+      {
+        "run": 4,
+        "b": 2,
+        "c": 0,
+        "p_value": 0.5,
+        "b_meaning": "QSVM wrong, RBF right",
+        "c_meaning": "QSVM right, RBF wrong"
+      },
+      {
+        "run": 5,
+        "b": 10,
+        "c": 7,
+        "p_value": 0.629058837890625,
+        "b_meaning": "QSVM wrong, RBF right",
+        "c_meaning": "QSVM right, RBF wrong"
+      }
+    ],
+    "combined_b": 24,
+    "combined_c": 15,
+    "combined_n": 39,
+    "p_value": 0.19959086691960698,
+    "median_p_value": 0.629058837890625,
+    "test": "exact_binomial_2sided",
+    "comparison": "QSVM vs RBF",
+    "b_meaning": "QSVM wrong, RBF right",
+    "c_meaning": "QSVM right, RBF wrong"
+  },
+  "metadata": {
+    "regime": "statevector",
+    "backend": "FidelityStatevectorKernel",
+    "n_runs": 5,
+    "C_strategy": "neutral_C1_no_retune",
+    "C_by_kernel": {
+      "quantum": 1.0,
+      "linear": 1.0,
+      "poly": 1.0,
+      "rbf": 1.0
+    },
+    "compared_against": "../models_unsw/c3_results_statevector.json",
+    "cache_reused_from": "../models_unsw/qsvm_cache/multirun",
+    "rationale": "1.6 (c1_dimreduction_multirun) found C=0.01 (tuned via CV f1 on imbalanced fold in 1.3) caused QSVM degeneracy (predict-all-attack: TN=0, recall=1.0 but precision=0.64) on test set of 1.4a. C=1.0 neutral chosen to surface non-degenerate QSVM performance — quantum kernel matrices reused 100% from 1.4a cache (kernel does not depend on C, only SVC.fit changes). KTA must equal 1.4a values (sanity check for cache reuse).",
+    "config_tag": "r2_full_k35_p4_cv5_sf1_run1",
+    "n_qubits": 4,
+    "k_select": 35,
+    "pca_n": 4,
+    "zz_reps": 2,
+    "zz_entanglement": "full",
+    "poly_degree": 2,
+    "rbf_gamma": "scale",
+    "random_state": 42,
+    "date": "2026-05-16",
+    "data_dir": "../data/unsw_nb15/processed_data/multi_run",
+    "reports": [
+      "../reports_unsw/c3_multirun_statevector_C1_f1_boxplot.png",
+      "../reports_unsw/c3_multirun_statevector_C1_kta_bar.png",
+      "../reports_unsw/c3_multirun_statevector_C1_confmat.png"
+    ]
+  },
+  "comparison_vs_1_4a": {
+    "old_results_path": "../models_unsw/c3_results_statevector.json",
+    "tn_mean_old": {
+      "quantum": 0.0,
+      "linear": 11.0,
+      "poly": 9.8,
+      "rbf": 13.8
+    },
+    "tn_mean_new": {
+      "quantum": 9.8,
+      "linear": 16.0,
+      "poly": 12.2,
+      "rbf": 13.8
+    },
+    "note": "TN_old reconstructed from precision/recall/accuracy (1.4a JSON does not store cm)"
+  }
+}

@@ -26,11 +26,23 @@
       "PowerShell($env:PYTHONIOENCODING=\"utf-8\"; python -c \"import json; nb=json.load\\(open\\('notebooks_unsw/preprocess.ipynb','r',encoding='utf-8'\\)\\); print\\('Total cells:', len\\(nb['cells']\\)\\); [print\\(f'--- CELL {i} \\({c[\\\\\"cell_type\\\\\"]}\\) ---'\\); print\\(''.join\\(c['source']\\)[:200]\\) for i,c in enumerate\\(nb['cells']\\)]\" 2>&1 | Out-File -FilePath \"cells_overview.txt\" -Encoding utf8; Get-Content \"cells_overview.txt\" | Select-Object -First 200)",
       "Bash(rm data/unsw_nb15/processed_data/multi_run/train_run*.parquet data/unsw_nb15/processed_data/multi_run/test_run*.parquet && ls data/unsw_nb15/processed_data/multi_run/)",
       "Bash(PYTHONIOENCODING=utf-8 python -c ' *)",
-      "Bash(PYTHONIOENCODING=utf-8 python scripts/verify_unsw_preprocess_fix.py)"
+      "Bash(PYTHONIOENCODING=utf-8 python scripts/verify_unsw_preprocess_fix.py)",
+      "Bash(cp d:/QSVM_NSLKDD/notebooks_unsw/c3_kernel_geometry_multirun_statevector.ipynb d:/QSVM_NSLKDD/notebooks_unsw/c3_kernel_geometry_multirun_shots.ipynb)",
+      "Bash(tasklist)",
+      "Bash(taskkill /F /PID 8776 /T)",
+      "Bash(taskkill /F /PID 10952 /T)",
+      "PowerShell(Stop-Process -Id 8776 -Force -ErrorAction SilentlyContinue)",
+      "PowerShell(Stop-Process -Id 10952 -Force -ErrorAction SilentlyContinue)",
+      "PowerShell(Get-Process -Id 8776,10952 -ErrorAction SilentlyContinue)",
+      "PowerShell(Get-Process -Name jupyter-nbconvert,jupyter -ErrorAction SilentlyContinue)",
+      "PowerShell($p = Get-Process -Name jupyter-nbconvert -ErrorAction SilentlyContinue; if \\($p\\) { \"still running: $\\($p.Id\\)\" } else { \"nbconvert: GONE\" })",
+      "Bash(ls \"C:\\\\Users\\\\Admin\\\\.claude\\\\projects\\\\d--QSVM-NSLKDD\\\\memory\\\\\" 2>&1)",
+      "Read(//c/Users/Admin/.claude/projects/d--QSVM-NSLKDD/**)"
     ],
     "additionalDirectories": [
       "d:\\QSVM_NSLKDD",
-      "D:\\QSVM_NSLKDD\\data\\unsw_nb15\\processed_data\\multi_run"
+      "D:\\QSVM_NSLKDD\\data\\unsw_nb15\\processed_data\\multi_run",
+      "d:\\QSVM_NSLKDD\\notebooks_unsw"
     ]
   }
 }
