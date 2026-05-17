@@ -59,8 +59,8 @@ The `runners/` scripts (`run_c1_pipeline.py`, `run_c2_analysis.py`, `run_c3_geom
 
 SelectKBest(K=20) + PCA(4D) → F1=0.8989 vs PCA(4D) alone → F1=0.8577. The K=20 → 4D path is validated empirically, not arbitrary.
 
-### C5 Key Result
-QSVM demonstrates superior confidence calibration on rare attacks (ECE_rare=0.4337 vs classical SVM-RBF ECE_rare=0.4707) and achieves the highest overall AUC-PR (0.9656). While overall detection counts on rare classes show statistical parity (McNemar p=1.000), Cohen's d (-0.6805) proves the quantum decision margin is significantly tighter and more stable. Complementarity analysis confirms QSVM captures distinct rare attack patterns that classical models miss, strongly justifying a Hybrid Quantum-Classical Ensemble approach for production IDS.
+### C5 Key Result (multi-run, 5 seeds — `c5_confidence_calibration_multirun.ipynb`)
+QSVM duy trì ưu thế calibration trên rare attacks: **ECE_rare = 0.4503 ± 0.0725** (vs SVM-RBF ECE_rare = 0.5387 ± 0.1697, Linear = 0.5460 ± 0.0633) và đạt **AUC-PR rare cao nhất = 0.9306 ± 0.0136** (vs RBF 0.9168, Linear 0.8861). Phân loại tổng thể tương đương các baseline (**McNemar p̄ = 0.4911** — không bác bỏ H0). **Lưu ý quan trọng — sửa narrative cũ**: Cohen's d margin = **−0.1608 ± 0.3095** (dấu âm ⇒ margin của RBF *rộng hơn*, không phải QSVM tighter như báo cáo gốc trước multi-run). Kết luận đã được hiệu chỉnh: QSVM thắng ở **chất lượng xếp hạng (AUC-PR)** và **calibration (ECE)** trên rare attacks, *không* thắng ở độ rộng margin; Hybrid Ensemble vẫn được khuyến nghị nhờ complementarity về xếp hạng.
 
 ### C6 Key Result
 QSVM outperformed classical baselines in the low-data regime (N=100 to 1000). At N=500, QSVM achieved a significantly higher mean decision margin (0.6538) compared to SVM-RBF (0.5070) on rare attacks (U2R/R2L). The calculated Cohen's d of 0.4043 confirms a statistically meaningful advantage in feature separation when training data is scarce.
