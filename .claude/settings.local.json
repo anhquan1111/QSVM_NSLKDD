@@ -37,7 +37,9 @@
       "PowerShell(Get-Process -Name jupyter-nbconvert,jupyter -ErrorAction SilentlyContinue)",
       "PowerShell($p = Get-Process -Name jupyter-nbconvert -ErrorAction SilentlyContinue; if \\($p\\) { \"still running: $\\($p.Id\\)\" } else { \"nbconvert: GONE\" })",
       "Bash(ls \"C:\\\\Users\\\\Admin\\\\.claude\\\\projects\\\\d--QSVM-NSLKDD\\\\memory\\\\\" 2>&1)",
-      "Read(//c/Users/Admin/.claude/projects/d--QSVM-NSLKDD/**)"
+      "Read(//c/Users/Admin/.claude/projects/d--QSVM-NSLKDD/**)",
+      "Bash(cd \"d:/QSVM_NSLKDD\" && rm -f docs/_Final_Report_dump.txt 2>&1; ls docs/_Final_Report_dump.txt 2>&1 | head -2)",
+      "Bash(grep -iE '~\\\\$|Sua_Final|\\\\.bak|cells_overview')"
     ],
     "additionalDirectories": [
       "d:\\QSVM_NSLKDD",

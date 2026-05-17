@@ -1,0 +1,160 @@
+H1       | CHƯƠNG 1. TỔNG QUAN VỀ BÀI TOÁN VÀ KHUNG NGHIÊN CỨU
+H2       | 1.1. Bối cảnh nghiên cứu: An ninh mạng (IDS) và Kỷ nguyên Lượng tử NISQ
+H3       | 1.1.1. Thách thức của bài toán Phát hiện Xâm nhập Mạng
+H3       | 1.1.2. Tiềm năng và rào cản của Điện toán lượng tử NISQ
+H2       | 1.2. Hạn chế của các nghiên cứu QSVM-ZZ-IDS hiện tại
+H2       | 1.3. Khung nghiên cứu tổng thể và 6 đóng góp nguyên gốc
+TABLE    #1  | rows=7, cols=3
+H1       | CHƯƠNG 2. CƠ SỞ LÝ THUYẾT VÀ NỀN TẢNG TOÁN HỌC KHÔNG GIAN NHÚNG LƯỢNG TỬ
+H2       | 2.1. Nền tảng Học máy Kernel Lượng tử (Quantum SVM)
+H3       | 2.1.1. Không gian Hilbert và Phép nhúng lượng tử
+H3       | 2.1.2. Công thức Quantum Kernel
+TABLE    #2  | rows=21, cols=3
+H2       | 2.2. Cơ sở Toán học Tối ưu Không gian Nhúng (C1)
+H3       | 2.2.1. Phân tích phương sai ANOVA F-test
+H3       | 2.2.2. Bài toán Tối ưu hóa Pareto đa mục tiêu và Ràng buộc phần cứng NISQ
+H2       | 2.3. Nền tảng Toán học của mạch ZZFeatureMap (C2)
+H3       | 2.3.1. Kiến trúc mạch và mã hóa qua ZZ Gate
+FIGURE   #1  | caption-near: ''
+FIGURE   #2  | caption-near: ''
+FIGURE   #3  | caption-near: ''
+H3       | 2.3.2. Quantum Kernel như một phép khai triển Đặc trưng
+H3       | 2.3.3. So sánh năng lực biểu diễn: ZZFeatureMap vs Polynomial Kernel bậc 2
+TABLE    #3  | rows=6, cols=3
+H3       | 2.3.4. FidelityStatevectorKernel và FidelityQuantumKernel: sai lệch finite-shot
+H3       | 2.3.5. Các độ đo lượng tử: Expressibility, Entanglement Entropy và Effective Rank
+H2       | 2.4. Cơ sở Lý thuyết Đánh giá Mô hình nâng cao (C3, C4, C5)
+H3       | 2.4.1. Cấu trúc hình học Kernel và công thức Kernel Target Alignment
+H3       | 2.4.2. Đánh giá độ bền bỉ (Robustness) thông qua Dịch chuyển phân phối
+H3       | 2.4.3. Toán học của Confidence Calibration
+H3       | 2.4.4. Khung Kiểm định Thống kê và Đánh giá trên tập dữ liệu mất cân bằng
+H1       | CHƯƠNG 3. KHUNG PHƯƠNG PHÁP LUẬN VÀ KIẾN TRÚC HỆ THỐNG ĐỀ XUẤT
+H2       | 3.1. Kiến trúc tổng thể của hệ thống QSVM-ZZ-IDS
+H3       | 3.1.1. Sơ đồ luồng xử lý tổng thể (Zero-Leakage Pipeline)
+FIGURE   #4  | caption-near: ''
+FIGURE   #5  | caption-near: ''
+H3       | 3.1.2. Tối ưu hóa tính toán và Đảm bảo tính tái lập
+H2       | 3.2. Phương pháp thực thi C1: Pipeline giảm chiều hai giai đoạn
+H2       | 3.3. Phương pháp thực thi C2: Phân tích Expressibility và Shot-noise
+H2       | 3.4. Phương pháp thực thi C3: Phân tích hình học Kernel và Trực quan hóa Biên quyết định
+H2       | 3.5. Phương pháp thực thi C4: Đánh giá độ bền bỉ (Robustness Validation)
+H2       | 3.6. Phương pháp thực thi C5: Confidence Calibration
+H2       | 3.7. Phương pháp thực thi C6: Đánh giá độ phức tạp mẫu (Sample Complexity Assessment)
+H2       | 3.8. Khung kiểm định thống kê áp dụng
+H2       | 3.9. Tính tái lập của hệ thống (Reproducibility Statement)
+H1       | CHƯƠNG 4. KẾT QUẢ THỰC NGHIỆM VÀ PHÂN TÍCH CHUYÊN SÂU TRÊN NSL-KDD
+H2       | 4.1. Tiền xử lý và Phân tích Thống kê NSL-KDD
+H3       | 4.1.1. Đặc trưng tập dữ liệu và phân phối lớp
+TABLE    #4  | rows=6, cols=4
+TABLE    #5  | rows=7, cols=3
+FIGURE   #6  | caption-near: ''
+FIGURE   #7  | caption-near: ''
+H3       | 4.1.2. Xác nhận tuân thủ hợp đồng Zero-Leakage
+H2       | 4.2. Đánh giá C1: Tối ưu hóa Nhúng Lượng tử Có Ràng buộc Phần cứng
+H3       | 4.2.1. Kết quả SelectKBest: Xác định  tối ưu bằng Elbow Criterion
+TABLE    #6  | rows=6, cols=3
+FIGURE   #8  | caption-near: ''
+TABLE    #7  | rows=7, cols=4
+H3       | 4.2.2. Kết quả Tối ưu Pareto: Xác định  qubit tối ưu
+TABLE    #8  | rows=7, cols=5
+TABLE    #9  | rows=8, cols=7
+FIGURE   #9  | caption-near: ''
+FIGURE   #10  | caption-near: ''
+FIGURE   #11  | caption-near: ''
+H3       | 4.2.3. Kết quả Ablation Study C1: Chứng minh hiệu quả Pipeline hai bước
+TABLE    #10  | rows=6, cols=4
+FIGURE   #12  | caption-near: ''
+H2       | 4.3. Đánh giá C2: Cầu nối Phân tích Cơ chế Biểu diễn Phi tuyến
+H3       | 4.3.1. Phân tích thực chứng tương quan Spearman giữa các PC
+TABLE    #11  | rows=7, cols=4
+FIGURE   #13  | caption-near: ''
+FIGURE   #14  | caption-near: ''
+H3       | 4.3.2. Phân tích khả năng biểu diễn của Quantum Kernel (Expressibility)
+FIGURE   #15  | caption-near: ''
+FIGURE   #16  | caption-near: ''
+FIGURE   #17  | caption-near: ''
+FIGURE   #18  | caption-near: ''
+TABLE    #12  | rows=2, cols=5
+TABLE    #13  | rows=5, cols=9
+FIGURE   #19  | caption-near: ''
+TABLE    #14  | rows=5, cols=5
+FIGURE   #20  | caption-near: ''
+FIGURE   #21  | caption-near: ''
+H2       | 4.4. Đánh giá C3: Phân tích Cấu trúc Hình học Kernel
+H3       | 4.4.1. So sánh Hiệu năng Toàn diện (QSVM-ZZ vs Classical SVM)
+TABLE    #15  | rows=9, cols=6
+FIGURE   #22  | caption-near: ''
+H3       | 4.4.2. Kernel Target Alignment (KTA): Định lượng tương thích hình học
+TABLE    #16  | rows=6, cols=3
+FIGURE   #23  | caption-near: ''
+FIGURE   #24  | caption-near: ''
+H3       | 4.4.3. Ablation Study: ZZFeatureMap vs ZFeatureMap (Cô lập vai trò Entanglement)
+TABLE    #17  | rows=4, cols=6
+FIGURE   #25  | caption-near: ''
+H2       | 4.5. Đánh giá C4: Robustness dưới Dịch chuyển Phân phối Dữ liệu
+H3       | 4.5.1. Thực nghiệm E1 — Temporal Split Evaluation
+TABLE    #18  | rows=8, cols=5
+TABLE    #19  | rows=7, cols=4
+FIGURE   #26  | caption-near: ''
+H3       | 4.5.2. Thực nghiệm E2 — Feature Perturbation Robustness
+TABLE    #20  | rows=8, cols=6
+FIGURE   #27  | caption-near: ''
+TABLE    #21  | rows=8, cols=6
+TABLE    #22  | rows=7, cols=3
+TABLE    #23  | rows=4, cols=4
+H2       | 4.6. Đánh giá C5: Confidence Calibration và Phân tích Tấn công Hiếm
+H3       | 4.6.1. Đánh giá ECE/MCE và Reliability Diagrams
+TABLE    #24  | rows=4, cols=5
+FIGURE   #28  | caption-near: ''
+FIGURE   #29  | caption-near: ''
+H3       | 4.6.2. Phân tích ROC/PR Curve và per-class Performance
+TABLE    #25  | rows=4, cols=3
+TABLE    #26  | rows=6, cols=4
+FIGURE   #30  | caption-near: ''
+FIGURE   #31  | caption-near: ''
+FIGURE   #32  | caption-near: ''
+H3       | 4.6.3. Phân tích Decision Margin Histogram cho lớp U2R/R2L
+TABLE    #27  | rows=3, cols=4
+FIGURE   #33  | caption-near: ''
+H3       | 4.6.4. Phân tích Tính bổ trợ (Complementarity) — Bằng chứng về Lợi thế Lượng tử
+TABLE    #28  | rows=5, cols=3
+FIGURE   #34  | caption-near: ''
+FIGURE   #35  | caption-near: ''
+H2       | 4.7. Đánh giá C6: Learning Curve và Sample Complexity
+H3       | 4.7.1. Bảng kết quả Test F1-macro theo mốc N
+TABLE    #29  | rows=6, cols=5
+FIGURE   #36  | caption-near: ''
+FIGURE   #37  | caption-near: ''
+FIGURE   #38  | caption-near: ''
+H3       | 4.7.2. Kiểm định thống kê Cohen’s d tại N=500
+TABLE    #30  | rows=3, cols=4
+H2       | 4.8. Tổng hợp Kết quả và So sánh Đa đóng góp
+TABLE    #31  | rows=12, cols=4
+H1       | CHƯƠNG 5. KHẢ NĂNG TỔNG QUÁT HÓA TRÊN CÁC TẬP DỮ LIỆU IDS KHÁC
+H2       | 5.1. Ma trận Ánh xạ Đóng góp – Tập dữ liệu
+TABLE    #32  | rows=7, cols=6
+H2       | 5.2. UNSW-NB15: Thách thức Tấn công Hybrid và Tương tác Bậc cao
+H3       | 5.2.1. Đặc trưng kỹ thuật
+H3       | 5.2.2. Khả năng tương thích của Pipeline Tiền xử lý (C1 Stability)
+TABLE    #33  | rows=7, cols=5
+FIGURE   #39  | caption-near: ''
+H3       | 5.2.3. Khả năng bao phủ không gian và Vướng víu Lượng tử (C2 Expressibility)
+FIGURE   #40  | caption-near: ''
+FIGURE   #41  | caption-near: ''
+H3       | 5.2.4. Đánh giá Hình học Kernel và Hiệu năng phân lớp (C3 & C4)
+FIGURE   #42  | caption-near: ''
+TABLE    #34  | rows=5, cols=5
+TABLE    #35  | rows=4, cols=4
+FIGURE   #43  | caption-near: ''
+H3       | 5.2.5. Đánh giá Robustness trên UNSW-NB15 (C4 UNSW)
+TABLE    #36  | rows=5, cols=3
+TABLE    #37  | rows=4, cols=5
+TABLE    #38  | rows=4, cols=4
+H3       | 5.2.6. Confidence Calibration + Rare Class trên UNSW-NB15 (C5 UNSW)
+TABLE    #39  | rows=5, cols=5
+H3       | 5.2.7. Diễn giải Khoa học: Ranh giới của Lợi thế Lượng tử
+H2       | 5.3. Hướng mở rộng đánh giá khả năng Tổng quát hóa
+H1       | CHƯƠNG 6. KẾT LUẬN VÀ HƯỚNG NGHIÊN CỨU MỞ RỘNG
+H2       | 6.1. Tổng kết 6 Đóng góp Khoa học
+H2       | 6.2. Các Hướng Nghiên cứu Mở rộng trong Tương lai
+H1       | TÀI LIỆU THAM KHẢO
