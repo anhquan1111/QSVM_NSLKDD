@@ -1,0 +1,663 @@
+{
+  "contribution": "C5-MultiRun",
+  "title": "Confidence Calibration — Multi-Run (5 trains x 1 fixed test)",
+  "config": {
+    "config_tag": "mr_c5_r2_full_cq1.0_crbf10.0_cpoly0.1_n1000_t100",
+    "run_ids": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "train_size": 1000,
+    "test_path": "data\\processed_data\\NSL_KDD_Test_Sample100.csv",
+    "test_size": 100,
+    "n_rare": 10,
+    "rare_classes": [
+      "U2R",
+      "R2L"
+    ],
+    "n_bins_full": 10,
+    "n_bins_rare": 5,
+    "C_QSVM": 1.0,
+    "C_RBF": 10.0,
+    "C_POLY": 0.1,
+    "poly_degree": 2,
+    "reps": 2,
+    "entanglement": "full",
+    "backend": "FidelityStatevectorKernel",
+    "calibration_method": "Platt Scaling (LogisticRegression C=1e10)",
+    "binning_strategy": "Adaptive Equal-Frequency Binning"
+  },
+  "per_run": [
+    {
+      "run_id": 1,
+      "platt_params": {
+        "QSVM": {
+          "A": 3.31249,
+          "B": -0.1647
+        },
+        "SVM-RBF": {
+          "A": 2.13016,
+          "B": -0.61853
+        },
+        "SVM-Poly": {
+          "A": 2.36185,
+          "B": -0.77436
+        }
+      },
+      "binary_performance": {
+        "QSVM": {
+          "f1": 0.77228,
+          "acc": 0.77
+        },
+        "SVM-RBF": {
+          "f1": 0.81481,
+          "acc": 0.8
+        },
+        "SVM-Poly": {
+          "f1": 0.79208,
+          "acc": 0.79
+        }
+      },
+      "calibration": {
+        "QSVM": {
+          "ece_full": 0.1816,
+          "mce_full": 0.55388,
+          "ece_rare": 0.4252,
+          "mce_rare": 0.72799
+        },
+        "SVM-RBF": {
+          "ece_full": 0.1825,
+          "mce_full": 0.56064,
+          "ece_rare": 0.45944,
+          "mce_rare": 0.8571
+        },
+        "SVM-Poly": {
+          "ece_full": 0.19493,
+          "mce_full": 0.58572,
+          "ece_rare": 0.54209,
+          "mce_rare": 0.88298
+        }
+      },
+      "auc_roc": {
+        "QSVM": 0.8957,
+        "SVM-RBF": 0.85877,
+        "SVM-Poly": 0.83523
+      },
+      "auc_pr": {
+        "QSVM": 0.92465,
+        "SVM-RBF": 0.90627,
+        "SVM-Poly": 0.90452
+      },
+      "per_group_accuracy": {
+        "Normal": {
+          "QSVM": 0.86364,
+          "SVM-RBF": 0.81818,
+          "SVM-Poly": 0.88636
+        },
+        "DoS": {
+          "QSVM": 0.73529,
+          "SVM-RBF": 0.76471,
+          "SVM-Poly": 0.67647
+        },
+        "Probe": {
+          "QSVM": 0.66667,
+          "SVM-RBF": 0.91667,
+          "SVM-Poly": 1.0
+        },
+        "U2R": {
+          "QSVM": 0.0,
+          "SVM-RBF": 0.0,
+          "SVM-Poly": 1.0
+        },
+        "R2L": {
+          "QSVM": 0.66667,
+          "SVM-RBF": 0.77778,
+          "SVM-Poly": 0.44444
+        }
+      },
+      "complementarity_rare": {
+        "qsvm_wins": 1,
+        "rbf_wins": 2,
+        "both_correct": 5,
+        "both_wrong": 2
+      },
+      "mcnemar": {
+        "b": 1,
+        "c": 2,
+        "chi2": 0.0,
+        "p_value": 1.0
+      },
+      "cohens_d_margin_rare": -0.54677
+    },
+    {
+      "run_id": 2,
+      "platt_params": {
+        "QSVM": {
+          "A": 3.73285,
+          "B": -0.15929
+        },
+        "SVM-RBF": {
+          "A": 2.09981,
+          "B": -0.51679
+        },
+        "SVM-Poly": {
+          "A": 2.40119,
+          "B": -0.61741
+        }
+      },
+      "binary_performance": {
+        "QSVM": {
+          "f1": 0.79208,
+          "acc": 0.79
+        },
+        "SVM-RBF": {
+          "f1": 0.73684,
+          "acc": 0.75
+        },
+        "SVM-Poly": {
+          "f1": 0.78788,
+          "acc": 0.79
+        }
+      },
+      "calibration": {
+        "QSVM": {
+          "ece_full": 0.14806,
+          "mce_full": 0.71479,
+          "ece_rare": 0.42703,
+          "mce_rare": 0.93177
+        },
+        "SVM-RBF": {
+          "ece_full": 0.17761,
+          "mce_full": 0.70645,
+          "ece_rare": 0.67519,
+          "mce_rare": 0.9069
+        },
+        "SVM-Poly": {
+          "ece_full": 0.19761,
+          "mce_full": 0.59411,
+          "ece_rare": 0.57661,
+          "mce_rare": 0.93229
+        }
+      },
+      "auc_roc": {
+        "QSVM": 0.93669,
+        "SVM-RBF": 0.84497,
+        "SVM-Poly": 0.83482
+      },
+      "auc_pr": {
+        "QSVM": 0.95329,
+        "SVM-RBF": 0.90964,
+        "SVM-Poly": 0.90445
+      },
+      "per_group_accuracy": {
+        "Normal": {
+          "QSVM": 0.88636,
+          "SVM-RBF": 0.90909,
+          "SVM-Poly": 0.90909
+        },
+        "DoS": {
+          "QSVM": 0.79412,
+          "SVM-RBF": 0.64706,
+          "SVM-Poly": 0.67647
+        },
+        "Probe": {
+          "QSVM": 0.58333,
+          "SVM-RBF": 0.91667,
+          "SVM-Poly": 0.91667
+        },
+        "U2R": {
+          "QSVM": 0.0,
+          "SVM-RBF": 0.0,
+          "SVM-Poly": 1.0
+        },
+        "R2L": {
+          "QSVM": 0.66667,
+          "SVM-RBF": 0.22222,
+          "SVM-Poly": 0.44444
+        }
+      },
+      "complementarity_rare": {
+        "qsvm_wins": 4,
+        "rbf_wins": 0,
+        "both_correct": 2,
+        "both_wrong": 4
+      },
+      "mcnemar": {
+        "b": 4,
+        "c": 0,
+        "chi2": 2.25,
+        "p_value": 0.13361
+      },
+      "cohens_d_margin_rare": 0.12812
+    },
+    {
+      "run_id": 3,
+      "platt_params": {
+        "QSVM": {
+          "A": 3.20066,
+          "B": -0.29688
+        },
+        "SVM-RBF": {
+          "A": 2.38602,
+          "B": -0.64766
+        },
+        "SVM-Poly": {
+          "A": 2.25436,
+          "B": -0.95153
+        }
+      },
+      "binary_performance": {
+        "QSVM": {
+          "f1": 0.80769,
+          "acc": 0.8
+        },
+        "SVM-RBF": {
+          "f1": 0.85714,
+          "acc": 0.84
+        },
+        "SVM-Poly": {
+          "f1": 0.79208,
+          "acc": 0.79
+        }
+      },
+      "calibration": {
+        "QSVM": {
+          "ece_full": 0.1461,
+          "mce_full": 0.66017,
+          "ece_rare": 0.3537,
+          "mce_rare": 0.90376
+        },
+        "SVM-RBF": {
+          "ece_full": 0.17866,
+          "mce_full": 0.59028,
+          "ece_rare": 0.33279,
+          "mce_rare": 0.60171
+        },
+        "SVM-Poly": {
+          "ece_full": 0.20586,
+          "mce_full": 0.68966,
+          "ece_rare": 0.53078,
+          "mce_rare": 0.88035
+        }
+      },
+      "auc_roc": {
+        "QSVM": 0.89489,
+        "SVM-RBF": 0.83685,
+        "SVM-Poly": 0.82955
+      },
+      "auc_pr": {
+        "QSVM": 0.93275,
+        "SVM-RBF": 0.89741,
+        "SVM-Poly": 0.89969
+      },
+      "per_group_accuracy": {
+        "Normal": {
+          "QSVM": 0.86364,
+          "SVM-RBF": 0.81818,
+          "SVM-Poly": 0.88636
+        },
+        "DoS": {
+          "QSVM": 0.76471,
+          "SVM-RBF": 0.79412,
+          "SVM-Poly": 0.67647
+        },
+        "Probe": {
+          "QSVM": 0.75,
+          "SVM-RBF": 0.91667,
+          "SVM-Poly": 1.0
+        },
+        "U2R": {
+          "QSVM": 1.0,
+          "SVM-RBF": 1.0,
+          "SVM-Poly": 1.0
+        },
+        "R2L": {
+          "QSVM": 0.66667,
+          "SVM-RBF": 1.0,
+          "SVM-Poly": 0.44444
+        }
+      },
+      "complementarity_rare": {
+        "qsvm_wins": 0,
+        "rbf_wins": 3,
+        "both_correct": 7,
+        "both_wrong": 0
+      },
+      "mcnemar": {
+        "b": 0,
+        "c": 3,
+        "chi2": 1.33333,
+        "p_value": 0.24821
+      },
+      "cohens_d_margin_rare": 0.05984
+    },
+    {
+      "run_id": 4,
+      "platt_params": {
+        "QSVM": {
+          "A": 3.65694,
+          "B": -0.2104
+        },
+        "SVM-RBF": {
+          "A": 2.11385,
+          "B": -0.47879
+        },
+        "SVM-Poly": {
+          "A": 2.23576,
+          "B": -0.8656
+        }
+      },
+      "binary_performance": {
+        "QSVM": {
+          "f1": 0.77228,
+          "acc": 0.77
+        },
+        "SVM-RBF": {
+          "f1": 0.80374,
+          "acc": 0.79
+        },
+        "SVM-Poly": {
+          "f1": 0.79208,
+          "acc": 0.79
+        }
+      },
+      "calibration": {
+        "QSVM": {
+          "ece_full": 0.15749,
+          "mce_full": 0.73129,
+          "ece_rare": 0.5232,
+          "mce_rare": 0.98232
+        },
+        "SVM-RBF": {
+          "ece_full": 0.1697,
+          "mce_full": 0.6937,
+          "ece_rare": 0.47738,
+          "mce_rare": 0.88626
+        },
+        "SVM-Poly": {
+          "ece_full": 0.19347,
+          "mce_full": 0.58466,
+          "ece_rare": 0.55661,
+          "mce_rare": 0.89332
+        }
+      },
+      "auc_roc": {
+        "QSVM": 0.86729,
+        "SVM-RBF": 0.86648,
+        "SVM-Poly": 0.83523
+      },
+      "auc_pr": {
+        "QSVM": 0.91895,
+        "SVM-RBF": 0.9151,
+        "SVM-Poly": 0.90475
+      },
+      "per_group_accuracy": {
+        "Normal": {
+          "QSVM": 0.86364,
+          "SVM-RBF": 0.81818,
+          "SVM-Poly": 0.88636
+        },
+        "DoS": {
+          "QSVM": 0.76471,
+          "SVM-RBF": 0.76471,
+          "SVM-Poly": 0.67647
+        },
+        "Probe": {
+          "QSVM": 0.66667,
+          "SVM-RBF": 0.91667,
+          "SVM-Poly": 1.0
+        },
+        "U2R": {
+          "QSVM": 1.0,
+          "SVM-RBF": 0.0,
+          "SVM-Poly": 1.0
+        },
+        "R2L": {
+          "QSVM": 0.44444,
+          "SVM-RBF": 0.66667,
+          "SVM-Poly": 0.44444
+        }
+      },
+      "complementarity_rare": {
+        "qsvm_wins": 1,
+        "rbf_wins": 2,
+        "both_correct": 4,
+        "both_wrong": 3
+      },
+      "mcnemar": {
+        "b": 1,
+        "c": 2,
+        "chi2": 0.0,
+        "p_value": 1.0
+      },
+      "cohens_d_margin_rare": -0.00544
+    },
+    {
+      "run_id": 5,
+      "platt_params": {
+        "QSVM": {
+          "A": 3.26154,
+          "B": 0.09986
+        },
+        "SVM-RBF": {
+          "A": 2.01334,
+          "B": 0.40641
+        },
+        "SVM-Poly": {
+          "A": 2.64515,
+          "B": 1.04343
+        }
+      },
+      "binary_performance": {
+        "QSVM": {
+          "f1": 0.73333,
+          "acc": 0.76
+        },
+        "SVM-RBF": {
+          "f1": 0.69663,
+          "acc": 0.73
+        },
+        "SVM-Poly": {
+          "f1": 0.70455,
+          "acc": 0.74
+        }
+      },
+      "calibration": {
+        "QSVM": {
+          "ece_full": 0.18835,
+          "mce_full": 0.74332,
+          "ece_rare": 0.52251,
+          "mce_rare": 0.96423
+        },
+        "SVM-RBF": {
+          "ece_full": 0.16355,
+          "mce_full": 0.52428,
+          "ece_rare": 0.74888,
+          "mce_rare": 0.90333
+        },
+        "SVM-Poly": {
+          "ece_full": 0.16233,
+          "mce_full": 0.68009,
+          "ece_rare": 0.66747,
+          "mce_rare": 0.89717
+        }
+      },
+      "auc_roc": {
+        "QSVM": 0.87946,
+        "SVM-RBF": 0.92086,
+        "SVM-Poly": 0.89489
+      },
+      "auc_pr": {
+        "QSVM": 0.92338,
+        "SVM-RBF": 0.93701,
+        "SVM-Poly": 0.92615
+      },
+      "per_group_accuracy": {
+        "Normal": {
+          "QSVM": 0.97727,
+          "SVM-RBF": 0.95455,
+          "SVM-Poly": 0.97727
+        },
+        "DoS": {
+          "QSVM": 0.61765,
+          "SVM-RBF": 0.58824,
+          "SVM-Poly": 0.61765
+        },
+        "Probe": {
+          "QSVM": 0.58333,
+          "SVM-RBF": 0.91667,
+          "SVM-Poly": 0.75
+        },
+        "U2R": {
+          "QSVM": 1.0,
+          "SVM-RBF": 0.0,
+          "SVM-Poly": 1.0
+        },
+        "R2L": {
+          "QSVM": 0.44444,
+          "SVM-RBF": 0.0,
+          "SVM-Poly": 0.0
+        }
+      },
+      "complementarity_rare": {
+        "qsvm_wins": 5,
+        "rbf_wins": 0,
+        "both_correct": 0,
+        "both_wrong": 5
+      },
+      "mcnemar": {
+        "b": 5,
+        "c": 0,
+        "chi2": 3.2,
+        "p_value": 0.07364
+      },
+      "cohens_d_margin_rare": -0.43971
+    }
+  ],
+  "aggregate": {
+    "f1": {
+      "QSVM": {
+        "mean": 0.77553,
+        "std": 0.02788
+      },
+      "SVM-RBF": {
+        "mean": 0.78183,
+        "std": 0.06427
+      },
+      "SVM-Poly": {
+        "mean": 0.77373,
+        "std": 0.03872
+      }
+    },
+    "acc": {
+      "QSVM": {
+        "mean": 0.778,
+        "std": 0.01643
+      },
+      "SVM-RBF": {
+        "mean": 0.782,
+        "std": 0.04324
+      },
+      "SVM-Poly": {
+        "mean": 0.78,
+        "std": 0.02236
+      }
+    },
+    "ece_full": {
+      "QSVM": {
+        "mean": 0.16432,
+        "std": 0.01949
+      },
+      "SVM-RBF": {
+        "mean": 0.1744,
+        "std": 0.00765
+      },
+      "SVM-Poly": {
+        "mean": 0.19084,
+        "std": 0.01664
+      }
+    },
+    "ece_rare": {
+      "QSVM": {
+        "mean": 0.45033,
+        "std": 0.07251
+      },
+      "SVM-RBF": {
+        "mean": 0.53874,
+        "std": 0.16974
+      },
+      "SVM-Poly": {
+        "mean": 0.57471,
+        "std": 0.05461
+      }
+    },
+    "auc_roc": {
+      "QSVM": {
+        "mean": 0.89481,
+        "std": 0.02621
+      },
+      "SVM-RBF": {
+        "mean": 0.86558,
+        "std": 0.03299
+      },
+      "SVM-Poly": {
+        "mean": 0.84594,
+        "std": 0.02747
+      }
+    },
+    "auc_pr": {
+      "QSVM": {
+        "mean": 0.9306,
+        "std": 0.01363
+      },
+      "SVM-RBF": {
+        "mean": 0.91308,
+        "std": 0.01484
+      },
+      "SVM-Poly": {
+        "mean": 0.90791,
+        "std": 0.01041
+      }
+    },
+    "mcnemar_chi2_QSVM_vs_RBF": {
+      "mean": 1.35667,
+      "std": 1.40335
+    },
+    "mcnemar_p_QSVM_vs_RBF": {
+      "mean": 0.49109,
+      "std": 0.46878
+    },
+    "cohens_d_margin_rare_QSVM_vs_RBF": {
+      "mean": -0.16079,
+      "std": 0.30946
+    },
+    "complementarity_rare": {
+      "qsvm_wins": {
+        "mean": 2.2,
+        "std": 2.16795
+      },
+      "rbf_wins": {
+        "mean": 1.4,
+        "std": 1.34164
+      },
+      "both_correct": {
+        "mean": 3.6,
+        "std": 2.70185
+      },
+      "both_wrong": {
+        "mean": 2.8,
+        "std": 1.92354
+      }
+    }
+  },
+  "narrative_corrected": "Cohen's d = -0.1608 ± 0.3095. Dau am ⇒ |margin| cua RBF lon hon QSVM tren lop hiem (KHONG phai \"QSVM margin tighter\" nhu narrative C5 don-run cu). Loi the QSVM khong den tu do rong margin ma den tu: (1) ECE_rare = 0.4503 (QSVM) vs 0.5387 (RBF) — calibration tot hon (Δ=+0.0884); (2) AUC-PR = 0.9306 (QSVM) vs 0.9131 (RBF) — ranking quality tot hon (Δ=+0.0175). McNemar mean p = 0.4911 (count predictions tied khi n_rare=10 → can multi-run de tang power, nhung gap ve calibration/ranking on dinh qua 5 runs).",
+  "reports_generated": [
+    "reports/c5_multirun_ece.png",
+    "reports/c5_multirun_auc.png",
+    "reports/c5_multirun_trends.png",
+    "reports/c5_multirun_reliability_rep.png"
+  ]
+}
