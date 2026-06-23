@@ -1,0 +1,10 @@
+metric,vs_baseline,cohen's_d,interpretation,favors_qsvm,note
+ECE,SVM-RBF,0.1405,negligible,False,"Δ(KDDTest-21 − KDDTest+) per run, n=5"
+BRIER,SVM-RBF,-0.1486,negligible,True,"Δ(KDDTest-21 − KDDTest+) per run, n=5"
+AUC_PR,SVM-RBF,-0.7661,medium,True,"Δ(KDDTest-21 − KDDTest+) per run, n=5"
+ECE,Random Forest,2.8948,large,False,"Δ(KDDTest-21 − KDDTest+) per run, n=5"
+BRIER,Random Forest,2.0925,large,False,"Δ(KDDTest-21 − KDDTest+) per run, n=5"
+AUC_PR,Random Forest,0.0472,negligible,False,"Δ(KDDTest-21 − KDDTest+) per run, n=5"
+ECE,XGBoost,3.0092,large,False,"Δ(KDDTest-21 − KDDTest+) per run, n=5"
+BRIER,XGBoost,1.7894,large,False,"Δ(KDDTest-21 − KDDTest+) per run, n=5"
+AUC_PR,XGBoost,0.3564,small,False,"Δ(KDDTest-21 − KDDTest+) per run, n=5"
