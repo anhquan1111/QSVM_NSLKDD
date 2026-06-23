@@ -1,0 +1,28 @@
+metric,distribution,vs_baseline,cohen's_d,interpretation,favors_qsvm
+ECE,Balanced,SVM-RBF,-0.7679,medium,True
+ECE,Balanced,Random Forest,-0.8429,large,True
+ECE,Balanced,XGBoost,-1.7591,large,True
+ECE,Attack-heavy,SVM-RBF,-0.1744,negligible,True
+ECE,Attack-heavy,Random Forest,0.2668,small,False
+ECE,Attack-heavy,XGBoost,-0.0001,negligible,True
+ECE,DoS-only,SVM-RBF,-0.5671,medium,True
+ECE,DoS-only,Random Forest,0.2748,small,False
+ECE,DoS-only,XGBoost,-0.382,small,True
+BRIER,Balanced,SVM-RBF,-2.321,large,True
+BRIER,Balanced,Random Forest,0.1143,negligible,False
+BRIER,Balanced,XGBoost,-0.7779,medium,True
+BRIER,Attack-heavy,SVM-RBF,-0.8898,large,True
+BRIER,Attack-heavy,Random Forest,0.5547,medium,False
+BRIER,Attack-heavy,XGBoost,0.0437,negligible,False
+BRIER,DoS-only,SVM-RBF,-1.5216,large,True
+BRIER,DoS-only,Random Forest,1.1564,large,False
+BRIER,DoS-only,XGBoost,0.3355,small,False
+AUC_PR,Balanced,SVM-RBF,2.8325,large,True
+AUC_PR,Balanced,Random Forest,-0.4195,small,False
+AUC_PR,Balanced,XGBoost,-0.7217,medium,False
+AUC_PR,Attack-heavy,SVM-RBF,2.2811,large,True
+AUC_PR,Attack-heavy,Random Forest,-1.9393,large,False
+AUC_PR,Attack-heavy,XGBoost,-1.6726,large,False
+AUC_PR,DoS-only,SVM-RBF,1.5861,large,True
+AUC_PR,DoS-only,Random Forest,-3.3627,large,False
+AUC_PR,DoS-only,XGBoost,-2.6487,large,False
