@@ -1,4 +1,4 @@
-# PLAN_PAPER2_RELIABILITY.md
+# PLAN_PAPER2_RELIABILITY_V2.md
 
 # Reliability and Calibration Analysis of Quantum Kernel Intrusion Detection Systems
 
@@ -8,193 +8,343 @@
 
 Paper 1 trả lời:
 
-> Khi nào QSVM đạt lợi thế hiệu năng?
+> Khi nào Quantum Kernel SVM đạt lợi thế hiệu năng?
 
 Paper 2 trả lời:
 
-> Các dự đoán của QSVM có đủ đáng tin cậy để triển khai thực tế hay không?
+> Các dự đoán của Quantum Kernel SVM có đủ đáng tin cậy để triển khai thực tế hay không?
 
-Trọng tâm chuyển từ:
+Khác với Paper 1 tập trung vào:
 
-* Accuracy
-* Quantum advantage
+* Accuracy;
+* Quantum advantage;
+* Kernel geometry;
+* Sample complexity;
+* Robustness.
 
-sang:
+Paper 2 tập trung vào:
 
-* Reliability
-* Calibration
-* Confidence
-* Deployment readiness
+* Reliability;
+* Calibration;
+* Confidence estimation;
+* Deployment readiness.
 
 ---
 
 # 2. Research Gap
 
-Các nghiên cứu Quantum IDS hiện tại chủ yếu báo cáo:
+Các nghiên cứu Quantum IDS hiện tại chủ yếu:
 
-* Accuracy
-* F1-score
+* báo cáo Accuracy;
+* báo cáo F1-score;
+* benchmark comparison.
 
-Nhưng chưa nghiên cứu:
+Nhưng hầu như chưa nghiên cứu:
 
-1. Calibration của Quantum Kernel.
-2. Reliability trên lớp hiếm.
-3. Reliability dưới distribution shift.
-4. Khả năng hiệu chỉnh xác suất.
+### G1. Calibration của Quantum Kernel.
+
+### G2. Reliability trên các lớp tấn công hiếm.
+
+### G3. Reliability dưới distribution shift.
+
+### G4. Khả năng cải thiện reliability bằng probability calibration.
 
 ---
 
 # 3. Research Questions
 
-RQ1. Quantum Kernel có bị over-confident hay không?
+## RQ1
 
-RQ2. Các dự đoán trên nhóm tấn công hiếm có đáng tin cậy hay không?
-
-RQ3. Độ tin cậy thay đổi như thế nào dưới distribution shift?
-
-RQ4. Platt Scaling cải thiện calibration đến mức nào?
+Quantum Kernel có bị over-confident hay không?
 
 ---
 
-# 4. Main Contributions
+## RQ2
+
+Các dự đoán trên nhóm tấn công hiếm có đáng tin cậy hay không?
+
+---
+
+## RQ3
+
+Độ tin cậy của Quantum Kernel thay đổi như thế nào dưới distribution shift?
+
+---
+
+## RQ4
+
+Platt Scaling cải thiện calibration đến mức nào?
+
+---
+
+# 4. Mapping giữa Paper 1 và Paper 2
+
+| Paper 1                     | Paper 2                 |
+| --------------------------- | ----------------------- |
+| Accuracy                    | Reliability             |
+| Quantum advantage           | Confidence analysis     |
+| Robustness                  | Calibration degradation |
+| Distribution shift          | Reliability under shift |
+| Low-data advantage          | Low-data reliability    |
+| Kernel geometry             | Không sử dụng           |
+| KTA                         | Không sử dụng           |
+| Entanglement ablation       | Không sử dụng           |
+| Sample complexity advantage | Không sử dụng           |
+
+---
+
+# 5. Main Contributions
+
+---
 
 ## C1. Calibration Analysis
 
-Nguồn:
+### Vai trò
+
+Contribution chính.
+
+### Notebook nguồn
 
 C5 - c5_confidence_calibration_multirun.ipynb
 
-Metrics:
+### Section tương ứng trong paper
 
-* ECE
-* Brier Score
-* Reliability Diagram
+Section IV - Calibration Analysis.
+
+### Metrics
+
+* ECE;
+* Brier Score;
+* Reliability Diagram.
+
+### Figures sinh ra
+
+* Figure 1;
+* Figure 2;
+* Figure 3.
+
+### Tables sinh ra
+
+* Table II.
+
+### Narrative
+
+Paper 1:
+
+> accuracy.
+
+Paper 2:
+
+> confidence quality.
 
 ---
 
 ## C2. Rare Attack Reliability
 
-Nguồn:
+### Vai trò
 
-C5
+Contribution chính.
 
-Metrics:
+### Notebook nguồn
 
-* Precision
-* Recall
-* PR Curve
-* AUC-PR
+C5.
 
-Terminology:
+### Metrics
 
-* Rare attacks
-* Minority attack group
+* Precision;
+* Recall;
+* PR Curve;
+* AUC-PR.
+
+### Figures
+
+* Figure 4.
+
+### Tables
+
+* Table III.
+
+### Terminology
+
+Không dùng:
+
+* U2R/R2L.
+
+Dùng:
+
+* Rare attacks;
+* Minority attack group.
+
+### Narrative
+
+Paper 1:
+
+> detection performance.
+
+Paper 2:
+
+> reliability on minority attacks.
 
 ---
 
 ## C3. Reliability under Prior Shift
 
-Nguồn:
+### Vai trò
+
+Contribution chính.
+
+### Notebook nguồn
 
 C4 - c4_robustness_distribution_shift_multirun_fixed.ipynb
 
-Chỉ sử dụng:
+### Chỉ sử dụng
 
-* Balanced
-* Attack-heavy
-* DoS-only
+* Balanced;
+* Attack-heavy;
+* DoS-only.
 
-Metrics:
+### Metrics
 
-* ECE
-* Brier Score
-* AUC-PR
+* ECE;
+* Brier Score;
+* AUC-PR.
+
+### Figures
+
+* Figure 5.
+
+### Tables
+
+* Table IV.
+
+### Narrative
+
+Paper 1:
+
+> robustness.
+
+Paper 2:
+
+> calibration degradation.
 
 ---
 
 ## C4. Probability Calibration using Platt Scaling
 
-Nguồn:
+### Vai trò
 
-C5
+Contribution chính.
 
-Metrics:
+### Notebook nguồn
 
-* ECE
-* Brier Score
+C5.
 
-Before calibration vs After calibration.
+### Metrics
+
+* ECE;
+* Brier Score.
+
+### Figures
+
+* Figure 6.
+
+### Tables
+
+* Table V.
+
+### Narrative
+
+Paper 2 không chỉ đánh giá reliability mà còn nghiên cứu khả năng cải thiện reliability.
 
 ---
 
-# 5. Additional Analyses
+# 6. Additional Analyses
+
+---
 
 ## A1. Low-data Reliability
 
-Nguồn:
+### Notebook nguồn
 
 C6 - learning_curve_sample_complexity.ipynb
 
-Không dùng:
+### Không sử dụng
 
-* F1 learning curve
+* Learning curve F1;
+* Sample complexity advantage.
 
-Chỉ dùng:
+### Chỉ sử dụng
 
-* ECE(N)
-* Brier(N)
-* AUC-PR(N)
+* ECE(N);
+* Brier(N);
+* AUC-PR(N).
 
-Narrative:
+### Vai trò
 
-Reliability under label scarcity.
+Discussion subsection.
+
+### Narrative
+
+Paper 1:
+
+> Quantum advantage under low-data.
+
+Paper 2:
+
+> Reliability under label scarcity.
 
 ---
 
 ## A2. Temporal Reliability
 
-Nguồn:
+### Notebook nguồn
 
-C4
+C4.
 
-Không dùng:
+### Không sử dụng
 
 Temporal robustness.
 
-Chỉ dùng:
+### Chỉ sử dụng
 
-* ECE temporal
-* Brier temporal
+* ECE temporal;
+* Brier temporal.
 
-Narrative:
+### Vai trò
+
+Discussion hoặc Appendix.
+
+### Narrative
 
 Calibration degradation under temporal shift.
 
 ---
 
-# 6. Excluded Contents
-
-## C3
-
-* Kernel geometry
-* KTA
-* Entanglement ablation
-
-## C4
-
-* Gaussian perturbation
-
-## C6
-
-* Sample-complexity advantage
+# 7. Excluded Contents
 
 ## C1
 
-* Pareto optimization
+* Pareto optimization;
+* Qubit selection.
+
+## C3
+
+* Kernel geometry;
+* KTA;
+* Entanglement ablation.
+
+## C4
+
+* Gaussian perturbation.
+
+## C6
+
+* Learning curve advantage;
+* Sample complexity advantage.
 
 ---
 
-# 7. Notebook → Paper Mapping
+# 8. Notebook → Paper Mapping
 
 | Notebook                 | Vai trò             |
 | ------------------------ | ------------------- |
@@ -210,144 +360,470 @@ Calibration degradation under temporal shift.
 
 ---
 
-# 8. Baselines
+# 9. Priority Levels
 
-Quantum:
+## Priority A (Bắt buộc)
 
-* QSVM-ZZ
-
-Classical:
-
-* SVM-RBF
-* Random Forest
-* XGBoost
-
-Deep Learning:
-
-* MLP (optional)
+* Calibration;
+* Rare attacks;
+* Prior shift;
+* Platt scaling.
 
 ---
 
-# 9. Figures
+## Priority B (Nên có)
 
-Figure 1: Reliability Diagram
-
-Figure 2: ECE comparison
-
-Figure 3: Brier Score comparison
-
-Figure 4: PR Curve of rare attacks
-
-Figure 5: Calibration degradation under prior shift
-
-Figure 6: Before vs After Platt Scaling
-
-Figure 7: Low-data reliability curve
-
-Figure 8: Temporal calibration degradation
+* Random Forest;
+* XGBoost;
+* Brier Score;
+* Cohen's d.
 
 ---
 
-# 10. Tables
+## Priority C (Nếu còn thời gian)
 
-Table I: Baselines
-
-Table II: Calibration metrics
-
-Table III: Rare attack performance
-
-Table IV: Prior shift reliability
-
-Table V: Platt scaling
+* Low-data reliability;
+* Temporal reliability;
+* MLP.
 
 ---
 
-# 11. Tasks for C5
+# 10. Baselines
 
-[ ] Add Brier Score
+## Quantum
 
-[ ] Cohen's d for ECE
+* QSVM-ZZ.
 
-[ ] Cohen's d for Brier
+## Classical
 
-[ ] Cohen's d for AUC-PR
+* SVM-RBF;
+* Random Forest;
+* XGBoost.
 
-[ ] Add Platt Scaling
+## Deep Learning
 
-[ ] Add Random Forest baseline
-
-[ ] Add XGBoost baseline
-
-[ ] Reduce role of margin analysis
+* MLP (optional).
 
 ---
 
-# 12. Tasks for C4
+# 11. Figures
 
-Giữ:
+Figure 1:
 
-* Balanced
-* Attack-heavy
-* DoS-only
+Reliability Diagram.
+
+---
+
+Figure 2:
+
+ECE comparison.
+
+---
+
+Figure 3:
+
+Brier Score comparison.
+
+---
+
+Figure 4:
+
+PR Curve của Rare Attacks.
+
+---
+
+Figure 5:
+
+Calibration degradation dưới Prior Shift.
+
+X-axis:
+
+Balanced → Attack-heavy → DoS-only.
+
+Y-axis:
+
+ECE.
+
+Models:
+
+* QSVM;
+* RBF;
+* RF;
+* XGB.
+
+---
+
+Figure 6:
+
+Before vs After Platt Scaling.
+
+---
+
+Figure 7:
+
+Low-data reliability curve.
+
+---
+
+Figure 8:
+
+Temporal calibration degradation.
+
+---
+
+# 12. Tables
+
+Table I:
+
+Baseline models.
+
+---
+
+Table II:
+
+Calibration metrics.
+
+* ECE;
+* Brier Score;
+* Macro-F1.
+
+---
+
+Table III:
+
+Rare attack metrics.
+
+* Precision;
+* Recall;
+* AUC-PR.
+
+---
+
+Table IV:
+
+Reliability under Prior Shift.
+
+---
+
+Table V:
+
+Before vs After Platt Scaling.
+
+---
+
+# 13. Tasks for C5
+
+## File
+
+c5_confidence_calibration_multirun.ipynb
+
+---
+
+## Đã hoàn thành
+
+### Calibration Analysis (C1)
+
+* [x] Multi-run (5 seeds);
+* [x] Mean ± std;
+* [x] Reliability Diagram;
+* [x] ECE.
+
+### Rare Attack Analysis (C2)
+
+* [x] Rare attack analysis;
+* [x] PR Curve;
+* [x] AUC-PR;
+* [x] Error analysis.
+
+---
+
+## Cần chỉnh sửa
+
+### [C5-1]
+
+Thêm Brier Score.
+
+Phục vụ:
+
+* C1;
+* Table II;
+* Figure 3.
+
+---
+
+### [C5-2]
+
+Tính Cohen's d cho:
+
+* ECE;
+* Brier Score;
+* AUC-PR.
+
+---
+
+### [C5-3]
+
+Chuẩn hóa terminology.
 
 Không dùng:
 
-* Gaussian perturbation
+* U2R/R2L.
 
-Tasks:
+Dùng:
 
-[ ] Replace F1 with ECE
-
-[ ] Add Brier Score
-
-[ ] Add AUC-PR
-
-[ ] Calibration degradation curve
-
-[ ] Cohen's d for ECE
-
-[ ] Add Random Forest baseline
-
-[ ] Add XGBoost baseline
+* Rare attacks;
+* Minority attack group.
 
 ---
 
-# 13. Tasks for C6
+### [C5-4]
 
-Không dùng learning curve F1.
+Giảm vai trò của margin analysis.
 
-Tasks:
+Giữ trong notebook.
 
-[ ] Compute ECE(N)
-
-[ ] Compute Brier(N)
-
-[ ] Compute AUC-PR(N)
+Không đưa vào contribution chính.
 
 ---
 
-# 14. General Tasks
+### [C5-5]
 
-[ ] Same seeds as Paper 1
+Implement Platt Scaling.
 
-[ ] mean ± std
+Sinh ra:
 
-[ ] Same figure style
+* Figure 6;
+* Table V.
 
-[ ] Same table style
+Phục vụ:
 
----
-
-# 15. Limitations
-
-* Rare attack classes contain few samples.
-* Single dataset (NSL-KDD).
-* Simulation-based QSVM.
-* Platt scaling limitations.
+Contribution C4.
 
 ---
 
-# 16. Draft Paper Structure
+### [C5-6]
+
+Thêm Random Forest baseline.
+
+---
+
+### [C5-7]
+
+Thêm XGBoost baseline.
+
+---
+
+## Có thể bổ sung
+
+* MLP baseline.
+
+---
+
+# 14. Tasks for C4
+
+## File
+
+c4_robustness_distribution_shift_multirun_fixed.ipynb
+
+---
+
+## Giữ lại
+
+### Prior Shift
+
+* Balanced;
+* Attack-heavy;
+* DoS-only.
+
+---
+
+## Không sử dụng
+
+* Gaussian perturbation.
+
+---
+
+## Cần chỉnh sửa
+
+### [C4-1]
+
+Đổi metric chính.
+
+Từ:
+
+* Macro-F1.
+
+Sang:
+
+* ECE;
+* Brier Score;
+* AUC-PR.
+
+---
+
+### [C4-2]
+
+Tạo Calibration Degradation Curve.
+
+---
+
+### [C4-3]
+
+Tính Cohen's d cho ECE.
+
+---
+
+### [C4-4]
+
+Sinh Table IV.
+
+---
+
+### [C4-5]
+
+Thêm Random Forest.
+
+---
+
+### [C4-6]
+
+Thêm XGBoost.
+
+---
+
+## Có thể bổ sung
+
+### Temporal Reliability
+
+Metrics:
+
+* ECE temporal;
+* Brier temporal.
+
+Vai trò:
+
+Discussion hoặc Appendix.
+
+---
+
+# 15. Tasks for C6
+
+## File
+
+learning_curve_sample_complexity.ipynb
+
+---
+
+## Không sử dụng
+
+Learning curve F1.
+
+---
+
+## Cần chỉnh sửa
+
+### [C6-1]
+
+ECE(N).
+
+### [C6-2]
+
+Brier(N).
+
+### [C6-3]
+
+AUC-PR(N).
+
+---
+
+## Vai trò
+
+Additional Analysis.
+
+Không phải contribution chính.
+
+---
+
+# 16. General Tasks
+
+## Đồng bộ protocol với Paper 1
+
+* seed = {0,1,2,3,4};
+* mean ± std;
+* Cohen's d.
+
+---
+
+## Đồng bộ Figure
+
+* font;
+* màu sắc;
+* style.
+
+---
+
+## Đồng bộ Table
+
+Format giống Paper 1.
+
+---
+
+## Chuẩn hóa terminology
+
+Dùng:
+
+* Rare attacks;
+* Prior shift;
+* Calibration degradation.
+
+Không dùng:
+
+* U2R/R2L;
+* Robustness under shift.
+
+---
+
+# 17. Optional Contents
+
+Có thể bỏ nếu gần deadline:
+
+* MLP;
+* Temporal reliability;
+* Low-data reliability.
+
+Không nên bỏ:
+
+* Calibration;
+* Rare attacks;
+* Prior shift;
+* Platt scaling.
+
+---
+
+# 18. Expected Claims
+
+Không claim:
+
+> Quantum outperforms all baselines.
+
+Claim:
+
+> Quantum kernels provide more reliable confidence estimates under several challenging scenarios.
+
+---
+
+# 19. Limitations
+
+* Rare attacks có rất ít mẫu;
+* NSL-KDD là dataset cũ;
+* Chỉ sử dụng một dataset;
+* QSVM chạy trên simulator;
+* Không đánh giá trên hardware thực;
+* Platt Scaling có giới hạn.
+
+---
+
+# 20. Draft Paper Structure
 
 I. Introduction
 
