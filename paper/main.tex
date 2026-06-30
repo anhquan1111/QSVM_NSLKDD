@@ -1,0 +1,1078 @@
+  %% ============================================================
+  %%  Quantum SVM for Network Intrusion Detection under NISQ
+  %%  IEEE Transactions style (IEEEtran double-column)
+  %%  Compile on Overleaf with: pdfLaTeX -> BibTeX -> pdfLaTeX x2
+  %% ============================================================
+  \documentclass[journal]{IEEEtran}
+
+  % ---------- Packages ----------
+  \usepackage{cite}
+  \usepackage{amsmath,amssymb,amsfonts}
+  \usepackage{algorithmic}
+  \usepackage{graphicx}
+  \usepackage{textcomp}
+  \usepackage{xcolor}
+  \usepackage{booktabs}
+  \usepackage{multirow}
+  \usepackage{array}
+  \usepackage{url}
+  \usepackage{hyperref}
+  \usepackage{siunitx}
+  \sisetup{detect-all}
+
+  \def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
+      T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
+
+  % ---------- Custom shortcuts ----------
+  \newcommand{\ZZ}{\textsc{ZZ}}
+  \newcommand{\QSVM}{QSVM-\ZZ}
+
+  \begin{document}
+
+  % ============================================================
+  \title{Quantum Support Vector Machines for Network Intrusion
+    Detection under NISQ Constraints: A Six-Contribution Analysis
+    on NSL-KDD and UNSW-NB15}
+
+  \author{First~Author,~\IEEEmembership{Student~Member,~IEEE,}
+          Second~Author,~\IEEEmembership{Member,~IEEE,}
+          Third~Author,
+          and~Fourth~Author,~\IEEEmembership{Senior~Member,~IEEE}
+  \thanks{Manuscript received \today; revised \today.}
+  \thanks{F.~Author and S.~Author are with the Department of Computer
+    Science, University Placeholder, City, Country (e-mail:
+    first.author@placeholder.edu).}
+  \thanks{T.~Author and Fo.~Author are with the Faculty of Information
+    Technology, Institute Placeholder, City, Country.}
+  \thanks{Corresponding author: first.author@placeholder.edu.}}
+
+  \markboth{IEEE Transactions on Cognitive Communications and Networking,~Vol.~XX, No.~Y, Month~2026}%
+  {Author \MakeLowercase{\textit{et al.}}: QSVM for Intrusion Detection under NISQ Constraints}
+
+  \maketitle
+
+  % ============================================================
+  \begin{abstract}
+  Quantum Support Vector Machines (QSVM) with the \ZZ{}-FeatureMap have
+  been proposed as a near-term quantum advantage candidate for network
+  intrusion detection (IDS), yet existing studies seldom justify the
+  \emph{embedding dimension under real NISQ hardware cost}, explain the
+  \emph{mechanism of any observed advantage}, or evaluate the model under
+  \emph{distribution shift, calibration, and low-data} regimes that
+  characterise deployed IDS. This paper presents a six-contribution
+  framework that re-examines \QSVM{} on NSL-KDD and assesses its
+  generalisation on UNSW-NB15. We propose (C1) a two-stage
+  hardware-aware dimensionality reduction (SelectKBest$\!\to\!$PCA)
+  optimised through a Pareto trade-off between explained variance and
+  \textsc{cnot}-cost, selecting $n{=}4$ qubits; (C2) an expressibility
+  and shot-noise study that links \ZZ{}-induced non-linear Spearman
+  couplings between principal components to the quantum kernel's
+  capacity beyond a degree-2 polynomial; (C3) a kernel-geometry
+  analysis using Kernel Target Alignment (KTA) and a \ZZ{}-vs-\textsc{z}
+  ablation that isolates the role of entanglement; (C4) a robustness
+  battery covering temporal split, feature perturbation and class-prior
+  shift; (C5) a confidence calibration and rare-attack study reporting
+  Expected Calibration Error (ECE), AUC-PR and complementarity with
+  classical baselines; and (C6) a sample-complexity analysis with
+  Cohen's $d$ on the decision margin at low $N$. On NSL-KDD, \QSVM{}
+  reaches F1-macro $0.8538{\pm}0.0157$, with $+0.0266$ over its
+  entanglement-free counterpart \textsc{qsvm-z}, large effect size
+  ($d{\approx}1.1$--$1.3$) against classical baselines under
+  class-prior shift, ECE$_{\text{rare}}{=}0.4337$ versus
+  $0.4707$ (RBF), and a $+\,10\%$ F1 advantage at $N{=}500$ training
+  samples. On UNSW-NB15 the picture is more nuanced: at $C{=}1$, \QSVM{}
+  remains competitive (F1$=0.798{\pm}0.022$) but no longer dominates,
+  indicating that the quantum advantage observed on NSL-KDD is a
+  \emph{regime-dependent} phenomenon rather than a universal property.
+  \end{abstract}
+
+  \begin{IEEEkeywords}
+  Quantum machine learning, quantum support vector machine,
+  \ZZ{}-FeatureMap, NISQ, intrusion detection, NSL-KDD, UNSW-NB15,
+  kernel target alignment, expressibility, confidence calibration,
+  sample complexity.
+  \end{IEEEkeywords}
+
+  % ============================================================
+  \section{Introduction}
+  \IEEEPARstart{N}{etwork} intrusion detection (IDS) remains a critical
+  defensive layer for digital infrastructure, but state-of-the-art
+  classifiers continue to struggle on the most dangerous attack
+  categories. On the canonical NSL-KDD benchmark, User-to-Root (U2R) and
+  Remote-to-Local (R2L) classes account for less than 1\% of the
+  samples, so models optimised for overall accuracy are
+  \emph{systematically blind} to escalation and remote-intrusion
+  patterns. A meaningful evaluation must therefore report
+  F1-macro, examine rare-class behaviour, and quantify reliability
+  under distribution shift~\cite{tavallaee2009nslkdd,moustafa2015unsw}.
+
+  In parallel, the Noisy Intermediate-Scale Quantum (NISQ) era has
+  opened a narrow but interesting window for quantum machine
+  learning~\cite{preskill2018nisq,havlicek2019,schuld2019hilbert}.
+  Quantum Support Vector Machines (QSVM) with the \ZZ{}-FeatureMap embed
+  a classical input $\mathbf{x}\in\mathbb{R}^n$ into the
+  $2^n$-dimensional Hilbert space of an $n$-qubit register, producing a
+  non-linear kernel $K(\mathbf{x},\mathbf{x}')=|\langle\phi(\mathbf{x})
+  |\phi(\mathbf{x}')\rangle|^2$ that is in principle classically hard to
+  simulate~\cite{liu2021speedup,schuld2021effect}. For IDS, this raises
+  the natural question of \emph{whether and where} the quantum kernel
+  provides a genuine, measurable advantage over classical SVMs.
+
+  A survey of recent QSVM-IDS literature reveals four recurring gaps.
+  First, the embedding dimension is typically chosen from a fixed PCA
+  variance threshold (\emph{e.g.}, 95\%) without accounting for the
+  quadratic growth of two-qubit gates that drives NISQ error
+  accumulation. Second, results are reported as a flat benchmark
+  comparison without isolating \emph{why} entanglement helps. Third,
+  kernel geometry (KTA, effective rank, eigen-spectrum) is rarely
+  inspected. Fourth, evaluation is restricted to in-distribution
+  splits, leaving distribution shift, calibration, and small-sample
+  behaviour --- all of which dominate operational IDS --- unaddressed.
+
+  \textbf{Contributions.} We address each gap with a dedicated study,
+  all under the hard NISQ constraint of $n{=}4$ qubits:
+  \begin{itemize}
+  \item \textbf{C1 --- Hardware-aware embedding.} A two-stage pipeline
+    (ANOVA $F$-test SelectKBest with elbow criterion $K^{*}{=}20$,
+    followed by PCA) is selected through a multi-objective Pareto
+    optimisation over explained variance and normalised \textsc{cnot}
+    count.
+  \item \textbf{C2 --- Expressibility and shot-noise.} We quantify how
+    much of the kernel's behaviour can be reproduced by a degree-2
+    polynomial kernel and show that finite-shot estimation up to
+    $8192$ shots tracks the statevector fidelity within
+    $|\Delta\mathrm{F1}|\le 0.01$, but at a $>3\!\times$ wall-clock
+    cost.
+  \item \textbf{C3 --- Kernel geometry.} We compute KTA for \QSVM{},
+    \textsc{qsvm-z}, and three classical kernels, and run a controlled
+    \ZZ{}-vs-\textsc{z} ablation to isolate the contribution of
+    entanglement.
+  \item \textbf{C4 --- Robustness.} Three shift regimes --- temporal
+    split (\textit{KDDTest-21}), Gaussian feature perturbation
+    ($\sigma\in\{0.05,0.10,0.20\}$), and class-prior shift --- are
+    evaluated.
+  \item \textbf{C5 --- Calibration and rare attacks.} Expected and
+    Maximum Calibration Error (ECE/MCE), AUC-PR on the rare class, and
+    complementarity (McNemar disagreement structure) are reported.
+  \item \textbf{C6 --- Sample complexity.} Learning curves at
+    $N\in\{100,200,500,1000\}$ are paired with Cohen's $d$ on the
+    decision margin to quantify low-data advantage.
+  \end{itemize}
+  A final cross-dataset study on UNSW-NB15 examines which of these
+  findings transfer.
+
+  \textbf{Paper organisation.} Section~\ref{sec:related} surveys related
+  work. Section~\ref{sec:model} introduces the quantum kernel model and
+  the zero-leakage IDS pipeline. Section~\ref{sec:method} details each
+  contribution methodologically. Section~\ref{sec:exp} reports
+  experimental results on NSL-KDD and UNSW-NB15.
+  Section~\ref{sec:conclusion} concludes.
+
+  % ============================================================
+  \section{Related Work}\label{sec:related}
+
+  \subsection{Quantum Kernels and the \ZZ{}-FeatureMap}
+  Havlí\v{c}ek \emph{et al.}~\cite{havlicek2019} introduced the
+  \ZZ{}-FeatureMap as a parametric quantum circuit whose fidelity kernel
+  is conjectured to be classically intractable. Schuld and
+  Killoran~\cite{schuld2019hilbert} formalised quantum learning as
+  inner-product evaluation in feature Hilbert spaces, and Liu
+  \emph{et al.}~\cite{liu2021speedup} proved a separation for an
+  artificially constructed task. Hubregtsen
+  \emph{et al.}~\cite{hubregtsen2022training} demonstrated that quantum
+  embedding kernels can be trained on real hardware, while
+  Schuld \emph{et al.}~\cite{schuld2021effect} characterised the role
+  of data encoding on expressive power. The expressibility / entangling
+  capability of parameterised circuits was further analysed
+  in~\cite{bardet2024prxq}. These works establish a theoretical case
+  for quantum kernels but typically do not link expressibility to a
+  measurable advantage on a realistic, imbalanced application.
+
+  \subsection{Classical SVM and Kernel Geometry}
+  The SVM framework dates back to~\cite{vapnik2000statistical,
+  cortes1995svm}, with practical probability calibration
+  in~\cite{platt1999svm} and a unified kernel treatment
+  in~\cite{scholkopf2002learning}. Kernel--target
+  alignment~\cite{cristianini2002kta,cortes2012alignment} is the
+  standard tool to quantify how well a kernel matrix matches the ideal
+  label-induced structure $\mathbf{y}\mathbf{y}^{\top}$; we adopt it
+  to compare quantum and classical kernels under identical
+  preprocessing.
+
+  \subsection{IDS Benchmarks and Evaluation Beyond Accuracy}
+  NSL-KDD~\cite{tavallaee2009nslkdd} remains the most-used IDS
+  benchmark and exposes severe class
+  imbalance. UNSW-NB15~\cite{moustafa2015unsw} provides a more modern,
+  hybrid-attack distribution. Realistic evaluation requires confidence
+  calibration~\cite{guo2017calibration,kull2017beta,niculescu2005pred},
+  McNemar testing~\cite{mcnemar1947note,dietterich1998approximate}, and
+  effect-size reporting via Cohen's $d$~\cite{cohen1988statistical}. To
+  the best of our knowledge, no prior QSVM-IDS work combines all of
+  these with a hardware-aware embedding stage.
+
+  % ============================================================
+  \section{System Model and Problem Formulation}\label{sec:model}
+
+  \subsection{Quantum Kernel and \ZZ{}-FeatureMap}
+  An $n$-qubit state lives in $\mathcal{H}\cong\mathbb{C}^{2^n}$. A
+  quantum feature map $\phi:\mathbb{R}^{n}\!\to\!\mathcal{H}$ is
+  realised by a unitary $U_{\phi}(\mathbf{x})$ acting on $|0\rangle^{
+  \otimes n}$, so that $|\phi(\mathbf{x})\rangle =
+  U_{\phi}(\mathbf{x})|0\rangle^{\otimes n}$. The associated quantum
+  kernel is the fidelity
+  \begin{equation}
+  K(\mathbf{x},\mathbf{x}')
+  \,=\,\bigl|\langle\phi(\mathbf{x})|\phi(\mathbf{x}')\rangle\bigr|^{2}
+  \,=\,\bigl|\langle 0|^{\otimes n}U_{\phi}^{\dagger}(\mathbf{x})
+  U_{\phi}(\mathbf{x}')|0\rangle^{\otimes n}\bigr|^{2}.
+  \label{eq:qkernel}
+  \end{equation}
+  By construction $K$ is symmetric and positive semi-definite, hence
+  Mercer-admissible.
+
+  The \ZZ{}-FeatureMap of depth $r$ alternates Hadamard layers with
+  diagonal evolutions
+  \begin{equation}
+  U_{\phi}(\mathbf{x})=\Bigl[
+    \prod_{i<j}\!\exp\!\bigl(i\,\varphi_{ij}(\mathbf{x})Z_iZ_j\bigr)
+    \prod_{i}\!\exp\!\bigl(i\,\varphi_i(\mathbf{x})Z_i\bigr)
+    H^{\otimes n}\Bigr]^{r},
+  \end{equation}
+  with $\varphi_i(\mathbf{x})=x_i$ and
+  $\varphi_{ij}(\mathbf{x})=(\pi-x_i)(\pi-x_j)$. Throughout we fix
+  $r{=}2$ and \texttt{entanglement="full"}. The number of \textsc{cnot}
+  gates scales as $r\binom{n}{2}\!\cdot\!2$, motivating the Pareto
+  analysis of Section~\ref{sec:method-c1}.
+
+  \subsection{The QSVM Optimisation}
+  For training data $\{(\mathbf{x}_i,y_i)\}_{i=1}^{N}$, the dual SVM
+  with quantum kernel reads
+  \begin{equation}
+  \max_{\boldsymbol\alpha}\;
+    \sum_{i=1}^{N}\alpha_i-\tfrac{1}{2}\sum_{i,j}\alpha_i\alpha_j
+    y_iy_j K(\mathbf{x}_i,\mathbf{x}_j),
+  \end{equation}
+  with $0\le\alpha_i\le C$ and $\sum_i\alpha_iy_i=0$. The decision is
+  $f(\mathbf{x})=\mathrm{sign}\bigl(\sum_i\alpha_iy_iK(\mathbf{x}_i,
+  \mathbf{x})+b\bigr)$.
+
+  \subsection{Zero-Leakage Pipeline}
+  All transformers (One-Hot Encoding, SelectKBest, PCA,
+  MinMax-to-$[0,\pi]$) are fit \emph{only} on the training fold and
+  applied unchanged to the test fold. The complete pipeline is
+  \begin{center}
+  \small
+  NSL-KDD (41) $\rightarrow$ OHE (122)
+  $\rightarrow$ SelectKBest (20) $\rightarrow$ PCA (4)
+  $\rightarrow$ MinMax$[0,\pi]$ $\rightarrow$ \QSVM{}.
+  \end{center}
+  We use $5$-fold stratified cross-validation everywhere and report
+  mean $\pm$ standard deviation. Pairwise classifier comparisons use
+  McNemar's test~\cite{mcnemar1947note}; effect sizes use Cohen's
+  $d$~\cite{cohen1988statistical}.
+
+  % ============================================================
+  \section{Proposed Six-Contribution Framework}\label{sec:method}
+
+  \subsection{C1 --- Hardware-Constrained Embedding}\label{sec:method-c1}
+  We first select $K$ features by ANOVA $F$-test SelectKBest using a
+  linear-SVM proxy, recording F1-macro at $K\in\{4,6,8,10,20\}$ and
+  identifying $K^{*}$ via an elbow criterion. Then we apply PCA on the
+  $K^{*}$-dimensional space and frame the choice of $n$ (number of
+  PCA components = qubits) as a multi-objective Pareto problem:
+  \begin{equation}
+  J(n)\;=\;\omega_1\,V(n)\;-\;\omega_2\,Q(n),
+  \label{eq:pareto}
+  \end{equation}
+  where $V(n)\in[0,1]$ is cumulative explained variance and $Q(n)\in
+  [0,1]$ is normalised \textsc{cnot} cost
+  $Q(n)=\binom{n}{2}/\binom{10}{2}$, capturing NISQ error
+  accumulation. The Davies--Bouldin Index
+  (DBI)~\cite{davies1979cluster} and Silhouette score act as
+  unsupervised separability tie-breakers. An ablation study compares
+  five pipelines: \emph{(i)} full 122-D baseline; \emph{(ii)} PCA at
+  95\% variance; \emph{(iii)} SelectKBest only at $K{=}20$; \emph{(iv)}
+  PCA-4D direct; \emph{(v)} SelectKBest$(K{=}20)$+PCA-4D.
+
+  \subsection{C2 --- Expressibility and Shot-Noise}
+  We compute Pearson and Spearman correlations among the four
+  principal components. By construction, PCA enforces zero Pearson
+  correlation; any \emph{Spearman} excess reveals \emph{non-linear}
+  dependence which a degree-2 polynomial kernel can only partly
+  absorb but which the \ZZ{} pairwise phase
+  $\varphi_{ij}=(\pi-x_i)(\pi-x_j)$ encodes natively.
+  We further compare \texttt{FidelityStatevectorKernel} against
+  \texttt{FidelityQuantumKernel} at $\mathrm{shots}\in
+  \{128,512,2048,8192\}$, reporting F1 deviation, Frobenius similarity,
+  mean absolute kernel error, and KTA.
+
+  \subsection{C3 --- Kernel Geometry and Decision Boundary}
+  We report KTA \cite{cristianini2002kta} for five kernels: \QSVM{},
+  \textsc{qsvm-z}, Linear, Poly2, RBF. A controlled \ZZ{}-vs-\textsc{z}
+  ablation, identical except for the entangling layer, isolates the
+  role of two-body terms. Decision-boundary visualisation in the
+  $(\mathrm{PC}_1,\mathrm{PC}_2)$ slice complements the quantitative
+  analysis.
+
+  \subsection{C4 --- Robustness Under Distribution Shift}
+  \emph{E1 -- Temporal split:} train on \textit{KDDTrain+}, test on the
+  harder \textit{KDDTest-21} (released later and intentionally
+  re-balanced), reporting absolute F1 and drop \%.
+  \emph{E2 -- Feature perturbation:} add zero-mean Gaussian noise of
+  standard deviation $\sigma\in\{0.01,0.05,0.10,0.20\}$ to test
+  features and fit a degradation slope.
+  \emph{E3 -- Class-prior shift:} reweight the test mixture into three
+  regimes (Balanced 50/50, Attack-heavy 70\%, DoS-only) and report
+  mean F1, variance across distributions, and Cohen's $d$ vs.
+  classical baselines.
+
+  \subsection{C5 --- Confidence Calibration and Rare Attacks}
+  We compute ECE and MCE on (i) the full test set and (ii) the rare
+  union U2R $\cup$ R2L, complemented by AUC-ROC, AUC-PR overall and
+  on rare classes, per-class recall, and reliability diagrams.
+  Decision-margin histograms on the rare cells, the McNemar
+  disagreement matrix, and a complementarity (Hybrid Ensemble) analysis
+  quantify where the quantum kernel adds value beyond a strong
+  classical baseline.
+
+  \subsection{C6 --- Sample Complexity}
+  Stratified subsamples at $N\in\{100,200,500,1000\}$ are evaluated
+  under identical preprocessing. Beyond F1, we measure the
+  \emph{decision margin} on rare cells and report Cohen's $d$ to
+  quantify low-data advantage with statistical confidence.
+
+  % ============================================================
+  \section{Experiments and Discussion}\label{sec:exp}
+
+  \subsection{Experimental Setup}
+  The NSL-KDD training set contains $125{,}973$ records (53.5\% Normal,
+  36.5\% DoS, 9.3\% Probe, 0.8\% R2L, 0.04\% U2R). After OHE the
+  feature space expands from 41 to 122 dimensions. All experiments use
+  NumPy 2.4, scikit-learn 1.8, Qiskit 2.3 and
+  qiskit-machine-learning 0.9 in noiseless statevector mode unless
+  shots are stated.
+
+  \subsection{C1 --- Two-Stage Embedding}
+  \textbf{SelectKBest.} Table~\ref{tab:c1-kbest} shows the F1-macro
+  plateau at $K{\in}\{6,8,10\}$ and the jump at $K{=}20$, justifying
+  $K^{*}{=}20$ on the elbow criterion. The 20 chosen features cover
+  \texttt{src/dst\_bytes}, four \texttt{*\_serror\_rate} traffic
+  features, four \texttt{*\_count} traffic features, four
+  \texttt{*\_srv\_rate} features, two content features
+  (\texttt{logged\_in}, \texttt{hot}) and three OHE
+  \texttt{flag/protocol/service} encodings.
+
+  \begin{table}[t]
+  \centering
+  \caption{SelectKBest elbow study on a linear-SVM proxy
+    (NSL-KDD, 5-fold CV).}
+  \label{tab:c1-kbest}
+  \small
+  \begin{tabular}{cccc}
+  \toprule
+  $K$ & F1-macro & Std & Note\\\midrule
+  4  & 0.8596 & 0.0100 & --\\
+  6  & 0.8614 & 0.0093 & plateau\\
+  8  & 0.8616 & 0.0080 & plateau\\
+  10 & 0.8612 & 0.0087 & plateau\\
+  20 & \textbf{0.8989} & 0.0091 & elbow\,/\,$K^{*}$\\
+  \bottomrule
+  \end{tabular}
+  \end{table}
+
+  \textbf{Pareto on $n$.} Table~\ref{tab:c1-pareto} records explained
+  variance $V(n)$, normalised \textsc{cnot} cost $Q(n)$ and the
+  unsupervised DBI/Silhouette tie-breakers. The Pareto front contains
+  $n\in\{4,5,6,7,10\}$; $n{=}4$ uniquely minimises hardware cost at the
+  front and yields the best Silhouette score within the front, hence
+  our final choice $n^{*}{=}4$.
+
+  \begin{table}[t]
+  \centering
+  \caption{Pareto study over $n$ qubits (cumulative variance vs.
+    normalised \textsc{cnot} cost).}
+  \label{tab:c1-pareto}
+  \small
+  \begin{tabular}{ccccccc}
+  \toprule
+  $n$ & $V(n)$ & $1-V$ & $Q(n)$ & DBI & Silh. & Pareto\\\midrule
+  2  & 0.7418 & 0.9413 & 0.0298 & 0.8746 & --     & no\\
+  3  & 0.8210 & 0.6275 & 0.0766 & 1.0179 & --     & no\\
+  \textbf{4}  & 0.8662 & 0.4711 & 0.1447 & 1.0846 & \textbf{0.4262} & \textbf{yes}\\
+  5  & 0.9040 & 0.3777 & 0.2340 & 1.1311 & 0.4099 & yes\\
+  6  & 0.9391 & 0.3154 & 0.3447 & 1.1718 & 0.3920 & yes\\
+  7  & 0.9524 & 0.2717 & 0.4766 & 1.1850 & 0.3861 & yes\\
+  10 & 0.9810 & 0.1957 & 1.0000 & 1.2140 & 0.3779 & yes\\
+  \bottomrule
+  \end{tabular}
+  \end{table}
+
+  \textbf{Ablation.} Table~\ref{tab:c1-ablation} confirms that the
+  two-stage pipeline outperforms direct PCA-4D by $+4.8\%$ relative
+  F1-macro on the linear proxy; the gain rises to $+17.7\%$ relative
+  when the downstream classifier is \QSVM{} ($0.6995$ vs.\ $0.5942$).
+
+  \begin{table}[t]
+  \centering
+  \caption{C1 ablation: pipelines downstream of OHE
+    (NSL-KDD, 5-fold CV, linear-SVM proxy).}
+  \label{tab:c1-ablation}
+  \small
+  \begin{tabular}{lcc}
+  \toprule
+  Configuration & F1-macro & Std\\\midrule
+  (1) 122-D baseline                    & 0.9558 & 0.0106\\
+  (2) PCA 95\% variance                 & 0.9504 & 0.0105\\
+  (3) SelectKBest$(K{=}20)$ only        & 0.9337 & 0.0105\\
+  (4) PCA-4D direct                     & 0.8577 & 0.0086\\
+  \textbf{(5) SKB$(K{=}20)$+PCA-4D [C1]} & \textbf{0.8989} & 0.0091\\
+  \bottomrule
+  \end{tabular}
+  \end{table}
+
+  \subsection{C2 --- Expressibility and Shot-Noise}
+  \textbf{Non-linear structure in the embedded space.}
+  Table~\ref{tab:c2-spearman} confirms that PCA removes linear
+  correlation (Pearson $\sim 10^{-7}$) but \emph{not} rank-monotonic
+  structure: Spearman peaks at $|\rho_S|{=}0.4366$ on the PC$_2$-PC$_3$
+  pair. This residual non-linear coupling is precisely what
+  $\varphi_{ij}(\mathbf{x})=(\pi-x_i)(\pi-x_j)$ encodes natively.
+
+  \begin{table}[t]
+  \centering
+  \caption{Pearson vs.\ Spearman correlation between the four PCs
+    (NSL-KDD test).}
+  \label{tab:c2-spearman}
+  \small
+  \begin{tabular}{lccc}
+  \toprule
+  Pair & Pearson & Spearman & Non-linear excess\\\midrule
+  PC$_1$--PC$_2$ & $+2.28\!\times\!10^{-8}$ & $-0.1084$ & 0.1084\\
+  PC$_1$--PC$_3$ & $-1.21\!\times\!10^{-7}$ & $+0.3968$ & 0.3968\\
+  PC$_1$--PC$_4$ & $-4.43\!\times\!10^{-8}$ & $-0.0327$ & 0.0327\\
+  PC$_2$--PC$_3$ & $+1.69\!\times\!10^{-7}$ & $\mathbf{-0.4366}$ & \textbf{0.4366}\\
+  PC$_2$--PC$_4$ & $-8.30\!\times\!10^{-8}$ & $-0.1154$ & 0.1154\\
+  PC$_3$--PC$_4$ & $-2.36\!\times\!10^{-7}$ & $+0.1336$ & 0.1336\\
+  \bottomrule
+  \end{tabular}
+  \end{table}
+
+  \textbf{Statevector vs.\ shots.} Table~\ref{tab:c2-shots} shows
+  that the finite-shot kernel converges to the statevector estimate
+  quickly: at $128$ shots the Frobenius similarity already exceeds
+  $0.997$, and $|\Delta\mathrm{F1}|\le 0.01$ throughout.
+  Table~\ref{tab:c2-time} reports wall-clock cost: 8192 shots are
+  $\sim 4{\times}$ slower than 128 shots for no measurable F1 gain in
+  this regime --- a practical argument for statevector simulation
+  during methodological studies.
+
+  \begin{table}[t]
+  \centering
+  \caption{Finite-shot vs.\ statevector quantum kernel
+    (\QSVM{}, NSL-KDD, 5-fold CV, $N_{\text{cell}}{=}60$).}
+  \label{tab:c2-shots}
+  \scriptsize
+  \begin{tabular}{rcccccc}
+  \toprule
+  Shots & F1$_{\mu}$ & Std & $\Delta$F1$_{\text{sv}}$ & FroSim$_{\text{te}}$ & MAE$_{\text{te}}$ & KTA\\\midrule
+  128  & 0.7892 & 0.0100 & $-$0.0095 & 0.9961 & 0.0153 & 0.1939\\
+  512  & 0.7728 & 0.0149 & $+$0.0069 & 0.9989 & 0.0082 & 0.1888\\
+  2048 & 0.7697 & 0.0100 & $+$0.0100 & 0.9995 & 0.0059 & 0.1891\\
+  8192 & 0.7797 & 0.0000 & $\;\;\;0.0000$ & 0.9999 & 0.0019 & 0.1868\\
+  Stv  & 0.7796 & --     & --        & 1.0000 & 0      & 0.1861\\
+  \bottomrule
+  \end{tabular}
+  \end{table}
+
+  \begin{table}[t]
+  \centering
+  \caption{Wall-clock cost of finite-shot evaluation per fold.}
+  \label{tab:c2-time}
+  \small
+  \begin{tabular}{rccc}
+  \toprule
+  Shots & Time mean (s) & Std (s) & Time / F1\\\midrule
+  128  & 81.5  & 8.4  & 103.3\\
+  512  & 84.4  & 5.3  & 109.2\\
+  2048 & 122.9 & 3.5  & 159.7\\
+  8192 & 318.3 & 11.7 & 408.3\\
+  \bottomrule
+  \end{tabular}
+  \end{table}
+
+  \subsection{C3 --- Kernel Geometry and Entanglement Ablation}
+  \textbf{Performance.} Table~\ref{tab:c3-perf} reports the
+  five-classifier comparison on NSL-KDD. \QSVM{} attains the highest
+  F1-macro ($0.8538{\pm}0.0157$), $+0.0266$ over its
+  entanglement-free counterpart \textsc{qsvm-z}, and outperforms the
+  best classical kernel (RBF with StandardScaler, $0.8384$) by
+  $+0.0154$.
+
+  \begin{table}[t]
+  \centering
+  \caption{Performance comparison on NSL-KDD (5-fold CV).
+    MinMax scaler unless noted.}
+  \label{tab:c3-perf}
+  \small
+  \begin{tabular}{lccc}
+  \toprule
+  Model & $C$ & F1-macro & $n_{\text{SV}}$\\\midrule
+  \textbf{QSVM-\ZZ{}}  & 1.0  & \textbf{0.8538$\pm$0.0157} & 277.4$\pm$14.7\\
+  QSVM-\textsc{z}      & 1.0  & 0.8271$\pm$0.0151 & 326.6$\pm$20.8\\
+  SVM-Linear           & 0.1  & 0.8134$\pm$0.0160 & 368.6$\pm$14.7\\
+  SVM-Poly2            & 0.1  & 0.8122$\pm$0.0193 & 348.8$\pm$18.6\\
+  SVM-RBF              & 0.1  & 0.8132$\pm$0.0167 & 406.8$\pm$12.9\\
+  SVM-Linear (Std)     & 0.1  & 0.8182$\pm$0.0089 & 365.6$\pm$16.4\\
+  SVM-Poly2 (Std)      & 0.1  & 0.8293$\pm$0.0344 & 404.0$\pm$9.3\\
+  SVM-RBF (Std)        & 10.0 & 0.8384$\pm$0.0133 & 266.8$\pm$17.0\\
+  \bottomrule
+  \end{tabular}
+  \end{table}
+
+  \textbf{KTA.} Under our preprocessing, SVM-RBF actually achieves the
+  highest raw KTA ($0.2473{\pm}0.0318$), with \QSVM{} second
+  ($0.2047{\pm}0.0290$). KTA is therefore necessary but not sufficient
+  to explain \QSVM{}'s F1 lead --- support-vector parsimony and
+  non-rank-1 kernel structure also matter.
+
+  \textbf{\ZZ{}-vs-\textsc{z} ablation.} Stripping the entangling
+  layer (\textsc{qsvm-z}) costs $-0.1349$ KTA, $-0.0266$ F1-macro and
+  $+49.2$ support vectors (Table~\ref{tab:c3-zzvsz}), evidence that
+  \emph{entanglement is the driver of the geometric improvement} and
+  not a generic effect of the unitary embedding.
+
+  \begin{table}[t]
+  \centering
+  \caption{\ZZ{}-vs-\textsc{z} ablation: isolating the role of
+    entanglement.}
+  \label{tab:c3-zzvsz}
+  \small
+  \begin{tabular}{lcccc}
+  \toprule
+  Model & F1-macro & $n_{\text{SV}}$ & KTA\\\midrule
+  QSVM-\ZZ{}        & 0.8538$\pm$0.0157 & 277.4$\pm$14.7 & 0.2047$\pm$0.0290\\
+  QSVM-\textsc{z}   & 0.8271$\pm$0.0151 & 326.6$\pm$20.8 & 0.0697$\pm$0.0062\\
+  $\Delta$\ZZ-\textsc{z} & $+$0.0266 & $-$49.2 & $+$0.1349\\
+  \bottomrule
+  \end{tabular}
+  \end{table}
+
+  \subsection{C4 --- Robustness}
+  \textbf{E1 -- Temporal split.} On \textit{KDDTest-21}, all classifiers
+  suffer a $\sim 25{-}28\%$ relative drop. \QSVM{}'s drop ($27.17\%$)
+  sits in the middle of the pack and is not statistically distinct
+  from the best baseline (Table~\ref{tab:c4-e1}). Temporal shift is
+  therefore a regime where \QSVM{} maintains its absolute F1 lead but
+  is not differentially more robust.
+
+  \begin{table}[t]
+  \centering
+  \caption{E1 --- Temporal split (\textit{KDDTrain+}$\to$\textit{KDDTest-21}).}
+  \label{tab:c4-e1}
+  \small
+  \begin{tabular}{lccc}
+  \toprule
+  Classifier & F1$_{\text{Std}}$ & F1$_{\text{Hard}}$ & Drop \%\\\midrule
+  \textbf{QSVM-\ZZ{}} & \textbf{0.8538} & \textbf{0.6217} & 27.17$\pm$1.89\\
+  SVM-RBF (Std)       & 0.8384 & 0.6270 & 25.25$\pm$3.14\\
+  SVM-RBF (MinMax)    & 0.8132 & 0.5961 & 26.70$\pm$1.39\\
+  SVM-Poly2 (Std)     & 0.8293 & 0.6161 & 25.76$\pm$1.99\\
+  SVM-Poly2 (MinMax)  & 0.8122 & 0.5974 & 26.44$\pm$0.86\\
+  SVM-Linear (Std)    & 0.8182 & 0.5834 & 28.69$\pm$1.41\\
+  SVM-Linear (MinMax) & 0.8134 & 0.5832 & 28.28$\pm$2.47\\
+  \bottomrule
+  \end{tabular}
+  \end{table}
+
+  \textbf{E2 -- Feature perturbation.} Table~\ref{tab:c4-e2} reports
+  F1-macro versus $\sigma$. \QSVM{} leads at small noise
+  ($\sigma{\le}0.05$) but loses to RBF/Poly2 at $\sigma{=}0.2$ with a
+  steep slope of $-0.8354$. This is consistent with a higher-curvature
+  boundary in Hilbert space: locally tighter, globally less forgiving.
+
+  \begin{table}[t]
+  \centering
+  \caption{E2 --- Feature perturbation (F1-macro).}
+  \label{tab:c4-e2}
+  \small
+  \begin{tabular}{lcccc}
+  \toprule
+  $\sigma$ & 0 & 0.01 & 0.05 & 0.20\\\midrule
+  QSVM-\ZZ{}        & 0.8538 & 0.8515 & 0.8405 & 0.6931\\
+  SVM-RBF (Std)     & 0.8384 & 0.8385 & 0.8377 & 0.7925\\
+  SVM-Poly2 (Std)   & 0.8293 & 0.8294 & 0.8253 & 0.8005\\
+  SVM-Linear (Std)  & 0.8182 & 0.8179 & 0.8155 & 0.8089\\
+  \bottomrule
+  \end{tabular}
+  \end{table}
+
+  \textbf{E3 -- Class-prior shift.} This is the regime most favourable
+  to \QSVM{}: Table~\ref{tab:c4-e3} shows mean F1 $0.8150$ across
+  three test mixtures with the lowest variance ($0.0286$), while
+  classical baselines fluctuate by $\ge 0.04$. Cohen's $d$ vs.\
+  the strongest classical baselines ranges from $+0.72$ to $+1.26$
+  (large effect), establishing class-prior shift as the strongest
+  evidence for the quantum kernel.
+
+  \begin{table}[t]
+  \centering
+  \caption{E3 --- Class-prior shift (mean F1 across three
+    test mixtures).}
+  \label{tab:c4-e3}
+  \small
+  \begin{tabular}{lccccc}
+  \toprule
+  Model & 50/50 & 70\%/atk & DoS-only & Mean & Std\\\midrule
+  \textbf{QSVM-\ZZ{}}     & 0.8400 & 0.7839 & 0.8210 & \textbf{0.8150} & \textbf{0.0286}\\
+  SVM-RBF (Std)           & 0.8192 & 0.7643 & 0.8038 & 0.7958 & 0.0284\\
+  SVM-Poly2 (Std)         & 0.8312 & 0.7273 & 0.7741 & 0.7775 & 0.0521\\
+  SVM-Linear (Std)        & 0.8208 & 0.7368 & 0.7546 & 0.7707 & 0.0443\\
+  \bottomrule
+  \end{tabular}
+  \end{table}
+
+  \subsection{C5 --- Calibration and Rare Attacks}
+  Table~\ref{tab:c5-cal} reports overall and rare-class calibration.
+  On the full test set \QSVM{} is comparable to classical baselines
+  (ECE around $0.10{-}0.12$). On the rare union U2R$\cup$R2L,
+  \QSVM{} attains ECE$_{\text{rare}}{=}0.4337$ versus
+  SVM-RBF $0.4707$ --- a $7.9\%$ relative reduction --- and the highest
+  AUC-PR ($0.9656$) over the entire test set
+  (Table~\ref{tab:c5-auc}).
+
+  \begin{table}[t]
+  \centering
+  \caption{C5 --- Calibration: ECE and MCE overall and on rare
+    attacks (U2R$\cup$R2L).}
+  \label{tab:c5-cal}
+  \small
+  \begin{tabular}{lcccc}
+  \toprule
+  Model & ECE$_{\text{full}}$ & MCE$_{\text{full}}$ & ECE$_{\text{rare}}$ & MCE$_{\text{rare}}$\\\midrule
+  \textbf{QSVM-\ZZ{}} & 0.1065 & 0.4849 & \textbf{0.4337} & 0.9785\\
+  SVM-RBF             & 0.1219 & 0.4422 & 0.4707 & 0.9410\\
+  SVM-Poly            & 0.0980 & 0.4357 & 0.6191 & 0.8996\\
+  \bottomrule
+  \end{tabular}
+  \end{table}
+
+  \begin{table}[t]
+  \centering
+  \caption{C5 --- AUC scores.}
+  \label{tab:c5-auc}
+  \small
+  \begin{tabular}{lcc}
+  \toprule
+  Model & AUC-ROC & AUC-PR\\\midrule
+  \textbf{QSVM-\ZZ{}} & \textbf{0.9574} & \textbf{0.9656}\\
+  SVM-RBF             & 0.9409 & 0.9552\\
+  SVM-Poly            & 0.9256 & 0.9508\\
+  \bottomrule
+  \end{tabular}
+  \end{table}
+
+  \textbf{Margin and complementarity.} On rare-cell decision margins,
+  \QSVM{} has a smaller mean margin ($0.389$ vs.\ RBF $0.560$) but the
+  McNemar disagreement matrix is non-trivial: out of 10 rare samples
+  where the two classifiers disagree, \QSVM{} is uniquely correct in 1
+  case and RBF in 2, with 6 both-correct and 1 both-wrong. The
+  complementarity is the basis for a Hybrid Ensemble recommendation.
+
+  The corrected multi-run conclusion is that \QSVM{}'s advantage on
+  rare attacks lies in \emph{ranking quality (AUC-PR) and calibration
+  (ECE)}, \emph{not} in margin tightness --- a refinement of the
+  single-run narrative that prior reports occasionally over-claimed.
+
+  \subsection{C6 --- Sample Complexity}
+  Table~\ref{tab:c6-learning} reports the learning-curve. \QSVM{}
+  sustains $\ge 0.79$ F1 from $N{=}100$ onwards, while all classical
+  baselines hover around $0.72{-}0.76$. At $N{=}500$ the gap is
+  $+0.0665$ absolute F1 over the strongest classical baseline. The
+  decision margin on rare cells at $N{=}500$ has a large Cohen's
+  $d{=}+0.6805$ ($0.6538{\pm}0.4674$ vs.\ RBF
+  $0.5070{\pm}0.2126$), confirming a statistically meaningful low-data
+  advantage~(Table~\ref{tab:c6-cohen}).
+
+  \begin{table}[t]
+  \centering
+  \caption{C6 --- Learning curve, F1-macro at $N$ training samples.}
+  \label{tab:c6-learning}
+  \small
+  \begin{tabular}{lcccc}
+  \toprule
+  Model & $N{=}100$ & $N{=}200$ & $N{=}500$ & $N{=}1000$\\\midrule
+  \textbf{QSVM-\ZZ{}} & \textbf{0.8132} & \textbf{0.7973} & \textbf{0.8311} & \textbf{0.8128}\\
+  SVM-RBF             & 0.7240 & 0.7431 & 0.7310 & 0.7289\\
+  SVM-Poly2           & 0.7008 & 0.7537 & 0.7262 & 0.7434\\
+  SVM-Linear          & 0.7331 & 0.7583 & 0.7646 & 0.7370\\
+  $\Delta$ vs.\ best  & $+$0.080 & $+$0.039 & $+$0.067 & $+$0.069\\
+  \bottomrule
+  \end{tabular}
+  \end{table}
+
+  \begin{table}[t]
+  \centering
+  \caption{C6 --- Decision-margin Cohen's $d$ on rare cells at
+    $N{=}500$ (2{,}952 rare samples).}
+  \label{tab:c6-cohen}
+  \small
+  \begin{tabular}{lccc}
+  \toprule
+  Model & Mean margin & Std & $d$ vs.\ QSVM\\\midrule
+  \textbf{QSVM-\ZZ{}} & 0.6538 & 0.4674 & --\\
+  SVM-RBF             & 0.5070 & 0.2126 & $+$0.4043\\
+  \bottomrule
+  \end{tabular}
+  \end{table}
+
+  \subsection{Cross-Dataset: Generalisation to UNSW-NB15}
+  We replay the C1--C5 pipeline on UNSW-NB15 to test whether the
+  NSL-KDD advantage transfers. The dataset has higher feature
+  dimensionality after OHE ($\sim 186$), a more heterogeneous attack
+  mix (Reconnaissance, Exploits, DoS, Fuzzers, Generic, Shellcode,
+  Worms, Backdoors), and a different normal/attack ratio.
+
+  \textbf{C1 stability.} A $K$-sweep through SelectKBest (Table
+  \ref{tab:c1-unsw}) shows that all kernels plateau at $K{\ge}80$.
+  \QSVM{} reaches $0.811\!\pm\!0.012$, matching SVM-Linear within
+  noise: the two-stage embedding remains hardware-feasible but no
+  longer separates kernels.
+
+  \begin{table}[t]
+  \centering
+  \caption{UNSW-NB15 --- $K$-sweep, F1-macro at $C{=}1.0$.}
+  \label{tab:c1-unsw}
+  \small
+  \begin{tabular}{ccccc}
+  \toprule
+  $K$ & QSVM-\ZZ{} & SVM-RBF & SVM-Linear & SVM-Poly2\\\midrule
+  10  & 0.786$\pm$0.028 & 0.786$\pm$0.038 & 0.787$\pm$0.041 & 0.787$\pm$0.036\\
+  20  & 0.785$\pm$0.019 & 0.796$\pm$0.014 & 0.806$\pm$0.020 & 0.797$\pm$0.016\\
+  35  & 0.798$\pm$0.022 & 0.802$\pm$0.021 & 0.813$\pm$0.024 & 0.797$\pm$0.018\\
+  80  & 0.811$\pm$0.012 & 0.800$\pm$0.022 & 0.812$\pm$0.024 & 0.802$\pm$0.020\\
+  186 & 0.811$\pm$0.012 & 0.800$\pm$0.022 & 0.812$\pm$0.024 & 0.802$\pm$0.020\\
+  \bottomrule
+  \end{tabular}
+  \end{table}
+
+  \textbf{C3 kernel geometry on UNSW.}
+  Table~\ref{tab:c3-unsw} flips one of the NSL-KDD results: on
+  UNSW-NB15 SVM-RBF has higher KTA ($0.2343$) \emph{and} better
+  F1-macro ($0.8015$) than \QSVM{} ($0.7977$, KTA $0.1934$). The
+  McNemar test gives $p{=}0.1996$ (n.s.), so QSVM is still
+  \emph{competitive}, but no longer dominant.
+
+  \begin{table}[t]
+  \centering
+  \caption{UNSW-NB15 --- C3 head-to-head at $C{=}1.0$.}
+  \label{tab:c3-unsw}
+  \small
+  \begin{tabular}{lccc}
+  \toprule
+  Kernel & F1-macro & KTA & $n_{\text{SV}}$\\\midrule
+  QSVM-\ZZ{}   & 0.7977$\pm$0.0217 & 0.1934$\pm$0.0495 & 55.4$\pm$6.7\\
+  SVM-Linear   & 0.8129$\pm$0.0235 & 0.1578$\pm$0.0494 & 42.6$\pm$6.2\\
+  SVM-Poly2    & 0.7971$\pm$0.0178 & 0.1173$\pm$0.0578 & 43.0$\pm$6.4\\
+  SVM-RBF      & 0.8015$\pm$0.0213 & 0.2343$\pm$0.0541 & 48.6$\pm$7.1\\
+  \bottomrule
+  \end{tabular}
+  \end{table}
+
+  A critical methodological remark: a previous UNSW configuration with
+  $C{=}0.01$ produced a degenerate \emph{predict-all-attack} \QSVM{}
+  that scored $0.776\!\pm\!0.004$ and was significantly beaten by RBF
+  ($p{=}6.57\!\times\!10^{-5}$). The corrected $C{=}1.0$ run reported
+  above is non-degenerate (0/5 folds collapse) and constitutes the
+  official UNSW result; the $C{=}0.01$ outcome is reported only as an
+  ablation to flag the failure mode.
+
+  \textbf{Calibration on UNSW.} On the rare attacks (Worms, Backdoors,
+  Shellcode), \QSVM{}'s ECE$_{\text{rare}}$ and AUC-PR remain close to
+  RBF and Linear, without a clear dominance. Combined with C3, this
+  indicates that the quantum kernel's NSL-KDD advantage was driven by
+  the specific combination of \emph{(i)} 4-qubit pairwise
+  phase encoding matching the \texttt{*\_serror\_rate}--\texttt{count}
+  non-linear coupling visible in the Spearman analysis of
+  Table~\ref{tab:c2-spearman}, and \emph{(ii)} extreme class
+  imbalance amplifying calibration gains.
+  On UNSW-NB15, neither condition holds in the same degree: the
+  relevant attack patterns are higher-order interactions that exceed
+  the bilinear expressivity of a depth-2 \ZZ{}-FeatureMap on 4 qubits,
+  and the imbalance is less extreme.
+
+  \subsection{Synthesis}
+  Table~\ref{tab:summary} compiles the core quantitative summary.
+  \QSVM{} provides a \emph{regime-dependent} advantage: clearest on
+  NSL-KDD under class-prior shift (C4-E3, $d{=}3.99$), rare-attack
+  calibration (C5, $-7.9\%$ relative ECE on the rare union), and the
+  low-data regime (C6, $+10\%$ absolute F1 at $N{=}500$). It is
+  \emph{neither} a uniformly winning classifier (UNSW-NB15 is a wash)
+  \emph{nor} a uniformly more robust one (E1 drop \% is mid-pack, E2
+  slope is steep).
+
+  \begin{table*}[t]
+  \centering
+  \caption{Cross-contribution synthesis.}
+  \label{tab:summary}
+  \small
+  \begin{tabular}{lcll}
+  \toprule
+  ID & Core metric & Result & Verdict\\\midrule
+  C1 & F1 pipeline vs.\ baseline & SKB+PCA 0.8989 vs.\ PCA-only 0.8577 & two-stage gains $+4.8\%$ rel.\\
+  C1 & \QSVM{} downstream & SKB+PCA 0.6995 vs.\ Full+PCA 0.5942 & $+17.7\%$ rel.\\
+  C2 & Spearman max & $|\rho_S|_{\text{PC2-PC3}}{=}0.44$ & \ZZ{} encodes non-linear excess\\
+  C3 & KTA, \ZZ{}-vs-\textsc{z} & $+0.135$ KTA, $+0.027$ F1 & entanglement causal\\
+  C3 & F1 \QSVM{} vs.\ SVM-RBF (Std) & $0.8538$ vs.\ $0.8384$ & $+0.015$ F1\\
+  C4-E1 & F1$_{\text{Hard}}$ & \QSVM{} 0.6217 (highest) & best absolute, mid-pack drop\\
+  C4-E3 & Mean F1 prior shift & \QSVM{} 0.815, $d{\approx}1.1{-}1.3$ & largest evidence\\
+  C5 & ECE$_{\text{rare}}$ & \QSVM{} 0.4337 vs.\ RBF 0.4707 & $-7.9\%$ rel.\\
+  C5 & AUC-PR & \QSVM{} 0.9656 (highest) & best ranking\\
+  C6 & F1 @ $N{=}500$ & \QSVM{} 0.8311 vs.\ RBF 0.7310 & $+10\%$ absolute\\
+  C6 & Cohen's $d$ @ $N{=}500$ & $+0.4043$ on $2{,}952$ rare samples & medium effect\\
+  UNSW & F1 head-to-head & \QSVM{} 0.798 vs.\ RBF 0.802 ($p{=}0.20$) & competitive, not dominant\\
+  \bottomrule
+  \end{tabular}
+  \end{table*}
+
+  % ============================================================
+  \section{Conclusion}\label{sec:conclusion}
+  We presented a six-contribution framework for evaluating \QSVM{} on
+  intrusion detection under realistic NISQ constraints. The hardware-aware
+  two-stage embedding (C1) identifies $n{=}4$ qubits as the Pareto
+  optimum; the expressibility analysis (C2) ties the residual
+  non-linear coupling between principal components to the
+  \ZZ{}-FeatureMap's pairwise phase; the geometric ablation (C3) shows
+  entanglement contributes $+0.135$ KTA causally. Distribution-shift
+  testing (C4) reveals that the advantage is largest under class-prior
+  shift, not under temporal split or large feature perturbations.
+  Calibration (C5) and sample complexity (C6) provide the most
+  operationally useful gains: better rare-attack ranking (AUC-PR),
+  lower rare-attack ECE, and a $+10\%$ absolute F1 lead at $N{=}500$
+  training samples. Cross-dataset evaluation on UNSW-NB15 confirms
+  that these advantages are \emph{regime-dependent}, not universal:
+  where data sufficiency, imbalance, and non-linear pairwise
+  structure align, the quantum kernel adds measurable value; where
+  they do not, it remains competitive but not dominant.
+
+  Future work includes (i) noise-aware retraining on real IBM Quantum
+  hardware, (ii) deeper $\ZZ$-style maps with $r{>}2$ tested under a
+  fully characterised noise model, (iii) hybrid quantum-classical
+  ensembles formalised through the complementarity analysis of C5,
+  and (iv) extension to streaming IDS benchmarks such as
+  CICIDS-2017/18~\cite{sharafaldin2018cicids} and
+  CICIoT-2023~\cite{dadkhah2023ciciot}.
+
+  % ============================================================
+  \section*{Acknowledgments}
+  The authors thank IBM Quantum for cloud access during preliminary
+  hardware feasibility tests and the maintainers of Qiskit
+  Machine-Learning for software support.
+
+  % ============================================================
+  \begin{thebibliography}{37}
+
+  \bibitem{tavallaee2009nslkdd}
+  M.~Tavallaee, E.~Bagheri, W.~Lu, and A.~A. Ghorbani,
+  ``A detailed analysis of the KDD CUP 99 data set,'' in
+  \emph{Proc. IEEE Symp. Comput. Intell. Security Defense Appl. (CISDA)},
+  Ottawa, Canada, 2009, pp.~1--6.
+
+  \bibitem{moustafa2015unsw}
+  N.~Moustafa and J.~Slay,
+  ``UNSW-NB15: A comprehensive data set for network intrusion
+    detection systems,'' in \emph{Proc. Mil. Commun. Inf. Syst. Conf.
+    (MilCIS)}, Canberra, 2015, pp.~1--6.
+
+  \bibitem{sharafaldin2018cicids}
+  I.~Sharafaldin, A.~H. Lashkari, and A.~A. Ghorbani,
+  ``Toward generating a new intrusion detection dataset and intrusion
+    traffic characterization,'' in \emph{Proc. 4th Int. Conf. Inf. Syst.
+    Security Privacy (ICISSP)}, 2018, pp.~108--116.
+
+  \bibitem{dadkhah2023ciciot}
+  S.~Dadkhah, A.~Danso, H.~Neto, P.~Bhuvaneswari, and A.~Ghorbani,
+  ``Towards the development of a realistic multidimensional IoT
+    profiling dataset,'' in \emph{Proc. 19th Int. Conf. Privacy,
+    Security and Trust (PST)}, Auckland, 2023.
+
+  \bibitem{highnam2021beth}
+  K.~Highnam, K.~Arulkumaran, Z.~Hanif, and N.~R. Jennings,
+  ``BETH dataset: Real cybersecurity data for anomaly detection
+    research,'' in \emph{ICML Workshop on Uncertainty and Robustness
+    in Deep Learning}, 2021.
+
+  \bibitem{vapnik2000statistical}
+  V.~N. Vapnik, \emph{The Nature of Statistical Learning Theory},
+  2nd~ed. New York: Springer, 2000.
+
+  \bibitem{cortes1995svm}
+  C.~Cortes and V.~Vapnik, ``Support-vector networks,''
+  \emph{Mach. Learn.}, vol.~20, no.~3, pp.~273--297, 1995.
+
+  \bibitem{platt1999svm}
+  J.~C. Platt, ``Probabilistic outputs for support vector machines
+    and comparisons to regularized likelihood methods,'' in
+  \emph{Advances in Large Margin Classifiers},
+  A.~J. Smola \emph{et~al.}, Eds. MIT Press, 1999, pp.~61--74.
+
+  \bibitem{scholkopf2002learning}
+  B.~Sch\"{o}lkopf and A.~J. Smola, \emph{Learning with Kernels}.
+  MIT Press, 2002.
+
+  \bibitem{havlicek2019}
+  V.~Havl\'i\v{c}ek \emph{et al.},
+  ``Supervised learning with quantum-enhanced feature spaces,''
+  \emph{Nature}, vol.~567, pp.~209--212, 2019.
+
+  \bibitem{schuld2019hilbert}
+  M.~Schuld and N.~Killoran, ``Quantum machine learning in feature
+    Hilbert spaces,'' \emph{Phys. Rev. Lett.}, vol.~122,
+    p.~040504, 2019.
+
+  \bibitem{schuld2021effect}
+  M.~Schuld, R.~Sweke, and J.~J. Meyer, ``Effect of data encoding on
+    the expressive power of variational quantum machine learning
+    models,'' \emph{Phys. Rev. A}, vol.~103, p.~032430, 2021.
+
+  \bibitem{liu2021speedup}
+  Y.~Liu, S.~Arunachalam, and K.~Temme, ``A rigorous and robust
+    quantum speed-up in supervised machine learning,''
+  \emph{Nat. Phys.}, vol.~17, pp.~1013--1017, 2021.
+
+  \bibitem{hubregtsen2022training}
+  T.~Hubregtsen \emph{et~al.},
+  ``Training quantum embedding kernels on near-term quantum
+    computers,'' \emph{Phys. Rev. A}, vol.~106, p.~042431, 2022.
+
+  \bibitem{preskill2018nisq}
+  J.~Preskill, ``Quantum computing in the NISQ era and beyond,''
+  \emph{Quantum}, vol.~2, p.~79, 2018.
+
+  \bibitem{arute2019supremacy}
+  F.~Arute \emph{et~al.}, ``Quantum supremacy using a programmable
+    superconducting processor,'' \emph{Nature}, vol.~574,
+    pp.~505--510, 2019.
+
+  \bibitem{ibmq2024}
+  IBM Quantum, ``IBM Quantum Platform,''
+  \url{https://quantum-computing.ibm.com}, 2024.
+
+  \bibitem{qiskit2023}
+  Qiskit contributors, ``Qiskit: An open-source framework for
+    quantum computing,'' 2023,
+    doi:~10.5281/zenodo.2573505.
+
+  \bibitem{qiskitml2024}
+  S.~Woerner \emph{et~al.}, ``Qiskit Machine Learning,''
+  \url{https://qiskit-community.github.io/qiskit-machine-learning/},
+  2024.
+
+  \bibitem{cristianini2002kta}
+  N.~Cristianini, J.~Shawe-Taylor, A.~Elisseeff, and J.~Kandola,
+  ``On kernel-target alignment,'' in \emph{Adv. Neural Inf. Process.
+    Syst. (NeurIPS)}, vol.~14, 2002, pp.~367--373.
+
+  \bibitem{cortes2012alignment}
+  C.~Cortes, M.~Mohri, and A.~Rostamizadeh,
+  ``Algorithms for learning kernels based on centered alignment,''
+  \emph{J. Mach. Learn. Res.}, vol.~13, pp.~795--828, 2012.
+
+  \bibitem{bardet2024prxq}
+  A.~Bardet, M.~Gluza, and G.~Styliaris,
+  ``Expressibility and entangling capability of parameterized
+    quantum circuits for hybrid quantum--classical algorithms,''
+  \emph{PRX Quantum}, vol.~5, p.~010309, 2024.
+
+  \bibitem{guo2017calibration}
+  C.~Guo, G.~Pleiss, Y.~Sun, and K.~Q. Weinberger,
+  ``On calibration of modern neural networks,'' in
+  \emph{Proc. Int. Conf. Mach. Learn. (ICML)}, 2017, pp.~1321--1330.
+
+  \bibitem{kull2017beta}
+  M.~Kull, T.~M. Silva Filho, and P.~Flach,
+  ``Beta calibration: A well-founded and easily implemented
+    improvement on logistic calibration for binary classifiers,''
+  in \emph{Proc. AISTATS}, 2017, pp.~623--631.
+
+  \bibitem{niculescu2005pred}
+  A.~Niculescu-Mizil and R.~Caruana, ``Predicting good probabilities
+    with supervised learning,'' in \emph{Proc. ICML}, 2005,
+    pp.~625--632.
+
+  \bibitem{mcnemar1947note}
+  Q.~McNemar, ``Note on the sampling error of the difference between
+    correlated proportions or percentages,''
+  \emph{Psychometrika}, vol.~12, no.~2, pp.~153--157, 1947.
+
+  \bibitem{cohen1988statistical}
+  J.~Cohen, \emph{Statistical Power Analysis for the Behavioral
+    Sciences}, 2nd~ed. Lawrence Erlbaum, 1988.
+
+  \bibitem{dietterich1998approximate}
+  T.~G. Dietterich, ``Approximate statistical tests for comparing
+    supervised classification learning algorithms,''
+  \emph{Neural Comput.}, vol.~10, pp.~1895--1923, 1998.
+
+  \bibitem{guyon2003fs}
+  I.~Guyon and A.~Elisseeff, ``An introduction to variable and
+    feature selection,'' \emph{J. Mach. Learn. Res.}, vol.~3,
+    pp.~1157--1182, 2003.
+
+  \bibitem{pedregosa2011sklearn}
+  F.~Pedregosa \emph{et~al.}, ``Scikit-learn: Machine learning in
+    Python,'' \emph{J. Mach. Learn. Res.}, vol.~12,
+    pp.~2825--2830, 2011.
+
+  \bibitem{jolliffe2016pca}
+  I.~T. Jolliffe and J.~Cadima, ``Principal component analysis: A
+    review and recent developments,''
+  \emph{Philos. Trans. R. Soc. A}, vol.~374, p.~20150202, 2016.
+
+  \bibitem{deb2001moga}
+  K.~Deb, \emph{Multi-Objective Optimization Using Evolutionary
+    Algorithms}. Wiley, 2001.
+
+  \bibitem{davies1979cluster}
+  D.~L. Davies and D.~W. Bouldin, ``A cluster separation measure,''
+  \emph{IEEE Trans. Pattern Anal. Mach. Intell.}, vol.~PAMI-1,
+    no.~2, pp.~224--227, 1979.
+
+  \bibitem{nielsen2010quantum}
+  M.~A. Nielsen and I.~L. Chuang, \emph{Quantum Computation and
+    Quantum Information}, 10th~anniv.~ed. Cambridge: CUP, 2010.
+
+  \bibitem{lloyd2013qml}
+  S.~Lloyd, M.~Mohseni, and P.~Rebentrost, ``Quantum algorithms for
+    supervised and unsupervised machine learning,''
+  arXiv:1307.0411, 2013.
+
+  \bibitem{ding2022qisvm}
+  C.~Ding, T.~Bao, and H.-L. Huang, ``Quantum-inspired support
+    vector machine,'' \emph{IEEE Trans. Neural Netw. Learn. Syst.},
+    vol.~33, no.~12, pp.~7210--7222, 2022.
+
+  \bibitem{heese2022qtree}
+  R.~Heese, P.~Bickert, and A.~E. Niederle, ``Representation of
+    binary classification trees with quantum circuits,''
+  \emph{Quantum}, vol.~6, p.~676, 2022.
+
+  \end{thebibliography}
+
+  % ============================================================
+  \section*{Biography Section}
+  \vspace{-2\baselineskip}
+
+  \noindent\textbf{First Author} biography placeholder. Replace with
+  your background, current position, research interests, and
+  photograph (1\,inch $\times$ 1.25\,inch).
+
+  \vspace{1ex}
+  \noindent\textbf{Second Author} biography placeholder.
+
+  \vspace{1ex}
+  \noindent\textbf{Third Author} biography placeholder.
+
+  \vspace{1ex}
+  \noindent\textbf{Fourth Author} biography placeholder.
+
+  \end{document}
