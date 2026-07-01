@@ -13,7 +13,7 @@ import matplotlib.pyplot as plt
 from matplotlib.patches import FancyArrowPatch, FancyBboxPatch
 
 ROOT = Path(__file__).resolve().parent.parent
-OUT = ROOT / "paper2" / "figs" / "p2_fig_pipeline.png"
+OUT = ROOT / "paper" / "paper2" / "figs" / "p2_fig_pipeline.png"
 OUT.parent.mkdir(parents=True, exist_ok=True)
 
 
@@ -34,9 +34,9 @@ ax.set_xlim(0, 11); ax.set_ylim(0, 4.6); ax.axis("off")
 PRE = "#DBEAFE"; QK = "#EDE9FE"; CAL = "#FEF3C7"; MET = "#DCFCE7"; REG = "#FFE4E6"
 
 # Hàng 1: tiền xử lý zero-leakage (fit trên train) -----------------------------
-ax.text(0.1, 4.35, "Tiền xử lý zero-leakage (fit chỉ trên train)", fontsize=8.5,
+ax.text(0.1, 4.35, "Zero-leakage preprocessing (fit on train only)", fontsize=8.5,
         style="italic", color="#1e3a8a")
-pre = [("Raw NSL-KDD\n(122-d sau OHE)", 0.1), ("SelectKBest\nANOVA F, K=20", 2.25),
+pre = [("Raw NSL-KDD\n(122-d after OHE)", 0.1), ("SelectKBest\nANOVA F, K=20", 2.25),
        ("PCA\n4 components", 4.4), ("MinMax\n→ [0, π]", 6.1)]
 for txt, x in pre:
     box(ax, x, 3.55, 1.9 if x == 0.1 else 1.55, 0.65, txt, PRE)
@@ -45,14 +45,14 @@ arrow(ax, 3.8, 3.875, 4.4, 3.875)
 arrow(ax, 5.95, 3.875, 6.1, 3.875)
 
 # Hàng 2: 5 model phân loại ----------------------------------------------------
-ax.text(0.1, 3.15, "Bộ phân loại (matched-4D, cùng input)", fontsize=8.5,
+ax.text(0.1, 3.15, "Classifiers (matched-4D, same input)", fontsize=8.5,
         style="italic", color="#5b21b6")
-models = [("QSVM-ZZ\n4q, r=2, full", QK), ("SVM-RBF", QK), ("MLP\n(deep)", QK),
+models = [("QSVM-ZZ\n4q, r=2, full", QK), ("SVM-RBF", QK),
           ("Random\nForest", QK), ("XGBoost", QK)]
-mx = 0.1
+mx = 0.6
 for txt, fc in models:
-    box(ax, mx, 2.35, 1.45, 0.62, txt, fc)
-    mx += 1.62
+    box(ax, mx, 2.35, 1.7, 0.62, txt, fc)
+    mx += 1.95
 arrow(ax, 6.875, 3.55, 4.0, 2.97)  # từ MinMax xuống dải model
 
 # Hàng 3: Platt + metrics ------------------------------------------------------
@@ -65,7 +65,7 @@ arrow(ax, 2.5, 1.58, 3.1, 1.58)
 arrow(ax, 4.6, 1.58, 4.5, 1.58)
 
 # Hàng 4: 3 regime đánh giá ----------------------------------------------------
-ax.text(0.1, 0.95, "Chế độ đánh giá (regime)", fontsize=8.5, style="italic", color="#9f1239")
+ax.text(0.1, 0.95, "Evaluation regimes", fontsize=8.5, style="italic", color="#9f1239")
 regs = [("Rare attacks\nU2R ∪ R2L  (C1/C2)", 0.1), ("Prior shift\nBal/Atk/DoS  (C3)", 3.7),
         ("Low-data\nN=100..1000  (A1)", 7.3)]
 for txt, x in regs:
