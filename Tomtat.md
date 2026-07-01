@@ -1,80 +1,126 @@
-# TÓM TẮT PAPER 2 (cho bạn đọc nhanh)
+# Tóm tắt và giải thích Paper 2
 
-> Paper 2 = paper **dự phòng** cho Paper 1. Trục: **độ tin cậy / calibration** của QSVM,
-> so với **Deep Learning + Machine Learning** (không đấu accuracy vì QSVM thua mảng đó).
-> File LaTeX hoàn chỉnh: `paper2/main.tex` (+ `paper2/figs/`). Zip sẵn: `paper2.zip`.
-
----
-
-## 1. Đã làm đúng theo plan `paper2.md` chưa? → ~90%, có 1 điều chỉnh quan trọng
-
-| Mục trong `paper2.md` | Tình trạng |
-|---|---|
-| C1 — Calibration (ECE, Brier, Reliability Diagram) | ✅ Xong |
-| C2 — Rare-attack reliability (AUC-PR, PR) | ✅ Xong |
-| C3 — Reliability under prior shift (Balanced/Attack-heavy/DoS) | ✅ Xong |
-| C4 — Platt before/after | ✅ Xong |
-| A1 — Low-data reliability (ECE/Brier/AUC-PR theo N) | ✅ Xong |
-| **A2 — Temporal reliability** | ✅ **Đã làm** — ECE/Brier trên KDDTest-21 (5 model, 5 run); kết quả: mọi model degrade, QSVM cạnh tranh không dẫn đầu (đúng kỳ vọng) |
-| Baselines: QSVM-ZZ, SVM-RBF, RandomForest, XGBoost, **MLP** | ✅ Đủ (MLP plan ghi "optional" — bọn mình đưa vào luôn) |
-| "Reduce role of margin analysis" | ✅ **Bỏ hẳn** margin (vì kiểm chứng cho thấy claim margin cũ bị SAI/đảo dấu) |
-| Tasks C5/C4/C6 (Brier, Cohen's d, Platt, RF/XGB, đổi F1→ECE) | ✅ Làm hết |
-
-### ⚠️ Điều chỉnh quan trọng nhất so với kỳ vọng của plan
-Plan ngầm giả định "QSVM đáng tin hơn DL/ML nói chung". **Số liệu thật (đã verify) KHÁC:**
-QSVM chỉ **thắng calibration TRÊN TẤN CÔNG HIẾM (U2R/R2L)**; trên **toàn tập** (prior-shift,
-low-data, temporal) nó chỉ **cạnh tranh**, và **MLP thường calibrate tốt hơn**. Vì vậy narrative
-đã được chốt là **"regime-specific reliability"** (đáng tin nhất ở đúng nhóm hiếm/nguy hiểm),
-**không over-claim**. Đây là điểm phải nói rõ với reviewer — và may là đã phát hiện TRƯỚC khi viết.
+> Bản tóm tắt tiếng Việt đi kèm bài báo, giúp người đọc nắm nhanh nội dung và ý nghĩa
+> của Paper 2 trước khi đọc bản tiếng Anh đầy đủ.
 
 ---
 
-## 2. Chuẩn định dạng IEEE chưa? → RỒI
+## 1. Paper 2 là gì
 
-- Dùng `\documentclass[journal]{IEEEtran}` — **đúng template Paper 1** của thầy (cùng class, cùng macro, cùng kiểu bảng `booktabs`, cùng kiểu bibliography).
-- **8 section, phản chiếu đúng bộ khung Paper 1:** Introduction → Background & Related Work → Reliability Framework → Experimental Setup → Results → **Regime Map** → **Limitations** → Conclusion.
-- Có đủ thành phần học thuật như Paper 1: **2 Definition, 1 Proposition (Platt giữ ranking), 1 Assumption (NISQ 4-qubit), 1 Problem, 1 Algorithm**, bibliography 15 reference.
-- Đã kiểm tra tự động: mọi môi trường cân bằng, mọi `\ref`/`\cite`/`\label` khớp, không thiếu hình.
+Paper 2 là một **bài báo đồng hành (companion paper)** đi cùng Paper 1. Cả hai dùng chung
+bộ dữ liệu **NSL-KDD** và chung mô hình **QSVM bốn qubit với ZZFeatureMap**, nhưng trả lời
+hai câu hỏi khác nhau:
 
-## 3. Hình & bảng? → 9 hình + 8 bảng (tương đương Paper 1: 10 hình + 7 bảng)
+- **Paper 1:** *Khi nào QSVM thắng các mô hình cổ điển về hiệu năng (độ chính xác, F1)?*
+- **Paper 2:** *Liệu dự đoán của QSVM có đủ đáng tin cậy để triển khai trong một hệ thống
+  phát hiện xâm nhập thật hay không?*
 
-**9 hình:** (1) sơ đồ pipeline, (2) ECE/Brier rare, (3) reliability diagram, (4) forest plot Cohen's d,
-(5) AUC-PR vs Brier, (6) prior-shift, (7) low-data curves, (8) Platt before/after, (9) temporal (KDDTest-21).
-**8 bảng:** coverage công trình trước, notation, rare-attack reliability, Cohen's d, prior-shift, low-data, temporal, Platt.
-
-**Để ra PDF:** máy không có LaTeX nên phải build trên **Overleaf** (upload `paper2.zip` → Recompile).
-Hướng dẫn từng bước: `docs/HUONG_DAN_OVERLEAF.md`.
+Nói cách khác, Paper 1 quan tâm mô hình **đoán đúng đến đâu**, còn Paper 2 quan tâm khi mô
+hình báo "đây là tấn công với xác suất 90%" thì **con số 90% đó có đáng tin không**. Đây là
+hai trục đánh giá độc lập, nên hai bài báo bổ trợ nhau chứ không trùng lặp.
 
 ---
 
-## 4. Nội dung chính + khác gì Paper 1?
+## 2. Vì sao chọn hướng "độ tin cậy" thay vì tiếp tục so độ chính xác
 
-| | **Paper 1** (manuscript.pdf — của thầy) | **Paper 2** (mới) |
+Trên dữ liệu dạng bảng như NSL-KDD, các mô hình học máy mạnh (XGBoost, Random Forest) và
+mạng nơ-ron thường **chính xác hơn** một QSVM bị giới hạn ở bốn chiều. Nếu cố chứng minh
+"QSVM chính xác hơn deep learning / machine learning" thì rất khó thuyết phục và dễ bị phản
+biện bác bỏ.
+
+Vì vậy chúng tôi chuyển trọng tâm sang **calibration** (mức độ đáng tin của xác suất dự
+đoán). Đây là điểm QSVM thực sự có lợi thế, đồng thời là một **khoảng trống nghiên cứu**:
+gần như chưa có công trình nào đánh giá calibration của quantum kernel cho phát hiện xâm
+nhập, cũng chưa ai so QSVM với các mô hình cây mạnh trên trục này.
+
+---
+
+## 3. Paper 2 khác Paper 1 ở điểm nào
+
+| Tiêu chí | Paper 1 | Paper 2 |
 |---|---|---|
-| Câu hỏi | *Khi nào QSVM thắng HIỆU NĂNG?* | *Dự đoán QSVM có ĐÁNG TIN để triển khai?* |
-| Metric | F1-macro, KTA, accuracy | **ECE, Brier, AUC-PR (calibration)** |
-| Đối thủ | Chỉ SVM cổ điển (RBF/Poly/Linear) | **+ MLP (deep), RandomForest, XGBoost** |
-| Phạm vi | Cả framework C1–C4 (giảm chiều, ablation, robustness, sample complexity) | **Chỉ trục reliability** (khôi phục C5 calibration đã bị cắt khỏi Paper 1) |
-| Kết luận | Lợi thế hiệu năng theo regime | Lợi thế độ tin cậy theo regime |
-
-**Kết quả chính (số thật, 5 run NSL-KDD):**
-1. **Rare attacks:** QSVM đáng tin NHẤT — ECE_rare = **0.4503**, Brier_rare = **0.3288** (thấp nhất),
-   đánh bại cả DL lẫn tree. So với XGBoost/RF: effect cực lớn (Cohen's d = **1.9–3.6**). So với MLP:
-   thắng cả calibration lẫn ranking.
-2. **Toàn tập (prior-shift, low-data, temporal):** QSVM chỉ **cạnh tranh**, MLP thường tốt hơn → báo cáo trung thực. Riêng **temporal (KDDTest-21): mọi model degrade mạnh** (ECE vọt ~3×), QSVM hạng 2 sau MLP → đúng chỗ Paper 1 nói QSVM yếu.
-3. **Platt scaling** giúp QSVM/SVM nhưng làm hại tree/MLP → đóng góp phương pháp.
-4. **Điểm tinh tế:** RF/XGBoost rank tốt hơn (AUC-PR cao) nhưng **overconfident** (Brier gấp đôi QSVM)
-   → "rank giỏi ≠ đáng tin". Đây là thông điệp bán hàng của paper.
-
-**Liên hệ 2 paper:** khác trục rõ ràng (performance vs reliability) nên **an toàn**, không bị coi là
-trùng lặp/salami khi nộp IEEE. Paper 2 có thể: (a) nộp riêng như companion, hoặc (b) dùng kết quả
-DL/ML này để cứu Paper 1 nếu reviewer chê "thiếu so deep learning".
+| Câu hỏi | Khi nào QSVM thắng về **hiệu năng**? | Dự đoán QSVM có **đáng tin** không? |
+| Thước đo | F1, KTA, accuracy | **ECE, Brier score, AUC-PR** |
+| Đối thủ so sánh | Chỉ SVM cổ điển (RBF/Poly/Linear) | Thêm **Random Forest, XGBoost** |
+| Phạm vi | Cả khung sáu đóng góp | Chỉ **độ tin cậy / calibration** |
+| Kết luận | Lợi thế hiệu năng theo từng chế độ | Lợi thế độ tin cậy theo từng chế độ |
 
 ---
 
-## 5. Việc còn lại
-- [ ] Upload `paper2.zip` lên Overleaf → ra PDF (xem `docs/HUONG_DAN_OVERLEAF.md`).
-- [ ] Điền tên tác giả/affiliation/email thật (đang để theo nhóm Paper 1).
-- [ ] (Tùy chọn) Rà câu chữ abstract cho khớp văn phong manuscript.
+## 4. Phương pháp tóm tắt
 
-> ✅ A2 (temporal) đã hoàn tất → paper giờ đủ cả 4 contribution chính (C1–C4) + 2 additional (A1, A2) đúng như plan `paper2.md`.
+- **Quy trình chung, không rò rỉ dữ liệu:** mọi mô hình đi qua cùng một pipeline
+  (SelectKBest 20 đặc trưng → PCA 4 chiều → chuẩn hóa về `[0, π]`). Nhờ vậy, khác biệt giữa
+  các mô hình chỉ đến từ bản thân bộ phân loại, không phải từ khâu xử lý dữ liệu.
+- **Bốn mô hình so sánh:** QSVM-ZZ, SVM-RBF, Random Forest, XGBoost.
+- **Hiệu chỉnh công bằng:** mọi mô hình đều được Platt scaling (fit trên train, áp dụng trên
+  test) trước khi đo calibration.
+- **Thống kê chắc chắn:** trung bình qua **năm lần chạy** độc lập (mean ± độ lệch chuẩn), kèm
+  **Cohen's d** để đo độ lớn hiệu ứng.
+
+---
+
+## 5. Kết quả chính
+
+### 5.1. Nơi QSVM thắng rõ nhất — nhóm tấn công hiếm (U2R, R2L)
+
+Đây là nhóm dưới 1% dữ liệu, cũng là nhóm **nguy hiểm và khó nhất**. Trên nhóm này, QSVM cho
+xác suất **đáng tin nhất** (ECE và Brier thấp nhất):
+
+| Mô hình | ECE (thấp = tốt) | Brier (thấp = tốt) | AUC-PR | F1 |
+|---|---|---|---|---|
+| **QSVM-ZZ** | **0.450** | **0.329** | 0.931 | 0.776 |
+| SVM-RBF | 0.539 | 0.367 | 0.913 | 0.782 |
+| Random Forest | 0.647 | 0.629 | 0.947 | 0.785 |
+| XGBoost | 0.672 | 0.656 | 0.944 | 0.796 |
+
+Khoảng cách so với hai mô hình cây rất lớn (**Cohen's d từ 1.9 đến 3.6** — mức "hiệu ứng
+lớn"). QSVM cũng đáng tin nhất ở **điểm vận hành cân bằng** (ECE 0.099 — thấp nhất) và trong
+**điều kiện ít dữ liệu** (từ 200 mẫu trở lên).
+
+### 5.2. Nơi QSVM không dẫn đầu (báo cáo trung thực)
+
+Khi phân phối lệch mạnh (attack-heavy, DoS-only) và khi dữ liệu **trôi dạt theo thời gian**
+(KDDTest-21), QSVM chỉ ở mức **cạnh tranh**; Random Forest hiệu chỉnh tốt hơn. Chúng tôi nêu
+rõ các điểm thua này để tránh thổi phồng.
+
+### 5.3. Hai phát hiện đáng chú ý
+
+1. **Xếp hạng tốt không đồng nghĩa với đáng tin:** Random Forest và XGBoost xếp hạng (AUC-PR)
+   tốt hơn nhưng "quá tự tin" — Brier cao gần gấp đôi QSVM. Với hệ thống an ninh phải dựa vào
+   độ tin cậy của cảnh báo, đây là điểm bất lợi của mô hình cây.
+2. **Platt scaling chỉ hợp với mô hình dựa trên margin:** nó cải thiện calibration cho QSVM
+   và SVM, nhưng làm xấu đi calibration của mô hình cây.
+
+---
+
+## 6. Kết luận và ý nghĩa
+
+Thông điệp tổng quát là **"độ tin cậy theo từng chế độ" (regime-specific reliability)**: QSVM
+không phải mô hình chính xác nhất, nhưng là mô hình **đáng tin cậy nhất ở đúng những nơi khó
+và nguy hiểm nhất** — tấn công hiếm và điều kiện ít dữ liệu. Kết luận này song song với Paper 1
+(lợi thế hiệu năng cũng chỉ xuất hiện theo từng chế độ), nên hai bài củng cố lẫn nhau.
+
+---
+
+## 7. Quan hệ với Paper 1 và cách sử dụng
+
+Paper 2 đóng vai trò một **"lưới an toàn"** cho Paper 1, linh hoạt theo từng tình huống:
+
+| Tình huống Paper 1 | Vai trò của Paper 2 |
+|---|---|
+| **Bị từ chối** | Là một bài độc lập có thể nộp riêng, tăng cơ hội có ít nhất một bài được chấp nhận |
+| **Bị yêu cầu chỉnh sửa lớn** (ví dụ phản biện đòi so sánh với deep learning / machine learning) | Lấy ngay kết quả của Paper 2 để bổ sung và trả lời phản biện |
+| **Được chấp nhận** | Nộp tiếp như một bài đồng hành, trích dẫn chéo Paper 1 |
+
+Vì hai bài **khác trục rõ ràng** (hiệu năng và độ tin cậy), việc tồn tại song song là an toàn
+về mặt liêm chính học thuật, không bị xem là nộp trùng nội dung.
+
+---
+
+## 8. Ghi chú về phối hợp
+
+Phần đóng góp về robustness dưới **phân phối lệch và trôi dạt thời gian** (prior-shift và
+temporal) sử dụng kết quả do thành viên phụ trách *contribution 4* thực hiện; bài báo dùng
+đúng số liệu và hình của phần này. Các phần còn lại (calibration, tấn công hiếm, low-data,
+Platt scaling) do nhóm thực hiện trên cùng một khung đánh giá để bảo đảm tính nhất quán.
