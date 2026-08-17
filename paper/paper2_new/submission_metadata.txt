@@ -1,0 +1,71 @@
+========================================================================
+NOI DUNG DIEN FORM NOP BAI  ---  IJNM (Wiley Research Exchange)
+Copy-paste tung muc vao he thong. Tat ca da bo lenh LaTeX, dung ky tu thuong.
+========================================================================
+
+------------------------------------------------------------------------
+[1] ARTICLE TYPE
+------------------------------------------------------------------------
+Research Article  (neu khong co, chon: Original Article / Regular Paper)
+
+------------------------------------------------------------------------
+[2] TITLE
+------------------------------------------------------------------------
+Are Quantum-Kernel Intrusion Detectors Trustworthy? A Reliability and Calibration Benchmark of QSVM Against Strong Tabular Learners on NSL-KDD
+
+------------------------------------------------------------------------
+[3] ABSTRACT
+------------------------------------------------------------------------
+Quantum Support Vector Machines (QSVM) with the ZZ-FeatureMap are an actively studied near-term candidate for network intrusion detection (IDS), yet the literature evaluates them almost exclusively on accuracy and against classical SVM baselines. On tabular IDS data, gradient-boosted trees usually dominate accuracy, so an accuracy-only comparison misses the question that governs deployment: are the model's probabilistic alerts trustworthy? This companion paper reframes the evaluation around reliability and calibration and benchmarks a hardware-constrained four-qubit QSVM against the strongest tabular learners - Random Forest and XGBoost - alongside an SVM-RBF baseline, under one zero-leakage pipeline and one Platt-scaling protocol. Using a five-run protocol on NSL-KDD we report Expected Calibration Error (ECE), Brier score and AUC-PR with Cohen's d effect sizes. We establish a regime-specific reliability result: on the rare-attack union U2R+R2L, QSVM attains the lowest ECE (0.4503) and Brier (0.3288), beating both tree ensembles with a large effect (|d| = 1.9-3.6); under balanced class-prior shift and in the low-data regime (N >= 200) it is again the best-calibrated model. Under attack-heavy/DoS-only shift and under temporal drift (KDDTest-21) it is only competitive, with tree ensembles calibrating as well or better, a boundary we report explicitly. We also show that the tree ensembles obtain the highest AUC-PR yet the worst calibration - ranking quality and trustworthiness are distinct - and that Platt scaling improves margin-based models (QSVM/SVM) but degrades natively probabilistic trees. The picture parallels the regime-dependent accuracy advantage reported for the same QSVM: where alert trustworthiness on scarce, dangerous classes is the priority, the quantum kernel adds measurable value despite its accuracy trade-off.
+
+------------------------------------------------------------------------
+[4] KEYWORDS  (moi tu 1 dong, hoac ngan cach dau ; tuy form)
+------------------------------------------------------------------------
+Quantum machine learning
+Quantum support vector machine
+ZZ-FeatureMap
+NISQ
+Intrusion detection
+NSL-KDD
+Confidence calibration
+Expected calibration error
+Brier score
+Platt scaling
+Rare attacks
+XGBoost
+
+------------------------------------------------------------------------
+[5] AUTHORS  (dung thu tu nay; danh dau #2 la Corresponding Author)
+------------------------------------------------------------------------
+1. Nguyen Nang Hung Van
+   Affiliation: University of Science and Technology, The University of Danang, Danang, Vietnam
+
+2. Quan Tran Anh Vo   <-- CORRESPONDING AUTHOR (nguoi nop)
+   Affiliation: University of Science and Technology, The University of Danang, Danang, Vietnam
+   Email: votrananhquan1111@gmail.com
+   ORCID: (he thong tu dien tu tai khoan ORCID cua ban)
+
+3. Nguyen Quang Anh
+   Affiliation: University of Science and Technology, The University of Danang, Danang, Vietnam
+
+4. Minh Tuan Pham
+   Affiliation: University of Science and Technology, The University of Danang, Danang, Vietnam
+
+------------------------------------------------------------------------
+[6] FILES UPLOAD
+------------------------------------------------------------------------
+- Main Document      -> main.pdf        (bai bao, compile tu Overleaf)
+- Cover Letter       -> cover_letter.pdf
+(Neu form bat buoc tach: Title Page co the tach rieng, nhung PDF gop van chap nhan cho ban dau.)
+
+------------------------------------------------------------------------
+[7] KHAI BAO (DECLARATIONS)
+------------------------------------------------------------------------
+- Open Access?            -> NO  (chon subscription / traditional de MIEN PHI, tranh APC 2610 USD)
+- Conflict of Interest    -> None declared
+- Funding                 -> The University of Danang - University of Science and Technology, Project T2026-02-10TN
+- Data Availability       -> Public benchmark dataset NSL-KDD; code/artifacts available from the authors on request
+- Ethics (human/animal)   -> Not applicable (no human or animal subjects)
+- Suggested reviewers     -> (tuy chon, co the bo trong)
+
+========================================================================

@@ -4,3 +4,11 @@ data/raw/
 *.pkl
 .env
 /temp
+
+# Tai lieu de tai chua thong tin ca nhan (CCCD, tai khoan ngan hang) - KHONG commit
+docs/Mau thong tin HD de tai cap co so.docx
+docs/Phieu de xuat de tai SVNCKH 2025-2026 1.docx
+docs/Thuyet minh de tai ma so T2026-02-10TN.docx
+
+# File tam / reviewer proof / rac
+*reviewer*.pdf
