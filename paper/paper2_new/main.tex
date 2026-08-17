@@ -26,7 +26,7 @@
 \usepackage{array}
 \usepackage{pifont}
 \usepackage{url}
-\usepackage{hyperref}
+\usepackage[hidelinks]{hyperref}  % links/citations màu đen, không tô xanh
 \usepackage{siunitx}
 \sisetup{detect-all}
 
@@ -45,27 +45,36 @@
 \newcommand{\ECE}{\mathrm{ECE}}
 \newcommand{\Brier}{\mathrm{BS}}
 
+% Biography thủ công: ảnh + text cạnh nhau, khoảng cách CỐ ĐỊNH -> xếp sát, không bị dàn.
+\newcommand{\authorbio}[3]{%
+  \par\vspace*{11pt}\noindent
+  \begin{minipage}[t]{1in}\vspace*{0pt}\includegraphics[width=1in,keepaspectratio]{#1}\end{minipage}%
+  \hspace{7pt}%
+  \begin{minipage}[t]{\dimexpr\columnwidth-1.2in\relax}\vspace*{0pt}\textbf{#2}\ #3\end{minipage}\par}
+
 \begin{document}
+% Ép tắt flushbottom (IEEEtran/twocolumn) -> refs không bị dàn dọc.
+\let\flushbottom\raggedbottom
+\raggedbottom
 
 % ============================================================
 \title{Are Quantum-Kernel Intrusion Detectors Trustworthy?
   A Reliability and Calibration Benchmark of QSVM Against Strong
   Tabular Learners on NSL-KDD}
 
-\author{Minh~Tuan~Pham,~\IEEEmembership{Student~Member,~IEEE,}
-        Phuc~Hao~Do,~\IEEEmembership{Member,~IEEE,}
-        Nguyen~Nang~Hung~Van,
-        Quang~Anh~Nguyen,
-        and~Quan~Tran~Anh~Vo,~\IEEEmembership{Senior~Member,~IEEE}
+\author{Nguyen~Nang~Hung~Van,
+        Quan~Tran~Anh~Vo,
+        Nguyen~Quang~Anh,
+        and~Minh~Tuan~Pham
 \thanks{Manuscript received \today; revised \today. This work was
   supported by The University of Danang -- University of Science and
-  Technology. \textit{(Corresponding author: Quan Tran Anh Vo.)}}
+  Technology under Project T2026-02-10TN. \textit{(Corresponding author: Quan Tran Anh Vo.)}}
 \thanks{The authors are with The University of Danang -- University of
   Science and Technology, Danang, Vietnam (e-mail:
   votrananhquan1111@gmail.com).}}
 
-\markboth{IEEE Transactions on Emerging Topics in Computing,~Vol.~XX, No.~Y, Month~2026}%
-{Pham \MakeLowercase{\textit{et al.}}: Reliability and Calibration of Quantum-Kernel Intrusion Detection}
+\markboth{Manuscript under review,~Vol.~XX, No.~Y, Month~2026}%
+{Nguyen \MakeLowercase{\textit{et al.}}: Reliability and Calibration of Quantum-Kernel Intrusion Detection}
 
 \maketitle
 
@@ -752,24 +761,20 @@ quantum kernel is not the most accurate classifier, but it is the most
 operating point, and in the low-data regime, where its ECE and Brier
 scores are the lowest and the gap against tree ensembles is large. Under
 heavier prior shift and temporal drift it is competitive but not
-dominant, which we report transparently, and we show that Platt scaling
-is the right recalibration tool for margin-based quantum and SVM models
-but counterproductive for tree ensembles. For deployments where
-trustworthy alerts on scarce, dangerous classes are the priority, the
-quantum kernel adds measurable value despite its accuracy trade-off.
+dominant, and Platt scaling is the right recalibrator for margin-based
+quantum and SVM models but counterproductive for tree ensembles. For
+deployments where trustworthy alerts on scarce, dangerous classes are the
+priority, the quantum kernel adds measurable value despite its accuracy
+trade-off.
 
-Future work includes (i) reliability under real-hardware shot and
-coherent noise, (ii) hybrid ensembles that route rare-class confidence
-through \QSVM{} while retaining a tree ensemble's ranking, (iii)
-alternative recalibrators (isotonic, temperature scaling), and (iv)
-extension of the calibration study to UNSW-NB15 and streaming IDS
-benchmarks.
+Future work includes reliability under real-hardware noise, hybrid
+ensembles routing rare-class confidence through \QSVM{} while keeping a
+tree's ranking, alternative recalibrators (isotonic, temperature
+scaling), and extension to UNSW-NB15 and streaming IDS benchmarks.
 
 % ============================================================
-\section*{Acknowledgments}
-The authors thank the maintainers of Qiskit Machine-Learning,
-scikit-learn and XGBoost for open-source tooling.
-
+% Muc Acknowledgment rieng da bo theo yeu cau: cau tai tro + ma de tai
+% T2026-02-10TN da nam o footnote trang 1 (\thanks), khong lap lai o cuoi bai.
 % ============================================================
 \begin{thebibliography}{20}
 
@@ -855,5 +860,39 @@ M.~O. Kalinin and V.~M. Krundyshev,
 no.~1, pp.~125--136, 2023.
 
 \end{thebibliography}
+
+% ============================================================
+% TIỂU SỬ TÁC GIẢ
+% ============================================================
+\authorbio{author_hungvan.png}{Nguyen Nang Hung Van}{received the Ph.D. degree in
+Computer Science from The University of Danang, Vietnam, in 2021. He is currently a
+Lecturer with the Faculty of Information Technology, The University of Danang --
+University of Science and Technology, Danang, Vietnam. His research interests include
+artificial intelligence, machine learning, geometric algebra, quantum machine
+learning, and computer networking.}
+
+\authorbio{author_vo.png}{Quan Tran Anh Vo}{is currently a third-year undergraduate
+student pursuing the B.S. degree in Information Technology, majoring in Data Science
+and Artificial Intelligence, with The University of Danang -- University of Science
+and Technology, Danang, Vietnam, where he leads this research project. In this work he
+studied the expressibility of quantum kernels, the confidence calibration and
+reliability of predictions on rare attacks, the behaviour of the model in the low-data
+regime, and its generalization across datasets. His research interests include quantum
+machine learning and trustworthy machine learning for network intrusion detection.}
+
+\authorbio{author_qanh.png}{Nguyen Quang Anh}{is currently a third-year undergraduate
+student pursuing the B.S. degree in Information Technology at The University of Danang
+-- University of Science and Technology, Danang, Vietnam. He is a member of the
+research team behind this study, where he contributed to the experimental evaluation,
+data preparation, and analysis of the results. His research interests include quantum
+machine learning, machine learning for network security, and network intrusion
+detection.}
+
+\authorbio{author_pham.png}{Minh Tuan Pham}{received the Ph.D. degree in Computational
+Science and Engineering from Nagoya University, Japan, in 2012. He is currently a
+Lecturer with the Faculty of Information Technology, The University of Danang --
+University of Science and Technology, Danang, Vietnam. His research interests include
+artificial intelligence, soft computing, and geometric algebra, together with their
+applications to pattern recognition and data analysis.}
 
 \end{document}

@@ -1,0 +1,97 @@
+%==============================================================================
+%  Cover Letter -- Paper 2 (Reliability & Calibration of Quantum-Kernel IDS)
+%  GHI CHU: thay International Journal of Network Management bang ten tap chi Q2/Q3 da chon truoc khi nop.
+%  Compile tren Overleaf: pdfLaTeX.
+%==============================================================================
+\documentclass[11pt]{letter}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[margin=1in]{geometry}
+\usepackage{newtxtext}                 % Times, dong bo voi bai bao
+\usepackage[hidelinks]{hyperref}       % link mau den, khong to xanh
+
+\signature{%
+  Quan Tran Anh Vo\\
+  (on behalf of all co-authors)\\
+  University of Science and Technology -- The University of Danang\\
+  Danang 550000, Vietnam\\
+  \href{mailto:votrananhquan1111@gmail.com}{votrananhquan1111@gmail.com}}
+
+\address{%
+  Quan Tran Anh Vo\\
+  University of Science and Technology\\
+  The University of Danang\\
+  Danang 550000, Vietnam}
+
+\begin{document}
+
+\begin{letter}{%
+  The Editor-in-Chief\\
+  \textit{International Journal of Network Management}}
+
+\opening{Dear Editor-in-Chief,}
+
+We are pleased to submit our manuscript entitled \textbf{``Are Quantum-Kernel
+Intrusion Detectors Trustworthy? A Reliability and Calibration Benchmark of QSVM
+Against Strong Tabular Learners on NSL-KDD''} for consideration as a regular paper
+in \textit{International Journal of Network Management}.
+
+Quantum Support Vector Machines (QSVM) with the ZZ-feature map have been proposed as
+a near-term quantum-machine-learning candidate for network intrusion detection (IDS).
+However, existing studies evaluate them almost exclusively on \emph{accuracy} and only
+against classical SVM baselines. On tabular IDS data, gradient-boosted trees and random
+forests usually dominate accuracy, so an accuracy-only comparison misses the question
+that actually governs deployment: whether the model's probabilistic alerts are
+\emph{trustworthy}.
+
+To address this gap, we reframe the evaluation around \emph{reliability and
+calibration}. We benchmark a hardware-constrained four-qubit QSVM against the strongest
+tabular learners -- Random Forest and XGBoost -- alongside an SVM-RBF baseline, under a
+single zero-leakage preprocessing pipeline and a single Platt-scaling protocol, so that
+observed differences are attributable to the classifier rather than to confounding
+experimental factors. Using a five-run protocol on NSL-KDD, we report Expected
+Calibration Error (ECE), Brier score, and AUC-PR with Cohen's $d$ effect sizes.
+
+Our central finding is a \emph{regime-specific reliability} result: on the rare-attack
+classes (User-to-Root and Remote-to-Local, under 1\% of the data and the most
+security-critical), the quantum kernel is the most trustworthy model, attaining the
+lowest ECE and Brier score with a large effect size against the tree ensembles. It is
+also best calibrated at a balanced operating point and in the low-data regime, while
+remaining only competitive under heavy prior shift and temporal drift -- results we
+report transparently, including where the quantum kernel does not lead. We further show
+that ranking quality and calibration are distinct (tree ensembles rank well yet are
+over-confident), and that Platt scaling is the appropriate recalibration tool for
+margin-based quantum and SVM models but not for tree ensembles.
+
+We believe this manuscript is well aligned with the scope of \textit{International Journal of Network Management}.
+It provides the first calibration-centric reliability study of a quantum kernel for
+intrusion detection, together with practical, deployment-oriented guidance on when such
+a model can be trusted -- a topic of growing relevance to readers working on machine
+learning for network security and on trustworthy AI.
+
+We confirm that:
+
+\begin{itemize}
+\item This manuscript is original and has not been published previously.
+\item The manuscript is not currently under consideration by any other journal or
+      conference.
+\item All authors have reviewed and approved the manuscript and agree with its
+      submission to \textit{International Journal of Network Management}.
+\item There are no conflicts of interest related to this work.
+\item The only self-citation is to our companion manuscript, which is clearly disclosed
+      as such in the reference list.
+\end{itemize}
+
+This manuscript was prepared in \LaTeX{}; as requested for initial submission, we
+provide a single compiled PDF for review and will supply the full \LaTeX{} source
+files upon revision.
+
+The corresponding author is \textbf{Quan Tran Anh Vo}
+(\href{mailto:votrananhquan1111@gmail.com}{votrananhquan1111@gmail.com}). We thank you
+and the reviewers in advance for your time and consideration, and we look forward to
+your response.
+
+\closing{Sincerely,}
+
+\end{letter}
+\end{document}
