@@ -17,10 +17,21 @@ import numpy as np
 # -- Thư mục gốc của project (nơi đặt file config.py này) --
 ROOT_DIR = Path(__file__).parent.resolve()
 
-# -- Thư mục dữ liệu --
-DATA_RAW_DIR       = ROOT_DIR / "data" / "raw"
-DATA_PROCESSED_DIR = ROOT_DIR / "data" / "processed_data"
-MULTI_RUN_DIR      = DATA_PROCESSED_DIR / "multi_run"
+# -- Thư mục dữ liệu (tổ chức theo dataset: data/nslkdd, data/unsw) --
+DATA_DIR = ROOT_DIR / "data"
+
+# NSL-KDD
+NSLKDD_RAW_DIR       = DATA_DIR / "nslkdd" / "raw"
+NSLKDD_PROCESSED_DIR = DATA_DIR / "nslkdd" / "processed_data"
+MULTI_RUN_DIR        = NSLKDD_PROCESSED_DIR / "multi_run"
+
+# UNSW-NB15
+UNSW_RAW_DIR       = DATA_DIR / "unsw" / "raw"
+UNSW_PROCESSED_DIR = DATA_DIR / "unsw" / "processed_data"
+
+# -- Alias tương thích ngược: code cũ dùng DATA_RAW_DIR / DATA_PROCESSED_DIR (trỏ NSL-KDD) --
+DATA_RAW_DIR       = NSLKDD_RAW_DIR
+DATA_PROCESSED_DIR = NSLKDD_PROCESSED_DIR
 
 # -- Thư mục model và kết quả --
 MODELS_DIR    = ROOT_DIR / "models"
@@ -37,12 +48,12 @@ NSLKDD_TEST_CLEAN  = DATA_PROCESSED_DIR / "NSL_KDD_Test_Cleaned.csv"
 
 # -- Đường dẫn đa dataset (dùng cho PCA generalization, C4+) --
 TRAIN_DATA_PATHS = {
-    "NSL-KDD"  : DATA_PROCESSED_DIR / "NSL_KDD_Train_Cleaned.csv",
-    "UNSW-NB15": DATA_PROCESSED_DIR / "UNSW_NB15_Train_Selected.csv",
+    "NSL-KDD"  : NSLKDD_PROCESSED_DIR / "NSL_KDD_Train_Cleaned.csv",
+    "UNSW-NB15": UNSW_PROCESSED_DIR / "UNSW_Train_Cleaned.parquet",
 }
 TEST_DATA_PATHS = {
-    "NSL-KDD"  : DATA_PROCESSED_DIR / "NSL_KDD_Test_Cleaned.csv",
-    "UNSW-NB15": DATA_PROCESSED_DIR / "UNSW_NB15_Test_Selected.csv",
+    "NSL-KDD"  : NSLKDD_PROCESSED_DIR / "NSL_KDD_Test_Cleaned.csv",
+    "UNSW-NB15": UNSW_PROCESSED_DIR / "UNSW_Test_Cleaned.parquet",
 }
 
 # -- Đường dẫn artifact đã lưu --
