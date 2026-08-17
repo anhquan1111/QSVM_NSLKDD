@@ -53,11 +53,12 @@ Chạy top-to-bottom: `preprocess` → `selectkbest_nslkdd` (C1) → `pca` (C1) 
 `c5_confidence_calibration_multirun`.
 > Kết quả UNSW: QSVM **competitive, không dominant** — lợi thế NSL-KDD phụ thuộc regime/dataset.
 
-## Setup
+## Setup (uv)
 ```bash
-python -m venv venv && source venv/Scripts/activate
-pip install -r requirements.txt
+uv sync                 # tạo .venv + cài theo uv.lock (nhanh)
+uv run jupyter notebook # chạy notebook trong env
 ```
+Dự án dùng **uv** (`pyproject.toml` + `uv.lock`). Thêm gói: `uv add <pkg>`.
 
 ## Tái lập Paper 2 (reliability)
 ```bash
