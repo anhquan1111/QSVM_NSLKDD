@@ -33,10 +33,13 @@ UNSW_PROCESSED_DIR = DATA_DIR / "unsw" / "processed_data"
 DATA_RAW_DIR       = NSLKDD_RAW_DIR
 DATA_PROCESSED_DIR = NSLKDD_PROCESSED_DIR
 
-# -- Thư mục model và kết quả --
-MODELS_DIR    = ROOT_DIR / "models"
-QSVM_CACHE_DIR = MODELS_DIR / "qsvm_cache"
-REPORTS_DIR   = ROOT_DIR / "reports"
+# -- Thư mục model và kết quả (tổ chức theo dataset) --
+MODELS_DIR        = ROOT_DIR / "models"
+NSLKDD_MODELS_DIR = MODELS_DIR / "nslkdd"
+UNSW_MODELS_DIR   = MODELS_DIR / "unsw"
+QSVM_CACHE_DIR    = NSLKDD_MODELS_DIR / "qsvm_cache"
+REPORTS_DIR       = ROOT_DIR / "reports"
+RESULTS_DIR       = ROOT_DIR / "results"
 
 # -- Đường dẫn dữ liệu thô NSL-KDD (đầu vào cho preprocess.ipynb) --
 NSLKDD_TRAIN_RAW = DATA_RAW_DIR / "KDDTrain+.txt"
@@ -58,13 +61,13 @@ TEST_DATA_PATHS = {
 
 # -- Đường dẫn artifact đã lưu --
 FEATURE_SELECTOR_PATHS = {
-    "NSL-KDD"  : MODELS_DIR / "feature_selector_k20.joblib",
-    "UNSW-NB15": MODELS_DIR / "feature_selector_k20.joblib",
+    "NSL-KDD"  : NSLKDD_MODELS_DIR / "feature_selector_k20.joblib",
+    "UNSW-NB15": UNSW_MODELS_DIR / "feature_selector_unsw_k35.joblib",
 }
-PCA_MODEL_PATH  = MODELS_DIR / "pca_4components.joblib"
-SCALER_PATH     = MODELS_DIR / "scaler_minmax_pi.joblib"
-QSVM_MODEL_PATH = MODELS_DIR / "qsvm_model.pkl"
-CSVM_MODEL_PATH = MODELS_DIR / "csvm_model.pkl"
+PCA_MODEL_PATH  = NSLKDD_MODELS_DIR / "pca_4components.joblib"
+SCALER_PATH     = NSLKDD_MODELS_DIR / "scaler_minmax_pi.joblib"
+QSVM_MODEL_PATH = NSLKDD_MODELS_DIR / "qsvm_model.pkl"
+CSVM_MODEL_PATH = NSLKDD_MODELS_DIR / "csvm_model.pkl"
 
 # ════════════════════════════════════════════════════════════
 # 2. DATA SCHEMA
