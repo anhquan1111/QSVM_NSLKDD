@@ -1,4 +1,5 @@
 venv/
+.venv/
 __pycache__/
 data/nslkdd/raw/
 *.pkl
