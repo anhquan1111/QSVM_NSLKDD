@@ -47,8 +47,8 @@ from src.reliability import (  # noqa: E402
     transform_pipeline,
 )
 
-DATA_DIR = ROOT / "data" / "processed_data"
-MODELS_DIR = ROOT / "models"
+DATA_DIR = ROOT / "data" / "nslkdd" / "processed_data"
+MODELS_DIR = ROOT / "models" / "nslkdd"
 C5_CACHE = MODELS_DIR / "qsvm_cache" / "multirun_c5"
 P2_LOWDATA_CACHE = MODELS_DIR / "qsvm_cache" / "p2_lowdata"  # THƯ MỤC MỚI
 P2_LOWDATA_CACHE.mkdir(parents=True, exist_ok=True)
@@ -121,7 +121,7 @@ def run_prior_shift(feat_cols, art):
         sub = piv.loc[mix].sort_values("mean")
         for mdl, row in sub.iterrows():
             print(f"     {mdl:12s} {row['mean']:.4f} ± {row['std']:.4f}")
-    out = DATA_DIR / "p2_priorshift.json"
+    out = ROOT / "results" / "nslkdd" / "p2_priorshift.json"
     json.dump({"per_run": per_run}, open(out, "w", encoding="utf-8"), indent=2, ensure_ascii=False)
     print(f"[OK] → {out}")
 
@@ -172,7 +172,7 @@ def run_low_data(feat_cols, art):
     df = pd.DataFrame(rows)
     print("\nECE_full theo N (thấp = tốt):")
     print(df.pivot(index="N", columns="model", values="ece_full").round(4).to_string())
-    out = DATA_DIR / "p2_lowdata.json"
+    out = ROOT / "results" / "nslkdd" / "p2_lowdata.json"
     json.dump({"rows": rows}, open(out, "w", encoding="utf-8"), indent=2, ensure_ascii=False)
     print(f"[OK] → {out}")
 
@@ -218,7 +218,7 @@ def run_platt_before_after(feat_cols, art):
         sub = df[df["model"] == mdl]
         b, a = sub["ece_before"].mean(), sub["ece_after"].mean()
         print(f"{mdl:12s} {b:>14.4f} {a:>14.4f} {b-a:>12.4f}")
-    out = DATA_DIR / "p2_platt.json"
+    out = ROOT / "results" / "nslkdd" / "p2_platt.json"
     json.dump({"rows": rows}, open(out, "w", encoding="utf-8"), indent=2, ensure_ascii=False)
     print(f"[OK] → {out}")
 

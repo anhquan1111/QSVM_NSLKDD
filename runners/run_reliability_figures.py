@@ -30,11 +30,11 @@ import matplotlib.pyplot as plt  # noqa: E402
 
 from src.reliability import cohens_d  # noqa: E402
 
-DATA_DIR = ROOT / "data" / "processed_data"
-REPORTS_DIR = ROOT / "reports"
+DATA_DIR = ROOT / "data" / "nslkdd" / "processed_data"
+REPORTS_DIR = ROOT / "reports" / "nslkdd"
 REPORTS_DIR.mkdir(parents=True, exist_ok=True)
-IN_PATH = DATA_DIR / "p2_verify_calibration.json"
-OUT_STATS = DATA_DIR / "p2_calibration_stats.json"
+IN_PATH = ROOT / "results" / "nslkdd" / "p2_verify_calibration.json"
+OUT_STATS = ROOT / "results" / "nslkdd" / "p2_calibration_stats.json"
 
 MODEL_COLORS = {
     "QSVM": "#8B5CF6", "SVM-RBF": "#F59E0B", "MLP": "#3B82F6",
