@@ -61,7 +61,15 @@
       "Bash(xargs echo \"begin table*:\")",
       "Bash(xargs echo \"end table*:\")",
       "PowerShell($zip = \"D:\\\\QSVM_NSLKDD\\\\paper2.zip\"; if \\(Test-Path $zip\\) { Remove-Item $zip -Force }; Compress-Archive -Path \"D:\\\\QSVM_NSLKDD\\\\paper\\\\paper2\\\\main.tex\",\"D:\\\\QSVM_NSLKDD\\\\paper\\\\paper2\\\\figs\" -DestinationPath $zip; \"Re-zipped: $\\([math]::Round\\(\\(Get-Item $zip\\).Length/1KB\\)\\) KB\")",
-      "PowerShell($zip = \"D:\\\\QSVM_NSLKDD\\\\paper2.zip\"; if \\(Test-Path $zip\\) { Remove-Item $zip -Force }; Compress-Archive -Path \"D:\\\\QSVM_NSLKDD\\\\paper\\\\paper2\\\\main.tex\",\"D:\\\\QSVM_NSLKDD\\\\paper\\\\paper2\\\\figs\" -DestinationPath $zip; \"Re-zipped \\(English figures\\): $\\([math]::Round\\(\\(Get-Item $zip\\).Length/1KB\\)\\) KB\")"
+      "PowerShell($zip = \"D:\\\\QSVM_NSLKDD\\\\paper2.zip\"; if \\(Test-Path $zip\\) { Remove-Item $zip -Force }; Compress-Archive -Path \"D:\\\\QSVM_NSLKDD\\\\paper\\\\paper2\\\\main.tex\",\"D:\\\\QSVM_NSLKDD\\\\paper\\\\paper2\\\\figs\" -DestinationPath $zip; \"Re-zipped \\(English figures\\): $\\([math]::Round\\(\\(Get-Item $zip\\).Length/1KB\\)\\) KB\")",
+      "Bash(git remote *)",
+      "Bash(gh repo *)",
+      "Bash(xargs echo \"số hình:\")",
+      "Bash(git mv *)",
+      "Bash(mkdir -p \"_PRIVATE_move_out_of_repo\")",
+      "Bash(mv docs/Mau*.docx docs/Phieu*.docx docs/Thuyet*.docx \"_PRIVATE_move_out_of_repo/\")",
+      "Bash(mv docs/NguyenNangHungVan.png docs/NguyenQuangAnh.png docs/PhamMinhTuan.png docs/VoTranAnhQuan.JPG \"_PRIVATE_move_out_of_repo/\")",
+      "Bash(mv paper/paper2/figs/author_hungvan.png paper/paper2/figs/author_pham.png paper/paper2/figs/author_qanh.png paper/paper2/figs/author_vo.png \"_PRIVATE_move_out_of_repo/\")"
     ],
     "additionalDirectories": [
       "d:\\QSVM_NSLKDD",
