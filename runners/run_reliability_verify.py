@@ -38,13 +38,13 @@ from src.reliability import (  # noqa: E402
     transform_pipeline,
 )
 
-DATA_DIR = ROOT / "data" / "processed_data"
-MODELS_DIR = ROOT / "models"
+DATA_DIR = ROOT / "data" / "nslkdd" / "processed_data"
+MODELS_DIR = ROOT / "models" / "nslkdd"
 CACHE_DIR = MODELS_DIR / "qsvm_cache" / "multirun_c5"
 RUN_IDS = [1, 2, 3, 4, 5]
 TEST_PATH = DATA_DIR / "NSL_KDD_Test_Sample100.csv"
 CONFIG_TAG = "mr_c5_r2_full_cq1.0_crbf10.0_cpoly0.1_n1000_t100"
-OUT_PATH = DATA_DIR / "p2_verify_calibration.json"
+OUT_PATH = ROOT / "results" / "nslkdd" / "p2_verify_calibration.json"
 
 
 def main():

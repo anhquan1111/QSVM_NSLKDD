@@ -35,10 +35,10 @@ from src.reliability import (  # noqa: E402
     load_pipeline_artifacts, reliability_metrics, transform_pipeline,
 )
 
-DATA = ROOT / "data" / "processed_data"
-MODELS_DIR = ROOT / "models"
+DATA = ROOT / "data" / "nslkdd" / "processed_data"
+MODELS_DIR = ROOT / "models" / "nslkdd"
 FIGS = ROOT / "paper" / "paper2" / "figs"
-REPORTS = ROOT / "reports"
+REPORTS = ROOT / "reports" / "nslkdd"
 C5_CACHE = MODELS_DIR / "qsvm_cache" / "multirun_c5"
 LOWDATA_CACHE = MODELS_DIR / "qsvm_cache" / "p2_lowdata"
 CONFIG_TAG = "mr_c5_r2_full_cq1.0_crbf10.0_cpoly0.1_n1000_t100"
@@ -87,13 +87,13 @@ def main():
         for nm, mm in mods.items():
             m = reliability_metrics(mm, Xtr, ytr, Xte, yte, rare)
             m.update({"N": N, "model": nm}); rows.append(m)
-    json.dump({"rows": rows}, open(DATA / "p2_lowdata.json", "w", encoding="utf-8"),
+    json.dump({"rows": rows}, open(ROOT / "results" / "nslkdd" / "p2_lowdata.json", "w", encoding="utf-8"),
               indent=2, ensure_ascii=False)
     print("    -> p2_lowdata.json (4 model)")
 
     # ── 2. Đọc dữ liệu rare + platt (lọc 4 model) ────────────────────────────
-    verify = pd.DataFrame(json.load(open(DATA / "p2_verify_calibration.json", encoding="utf-8"))["per_run"])
-    platt = pd.DataFrame(json.load(open(DATA / "p2_platt.json", encoding="utf-8"))["rows"])
+    verify = pd.DataFrame(json.load(open(ROOT / "results" / "nslkdd" / "p2_verify_calibration.json", encoding="utf-8"))["per_run"])
+    platt = pd.DataFrame(json.load(open(ROOT / "results" / "nslkdd" / "p2_platt.json", encoding="utf-8"))["rows"])
     low = pd.DataFrame(rows)
 
     # ── 3. Hình rare ECE/Brier ───────────────────────────────────────────────
@@ -117,7 +117,7 @@ def main():
         cd[m] = {"d_ece_rare": cohens_d(q.ece_rare.values, b.ece_rare.values),
                  "d_brier_rare": cohens_d(q.brier_rare.values, b.brier_rare.values),
                  "d_auc_pr": cohens_d(q.auc_pr.values, b.auc_pr.values)}
-    json.dump(cd, open(DATA / "p2_calibration_stats.json", "w", encoding="utf-8"), indent=2, ensure_ascii=False)
+    json.dump(cd, open(ROOT / "results" / "nslkdd" / "p2_calibration_stats.json", "w", encoding="utf-8"), indent=2, ensure_ascii=False)
     cdf = pd.DataFrame(cd).T
     fig, a = plt.subplots(figsize=(8, 3.6)); ys = np.arange(len(cdf)); off = 0.18
     a.barh(ys + off, cdf.d_ece_rare, 0.34, color="#8B5CF6", label="d(ECE_rare)")

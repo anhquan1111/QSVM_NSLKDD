@@ -32,15 +32,15 @@ from src.reliability import (  # noqa: E402
     transform_pipeline,
 )
 
-DATA_DIR = ROOT / "data" / "processed_data"
-MODELS_DIR = ROOT / "models"
+DATA_DIR = ROOT / "data" / "nslkdd" / "processed_data"
+MODELS_DIR = ROOT / "models" / "nslkdd"
 C5_CACHE = MODELS_DIR / "qsvm_cache" / "multirun_c5"
 RUN_IDS = [1, 2, 3, 4, 5]
 CONFIG_TAG = "mr_c5_r2_full_cq1.0_crbf10.0_cpoly0.1_n1000_t100"
 TEST_PATH = DATA_DIR / "NSL_KDD_Test21_Cleaned.csv"
 # Subsample test cho QSVM eval nhanh, giữ phân bố lớp (đủ rare U2R/R2L)
 TEST_SUBSAMPLE = 2000
-OUT = DATA_DIR / "p2_temporal.json"
+OUT = ROOT / "results" / "nslkdd" / "p2_temporal.json"
 
 
 def main():
