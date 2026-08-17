@@ -49,7 +49,7 @@ uv run python ...          # chạy trong env (không cần activate)
 uv run jupyter notebook    # mở notebook
 # hoặc activate: source .venv/Scripts/activate  (Windows)
 ```
-Thêm gói: `uv add <pkg>` (tự cập nhật pyproject + lock). `requirements.txt` chỉ còn là bản legacy.
+Thêm gói: `uv add <pkg>` (tự cập nhật pyproject + lock). Cần `requirements.txt` cho pip? Sinh lại bằng `uv export --format requirements-txt > requirements.txt`.
 - **Notebook** là executable chính (`notebooks/nslkdd/`, `notebooks/unsw/`) — tự chứa, sinh hình + JSON.
 - **Runners** (Paper 2): `python runners/run_reliability_verify.py` (rồi recompute/temporal/figures).
 - **Kernel matrix rất chậm** (hàng giờ CPU) — LUÔN kiểm `models/*/qsvm_cache/` trước khi tính lại.
