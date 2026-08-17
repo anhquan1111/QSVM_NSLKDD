@@ -39,7 +39,11 @@ NSLKDD_MODELS_DIR = MODELS_DIR / "nslkdd"
 UNSW_MODELS_DIR   = MODELS_DIR / "unsw"
 QSVM_CACHE_DIR    = NSLKDD_MODELS_DIR / "qsvm_cache"
 REPORTS_DIR       = ROOT_DIR / "reports"
+NSLKDD_REPORTS_DIR = REPORTS_DIR / "nslkdd"
+UNSW_REPORTS_DIR   = REPORTS_DIR / "unsw"
 RESULTS_DIR       = ROOT_DIR / "results"
+NSLKDD_RESULTS_DIR = RESULTS_DIR / "nslkdd"
+UNSW_RESULTS_DIR   = RESULTS_DIR / "unsw"
 
 # -- Đường dẫn dữ liệu thô NSL-KDD (đầu vào cho preprocess.ipynb) --
 NSLKDD_TRAIN_RAW = DATA_RAW_DIR / "KDDTrain+.txt"
