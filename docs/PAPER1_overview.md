@@ -9,7 +9,10 @@
 - **Câu hỏi:** *Khi nào* và *vì sao* quantum kernel (4-qubit ZZFeatureMap) thắng SVM cổ điển — không chỉ báo cáo accuracy tổng.
 - **Tác giả (thứ tự đã nộp, KHÔNG được đổi):** Minh Tuan Pham → Phuc Hao Do → Nguyen Nang Hung Van → Quang Anh Nguyen → **Quan Tran Anh Vo** *(đứng cuối nhưng là **corresponding author**)*.
 
-## 2. Sáu đóng góp (C1–C6)
+## 2. Các đóng góp
+
+> ⚠️ **Lưu ý quan trọng:** đây là 6 đóng góp trong *khung nghiên cứu gốc*, nhưng **BÀI ĐÃ NỘP chỉ dùng ~5**: **C5 (calibration ECE/Brier/reliability) KHÔNG có trong Paper 1** (ECE/Brier/reliability = 0 lần) — đã **tách sang Paper 2**. Paper 1 dùng: C1 (Table III), C2/C3 (Table IV), C4 (Table V), C6 (Table VI), + shot-noise (Table VII) + regime map. "Rare-attack" trong Paper 1 là **margin-based** (trong C6), không phải calibration.
+
 | | Nội dung | Kết quả chính |
 |---|---|---|
 | **C1** | Giảm chiều 2 giai đoạn: SelectKBest + PCA tối ưu Pareto có tính chi phí qubit `Q(n)` | **K=20 + PCA 4D → F1=0.8989** (vs PCA 4D trực tiếp 0.8577). Chọn n=4 qubit trên Pareto front |
