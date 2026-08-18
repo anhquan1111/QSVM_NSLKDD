@@ -111,5 +111,10 @@ Cần thảo luận & phân biệt với bài mình:
 - **Pushback EiC:** thư cho phép báo EiC nếu ref reviewer gợi ý không liên quan. Với 2 bài Rev3, chọn **thêm + phân biệt** (an toàn hơn) hay **phản biện lên EiC**.
 - **Gộp Paper 1+2:** vẫn HOÃN — quyết sau khi Paper 1 xong.
 
+## 15. WORKFLOW & ràng buộc độ dài (CHỐT)
+- **GIỮ ≤ 12 trang** — KHÔNG vượt để **né phí MOPC** ($220/trang vượt). ⇒ mọi bổ sung (baseline, noise, UNSW, refs) phải **nén gọn**: dùng bảng/supplementary, cắt phần dài dòng, đẩy chi tiết phụ ra supplementary material (UNSW để supplementary — vừa đáp reviewer vừa không tốn trang chính).
+- **Phân công:** **thầy viết/sửa file .tex** (paper). **Nhóm (mình) làm thí nghiệm + phân tích, rồi xuất 1 file MD báo cáo toàn bộ** (kết quả mới, số liệu, hình, lập luận phản biện) để thầy dựa vào chèn vào paper. ⇒ đầu ra chính của mình mỗi bước = **cập nhật file MD báo cáo**, KHÔNG sửa .tex trực tiếp.
+- Gợi ý: file báo cáo đặt `docs/paper1_revision_report.md` — mỗi mục reviewer → việc đã làm → số liệu/hình → câu trả lời rebuttal đề xuất.
+
 ## Thứ tự đề xuất
 1) Mục 1 (liêm chính) → 2) Mục 7 refs + 5 theory → 3) Mục 2/3/8 (dùng lại tài sản có sẵn) → 4) Mục 4 (noise, làm mới) → 5) Mục 6/10 (viết lại claim + số liệu) → 6) Mục 12 (đóng gói + rebuttal).
