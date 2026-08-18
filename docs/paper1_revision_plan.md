@@ -97,5 +97,19 @@ Cần thảo luận & phân biệt với bài mình:
 
 ---
 
+## 13. BỔ SUNG (sau khi soát lại toàn văn thư reviewer — các điểm plan còn sót)
+- **13.1 Nền thống kê mỏng (Rev 2):** 5 seeds là yếu cho claim "large effect size" → tăng seed (5→10+) HOẶC bootstrap CI; báo cáo CI thực thay vì chỉ mean±std.
+- **13.2 Regime ÂM phải có stats tương xứng (Rev 2):** 2 regime QSVM thua (temporal, perturbation) hiện chỉ giải thích **định tính** ("wrapped phase encoding") trong khi 3 regime dương có full stats → thêm effect-size/CI cho regime âm, HOẶC **hạ giọng "regime map"** cho cân bằng (tránh cherry-picking).
+- **13.3 BẢO VỆ NOVELTY (Rev 3 = phiếu REJECT + AE nói "deviating novelty"):** phải viết rõ đóng góp KHÔNG phải kernel mới, mà là (a) phương pháp **regime-specific**, (b) Pareto **có chi phí qubit** (C1), (c) bộ **ablation + calibration + stress-test**. **Phân biệt tường minh** với arXiv:2403.07059 & 2409.04406 (2 bài Rev3 bảo "đã làm rồi") và QMI-2026 (Rev1). Đây là mục sống-còn vì R3 đòi từ chối.
+- **13.4 Table I (Rev 1):** cập nhật rõ literature **2025–2026** (không chỉ thêm vài ref lẻ).
+- **13.5 CatBoost:** Rev 1 nêu cùng TabNet/FT-Transformer — cân nhắc thêm nếu kịp.
+
+## 14. ⚠️ ĐIỂM CẦN THẢO LUẬN / quyết định trước khi làm
+- **MOPC (phí trang):** thêm baseline + noise + UNSW + bio tác giả → gần chắc **>12 trang ⇒ PHẢI TRẢ PHÍ MOPC**. Cần thầy đồng ý chi (khai trong cover letter) HOẶC nén nội dung. Quyết sớm.
+- **Ngân sách ref ≤ 45:** đếm ref hiện tại; thêm ~5 ref mới mà **KHÔNG được bỏ self-citation** → có thể phải cắt ref non-self khác. Kiểm tra ngay để khỏi vỡ.
+- **⚠️ Số Cohen's d rare N=500 VÊNH:** bài ghi **d = +0.68**, nhưng dữ liệu nội bộ cũ ghi **d = 0.4043**. Rev4 đòi đúng số này → **verify lại số thật** (chạy `run_reliability_*` / notebook C6) trước khi đưa vào rebuttal. Nếu bài in sai → sửa + giải trình.
+- **Pushback EiC:** thư cho phép báo EiC nếu ref reviewer gợi ý không liên quan. Với 2 bài Rev3, chọn **thêm + phân biệt** (an toàn hơn) hay **phản biện lên EiC**.
+- **Gộp Paper 1+2:** vẫn HOÃN — quyết sau khi Paper 1 xong.
+
 ## Thứ tự đề xuất
 1) Mục 1 (liêm chính) → 2) Mục 7 refs + 5 theory → 3) Mục 2/3/8 (dùng lại tài sản có sẵn) → 4) Mục 4 (noise, làm mới) → 5) Mục 6/10 (viết lại claim + số liệu) → 6) Mục 12 (đóng gói + rebuttal).
