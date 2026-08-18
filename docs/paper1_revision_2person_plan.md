@@ -4,7 +4,7 @@
 > Đưa bài đạt chuẩn nhận ở **TETC (Q1/Q2)**. Cốt lõi: **bỏ mọi phóng đại — làm chắc từng đóng góp bằng bằng chứng rigorous kiểu 2026 — định vị lại là "phương pháp regime-specific", KHÔNG phải "quantum advantage".**
 >
 > - 👤 **Người 1** → **C1, C2, C3** (nền toán + kernel)
-> - 👤 **Người 2** → **C4, C5, C6** + thí nghiệm mới cross-cutting
+> - 👤 **Người 2** → **C4, C6** + rare-attack (margin) + thí nghiệm mới cross-cutting *(C5 calibration đã ở Paper 2)*
 > - ✍️ Viết `.tex` là việc của **THẦY** (gom ở cuối) — ở đây chỉ ghi **CODE / thí nghiệm cần làm**.
 
 > [!warning] Ràng buộc chung
@@ -73,7 +73,7 @@
 
 ---
 
-# 👤 NGƯỜI 2 — C4 · C5 · C6 (+ cross-cutting)
+# 👤 NGƯỜI 2 — C4 · C6 + rare-attack (+ cross-cutting)
 
 ## 🔴 C4 — Robustness: stats cho MỌI regime (chống cherry-pick)
 > [!danger] Vấn đề (Reviewer 2 rất tinh)
@@ -91,21 +91,25 @@
 
 ---
 
-## 🔴 C5 — Calibration + số Rare-Attack
-> [!danger] Vấn đề (Reviewer 4)
-> Claim rare-attack N=500 *"+6.7 điểm, d=+0.68"* nhưng **không có bảng số** để kiểm chứng.
+## 🔴 Rare-Attack (margin-based) — thuộc C6, KHÔNG phải calibration
+> [!important] Làm rõ cấu trúc bài (bạn bạn hỏi đúng)
+> **Paper 1 KHÔNG có C5 calibration** (ECE/Brier/reliability = 0 lần trong bài — đã tách sang Paper 2).
+> Cái reviewer 4 đòi là **phân tích MARGIN trên rare-attack** (nằm trong phần sample-complexity/regime = C6), không phải ECE. ⇒ **không có "mục C5" để sửa** ở Paper 1.
 
-📁 `c5_confidence_calibration_multirun.ipynb`
+> [!danger] Vấn đề (Reviewer 4)
+> Claim *"rare-attack N=500: +6.7 điểm, Cohen's d = +0.68 trên per-sample decision margins"* nhưng **không có bảng số** để kiểm chứng.
+
+📁 `c6_learning_curve_sample_complexity.ipynb` *(rare-attack qua decision margin, KHÔNG dùng notebook calibration)*
 
 > [!todo] CODE cần làm
-> - [ ] Xuất **bảng số rare-attack (U2R∪R2L)**: F1/ECE/margin cho QSVM vs baseline, kèm **d + CI**.
-> - [ ] Đảm bảo định nghĩa/giá trị **nhất quán** với C6 & bảng chính.
+> - [ ] Xuất **bảng số rare-attack (U2R∪R2L)**: F1 + **|decision margin|** cho QSVM vs SVM-RBF ở N=500, kèm **Cohen's d + CI**.
+> - [ ] ==Chốt số d thật== (bài ghi +0.68, nội bộ 0.4043) — nhất quán với C6.
 
 > [!warning] Ranh giới Paper 2
-> Calibration sâu (ECE/Brier vs RF/XGBoost) ==để cho Paper 2==; Paper 1 chỉ nêu vừa đủ + **cite Paper 2**.
+> Toàn bộ **calibration (ECE/Brier/reliability vs RF/XGBoost) ĐÃ ở Paper 2** — Paper 1 chỉ cần margin-based rare-attack. Nếu muốn nhắc calibration thì **cite Paper 2**, KHÔNG thêm phân tích ECE mới (tránh trùng + tránh phình trang).
 
 > [!example] Output
-> Bảng rare-attack chuẩn (kiểm chứng được).
+> Bảng rare-attack margin (N=500) kiểm chứng được → nhập vào C6.
 
 ---
 
@@ -165,7 +169,7 @@
 > 1. 🔴 **Liêm chính + số:** C1 (bỏ Theorem/Pareto) · C6 (verify Cohen's d) · rà refs bịa.
 > 2. 🔴 **Bằng chứng mới:** X1 baseline · C2 noise · X2 UNSW.
 > 3. 🔴 **Fix phương pháp:** C3 QSVM C-sensitivity · C4 stats mọi regime · C2 concentration.
-> 4. 🟡 **Số & làm rõ:** C6 crossover / Bảng VI-IV · C5 bảng rare-attack.
+> 4. 🟡 **Số & làm rõ:** C6 crossover / Bảng VI-IV · bảng rare-attack margin (trong C6).
 > 5. Gom `docs/paper1_revision_report.md` → chuyển thầy.
 
 ---
