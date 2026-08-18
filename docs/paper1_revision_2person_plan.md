@@ -171,6 +171,7 @@
 > 3. 🔴 **Fix phương pháp:** C3 QSVM C-sensitivity · C4 stats mọi regime · C2 concentration.
 > 4. 🟡 **Số & làm rõ:** C6 crossover / Bảng VI-IV · bảng rare-attack margin (trong C6).
 > 5. Gom `docs/paper1_revision_report.md` → chuyển thầy.
+> 6. 🧹 **Dọn codebase lần cuối:** sau khi thêm noise/baseline/n-sweep/seed → tổ chức lại theo cấu trúc `{nslkdd,unsw}`, fix path, đảm bảo `uv sync` chạy được, README cập nhật → **repo public sạch để reviewer/trường check** (reproducibility, Rev4).
 
 ---
 
