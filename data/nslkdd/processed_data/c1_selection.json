@@ -1,0 +1,134 @@
+{
+  "dataset": "NSL-KDD",
+  "K": 20,
+  "candidate_n": [
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10
+  ],
+  "selection_rule": {
+    "variance_threshold": 0.85,
+    "kta_tolerance": 0.05,
+    "kta_reference": "maximum KTA among information-feasible dimensions",
+    "objective": "minimize CNOT-weighted hardware cost Q(n)"
+  },
+  "information_feasible_n": [
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10
+  ],
+  "kta_max_feasible": 0.2438648583659138,
+  "kta_max_feasible_n": 5,
+  "kta_threshold": 0.23167161544761808,
+  "kernel_quality_feasible_n": [
+    4,
+    5,
+    6
+  ],
+  "final_feasible_n": [
+    4,
+    5,
+    6
+  ],
+  "selected_n": 4,
+  "selected_hardware_cost": 0.14468085106382977,
+  "n_equals_manuscript_n4": true,
+  "variance": 0.8661869764328003,
+  "dbi": 1.084614054934069,
+  "inverse_dbi": 0.9219869459102551,
+  "hardware_cost": 0.14468085106382977,
+  "kernel_geometry": {
+    "KTA": 0.23641933146217248,
+    "KTA_max_feasible": 0.2438648583659138,
+    "KTA_max_feasible_n": 5,
+    "effective_rank": 28.49373845236018
+  },
+  "finite_shot_validation": {
+    "shots": 1024,
+    "role": "validation_only",
+    "D_noise": 0.0003210258690662382,
+    "delta_KTA": -0.0023996728464356076
+  },
+  "kernel_subset_seed": 42,
+  "kernel_subset_size": 300,
+  "noise_model": "finite_shot_sampling(shots=1024, seed=42)",
+  "threshold_sensitivity": {
+    "0.8": 3,
+    "0.85": 4,
+    "0.9": 5,
+    "0.95": 7
+  },
+  "pareto_analysis": {
+    "all_candidates_pareto_optimal": true,
+    "dominated_n": [],
+    "role": "diagnostic_only_not_used_for_selection"
+  },
+  "weight_sensitivity": {
+    "selected_n_frequency_pct": 3.4274193548387095,
+    "role": "supplementary_diagnostic_only_not_used_for_selection"
+  },
+  "artifacts": {
+    "pca": "pca_4components.joblib",
+    "scaler": "scaler_minmax_pi.joblib",
+    "dimension_metrics": "c1_dimension_metrics.csv",
+    "kernel_geometry": "c1_kernel_geometry.csv",
+    "noise_metrics": "c1_noise_metrics.csv",
+    "tradeoff_fig": "c1_tradeoff.png",
+    "kernel_quality_fig": "c1_kernel_quality.png",
+    "noise_robustness_fig": "c1_noise_robustness.png",
+    "kta_bootstrap_ci": "c1_kta_bootstrap_ci.csv",
+    "kta_bootstrap_ci_fig": "c1_kta_bootstrap_ci.png",
+    "shot_sensitivity": "c1_shot_sensitivity.csv",
+    "shot_sensitivity_fig": "c1_shot_sensitivity.png",
+    "epsilon_sensitivity": "c1_epsilon_sensitivity.csv"
+  },
+  "robustness_checks": {
+    "kta_tolerance_sensitivity": {
+      "epsilon_grid": [
+        0.02,
+        0.05,
+        0.1
+      ],
+      "n_star_stable": false,
+      "n_star_by_epsilon": {
+        "0.02": 5,
+        "0.05": 4,
+        "0.1": 4
+      }
+    },
+    "kta_bootstrap_ci": {
+      "n_bootstrap": 200,
+      "alpha": 0.05,
+      "ci_at_selected_n": {
+        "ci_low": 0.21186679152764437,
+        "ci_high": 0.27615166268990693
+      }
+    },
+    "shot_sensitivity": {
+      "shots_grid": [
+        256,
+        512,
+        1024
+      ],
+      "n_grid": [
+        4,
+        6,
+        10
+      ],
+      "reused_shots": 1024,
+      "trend_consistent": false
+    }
+  },
+  "frozen_for_downstream": true,
+  "notes": "Gate-level depolarizing/readout/thermal noise is not part of C1 selection; finite-shot analysis is reported as validation only."
+}
