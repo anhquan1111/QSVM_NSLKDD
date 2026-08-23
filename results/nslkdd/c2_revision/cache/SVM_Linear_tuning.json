@@ -1,0 +1,106 @@
+{
+  "chosen": {
+    "model": "SVM_Linear",
+    "params": {
+      "svc__C": 0.1
+    },
+    "mean_score": 0.8470121845304984,
+    "std_score": 0.01078388821000439,
+    "se_score": 0.004822701419865669,
+    "n_folds": 5,
+    "complexity": 0.1
+  },
+  "best": {
+    "model": "SVM_Linear",
+    "params": {
+      "svc__C": 0.1
+    },
+    "mean_score": 0.8470121845304984,
+    "std_score": 0.01078388821000439,
+    "se_score": 0.004822701419865669,
+    "n_folds": 5,
+    "complexity": 0.1
+  },
+  "threshold": 0.8421894831106328,
+  "rows": [
+    {
+      "model": "SVM_Linear",
+      "params": {
+        "svc__C": 0.1
+      },
+      "mean_score": 0.8470121845304984,
+      "std_score": 0.01078388821000439,
+      "se_score": 0.004822701419865669,
+      "n_folds": 5,
+      "complexity": 0.1
+    },
+    {
+      "model": "SVM_Linear",
+      "params": {
+        "svc__C": 0.3
+      },
+      "mean_score": 0.8460317914363238,
+      "std_score": 0.010102248110806998,
+      "se_score": 0.004517862700266655,
+      "n_folds": 5,
+      "complexity": 0.3
+    },
+    {
+      "model": "SVM_Linear",
+      "params": {
+        "svc__C": 0.5
+      },
+      "mean_score": 0.8460317914363238,
+      "std_score": 0.010102248110806998,
+      "se_score": 0.004517862700266655,
+      "n_folds": 5,
+      "complexity": 0.5
+    },
+    {
+      "model": "SVM_Linear",
+      "params": {
+        "svc__C": 1.0
+      },
+      "mean_score": 0.8465609136136394,
+      "std_score": 0.009413673425973402,
+      "se_score": 0.004209922739691972,
+      "n_folds": 5,
+      "complexity": 1.0
+    },
+    {
+      "model": "SVM_Linear",
+      "params": {
+        "svc__C": 3.0
+      },
+      "mean_score": 0.8461453710760107,
+      "std_score": 0.01078979031458501,
+      "se_score": 0.004825340921276184,
+      "n_folds": 5,
+      "complexity": 3.0
+    },
+    {
+      "model": "SVM_Linear",
+      "params": {
+        "svc__C": 5.0
+      },
+      "mean_score": 0.8466649533598126,
+      "std_score": 0.010387206775732693,
+      "se_score": 0.004645300089376942,
+      "n_folds": 5,
+      "complexity": 5.0
+    },
+    {
+      "model": "SVM_Linear",
+      "params": {
+        "svc__C": 10.0
+      },
+      "mean_score": 0.8466649533598126,
+      "std_score": 0.010387206775732693,
+      "se_score": 0.004645300089376942,
+      "n_folds": 5,
+      "complexity": 10.0
+    }
+  ],
+  "selection": "1SE",
+  "config_signature": "f3cfa32efc4f678a"
+}
