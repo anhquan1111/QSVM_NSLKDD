@@ -1,0 +1,241 @@
+{
+  "chosen": {
+    "model": "XGBoost",
+    "params": {
+      "learning_rate": 0.1,
+      "max_depth": 5,
+      "n_estimators": 500,
+      "subsample": 0.8
+    },
+    "mean_score": 0.9349162836405315,
+    "std_score": 0.010011383065590936,
+    "se_score": 0.004477226616690313,
+    "n_folds": 5
+  },
+  "best": {
+    "model": "XGBoost",
+    "params": {
+      "learning_rate": 0.1,
+      "max_depth": 5,
+      "n_estimators": 500,
+      "subsample": 0.8
+    },
+    "mean_score": 0.9349162836405315,
+    "std_score": 0.010011383065590936,
+    "se_score": 0.004477226616690313,
+    "n_folds": 5
+  },
+  "threshold": null,
+  "rows": [
+    {
+      "model": "XGBoost",
+      "params": {
+        "learning_rate": 0.03,
+        "max_depth": 3,
+        "n_estimators": 200,
+        "subsample": 0.8
+      },
+      "mean_score": 0.9189410884830395,
+      "std_score": 0.012184902258536228,
+      "se_score": 0.005449253949855544,
+      "n_folds": 5
+    },
+    {
+      "model": "XGBoost",
+      "params": {
+        "learning_rate": 0.03,
+        "max_depth": 3,
+        "n_estimators": 200,
+        "subsample": 1.0
+      },
+      "mean_score": 0.9159280459549185,
+      "std_score": 0.010234036009009724,
+      "se_score": 0.004576800040065278,
+      "n_folds": 5
+    },
+    {
+      "model": "XGBoost",
+      "params": {
+        "learning_rate": 0.03,
+        "max_depth": 3,
+        "n_estimators": 500,
+        "subsample": 0.8
+      },
+      "mean_score": 0.9259326020367009,
+      "std_score": 0.007648657918637667,
+      "se_score": 0.0034205838085431756,
+      "n_folds": 5
+    },
+    {
+      "model": "XGBoost",
+      "params": {
+        "learning_rate": 0.03,
+        "max_depth": 3,
+        "n_estimators": 500,
+        "subsample": 1.0
+      },
+      "mean_score": 0.9279463463391451,
+      "std_score": 0.00905033685444172,
+      "se_score": 0.00404743368516066,
+      "n_folds": 5
+    },
+    {
+      "model": "XGBoost",
+      "params": {
+        "learning_rate": 0.03,
+        "max_depth": 5,
+        "n_estimators": 200,
+        "subsample": 0.8
+      },
+      "mean_score": 0.9299441270400175,
+      "std_score": 0.005592451043752991,
+      "se_score": 0.0025010201389342674,
+      "n_folds": 5
+    },
+    {
+      "model": "XGBoost",
+      "params": {
+        "learning_rate": 0.03,
+        "max_depth": 5,
+        "n_estimators": 200,
+        "subsample": 1.0
+      },
+      "mean_score": 0.9304605058363224,
+      "std_score": 0.009242994686409989,
+      "se_score": 0.004133592886896417,
+      "n_folds": 5
+    },
+    {
+      "model": "XGBoost",
+      "params": {
+        "learning_rate": 0.03,
+        "max_depth": 5,
+        "n_estimators": 500,
+        "subsample": 0.8
+      },
+      "mean_score": 0.9339380931532733,
+      "std_score": 0.01140767303874252,
+      "se_score": 0.005101666475943973,
+      "n_folds": 5
+    },
+    {
+      "model": "XGBoost",
+      "params": {
+        "learning_rate": 0.03,
+        "max_depth": 5,
+        "n_estimators": 500,
+        "subsample": 1.0
+      },
+      "mean_score": 0.9319163075464555,
+      "std_score": 0.007160808352176295,
+      "se_score": 0.00320241084986289,
+      "n_folds": 5
+    },
+    {
+      "model": "XGBoost",
+      "params": {
+        "learning_rate": 0.1,
+        "max_depth": 3,
+        "n_estimators": 200,
+        "subsample": 0.8
+      },
+      "mean_score": 0.9284331243844288,
+      "std_score": 0.00821106838893729,
+      "se_score": 0.0036721014171126926,
+      "n_folds": 5
+    },
+    {
+      "model": "XGBoost",
+      "params": {
+        "learning_rate": 0.1,
+        "max_depth": 3,
+        "n_estimators": 200,
+        "subsample": 1.0
+      },
+      "mean_score": 0.9259241491596487,
+      "std_score": 0.005224439962746144,
+      "se_score": 0.0023364405802133695,
+      "n_folds": 5
+    },
+    {
+      "model": "XGBoost",
+      "params": {
+        "learning_rate": 0.1,
+        "max_depth": 3,
+        "n_estimators": 500,
+        "subsample": 0.8
+      },
+      "mean_score": 0.9314402355942759,
+      "std_score": 0.008410545502484783,
+      "se_score": 0.00376131029428222,
+      "n_folds": 5
+    },
+    {
+      "model": "XGBoost",
+      "params": {
+        "learning_rate": 0.1,
+        "max_depth": 3,
+        "n_estimators": 500,
+        "subsample": 1.0
+      },
+      "mean_score": 0.9294238022417387,
+      "std_score": 0.008377789155536644,
+      "se_score": 0.003746661210588099,
+      "n_folds": 5
+    },
+    {
+      "model": "XGBoost",
+      "params": {
+        "learning_rate": 0.1,
+        "max_depth": 5,
+        "n_estimators": 200,
+        "subsample": 0.8
+      },
+      "mean_score": 0.9309262767509334,
+      "std_score": 0.00979475444222471,
+      "se_score": 0.004380347351146497,
+      "n_folds": 5
+    },
+    {
+      "model": "XGBoost",
+      "params": {
+        "learning_rate": 0.1,
+        "max_depth": 5,
+        "n_estimators": 200,
+        "subsample": 1.0
+      },
+      "mean_score": 0.9319107607381778,
+      "std_score": 0.0071836796450272505,
+      "se_score": 0.003212639202972498,
+      "n_folds": 5
+    },
+    {
+      "model": "XGBoost",
+      "params": {
+        "learning_rate": 0.1,
+        "max_depth": 5,
+        "n_estimators": 500,
+        "subsample": 0.8
+      },
+      "mean_score": 0.9349162836405315,
+      "std_score": 0.010011383065590936,
+      "se_score": 0.004477226616690313,
+      "n_folds": 5
+    },
+    {
+      "model": "XGBoost",
+      "params": {
+        "learning_rate": 0.1,
+        "max_depth": 5,
+        "n_estimators": 500,
+        "subsample": 1.0
+      },
+      "mean_score": 0.933398747728635,
+      "std_score": 0.007640075424061681,
+      "se_score": 0.0034167456002854903,
+      "n_folds": 5
+    }
+  ],
+  "selection": "best_mean",
+  "config_signature": "f3cfa32efc4f678a"
+}
