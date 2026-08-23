@@ -1,0 +1,23 @@
+{
+  "c2_tuning_size": 2000,
+  "c2_tuning_seed": 200,
+  "c2_tuning_path": "../../data/nslkdd/processed_data/c2_tuning/train_tuning_2000.csv",
+  "n_runs": 10,
+  "run_size": 1000,
+  "run_seeds": [
+    100,
+    101,
+    102,
+    103,
+    104,
+    105,
+    106,
+    107,
+    108,
+    109
+  ],
+  "run_source": "train_pool = train_clean minus c2_tune",
+  "sampling_unit": "attack_category_stratified",
+  "tuning_disjoint_from_runs": true,
+  "note_c1_representation": "SelectKBest / PCA / MinMaxScaler were fit on full train_clean. c2_tune is non-overlapping only w.r.t. classifier training data, not w.r.t. representation fitting (C1 stage)."
+}

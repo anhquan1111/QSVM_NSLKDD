@@ -1,0 +1,106 @@
+{
+  "chosen": {
+    "model": "SVM_Poly2",
+    "params": {
+      "svc__C": 0.1
+    },
+    "mean_score": 0.8414757668402062,
+    "std_score": 0.009863279061966584,
+    "se_score": 0.004410992492721528,
+    "n_folds": 5,
+    "complexity": 0.1
+  },
+  "best": {
+    "model": "SVM_Poly2",
+    "params": {
+      "svc__C": 3.0
+    },
+    "mean_score": 0.8435505626773627,
+    "std_score": 0.01229646255812025,
+    "se_score": 0.0054991452325475676,
+    "n_folds": 5,
+    "complexity": 3.0
+  },
+  "threshold": 0.8380514174448151,
+  "rows": [
+    {
+      "model": "SVM_Poly2",
+      "params": {
+        "svc__C": 0.1
+      },
+      "mean_score": 0.8414757668402062,
+      "std_score": 0.009863279061966584,
+      "se_score": 0.004410992492721528,
+      "n_folds": 5,
+      "complexity": 0.1
+    },
+    {
+      "model": "SVM_Poly2",
+      "params": {
+        "svc__C": 0.3
+      },
+      "mean_score": 0.840962345920391,
+      "std_score": 0.009913934557080128,
+      "se_score": 0.004433646318823087,
+      "n_folds": 5,
+      "complexity": 0.3
+    },
+    {
+      "model": "SVM_Poly2",
+      "params": {
+        "svc__C": 0.5
+      },
+      "mean_score": 0.8419851898598342,
+      "std_score": 0.010125762320927016,
+      "se_score": 0.00452837857471977,
+      "n_folds": 5,
+      "complexity": 0.5
+    },
+    {
+      "model": "SVM_Poly2",
+      "params": {
+        "svc__C": 1.0
+      },
+      "mean_score": 0.8404628325086065,
+      "std_score": 0.010290709481026103,
+      "se_score": 0.00460214518725519,
+      "n_folds": 5,
+      "complexity": 1.0
+    },
+    {
+      "model": "SVM_Poly2",
+      "params": {
+        "svc__C": 3.0
+      },
+      "mean_score": 0.8435505626773627,
+      "std_score": 0.01229646255812025,
+      "se_score": 0.0054991452325475676,
+      "n_folds": 5,
+      "complexity": 3.0
+    },
+    {
+      "model": "SVM_Poly2",
+      "params": {
+        "svc__C": 5.0
+      },
+      "mean_score": 0.8394603131827758,
+      "std_score": 0.011491720594044342,
+      "se_score": 0.005139253685343482,
+      "n_folds": 5,
+      "complexity": 5.0
+    },
+    {
+      "model": "SVM_Poly2",
+      "params": {
+        "svc__C": 10.0
+      },
+      "mean_score": 0.8416354092533448,
+      "std_score": 0.015660650562586958,
+      "se_score": 0.007003655845962953,
+      "n_folds": 5,
+      "complexity": 10.0
+    }
+  ],
+  "selection": "1SE",
+  "config_signature": "f3cfa32efc4f678a"
+}

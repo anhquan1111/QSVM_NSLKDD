@@ -1,0 +1,33 @@
+{
+  "QSVM_ZZ": {
+    "C": 3.0,
+    "feature_map": "ZZFeatureMap",
+    "reps": 2,
+    "entanglement": "full"
+  },
+  "QSVM_Z": {
+    "C": 3.0,
+    "feature_map": "ZFeatureMap",
+    "reps": 2
+  },
+  "SVM_Linear": {
+    "svc__C": 0.1
+  },
+  "SVM_Poly2": {
+    "svc__C": 0.1
+  },
+  "SVM_RBF": {
+    "svc__C": 5.0
+  },
+  "RandomForest": {
+    "max_depth": null,
+    "min_samples_leaf": 1,
+    "n_estimators": 200
+  },
+  "XGBoost": {
+    "learning_rate": 0.1,
+    "max_depth": 5,
+    "n_estimators": 500,
+    "subsample": 0.8
+  }
+}
