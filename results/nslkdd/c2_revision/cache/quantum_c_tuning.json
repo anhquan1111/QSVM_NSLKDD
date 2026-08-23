@@ -1,0 +1,97 @@
+{
+  "chosen": {
+    "model": "QSVM_ZZ_tuning_for_shared_C",
+    "C": 3.0,
+    "mean_score": 0.9409300609585681,
+    "std_score": 0.013438781395539237,
+    "se_score": 0.006010005747037045,
+    "n_folds": 5,
+    "elapsed_sec": 96.94781255722046,
+    "complexity": 3.0
+  },
+  "best": {
+    "model": "QSVM_ZZ_tuning_for_shared_C",
+    "C": 3.0,
+    "mean_score": 0.9409300609585681,
+    "std_score": 0.013438781395539237,
+    "se_score": 0.006010005747037045,
+    "n_folds": 5,
+    "elapsed_sec": 96.94781255722046,
+    "complexity": 3.0
+  },
+  "threshold": 0.9349200552115311,
+  "rows": [
+    {
+      "model": "QSVM_ZZ_tuning_for_shared_C",
+      "C": 0.1,
+      "mean_score": 0.8938116700669216,
+      "std_score": 0.014150062651180937,
+      "se_score": 0.0063281003947842935,
+      "n_folds": 5,
+      "elapsed_sec": 98.08850049972534,
+      "complexity": 0.1
+    },
+    {
+      "model": "QSVM_ZZ_tuning_for_shared_C",
+      "C": 0.3,
+      "mean_score": 0.9129460669062244,
+      "std_score": 0.017461979587858903,
+      "se_score": 0.007809234676033254,
+      "n_folds": 5,
+      "elapsed_sec": 97.52177143096924,
+      "complexity": 0.3
+    },
+    {
+      "model": "QSVM_ZZ_tuning_for_shared_C",
+      "C": 0.5,
+      "mean_score": 0.9189601906432632,
+      "std_score": 0.01485784468627723,
+      "se_score": 0.006644630143529984,
+      "n_folds": 5,
+      "elapsed_sec": 97.38223505020142,
+      "complexity": 0.5
+    },
+    {
+      "model": "QSVM_ZZ_tuning_for_shared_C",
+      "C": 1.0,
+      "mean_score": 0.9249588843009569,
+      "std_score": 0.017051992959181396,
+      "se_score": 0.007625883081715479,
+      "n_folds": 5,
+      "elapsed_sec": 97.4319019317627,
+      "complexity": 1.0
+    },
+    {
+      "model": "QSVM_ZZ_tuning_for_shared_C",
+      "C": 3.0,
+      "mean_score": 0.9409300609585681,
+      "std_score": 0.013438781395539237,
+      "se_score": 0.006010005747037045,
+      "n_folds": 5,
+      "elapsed_sec": 96.94781255722046,
+      "complexity": 3.0
+    },
+    {
+      "model": "QSVM_ZZ_tuning_for_shared_C",
+      "C": 5.0,
+      "mean_score": 0.9339037063951727,
+      "std_score": 0.010855150393491058,
+      "se_score": 0.004854570837165919,
+      "n_folds": 5,
+      "elapsed_sec": 96.3294768333435,
+      "complexity": 5.0
+    },
+    {
+      "model": "QSVM_ZZ_tuning_for_shared_C",
+      "C": 10.0,
+      "mean_score": 0.9328918769613506,
+      "std_score": 0.009600880386072588,
+      "se_score": 0.004293644237420546,
+      "n_folds": 5,
+      "elapsed_sec": 96.37722682952881,
+      "complexity": 10.0
+    }
+  ],
+  "selection": "1SE",
+  "config_signature": "f3cfa32efc4f678a"
+}

@@ -1,0 +1,59 @@
+{
+  "selected_n": 4,
+  "reps": 2,
+  "n_runs": 10,
+  "run_ids_to_execute": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10
+  ],
+  "force_rerun": false,
+  "config_signature": "f3cfa32efc4f678a",
+  "train_size": 1000,
+  "test_size": 300,
+  "tuning_size": 2000,
+  "tuning_seed": 200,
+  "quantum_C": 3.0,
+  "C_ZZ": 3.0,
+  "C_Z": 3.0,
+  "delta_f1_mean": 0.01136002423336412,
+  "delta_f1_ci95": [
+    -0.0054082667196601875,
+    0.028128315186388426
+  ],
+  "delta_kta_mean": 0.1378072101942575,
+  "delta_kta_ci95": [
+    0.12673839944570334,
+    0.1488760209428117
+  ],
+  "noise_validation": {
+    "included": true,
+    "selection_independent": true,
+    "realistic_noise_validation": true,
+    "noisy_f1_available": true,
+    "noisy_kernel_changed": true
+  },
+  "checks": {
+    "C1_selected_n_is_4": true,
+    "is_pilot_run": false,
+    "10_training_runs": true,
+    "all_runs_1000": true,
+    "tuning_set_2000": true,
+    "tuning_disjoint_from_runs": true,
+    "C_ZZ_equals_C_Z": true,
+    "fixed_test_set": true,
+    "no_test_used_for_tuning": true,
+    "noise_not_used_for_selection": true,
+    "realistic_noise_validation": true,
+    "noisy_f1_available": true,
+    "noisy_kernel_changed": true
+  },
+  "status": "PASS"
+}

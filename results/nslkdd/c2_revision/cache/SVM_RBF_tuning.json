@@ -1,0 +1,106 @@
+{
+  "chosen": {
+    "model": "SVM_RBF",
+    "params": {
+      "svc__C": 5.0
+    },
+    "mean_score": 0.8895906605458416,
+    "std_score": 0.008550476898604949,
+    "se_score": 0.003823889517064448,
+    "n_folds": 5,
+    "complexity": 5.0
+  },
+  "best": {
+    "model": "SVM_RBF",
+    "params": {
+      "svc__C": 5.0
+    },
+    "mean_score": 0.8895906605458416,
+    "std_score": 0.008550476898604949,
+    "se_score": 0.003823889517064448,
+    "n_folds": 5,
+    "complexity": 5.0
+  },
+  "threshold": 0.8857667710287771,
+  "rows": [
+    {
+      "model": "SVM_RBF",
+      "params": {
+        "svc__C": 0.1
+      },
+      "mean_score": 0.8292981637386608,
+      "std_score": 0.005804665467803195,
+      "se_score": 0.002595925314530712,
+      "n_folds": 5,
+      "complexity": 0.1
+    },
+    {
+      "model": "SVM_RBF",
+      "params": {
+        "svc__C": 0.3
+      },
+      "mean_score": 0.8345906868211953,
+      "std_score": 0.005009964389927309,
+      "se_score": 0.0022405241881461447,
+      "n_folds": 5,
+      "complexity": 0.3
+    },
+    {
+      "model": "SVM_RBF",
+      "params": {
+        "svc__C": 0.5
+      },
+      "mean_score": 0.856967581530688,
+      "std_score": 0.01180187832451615,
+      "se_score": 0.005277960439159886,
+      "n_folds": 5,
+      "complexity": 0.5
+    },
+    {
+      "model": "SVM_RBF",
+      "params": {
+        "svc__C": 1.0
+      },
+      "mean_score": 0.868910365176923,
+      "std_score": 0.012562385979536808,
+      "se_score": 0.005618069801966916,
+      "n_folds": 5,
+      "complexity": 1.0
+    },
+    {
+      "model": "SVM_RBF",
+      "params": {
+        "svc__C": 3.0
+      },
+      "mean_score": 0.8828802963894307,
+      "std_score": 0.012753587150977921,
+      "se_score": 0.005703577565310901,
+      "n_folds": 5,
+      "complexity": 3.0
+    },
+    {
+      "model": "SVM_RBF",
+      "params": {
+        "svc__C": 5.0
+      },
+      "mean_score": 0.8895906605458416,
+      "std_score": 0.008550476898604949,
+      "se_score": 0.003823889517064448,
+      "n_folds": 5,
+      "complexity": 5.0
+    },
+    {
+      "model": "SVM_RBF",
+      "params": {
+        "svc__C": 10.0
+      },
+      "mean_score": 0.8888419026645252,
+      "std_score": 0.012752494195861499,
+      "se_score": 0.005703088780923566,
+      "n_folds": 5,
+      "complexity": 10.0
+    }
+  ],
+  "selection": "1SE",
+  "config_signature": "f3cfa32efc4f678a"
+}

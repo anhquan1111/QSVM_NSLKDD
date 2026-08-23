@@ -1,0 +1,100 @@
+{
+  "selected_n": 4,
+  "reps": 2,
+  "entanglement": "full",
+  "n_runs": 10,
+  "run_size": 1000,
+  "tuning_size": 2000,
+  "tuning_seed": 200,
+  "run_seeds": [
+    100,
+    101,
+    102,
+    103,
+    104,
+    105,
+    106,
+    107,
+    108,
+    109
+  ],
+  "cv_folds": 5,
+  "cv_scoring": "f1_macro",
+  "c_selection": "1SE",
+  "kta_sample_size": 200,
+  "kta_seed_base": 1000,
+  "c_candidates": [
+    0.1,
+    0.3,
+    0.5,
+    1.0,
+    3.0,
+    5.0,
+    10.0
+  ],
+  "rf_grid": {
+    "n_estimators": [
+      200,
+      500
+    ],
+    "max_depth": [
+      null,
+      10,
+      20
+    ],
+    "min_samples_leaf": [
+      1,
+      2
+    ]
+  },
+  "xgb_grid": {
+    "n_estimators": [
+      200,
+      500
+    ],
+    "max_depth": [
+      3,
+      5
+    ],
+    "learning_rate": [
+      0.03,
+      0.1
+    ],
+    "subsample": [
+      0.8,
+      1.0
+    ]
+  },
+  "fixed_test_path": "D:\\coding\\Research\\Quantum\\SVM\\data\\nslkdd\\processed_data\\NSL_KDD_Test_Sample300.csv",
+  "test_size": 300,
+  "random_state": 42,
+  "force_rerun": false,
+  "run_ids_to_execute": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10
+  ],
+  "quantum_backend": "FidelityStatevectorKernel",
+  "noise_validation_enabled": true,
+  "noise_shots": 512,
+  "noise_run_id": 1,
+  "noise_f1_test_size": 100,
+  "noise_backend_candidates": [
+    [
+      "qiskit_ibm_runtime.fake_provider",
+      "FakeManilaV2"
+    ],
+    [
+      "qiskit.providers.fake_provider",
+      "FakeManilaV2"
+    ]
+  ],
+  "config_signature": "f3cfa32efc4f678a"
+}
