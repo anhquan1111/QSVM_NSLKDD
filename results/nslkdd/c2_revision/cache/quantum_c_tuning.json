@@ -6,7 +6,7 @@
     "std_score": 0.013438781395539237,
     "se_score": 0.006010005747037045,
     "n_folds": 5,
-    "elapsed_sec": 96.94781255722046,
+    "elapsed_sec": 99.72936248779297,
     "complexity": 3.0
   },
   "best": {
@@ -16,7 +16,7 @@
     "std_score": 0.013438781395539237,
     "se_score": 0.006010005747037045,
     "n_folds": 5,
-    "elapsed_sec": 96.94781255722046,
+    "elapsed_sec": 99.72936248779297,
     "complexity": 3.0
   },
   "threshold": 0.9349200552115311,
@@ -28,7 +28,7 @@
       "std_score": 0.014150062651180937,
       "se_score": 0.0063281003947842935,
       "n_folds": 5,
-      "elapsed_sec": 98.08850049972534,
+      "elapsed_sec": 98.95750451087952,
       "complexity": 0.1
     },
     {
@@ -38,7 +38,7 @@
       "std_score": 0.017461979587858903,
       "se_score": 0.007809234676033254,
       "n_folds": 5,
-      "elapsed_sec": 97.52177143096924,
+      "elapsed_sec": 98.422039270401,
       "complexity": 0.3
     },
     {
@@ -48,7 +48,7 @@
       "std_score": 0.01485784468627723,
       "se_score": 0.006644630143529984,
       "n_folds": 5,
-      "elapsed_sec": 97.38223505020142,
+      "elapsed_sec": 98.36222887039185,
       "complexity": 0.5
     },
     {
@@ -58,7 +58,7 @@
       "std_score": 0.017051992959181396,
       "se_score": 0.007625883081715479,
       "n_folds": 5,
-      "elapsed_sec": 97.4319019317627,
+      "elapsed_sec": 98.64668798446655,
       "complexity": 1.0
     },
     {
@@ -68,7 +68,7 @@
       "std_score": 0.013438781395539237,
       "se_score": 0.006010005747037045,
       "n_folds": 5,
-      "elapsed_sec": 96.94781255722046,
+      "elapsed_sec": 99.72936248779297,
       "complexity": 3.0
     },
     {
@@ -78,7 +78,7 @@
       "std_score": 0.010855150393491058,
       "se_score": 0.004854570837165919,
       "n_folds": 5,
-      "elapsed_sec": 96.3294768333435,
+      "elapsed_sec": 98.89481377601624,
       "complexity": 5.0
     },
     {
@@ -88,10 +88,10 @@
       "std_score": 0.009600880386072588,
       "se_score": 0.004293644237420546,
       "n_folds": 5,
-      "elapsed_sec": 96.37722682952881,
+      "elapsed_sec": 98.28075194358826,
       "complexity": 10.0
     }
   ],
   "selection": "1SE",
-  "config_signature": "f3cfa32efc4f678a"
+  "config_signature": "a4c9352cd09072fc"
 }
