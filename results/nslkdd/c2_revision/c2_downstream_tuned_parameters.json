@@ -1,0 +1,144 @@
+{
+  "metadata": {
+    "source_notebook": "notebooks/nslkdd/C2_revision.ipynb",
+    "selection_note": "chosen_params là hyperparameters đã freeze để chạy downstream; best_mean_params là cấu hình có mean CV cao nhất.",
+    "tuning_set_size": 2000,
+    "cv_folds": 5,
+    "random_state": 42
+  },
+  "models": {
+    "QSVM_ZZ": {
+      "chosen_params": {
+        "C": 3.0,
+        "feature_map": "ZZFeatureMap",
+        "reps": 2,
+        "entanglement": "full"
+      },
+      "best_mean_params": {
+        "C": 3.0,
+        "feature_map": "ZZFeatureMap",
+        "reps": 2,
+        "entanglement": "full"
+      },
+      "tuning_summary": {
+        "selection": "1SE",
+        "threshold": 0.9349200552115311,
+        "chosen_mean_score": 0.9409300609585681,
+        "chosen_se_score": 0.006010005747037045,
+        "best_mean_score": 0.9409300609585681,
+        "best_se_score": 0.006010005747037045
+      }
+    },
+    "QSVM_Z": {
+      "chosen_params": {
+        "C": 3.0,
+        "feature_map": "ZFeatureMap",
+        "reps": 2
+      },
+      "best_mean_params": {
+        "C": 3.0,
+        "feature_map": "ZFeatureMap",
+        "reps": 2
+      },
+      "tuning_summary": {
+        "selection": "1SE",
+        "threshold": 0.9349200552115311,
+        "chosen_mean_score": 0.9409300609585681,
+        "chosen_se_score": 0.006010005747037045,
+        "best_mean_score": 0.9409300609585681,
+        "best_se_score": 0.006010005747037045,
+        "note": "QSVM_Z dùng cùng C được tune trên ZZ kernel theo protocol C2."
+      }
+    },
+    "SVM_Linear": {
+      "chosen_params": {
+        "svc__C": 0.1
+      },
+      "best_mean_params": {
+        "svc__C": 0.1
+      },
+      "tuning_summary": {
+        "selection": "1SE",
+        "threshold": 0.8421894831106328,
+        "chosen_mean_score": 0.8470121845304984,
+        "chosen_se_score": 0.004822701419865669,
+        "best_mean_score": 0.8470121845304984,
+        "best_se_score": 0.004822701419865669
+      }
+    },
+    "SVM_Poly2": {
+      "chosen_params": {
+        "svc__C": 0.1
+      },
+      "best_mean_params": {
+        "svc__C": 3.0
+      },
+      "tuning_summary": {
+        "selection": "1SE",
+        "threshold": 0.8380514174448151,
+        "chosen_mean_score": 0.8414757668402062,
+        "chosen_se_score": 0.004410992492721528,
+        "best_mean_score": 0.8435505626773627,
+        "best_se_score": 0.0054991452325475676
+      }
+    },
+    "SVM_RBF": {
+      "chosen_params": {
+        "svc__C": 5.0
+      },
+      "best_mean_params": {
+        "svc__C": 5.0
+      },
+      "tuning_summary": {
+        "selection": "1SE",
+        "threshold": 0.8857667710287771,
+        "chosen_mean_score": 0.8895906605458416,
+        "chosen_se_score": 0.003823889517064448,
+        "best_mean_score": 0.8895906605458416,
+        "best_se_score": 0.003823889517064448
+      }
+    },
+    "RandomForest": {
+      "chosen_params": {
+        "max_depth": null,
+        "min_samples_leaf": 1,
+        "n_estimators": 200
+      },
+      "best_mean_params": {
+        "max_depth": null,
+        "min_samples_leaf": 1,
+        "n_estimators": 200
+      },
+      "tuning_summary": {
+        "selection": "best_mean",
+        "threshold": null,
+        "chosen_mean_score": 0.9364460726502475,
+        "chosen_se_score": 0.005949516804700647,
+        "best_mean_score": 0.9364460726502475,
+        "best_se_score": 0.005949516804700647
+      }
+    },
+    "XGBoost": {
+      "chosen_params": {
+        "learning_rate": 0.1,
+        "max_depth": 5,
+        "n_estimators": 500,
+        "subsample": 0.8
+      },
+      "best_mean_params": {
+        "learning_rate": 0.1,
+        "max_depth": 5,
+        "n_estimators": 500,
+        "subsample": 0.8
+      },
+      "tuning_summary": {
+        "selection": "best_mean",
+        "threshold": null,
+        "chosen_mean_score": 0.9349162836405315,
+        "chosen_se_score": 0.004477226616690313,
+        "best_mean_score": 0.9349162836405315,
+        "best_se_score": 0.004477226616690313
+      }
+    }
+  }
+}

@@ -1,0 +1,117 @@
+{
+  "selected_n": 4,
+  "select_k": 20,
+  "reps": 2,
+  "entanglement": "full",
+  "n_runs": 10,
+  "train_size": 1000,
+  "eval_size": 1000,
+  "eval_min_rare": 30,
+  "rare_categories": [
+    "U2R",
+    "R2L"
+  ],
+  "run_ids": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10
+  ],
+  "run_seeds": [
+    100,
+    101,
+    102,
+    103,
+    104,
+    105,
+    106,
+    107,
+    108,
+    109
+  ],
+  "run_ids_to_execute": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10
+  ],
+  "pilot_mode": false,
+  "force_rerun": false,
+  "sigma_levels": [
+    0.0,
+    0.01,
+    0.05,
+    0.1,
+    0.2
+  ],
+  "prior_attack_fractions": [
+    0.3,
+    0.5,
+    0.7
+  ],
+  "temporal_sources": {
+    "KDDTestPlus": "D:\\coding\\Research\\Quantum\\SVM\\data\\nslkdd\\processed_data\\NSL_KDD_Test_Cleaned.csv",
+    "KDDTest21": "D:\\coding\\Research\\Quantum\\SVM\\data\\nslkdd\\processed_data\\NSL_KDD_Test21_Cleaned.csv"
+  },
+  "c1_selection_path": "D:\\coding\\Research\\Quantum\\SVM\\data\\nslkdd\\processed_data\\c1_selection.json",
+  "c1_artifacts": {
+    "feature_selector": "D:\\coding\\Research\\Quantum\\SVM\\models\\nslkdd\\feature_selector_k20.joblib",
+    "pca": "D:\\coding\\Research\\Quantum\\SVM\\models\\nslkdd\\pca_4components.joblib",
+    "angle_scaler": "D:\\coding\\Research\\Quantum\\SVM\\models\\nslkdd\\scaler_minmax_pi.joblib"
+  },
+  "c1_artifact_hashes": {
+    "feature_selector": "e072f5fc3be24f6be0cfb0b8030849405ad4eadc1d0cd2714d5ff68a26e970df",
+    "pca": "1a31c2fb2639fdbe8ba181d14c8f83e31b75bf695e987e2e0c945552ea16e00d",
+    "angle_scaler": "f4a5090ba9f07e2384771b6eb291aa46f2c78c6e5b958cfc5d0ae8e225855155"
+  },
+  "c2_contract_path": "D:\\coding\\Research\\Quantum\\SVM\\results\\nslkdd\\c2_revision\\c2_downstream_tuned_parameters.json",
+  "c2_config_path": "D:\\coding\\Research\\Quantum\\SVM\\results\\nslkdd\\c2_revision\\c2_config.json",
+  "quantum_backend": "FidelityStatevectorKernel_statevector_precomputed_SVC",
+  "preprocessing_protocol": "frozen_C1_SelectKBest_PCA4_MinMaxPi_transform_only",
+  "all_models": [
+    "QSVM_ZZ",
+    "QSVM_Z",
+    "SVM_Linear",
+    "SVM_Poly2",
+    "SVM_RBF",
+    "RandomForest",
+    "XGBoost"
+  ],
+  "all_baselines": [
+    "QSVM_Z",
+    "SVM_Linear",
+    "SVM_Poly2",
+    "SVM_RBF",
+    "RandomForest",
+    "XGBoost"
+  ],
+  "inferential_families": {
+    "entanglement": [
+      "QSVM_Z"
+    ],
+    "strong_tabular": [
+      "RandomForest",
+      "XGBoost"
+    ],
+    "classical_kernel": [
+      "SVM_RBF",
+      "SVM_Poly2",
+      "SVM_Linear"
+    ]
+  },
+  "multiple_testing_policy": "All QSVM_ZZ-vs-baseline comparisons are reported; Holm correction is applied within predefined baseline families for each stress experiment/metric.",
+  "statistics_unit": "run",
+  "config_signature": "82fd00a51dab5ebf"
+}

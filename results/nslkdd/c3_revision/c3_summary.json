@@ -1,0 +1,215 @@
+{
+  "status": "PASS",
+  "pilot_mode": false,
+  "config": {
+    "selected_n": 4,
+    "select_k": 20,
+    "reps": 2,
+    "entanglement": "full",
+    "n_runs": 10,
+    "train_size": 1000,
+    "eval_size": 1000,
+    "eval_min_rare": 30,
+    "rare_categories": [
+      "U2R",
+      "R2L"
+    ],
+    "run_ids": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10
+    ],
+    "run_seeds": [
+      100,
+      101,
+      102,
+      103,
+      104,
+      105,
+      106,
+      107,
+      108,
+      109
+    ],
+    "run_ids_to_execute": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10
+    ],
+    "pilot_mode": false,
+    "force_rerun": false,
+    "sigma_levels": [
+      0.0,
+      0.01,
+      0.05,
+      0.1,
+      0.2
+    ],
+    "prior_attack_fractions": [
+      0.3,
+      0.5,
+      0.7
+    ],
+    "temporal_sources": {
+      "KDDTestPlus": "D:\\coding\\Research\\Quantum\\SVM\\data\\nslkdd\\processed_data\\NSL_KDD_Test_Cleaned.csv",
+      "KDDTest21": "D:\\coding\\Research\\Quantum\\SVM\\data\\nslkdd\\processed_data\\NSL_KDD_Test21_Cleaned.csv"
+    },
+    "c1_selection_path": "D:\\coding\\Research\\Quantum\\SVM\\data\\nslkdd\\processed_data\\c1_selection.json",
+    "c1_artifacts": {
+      "feature_selector": "D:\\coding\\Research\\Quantum\\SVM\\models\\nslkdd\\feature_selector_k20.joblib",
+      "pca": "D:\\coding\\Research\\Quantum\\SVM\\models\\nslkdd\\pca_4components.joblib",
+      "angle_scaler": "D:\\coding\\Research\\Quantum\\SVM\\models\\nslkdd\\scaler_minmax_pi.joblib"
+    },
+    "c1_artifact_hashes": {
+      "feature_selector": "e072f5fc3be24f6be0cfb0b8030849405ad4eadc1d0cd2714d5ff68a26e970df",
+      "pca": "1a31c2fb2639fdbe8ba181d14c8f83e31b75bf695e987e2e0c945552ea16e00d",
+      "angle_scaler": "f4a5090ba9f07e2384771b6eb291aa46f2c78c6e5b958cfc5d0ae8e225855155"
+    },
+    "c2_contract_path": "D:\\coding\\Research\\Quantum\\SVM\\results\\nslkdd\\c2_revision\\c2_downstream_tuned_parameters.json",
+    "c2_config_path": "D:\\coding\\Research\\Quantum\\SVM\\results\\nslkdd\\c2_revision\\c2_config.json",
+    "quantum_backend": "FidelityStatevectorKernel_statevector_precomputed_SVC",
+    "preprocessing_protocol": "frozen_C1_SelectKBest_PCA4_MinMaxPi_transform_only",
+    "all_models": [
+      "QSVM_ZZ",
+      "QSVM_Z",
+      "SVM_Linear",
+      "SVM_Poly2",
+      "SVM_RBF",
+      "RandomForest",
+      "XGBoost"
+    ],
+    "all_baselines": [
+      "QSVM_Z",
+      "SVM_Linear",
+      "SVM_Poly2",
+      "SVM_RBF",
+      "RandomForest",
+      "XGBoost"
+    ],
+    "inferential_families": {
+      "entanglement": [
+        "QSVM_Z"
+      ],
+      "strong_tabular": [
+        "RandomForest",
+        "XGBoost"
+      ],
+      "classical_kernel": [
+        "SVM_RBF",
+        "SVM_Poly2",
+        "SVM_Linear"
+      ]
+    },
+    "multiple_testing_policy": "All QSVM_ZZ-vs-baseline comparisons are reported; Holm correction is applied within predefined baseline families for each stress experiment/metric.",
+    "statistics_unit": "run",
+    "config_signature": "82fd00a51dab5ebf"
+  },
+  "checks": {
+    "c1_artifacts_loaded": true,
+    "c1_artifact_hashes_in_signature": true,
+    "frozen_c1_transform_only": true,
+    "c2_hp_loaded": true,
+    "using_chosen_params_only": true,
+    "qsvm_kernel_params_from_c2_artifact": true,
+    "full_7_model_contract": true,
+    "inferential_families_complete": true,
+    "holm_family_policy_present": true,
+    "temporal_mcnemar_complete": true,
+    "expected_models_present": true,
+    "every_context_has_7_expected_models": true,
+    "10_training_runs": true,
+    "train_size_1000": true,
+    "eval_size_1000": true,
+    "manifest_expected_counts": true,
+    "no_c3_tuning": true,
+    "temporal_sets_fixed": true,
+    "perturbation_matched": true,
+    "prior_targets_exact": true,
+    "10_prior_runs_each": true,
+    "10_perturbation_runs": true,
+    "all_models_share_eval_subset": true,
+    "statistics_complete": true,
+    "full_run_audit_complete": true
+  },
+  "full_run_expected": {
+    "expected_models": [
+      "QSVM_ZZ",
+      "QSVM_Z",
+      "SVM_Linear",
+      "SVM_Poly2",
+      "SVM_RBF",
+      "RandomForest",
+      "XGBoost"
+    ],
+    "expected_model_count": 7,
+    "expected_contexts": {
+      "temporal": 20,
+      "perturbation": 50,
+      "prior_shift": 30,
+      "attack_composition": 10
+    },
+    "expected_result_rows": 770,
+    "observed_models": [
+      "QSVM_Z",
+      "QSVM_ZZ",
+      "RandomForest",
+      "SVM_Linear",
+      "SVM_Poly2",
+      "SVM_RBF",
+      "XGBoost"
+    ],
+    "observed_contexts_by_regime": {
+      "perturbation": 50,
+      "prior_shift": 30,
+      "temporal": 20,
+      "attack_composition": 10
+    },
+    "observed_result_rows_by_regime": {
+      "perturbation": 350,
+      "prior_shift": 210,
+      "temporal": 140,
+      "attack_composition": 70
+    },
+    "temporal_mcnemar_expected_rows": 120,
+    "temporal_mcnemar_observed_rows": 120,
+    "checks": {
+      "expected_models_present": true,
+      "every_context_has_7_expected_models": true,
+      "result_rows_full_expected": true,
+      "temporal_full_contexts": true,
+      "perturbation_full_contexts": true,
+      "prior_full_contexts": true,
+      "attack_composition_full_contexts": true,
+      "synthetic_conditions_have_10_runs": true,
+      "temporal_mcnemar_full": true
+    }
+  },
+  "artifacts": {
+    "config": "D:\\coding\\Research\\Quantum\\SVM\\results\\nslkdd\\c3_revision\\c3_config.json",
+    "frozen_hyperparameters": "D:\\coding\\Research\\Quantum\\SVM\\results\\nslkdd\\c3_revision\\c3_frozen_hyperparameters.json",
+    "manifest": "D:\\coding\\Research\\Quantum\\SVM\\results\\nslkdd\\c3_revision\\c3_eval_manifest.csv",
+    "temporal_per_run": "D:\\coding\\Research\\Quantum\\SVM\\results\\nslkdd\\c3_revision\\c3_temporal_per_run.csv",
+    "perturbation_per_run": "D:\\coding\\Research\\Quantum\\SVM\\results\\nslkdd\\c3_revision\\c3_perturbation_per_run.csv",
+    "prior_shift_per_run": "D:\\coding\\Research\\Quantum\\SVM\\results\\nslkdd\\c3_revision\\c3_prior_shift_per_run.csv",
+    "attack_composition_per_run": "D:\\coding\\Research\\Quantum\\SVM\\results\\nslkdd\\c3_revision\\c3_attack_composition_per_run.csv",
+    "pairwise_statistics": "D:\\coding\\Research\\Quantum\\SVM\\results\\nslkdd\\c3_revision\\c3_pairwise_statistics.csv",
+    "regime_summary": "D:\\coding\\Research\\Quantum\\SVM\\results\\nslkdd\\c3_revision\\c3_regime_summary.csv",
+    "temporal_mcnemar": "D:\\coding\\Research\\Quantum\\SVM\\results\\nslkdd\\c3_revision\\c3_temporal_mcnemar.csv",
+    "regime_map_main": "D:\\coding\\Research\\Quantum\\SVM\\results\\nslkdd\\c3_revision\\figures\\c3_regime_map_main_full_baselines.png",
+    "regime_map_supplementary": "D:\\coding\\Research\\Quantum\\SVM\\results\\nslkdd\\c3_revision\\figures\\c3_regime_map_supplementary_all_comparators.png"
+  }
+}

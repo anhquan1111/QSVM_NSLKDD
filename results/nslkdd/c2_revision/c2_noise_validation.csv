@@ -1,7 +1,7 @@
 condition,shots,model,kta,relative_frobenius_distance,f1_macro,selection_independent,noise_source,transpiled_depth,transpiled_op_counts
 ideal_statevector,statevector,QSVM_ZZ,0.19647228346612933,0.0,0.8897243107769424,True,,,
 ideal_statevector,statevector,QSVM_Z,0.07374436558214177,0.0,0.8298468621759583,True,,,
-ideal_finite_shot,512,QSVM_ZZ,0.19398210927276457,0.0991337720690445,0.8792270531400965,True,,,
-ideal_finite_shot,512,QSVM_Z,0.07398106337247054,0.0322531478086638,0.7996794871794872,True,,,
+ideal_finite_shot,512,QSVM_ZZ,0.19520421829163614,0.10952028849006744,0.8498648783905515,True,,,
+ideal_finite_shot,512,QSVM_Z,0.07374546813440425,0.027589974496065466,0.8798076923076923,True,,,
 realistic_noisy_simulator,512,QSVM_ZZ,0.14367364067380958,0.6304692183605701,0.8798076923076923,True,FakeManilaV2-derived (qiskit_ibm_runtime.fake_provider),70.0,"{'cx': 48, 'rz': 36, 'sx': 8}"
 realistic_noisy_simulator,512,QSVM_Z,0.07129817206375126,0.16577848166975623,0.8397435897435898,True,FakeManilaV2-derived (qiskit_ibm_runtime.fake_provider),8.0,"{'rz': 24, 'sx': 8}"
