@@ -2,7 +2,7 @@
 
 ## 0. Executive conclusion
 
-The final `C1_revision(2).ipynb` establishes a substantially stronger and more defensible C1 than the original manuscript.
+The final `C1_revision(7).ipynb` establishes a substantially stronger and more defensible C1 than the original manuscript.
 
 The original C1 claimed:
 
@@ -29,7 +29,7 @@ Candidate PCA/embedding dimensions n = 2,...,10
        {4,5,6}
         ↓
 3. Hardware-cost selection:
-       minimize CNOT-weighted Q(n)
+       minimize the CNOT-weighted hardware-cost proxy Q(n)
         ↓
        n* = 4
         ↓
@@ -39,6 +39,31 @@ Freeze n=4 for C2–C4
 Finite-shot analysis is retained as a separate validation/sanity check and is **not** part of the selection rule.
 
 This is the version of C1 that should be used as the source of truth for the manuscript revision.
+
+---
+
+# Final freeze decision
+
+**Status: FROZEN — C1_revision(7).ipynb**
+
+The corrected implementation was executed successfully after replacing the previous two-qubit interaction count with the decomposed CNOT count. The revised cost remains monotonic in the candidate dimension, the information-feasible and KTA-feasible sets are unchanged, and the final operating point remains **n=4**. The downstream contract therefore remains unchanged: **K=20, n=4, r=2**.
+
+The corrected hardware-cost definition is:
+
+\[
+N_{\mathrm{ZZ}}(n)=r\binom{n}{2},\qquad
+N_{\mathrm{CNOT}}(n)=2r\binom{n}{2},
+\]
+
+with the normalized cost
+
+\[
+Q(n)=\frac{N_{1q}(n)+5N_{\mathrm{CNOT}}(n)}{Q_{\max}}.
+\]
+
+For n=4 and r=2, this corresponds to 6 ZZ interaction pairs per layer, 12 CNOTs per layer, and 24 CNOTs across the two repetitions. The numerical Q(n) values and C1 artifacts were regenerated from this corrected implementation.
+
+**Freeze rule:** no further changes to the C1 selection methodology or frozen operating point should be made unless a new scientific issue is identified.
 
 ---
 
@@ -66,9 +91,9 @@ The executed C1 sweep produces:
 |---:|---:|---:|---:|---:|
 | 2 | 0.7418 | 0.8746 | 1.1434 | 0.0298 |
 | 3 | 0.8210 | 1.0179 | 0.9824 | 0.0766 |
-| **4** | **0.8662** | **1.0846** | **0.9220** | **0.1447** |
-| 5 | 0.9040 | 1.1311 | 0.8841 | 0.2340 |
-| 6 | 0.9391 | 1.1718 | 0.8534 | 0.3447 |
+| **4** | **0.8662** | **1.0846** | **0.9220** | **0.1391** |
+| 5 | 0.9040 | 1.1311 | 0.8841 | 0.2283 |
+| 6 | 0.9391 | 1.1718 | 0.8534 | 0.3391 |
 | 7 | 0.9524 | 1.1850 | 0.8439 | 0.4766 |
 | 8 | 0.9643 | 1.1985 | 0.8344 | 0.6298 |
 | 9 | 0.9729 | 1.2065 | 0.8288 | 0.8043 |
@@ -251,9 +276,9 @@ the hardware-cost proxy is:
 
 | n | Q(n) |
 |---:|---:|
-| 4 | **0.1447** |
-| 5 | 0.2340 |
-| 6 | 0.3447 |
+| 4 | **0.1391** |
+| 5 | 0.2283 |
+| 6 | 0.3391 |
 
 Therefore:
 
@@ -267,13 +292,14 @@ At `n=4`:
 - KTA = **0.2364**;
 - best feasible KTA = **0.2439**;
 - KTA gap from best feasible candidate ≈ **3.05%**;
-- hardware cost = **0.1447**;
-- full-entanglement two-qubit pairs/layer = **6**.
+- hardware cost = **0.1391**;
+- full-entanglement ZZ interaction pairs/layer = **6**;
+- CNOTs/layer = **12**; total CNOT count at r=2 = **24**.
 
 Relative to the other remaining candidates, `n=4` has approximately:
 
-- 38.2% lower Q than `n=5`;
-- 58.0% lower Q than `n=6`.
+- 39.1% lower Q than `n=5`;
+- 59.0% lower Q than `n=6`.
 
 Therefore hardware cost now plays a genuine final decision role.
 
@@ -532,6 +558,40 @@ Therefore:
 - The paper still needs either a separate realistic-noise experiment or a clear reduction of NISQ-feasibility claims.
 
 The review roadmap explicitly classifies noisy simulation as a major revision item independent of C1. fileciteturn26file11L1246-L1278
+
+---
+
+# 12. Corrected hardware-cost implementation
+
+The final notebook now implements the hardware-cost term using the actual CNOT count implied by the ZZFeatureMap decomposition. Each pairwise ZZ interaction contributes two CNOTs through the CNOT–RZ–CNOT decomposition. Thus:
+
+\[
+N_{\mathrm{CNOT}}(n)=2r\binom{n}{2}.
+\]
+
+The recomputed normalized costs are:
+
+| n | Q(n) |
+|---:|---:|
+| 2 | 0.0261 |
+| 3 | 0.0717 |
+| **4** | **0.1391** |
+| 5 | 0.2283 |
+| 6 | 0.3391 |
+| 7 | 0.4717 |
+| 8 | 0.6261 |
+| 9 | 0.8022 |
+| 10 | 1.0000 |
+
+The correction changes the numerical scale of Q(n) but preserves its monotonic increase with embedding dimension. Consequently, the information-feasible set remains {4,5,6,7,8,9,10}, the KTA-feasible set remains {4,5,6}, and the minimum-cost candidate remains **n=4**.
+
+For the selected configuration (n=4, r=2):
+
+- 6 ZZ interaction pairs per layer;
+- 12 CNOTs per layer;
+- 24 CNOTs across the two ZZ layers.
+
+This corrected implementation should be the source of truth for the revised manuscript and rebuttal.
 
 ---
 
@@ -850,9 +910,9 @@ The new Table III should contain:
 |---:|---:|---:|---:|---:|---:|---:|---:|:---:|:---:|
 | 2 | 0.7418 | 0.8746 | 1.1434 | 0.3297 | 5.78 | 0.3264 | 0.0298 | No | — |
 | 3 | 0.8210 | 1.0179 | 0.9824 | 0.1537 | 9.55 | 0.2946 | 0.0766 | No | — |
-| **4** | **0.8662** | **1.0846** | **0.9220** | **0.2364** | **28.49** | **0.2210** | **0.1447** | **Yes** | **Yes** |
-| **5** | **0.9040** | **1.1311** | **0.8841** | **0.2439** | **46.50** | **0.1954** | **0.2340** | **Yes** | **Yes** |
-| **6** | **0.9391** | **1.1718** | **0.8534** | **0.2381** | **56.93** | **0.1825** | **0.3447** | **Yes** | **Yes** |
+| **4** | **0.8662** | **1.0846** | **0.9220** | **0.2364** | **28.49** | **0.2210** | **0.1391** | **Yes** | **Yes** |
+| **5** | **0.9040** | **1.1311** | **0.8841** | **0.2439** | **46.50** | **0.1954** | **0.2283** | **Yes** | **Yes** |
+| **6** | **0.9391** | **1.1718** | **0.8534** | **0.2381** | **56.93** | **0.1825** | **0.3391** | **Yes** | **Yes** |
 | 7 | 0.9524 | ... | ... | 0.1949 | 79.57 | 0.1515 | 0.4766 | Yes | No |
 | ... | ... | ... | ... | ... | ... | ... | ... | ... | ... |
 
@@ -899,7 +959,7 @@ The old Results section should not say:
 
 Instead:
 
-> “The information constraint first excludes n=2 and n=3, yielding seven feasible dimensions (n=4–10). Within this set, the highest KTA occurs at n=5 (0.2439). Requiring each candidate to remain within 5% of this value retains n=4–6. The CNOT-weighted hardware-cost proxy then selects n=4 because Q(4)=0.1447, compared with 0.2340 and 0.3447 for n=5 and n=6.”
+> “The information constraint first excludes n=2 and n=3, yielding seven feasible dimensions (n=4–10). Within this set, the highest KTA occurs at n=5 (0.2439). Requiring each candidate to remain within 5% of this value retains n=4–6. The CNOT-weighted hardware-cost proxy then selects n=4 because Q(4)=0.1391, compared with 0.2283 and 0.3391 for n=5 and n=6.”
 
 Then discuss:
 
@@ -1069,7 +1129,7 @@ This supports finite-shot stability, but not realistic hardware-noise robustness
 
 The C1 story should ultimately be:
 
-> **The embedding dimension is not selected by PCA variance alone. We first require sufficient information retention, then reject dimensions whose quantum-kernel alignment falls materially below the best alignment achievable in that information-feasible region, and finally use a CNOT-weighted hardware-cost proxy to select the lowest-cost remaining operating point. On NSL-KDD, this procedure retains dimensions 4–6 and selects n=4. The selected 4-qubit configuration retains 86.62% cumulative variance, achieves KTA 0.2364 versus 0.2439 at the best feasible dimension, and has the lowest hardware-cost proxy Q=0.1447 among the kernel-quality-feasible candidates.**
+> **The embedding dimension is not selected by PCA variance alone. We first require sufficient information retention, then reject dimensions whose quantum-kernel alignment falls materially below the best alignment achievable in that information-feasible region, and finally use a CNOT-weighted hardware-cost proxy to select the lowest-cost remaining operating point. On NSL-KDD, this procedure retains dimensions 4–6 and selects n=4. The selected 4-qubit configuration retains 86.62% cumulative variance, achieves KTA 0.2364 versus 0.2439 at the best feasible dimension, and has the lowest hardware-cost proxy Q=0.1391 among the kernel-quality-feasible candidates.**
 
 This is the C1 story that should replace the original:
 
@@ -1077,10 +1137,23 @@ This is the C1 story that should replace the original:
 
 ---
 
-# 30. Source files used
+# 30. Freeze checklist
 
-- `C1_revision(2).ipynb` — final executed C1 notebook and numerical outputs.
-- `manuscript(2).pdf` — current manuscript that must be rewritten.
-- `reviewer_major_revision_plan_vi(2).md` — reviewer-derived revision requirements and priority matrix.
+- [x] Corrected two-qubit/CNOT cost implementation executed.
+- [x] All candidate dimensions n=2,...,10 recomputed.
+- [x] Information-feasible set unchanged: {4,5,6,7,8,9,10}.
+- [x] KTA-feasible set unchanged: {4,5,6}.
+- [x] Final selection remains n=4.
+- [x] Frozen downstream interface remains K=20, n=4, r=2.
+- [x] Updated C1 cost values and artifacts exported.
+- [x] No further C1 rerun is required for C2/C3; they can continue using the frozen n=4 configuration.
+
+**Final decision: C1 is frozen.**
+
+# 31. Source files used
+
+- `C1_revision(7).ipynb` — final executed C1 notebook and numerical outputs.
+- `manuscript(3).pdf` — current manuscript that must be rewritten.
+- `reviewer_major_revision_plan_vi(7).md` — reviewer-derived revision requirements and priority matrix.
 
 The review roadmap explicitly identifies C1/Theorem correctness as a scientific-validity gate and recommends a new hardware-constrained embedding-selection contribution. fileciteturn27file3L341-L365 fileciteturn27file6L985-L999

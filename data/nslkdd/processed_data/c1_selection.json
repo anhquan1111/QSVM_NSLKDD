@@ -16,7 +16,8 @@
     "variance_threshold": 0.85,
     "kta_tolerance": 0.05,
     "kta_reference": "maximum KTA among information-feasible dimensions",
-    "objective": "minimize CNOT-weighted hardware cost Q(n)"
+    "objective": "minimize CNOT-weighted hardware cost Q(n)",
+    "q_n_definition": "Q(n) = [N_1q(n) + 5*N_CNOT(n)] / Q_max, with N_1q(n) = n*r, N_ZZ(n) = r*C(n,2) ZZ interaction pairs per layer, and N_CNOT(n) = 2*N_ZZ(n) actual CNOT gates (each ZZ interaction decomposed into a CNOT-RZ-CNOT sequence)."
   },
   "information_feasible_n": [
     4,
@@ -41,12 +42,14 @@
     6
   ],
   "selected_n": 4,
-  "selected_hardware_cost": 0.14468085106382977,
+  "selected_hardware_cost": 0.1391304347826087,
+  "selected_n_zz_pairs_layer": 12,
+  "selected_n_cnot_total": 24,
   "n_equals_manuscript_n4": true,
   "variance": 0.8661869764328003,
   "dbi": 1.084614054934069,
   "inverse_dbi": 0.9219869459102551,
-  "hardware_cost": 0.14468085106382977,
+  "hardware_cost": 0.1391304347826087,
   "kernel_geometry": {
     "KTA": 0.23641933146217248,
     "KTA_max_feasible": 0.2438648583659138,
@@ -74,7 +77,7 @@
     "role": "diagnostic_only_not_used_for_selection"
   },
   "weight_sensitivity": {
-    "selected_n_frequency_pct": 3.4274193548387095,
+    "selected_n_frequency_pct": 3.6290322580645165,
     "role": "supplementary_diagnostic_only_not_used_for_selection"
   },
   "artifacts": {

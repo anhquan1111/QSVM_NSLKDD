@@ -586,6 +586,8 @@ Reviewer yêu cầu tối thiểu:
 
 ## 9.2. C2 revision
 
+**Updated classifier-level noise test size.** The latest C2 run uses `noise_f1_test_size=300`, matching the main fixed test size (`test_size=300`). The KTA/noise-geometry subset remains `kta_sample_size=200` to keep the noisy kernel computation tractable. This is a deliberate separation between kernel-geometry computational budget and classifier-level evaluation size.
+
 Đã bổ sung backend-derived realistic simulation:
 
 \[
@@ -627,13 +629,13 @@ Transpiled:
 ZZ:
 
 \[
-KTA=0.196472,\quad F1=0.889724
+KTA=0.196472,\quad F1=0.866453
 \]
 
 Z:
 
 \[
-KTA=0.073744,\quad F1=0.829847
+KTA=0.073744,\quad F1=0.849798
 \]
 
 ### Ideal finite-shot, 512 shots
@@ -641,29 +643,29 @@ KTA=0.073744,\quad F1=0.829847
 ZZ:
 
 \[
-KTA=0.193982,\quad F1=0.879227
+KTA=0.194360,\quad F1=0.855819
 \]
 
 Z:
 
 \[
-KTA=0.073981,\quad F1=0.799679
+KTA=0.073272,\quad F1=0.859900
 \]
 
-### Realistic noisy
+### Realistic noisy, 512 shots
 
 ZZ:
 
 \[
-KTA=0.143674
+KTA=0.149988
 \]
 
 \[
-D_F=0.630469
+D_F=0.599128
 \]
 
 \[
-F1=0.879808
+F1=0.863149
 \]
 
 Z:
@@ -677,7 +679,7 @@ D_F=0.165778
 \]
 
 \[
-F1=0.839744
+F1=0.856397
 \]
 
 ## 9.4. Scientific interpretation
@@ -685,7 +687,7 @@ F1=0.839744
 Noise làm:
 
 \[
-ZZ:\quad KTA\ 0.1965\rightarrow0.1437
+ZZ:\quad KTA\ 0.1965\rightarrow0.1500
 \]
 
 trong khi:
@@ -697,7 +699,7 @@ Z:\quad KTA\ 0.0737\rightarrow0.0713.
 Đồng thời:
 
 \[
-D_F^{ZZ}=0.6305
+D_F^{ZZ}=0.5991
 \]
 
 lớn hơn nhiều:
@@ -718,7 +720,7 @@ so với:
 0\ CX\quad\text{(Z)}.
 \]
 
-F1 degradation lại nhỏ hơn kernel distortion rất nhiều trên representative validation subset. Đây là một finding thú vị nhưng phải mô tả là **secondary validation trên một fixed representative subset**, không phải 10-run statistical noise study.
+Với `noise_f1_test_size=300`, classifier-level F1 được đánh giá trên cùng kích thước test cố định như main C2 protocol. Đây vẫn là **secondary validation trên một representative subset**, không phải 10-run statistical noise study; tuy nhiên test-size lớn hơn giúp giảm sampling variability so với cấu hình 100 mẫu trước đó.
 
 ## 9.5. Mức độ giải quyết
 
@@ -1239,7 +1241,7 @@ ZZ có:
 và noise làm:
 
 \[
-KTA:0.1965\rightarrow0.1437.
+KTA:0.1965\rightarrow0.1500.
 \]
 
 → entanglement benefit có hardware sensitivity.
@@ -1415,7 +1417,8 @@ Nên mô tả rõ:
 C2 dùng frozen C1 representation:
 
 \[
-	ext{SelectKBest}_{C1}ightarrow PCA(n=4)
+	ext{SelectKBest}_{C1}
+ightarrow PCA(n=4)
 \]
 
 và không re-select \(n\) trong C2.
@@ -1595,12 +1598,12 @@ Nên có một subsection compact:
 
 | Condition | Model | KTA | \(D_F\) | Macro-F1 |
 |---|---|---:|---:|---:|
-| Ideal | ZZ | 0.1965 | — | 0.8897 |
-| Ideal | Z | 0.0737 | — | 0.8298 |
-| Finite-shot | ZZ | 0.1940 | … | 0.8792 |
-| Finite-shot | Z | 0.0740 | … | 0.7997 |
-| Realistic noisy | ZZ | 0.1437 | 0.6305 | 0.8798 |
-| Realistic noisy | Z | 0.0713 | 0.1658 | 0.8397 |
+| Ideal | ZZ | 0.1965 | — | 0.8665 |
+| Ideal | Z | 0.0737 | — | 0.8498 |
+| Finite-shot | ZZ | 0.1944 | 0.1229 | 0.8558 |
+| Finite-shot | Z | 0.0733 | 0.0279 | 0.8599 |
+| Realistic noisy | ZZ | 0.1500 | 0.5991 | 0.8631 |
+| Realistic noisy | Z | 0.0713 | 0.1658 | 0.8564 |
 
 Narrative:
 
@@ -1668,7 +1671,8 @@ Nên viết:
 
 \[
 C1:	ext{hardware cost}
-ightarrow
+
+ightarrow
 C2:	ext{hardware sensitivity of entanglement}.
 \]
 
@@ -1775,15 +1779,20 @@ Toàn bộ C2 nên đi theo flow:
 
 \[
 	ext{Fair tuning}
-ightarrow
+
+ightarrow
 	ext{Matched ZZ vs Z}
-ightarrow
+
+ightarrow
 \Delta KTA	ext{ large + significant}
-ightarrow
+
+ightarrow
 \Delta F1	ext{ positive but inconclusive}
-ightarrow
+
+ightarrow
 	ext{XGB strongest overall baseline}
-ightarrow
+
+ightarrow
 	ext{ZZ more noise-sensitive due to larger 2Q footprint}.
 \]
 
