@@ -1,6 +1,8 @@
 {
   "QSVM_ZZ": {
     "backend_name": "fake_manila",
+    "optimization_level": 1,
+    "seed_transpiler": 42,
     "backend_supported_operations": [
       "cx",
       "delay",
@@ -29,6 +31,8 @@
   },
   "QSVM_Z": {
     "backend_name": "fake_manila",
+    "optimization_level": 1,
+    "seed_transpiler": 42,
     "backend_supported_operations": [
       "cx",
       "delay",

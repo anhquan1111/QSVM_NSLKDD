@@ -493,7 +493,7 @@ RF/XGB được tune trên dedicated tuning set.
 
 | Model | Mean Macro-F1 |
 |---|---:|
-| XGBoost | **0.851625** |
+| XGBoost | **0.849301** |
 | QSVM-ZZ | **0.846888** |
 | Random Forest | 0.844636 |
 | SVM-RBF | 0.836186 |
@@ -503,12 +503,7 @@ RF/XGB được tune trên dedicated tuning set.
 
 ### Interpretation
 
-QSVM-ZZ:
-
-- rõ ràng cao hơn QSVM-Z;
-- cao hơn các SVM baselines;
-- rất gần RF;
-- chỉ thấp hơn XGBoost một lượng nhỏ.
+QSVM-ZZ has a higher 10-run mean Macro-F1 than QSVM-Z and all evaluated SVM baselines, is very close to Random Forest, and is slightly below XGBoost. These are point-estimate comparisons; they should not be read as separate statistical superiority claims for every baseline.
 
 Do đó C2 không còn dựa vào weak SVM-only comparison.
 
@@ -543,7 +538,7 @@ Reviewer 2 đặt câu hỏi rất mạnh:
 C2 mới cho thấy:
 
 \[
-XGBoost=0.8516
+XGBoost=0.8493
 \]
 
 là model mạnh nhất, còn:
@@ -600,14 +595,14 @@ environment:
 - Aer 0.17.2;
 - Qiskit IBM Runtime 0.49.0.
 
-Feature maps được transpile theo backend target trước noisy execution.
+Feature maps được transpile theo backend target trước noisy execution. Artifact hiện ghi rõ `optimization_level=1` và `seed_transpiler=42`, nên circuit transpiled có thể reproduce theo cùng backend/optimization/seed.
 
 ### ZZ
 
 Transpiled:
 
-- depth = 70;
-- 48 CX;
+- depth = 59;
+- 44 CX;
 - 36 RZ;
 - 8 SX.
 
@@ -643,13 +638,13 @@ KTA=0.073744,\quad F1=0.849798
 ZZ:
 
 \[
-KTA=0.194360,\quad F1=0.855819
+KTA=0.195862,\quad F1=0.879566
 \]
 
 Z:
 
 \[
-KTA=0.073272,\quad F1=0.859900
+KTA=0.072387,\quad F1=0.853098
 \]
 
 ### Realistic noisy, 512 shots
@@ -711,7 +706,7 @@ D_F^Z=0.1658.
 Điều này phù hợp với circuit footprint:
 
 \[
-48\ CX\quad\text{(ZZ)}
+44\ CX\quad\text{(ZZ)}
 \]
 
 so với:
@@ -1168,6 +1163,8 @@ C2 revision không nên được viết theo story:
 
 > “ZZ gives higher F1.”
 
+Điểm này chỉ nên được dùng như một mô tả point estimate; kết luận inferential chính là classification gain dương nhưng chưa có ý nghĩa thống kê.
+
 Story mạnh hơn là:
 
 ### Step 1 — Fair configuration
@@ -1223,10 +1220,10 @@ p=0.232.
 ### Step 5 — Practical benchmark
 
 \[
-XGB > ZZ > RF \approx ZZ
+XGB > ZZ > RF
 \]
 
-tùy metric/CI, với XGB đứng đầu mean F1.
+về 10-run mean Macro-F1, với XGBoost đứng đầu, QSVM-ZZ ở vị trí thứ hai và Random Forest rất gần phía sau. Đây là ranking theo point estimate; nó không tự hàm ý mọi cặp đều có superiority có ý nghĩa thống kê.
 
 → QSVM-ZZ là competitive, không phải universally superior.
 
@@ -1235,7 +1232,7 @@ tùy metric/CI, với XGB đứng đầu mean F1.
 ZZ có:
 
 \[
-48 CX,\ depth=70
+44 CX,\ depth=59
 \]
 
 và noise làm:
@@ -1364,7 +1361,7 @@ Còn realistic noise cho thấy:
 
 \[
 \boxed{
-D_F^{ZZ}\approx0.6305
+D_F^{ZZ}\approx0.5991
 \gg
 D_F^{Z}\approx0.1658
 }
@@ -1373,7 +1370,7 @@ D_F^{Z}\approx0.1658
 phù hợp với footprint:
 
 \[
-48\ CX\text{ vs }0\ CX.
+44\ CX\text{ vs }0\ CX.
 \]
 
 Vì vậy C2 mới không còn cố “chứng minh quantum advantage”, mà cung cấp một attribution story rõ hơn:
@@ -1551,7 +1548,7 @@ Bảng mean Macro-F1:
 
 | Model | Mean Macro-F1 |
 |---|---:|
-| XGBoost | 0.8516 |
+| XGBoost | 0.8493 |
 | QSVM-ZZ | 0.8469 |
 | Random Forest | 0.8446 |
 | SVM-RBF | 0.8362 |
@@ -1591,7 +1588,7 @@ Nên có một subsection compact:
 
 | Feature map | Depth | CX count |
 |---|---:|---:|
-| ZZ | 70 | 48 |
+| ZZ | 59 | 44 |
 | Z | 8 | 0 |
 
 ### Noise table
@@ -1600,8 +1597,8 @@ Nên có một subsection compact:
 |---|---|---:|---:|---:|
 | Ideal | ZZ | 0.1965 | — | 0.8665 |
 | Ideal | Z | 0.0737 | — | 0.8498 |
-| Finite-shot | ZZ | 0.1944 | 0.1229 | 0.8558 |
-| Finite-shot | Z | 0.0733 | 0.0279 | 0.8599 |
+| Finite-shot | ZZ | 0.1959 | 0.1126 | 0.8796 |
+| Finite-shot | Z | 0.0724 | 0.0306 | 0.8531 |
 | Realistic noisy | ZZ | 0.1500 | 0.5991 | 0.8631 |
 | Realistic noisy | Z | 0.0713 | 0.1658 | 0.8564 |
 

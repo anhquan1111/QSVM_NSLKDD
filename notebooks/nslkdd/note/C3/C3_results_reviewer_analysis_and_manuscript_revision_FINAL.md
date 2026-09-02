@@ -187,7 +187,7 @@ The paired effect is defined so that positive values favor QSVM-ZZ.
 | SVM-Poly2 | -0.0484 | [-0.0725, -0.0244] | -1.442 | 0.0117 | Classical-favorable |
 | SVM-RBF | +0.0006 | [-0.0207, 0.0220] | 0.021 | 0.8457 | Inconclusive |
 | Random Forest | -0.0048 | [-0.0263, 0.0166] | -0.162 | 0.7695 | Inconclusive |
-| XGBoost | -0.0129 | [-0.0370, 0.0111] | -0.384 | 0.4648 | Inconclusive |
+| XGBoost | -0.0133 | [-0.0383, 0.0118] | -0.379 | 0.4648 | Inconclusive |
 
 ## 5.2 Finding
 
@@ -255,7 +255,7 @@ is positive when ZZ has the more favorable degradation slope.
 | SVM-Poly2 | -1.0675 | [-1.2401, -0.8950] | -4.426 | 0.00586 | Classical-favorable |
 | SVM-RBF | -0.9966 | [-1.1559, -0.8374] | -4.477 | 0.00586 | Classical-favorable |
 | Random Forest | -0.8638 | [-1.0018, -0.7258] | -4.478 | 0.00391 | Classical-favorable |
-| XGBoost | -0.6807 | [-0.8669, -0.4945] | -2.615 | 0.00391 | Classical-favorable |
+| XGBoost | -0.6933 | [-0.8662, -0.5203] | -2.867 | 0.00391 | Classical-favorable |
 
 ## 6.2 Finding
 
@@ -270,7 +270,7 @@ This is the clearest negative regime in C3.
 The effect is not a small isolated difference. Standardized paired effects are large in magnitude:
 
 \[
-|d_z|\approx2.62\text{ to }4.78.
+|d_z|\approx2.87\text{ to }4.78.
 \]
 
 This is strong evidence for a **robustness boundary of the selected ZZ embedding**.
@@ -294,7 +294,7 @@ Do not turn this directly into a causal claim that “phase wrapping causes the 
 | SVM-Poly2 | +0.0116 | [-0.0042, 0.0273] | 0.526 | 0.2109 | Inconclusive |
 | SVM-RBF | +0.0147 | [-0.0040, 0.0334] | 0.562 | 0.2109 | Inconclusive |
 | Random Forest | -0.0090 | [-0.0243, 0.0063] | -0.422 | 0.3867 | Inconclusive |
-| XGBoost | -0.0091 | [-0.0233, 0.0051] | -0.458 | 0.3867 | Inconclusive |
+| XGBoost | -0.0128 | [-0.0316, 0.0059] | -0.489 | 0.3203 | Inconclusive |
 
 ### Finding
 
@@ -313,7 +313,7 @@ The manuscript should **not** label the 30%-attack condition a general QSVM adva
 | SVM-Poly2 | +0.0232 | [0.0023, 0.0442] | 0.795 | 0.1113 | Inconclusive |
 | SVM-RBF | +0.0068 | [-0.0120, 0.0257] | 0.259 | 0.3223 | Inconclusive |
 | Random Forest | -0.0137 | [-0.0272, -0.0002] | -0.727 | 0.0977 | Inconclusive |
-| XGBoost | -0.0152 | [-0.0283, -0.0022] | -0.833 | 0.0977 | Inconclusive |
+| XGBoost | -0.0153 | [-0.0310, 0.0004] | -0.696 | 0.1055 | Inconclusive |
 
 ### Finding
 
@@ -338,7 +338,7 @@ This is especially important because it connects C2 and C3: a positive ZZ-vs-Z a
 | SVM-Poly2 | +0.0291 | [0.0032, 0.0549] | 0.804 | 0.1113 | Inconclusive |
 | SVM-RBF | +0.0033 | [-0.0204, 0.0269] | 0.099 | 0.4922 | Inconclusive |
 | Random Forest | -0.0161 | [-0.0377, 0.0055] | -0.534 | 0.1602 | Inconclusive |
-| XGBoost | -0.0253 | [-0.0424, -0.0083] | -1.061 | 0.0273 | Classical-favorable |
+| XGBoost | -0.0242 | [-0.0430, -0.0054] | -0.921 | 0.0391 | Classical-favorable |
 
 ## 9.1 The most useful prior-shift finding
 
@@ -356,15 +356,9 @@ XGB>ZZ
 
 with a statistically supported advantage.
 
-This is a particularly strong demonstration that:
+This is a particularly clear demonstration of **comparator dependence**: a QSVM-favorable result against the matched quantum control can coexist with a classical-favorable result against a strong tabular learner.
 
-\[
-\boxed{
-\text{observed quantum advantage depends on the comparator class}
-}
-\]
-
-and it provides a direct empirical answer to the reviewer concern about practical non-SVM competitors.
+It therefore provides a direct empirical answer to the reviewer concern about practical non-SVM competitors.
 
 ---
 
@@ -383,7 +377,7 @@ Condition:
 | SVM-Poly2 | +0.0489 | [0.0311, 0.0668] | 1.960 | 0.00586 | QSVM-favorable |
 | SVM-RBF | +0.0381 | [0.0207, 0.0555] | 1.564 | 0.00586 | QSVM-favorable |
 | Random Forest | +0.0014 | [-0.0156, 0.0185] | 0.061 | 1.0000 | Inconclusive |
-| XGBoost | +0.0007 | [-0.0129, 0.0143] | 0.036 | 1.0000 | Inconclusive |
+| XGBoost | +0.0006 | [-0.0151, 0.0164] | 0.029 | 1.0000 | Inconclusive |
 
 ## Finding
 
@@ -652,7 +646,7 @@ Main message:
 
 Main message:
 
-> Prior-shift results are strongly comparator-dependent. ZZ shows significant gains against the matched Z control in several settings, but these gains do not translate into uniform superiority over strong tabular learners; XGBoost is significantly favorable against ZZ in the attack-heavy condition.
+> Prior-shift results are strongly comparator-dependent. ZZ shows statistically supported gains over the matched Z control under the 50% and 70% attack-prior conditions, while these gains do not translate into uniform superiority over strong tabular learners; in the attack-heavy 70% condition, XGBoost is significantly favorable against ZZ.
 
 ### V.C.4 Attack-Composition Stress
 
@@ -670,13 +664,13 @@ Recommended compact main-paper table:
 |---|---|---:|---|---:|---:|---|
 | Temporal | Z | -0.0219 | [-0.0360,-0.0079] | 0.0137 | -1.116 | Classical |
 | Temporal | RBF | +0.0006 | [-0.0207,0.0220] | 0.8457 | 0.021 | Inconclusive |
-| Temporal | XGB | -0.0129 | [-0.0370,0.0111] | 0.4648 | -0.384 | Inconclusive |
+| Temporal | XGB | -0.0133 | [-0.0383,0.0118] | 0.4648 | -0.379 | Inconclusive |
 | Perturbation | RBF | -0.9966 | [-1.1559,-0.8374] | 0.00586 | -4.477 | Classical |
-| Perturbation | XGB | -0.6807 | [-0.8669,-0.4945] | 0.00391 | -2.615 | Classical |
+| Perturbation | XGB | -0.6933 | [-0.8662,-0.5203] | 0.00391 | -2.867 | Classical |
 | Prior 70% | Z | +0.0367 | [0.0170,0.0565] | 0.00586 | 1.329 | QSVM |
-| Prior 70% | XGB | -0.0253 | [-0.0424,-0.0083] | 0.0273 | -1.061 | Classical |
+| Prior 70% | XGB | -0.0242 | [-0.0430,-0.0054] | 0.0391 | -0.921 | Classical |
 | DoS composition | RBF | +0.0381 | [0.0207,0.0555] | 0.00586 | 1.564 | QSVM |
-| DoS composition | XGB | +0.0007 | [-0.0129,0.0143] | 1.0000 | 0.036 | Inconclusive |
+| DoS composition | XGB | +0.0006 | [-0.0151,0.0164] | 1.0000 | 0.029 | Inconclusive |
 
 Full pairwise table: supplementary.
 
