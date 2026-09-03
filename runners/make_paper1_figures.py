@@ -136,7 +136,7 @@ def fmt_n(v: int) -> str:
     return f"{v // 1000}k" if v >= 1000 and v % 1000 == 0 else str(v)
 
 
-def place_right_labels(ax, points):
+def place_right_labels(ax, points, xanchor=None):
     """Dat nhan truc tiep o le phai, day cac nhan ra cho het chong nhau.
 
     `points` la danh sach (y, text). Nhan mang token muc chu, khong mang mau
@@ -155,7 +155,8 @@ def place_right_labels(ax, points):
         ys = [y - overflow for y in ys]
         for i in range(len(ys) - 2, -1, -1):
             ys[i] = min(ys[i], ys[i + 1] - gap)
-    xanchor = ax.get_xlim()[1] / RIGHT_MARGIN * 1.06
+    if xanchor is None:                       # mac dinh: truc log co le phai RIGHT_MARGIN
+        xanchor = ax.get_xlim()[1] / RIGHT_MARGIN * 1.06
     for (_, text), y in zip(pts, ys):
         ax.annotate(text, (xanchor, y), xytext=(2, 0), textcoords="offset points",
                     va="center", ha="left", fontsize=7, color=INK_2, zorder=10)
@@ -449,7 +450,7 @@ def figure11():
     place_right_labels(axes[0], ends)
 
     _plot_delta(axes[1], pairs, ticks)
-    axes[1].set_title("(b) Paired $\Delta$ vs. each baseline", loc="left", color=INK, pad=6)
+    axes[1].set_title("(b) Paired $\\Delta$ vs. each baseline", loc="left", color=INK, pad=6)
     d = pairs[pairs.baseline.isin(STRONG)]
     pad = 0.09 * (d.ci_high.max() - d.ci_low.min())
     axes[1].set_ylim(d.ci_low.min() - pad, d.ci_high.max() + pad)
@@ -572,9 +573,186 @@ def figure10():
     return save(fig, "fig10_regime_map")
 
 
+# --------------------------------------------------------------------------
+# Fig 6 -- ablation entanglement (thay hinh KTA cu)
+# --------------------------------------------------------------------------
+def figure6():
+    """Ablation ZZ vs Z, tu du lieu C2 revision (10 run, ghep cap theo run).
+
+    Hinh cu ve KTA cua ca nam kernel voi thanh sai so tren 5 run. Ban revision
+    khong tinh KTA cho kernel co dien (khong co trong `c2_per_run.csv`), va dieu
+    dang noi cua C2 von la ablation ghep cap chu khong phai bang xep hang KTA.
+    Nen hinh moi ve dung phep so sanh ghep cap do.
+    """
+    base = ROOT / "results/nslkdd/c2_revision"
+    kta = pd.read_csv(base / "c2_kta_per_run.csv")
+    per_run = pd.read_csv(base / "c2_per_run.csv")
+    f1 = per_run.pivot_table(index="run_id", columns="model", values="f1_macro")
+
+    fig, axes = plt.subplots(1, 2, figsize=(7.16, 2.9))
+
+    # (a) Bieu do do doc: moi run mot doan noi Z -> ZZ.
+    ax = axes[0]
+    tidy(ax)
+    for _, r in kta.iterrows():
+        ax.plot([0, 1], [r.kta_z, r.kta_zz], color=INK_MUTED, lw=0.8, alpha=0.55,
+                zorder=3, marker="o", ms=3.0, mfc=SURFACE, mew=0.8)
+    for x, col, c, lab in ((0, "kta_z", VIOLET, "QSVM-Z"), (1, "kta_zz", BLUE, "QSVM-ZZ")):
+        m, e = kta[col].mean(), ci95(kta[col].values)
+        ax.errorbar([x], [m], yerr=[[e], [e]], fmt="o", ms=7, color=c, mec=SURFACE,
+                    mew=1.2, ecolor=c, elinewidth=1.6, capsize=4, zorder=6)
+        ax.annotate(f"{m:.3f}", (x, m), xytext=(0, 12), textcoords="offset points",
+                    ha="center", fontsize=7.5, color=INK, fontweight="bold")
+        ax.annotate(lab, (x, 0), xytext=(0, -22), textcoords="offset points",
+                    xycoords=("data", "axes fraction"), ha="center", fontsize=8,
+                    color=INK_2)
+    ax.set_xticks([])
+    ax.set_xlim(-0.45, 1.45)
+    ax.set_ylabel("Kernel-target alignment")
+    ax.set_title("(a) Entanglement ablation, paired by run", loc="left",
+                 color=INK, pad=6)
+
+    # (b) Delta ghep cap cho KTA va F1.
+    ax = axes[1]
+    tidy(ax)
+    ax.axvline(0.0, color=INK_MUTED, lw=1.0, zorder=2)
+    rows = [("$\\Delta$ KTA", kta.delta_kta.values, BLUE),
+            ("$\\Delta F_1$", (f1["QSVM_ZZ"] - f1["QSVM_Z"]).values, VIOLET)]
+    for i, (label, vals, colour) in enumerate(rows):
+        y = len(rows) - 1 - i
+        m, e = float(np.mean(vals)), ci95(vals)
+        ax.errorbar([m], [y], xerr=[[e], [e]], fmt="o", ms=7, color=colour,
+                    mec=SURFACE, mew=1.2, ecolor=colour, elinewidth=1.6,
+                    capsize=4, zorder=6)
+        ax.plot(vals, np.full(len(vals), y) + 0.17, ls="none", marker="o", ms=3,
+                color=colour, alpha=0.35, zorder=4)
+        ax.annotate(f"{m:+.4f}  [{m - e:+.4f}, {m + e:+.4f}]", (m, y),
+                    xytext=(0, -15), textcoords="offset points", ha="center",
+                    fontsize=7, color=INK_2)
+    ax.set_yticks(range(len(rows)))
+    ax.set_yticklabels([r[0] for r in reversed(rows)], fontsize=9)
+    ax.set_ylim(-0.55, len(rows) - 0.35)
+    ax.set_xlabel("Paired difference, QSVM-ZZ $-$ QSVM-Z (10 runs)")
+    ax.set_title("(b) Paired effect with 95% CI", loc="left", color=INK, pad=6)
+    ax.grid(False, axis="y")
+
+    fig.suptitle("Entanglement moves the kernel geometry far more than the score",
+                 x=0.012, y=0.995, ha="left", fontsize=10, fontweight="bold", color=INK)
+    fig.tight_layout(rect=(0, 0.03, 1, 0.945))
+    return save(fig, "fig6_entanglement_ablation")
+
+
+# --------------------------------------------------------------------------
+# Fig 7 -- phan bo F1 tung run cho ca bay model
+# --------------------------------------------------------------------------
+def figure7():
+    """Phan bo F1 tung run, 10 run, ca bay model -- co ca RF va XGBoost."""
+    d = pd.read_csv(ROOT / "results/nslkdd/c2_revision/c2_per_run.csv")
+    order = d.groupby("model")["f1_macro"].mean().sort_values().index.tolist()
+
+    fig, ax = plt.subplots(figsize=(7.16, 2.9))
+    tidy(ax)
+    rng = np.random.default_rng(20260903)
+    means = {}
+    for i, m in enumerate(order):
+        vals = d.loc[d.model == m, "f1_macro"].values
+        s = STYLE[m]
+        ax.plot(vals, i + rng.uniform(-0.13, 0.13, len(vals)), ls="none", marker="o",
+                ms=3.5, color=s["color"], alpha=0.45, zorder=4)
+        mean, e = float(vals.mean()), ci95(vals)
+        ax.errorbar([mean], [i], xerr=[[e], [e]], fmt=s["marker"], ms=7,
+                    color=s["color"], mec=SURFACE, mew=1.2, ecolor=s["color"],
+                    elinewidth=1.6, capsize=3.5, zorder=6)
+        means[m] = mean
+    ax.set_yticks(range(len(order)))
+    # Tri so nam trong nhan truc: dat troi trong vung ve thi no roi sang hang ben.
+    ax.set_yticklabels([f"{STYLE[m]['label']}   {means[m]:.4f}" for m in order],
+                       fontsize=8)
+    ax.set_ylim(-0.6, len(order) - 0.4)
+    ax.set_xlabel("Macro-$F_1$ (10 independent runs, $N_{\\mathrm{train}}=1000$)")
+    ax.grid(False, axis="y")
+    ax.grid(True, axis="x", color=GRID, lw=0.6)
+
+    fig.suptitle("With strong tabular baselines the quantum kernel no longer leads",
+                 x=0.012, y=0.995, ha="left", fontsize=10, fontweight="bold", color=INK)
+    fig.text(0.012, 0.90, "Dots are individual runs; markers are the mean with a 95% "
+                          "confidence interval. The intervals overlap: this is an "
+                          "ordering of point estimates, not a significant separation.",
+             ha="left", fontsize=7.5, color=INK_MUTED)
+    fig.tight_layout(rect=(0, 0.01, 1, 0.87))
+    return save(fig, "fig7_per_run_f1")
+
+
+# --------------------------------------------------------------------------
+# Fig 8 -- dich chuyen prior lop
+# --------------------------------------------------------------------------
+def figure8():
+    """Dich chuyen prior lop, tu C3 revision (10 run, 7 model, 3 dieu kien)."""
+    d = pd.read_csv(ROOT / "results/nslkdd/c3_revision/c3_prior_shift_per_run.csv")
+    frac = {"attack_30pct": 30, "attack_50pct": 50, "attack_70pct": 70}
+    d["attack_pct"] = d.condition.map(frac)
+
+    fig, axes = plt.subplots(1, 2, figsize=(7.16, 2.9))
+
+    ax = axes[0]
+    tidy(ax)
+    ends = []
+    for m in MODEL_ORDER:
+        g = d[d.model == m].groupby("attack_pct")["f1_macro"]
+        x = np.array(sorted(g.groups))
+        mean = g.mean().values
+        err = np.array([ci95(d[(d.model == m) & (d.attack_pct == v)]["f1_macro"].values)
+                        for v in x])
+        s = STYLE[m]
+        if s["z"] >= 5:
+            ax.fill_between(x, mean - err, mean + err, color=s["color"], alpha=0.12,
+                            lw=0, zorder=s["z"] - 3)
+            ends.append((float(mean[-1]), s["label"]))
+        ax.plot(x, mean, color=s["color"], ls=s["ls"], lw=s["lw"], marker=s["marker"],
+                ms=s["ms"], mec=SURFACE, mew=0.8, zorder=s["z"])
+    ax.set_xticks([30, 50, 70])
+    ax.set_xlim(25, 104)
+    ax.set_xlabel("Attack proportion in the test mixture (%)")
+    ax.set_ylabel("Macro-$F_1$")
+    ax.set_title("(a) Class-prior shift", loc="left", color=INK, pad=6)
+    place_right_labels(ax, ends, xanchor=72)
+
+    # (b) Do sut giam tu 30% len 70% -- ai chiu duoc dich chuyen tot hon.
+    ax = axes[1]
+    tidy(ax)
+    drops = []
+    for m in MODEL_ORDER:
+        p = d[d.model == m].pivot_table(index="run_id", columns="attack_pct",
+                                        values="f1_macro")
+        delta = (p[70] - p[30]).values
+        drops.append((m, float(np.mean(delta)), ci95(delta)))
+    drops.sort(key=lambda r: r[1])
+    ax.axvline(0.0, color=INK_MUTED, lw=1.0, zorder=2)
+    for i, (m, mean, e) in enumerate(drops):
+        s = STYLE[m]
+        ax.errorbar([mean], [i], xerr=[[e], [e]], fmt=s["marker"], ms=6.5,
+                    color=s["color"], mec=SURFACE, mew=1.2, ecolor=s["color"],
+                    elinewidth=1.4, capsize=3, zorder=6)
+    ax.set_yticks(range(len(drops)))
+    ax.set_yticklabels([STYLE[m]["label"] for m, _, _ in drops], fontsize=8)
+    ax.set_ylim(-0.6, len(drops) - 0.4)
+    ax.set_xlabel("$F_1$ change from 30% to 70% attacks")
+    ax.set_title("(b) Degradation under the shift", loc="left", color=INK, pad=6)
+    ax.grid(False, axis="y")
+    ax.grid(True, axis="x", color=GRID, lw=0.6)
+
+    fig.suptitle("Under class-prior shift the quantum kernel degrades more than the trees",
+                 x=0.012, y=0.995, ha="left", fontsize=10, fontweight="bold", color=INK)
+    fig.tight_layout(rect=(0, 0.01, 1, 0.945))
+    return save(fig, "fig8_prior_shift")
+
+
 if __name__ == "__main__":
     print("Sinh hinh cho ban revision paper 1")
     figure5()
+    figure6()
+    figure7()
+    figure8()
     figure9()
     figure10()
     figure11()

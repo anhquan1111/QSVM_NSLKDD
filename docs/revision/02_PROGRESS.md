@@ -1694,3 +1694,58 @@ sufficient new contribution"*, tức AE không đứng về phía R3.
 ## Chốt: `.tex` nguồn không còn → dựng lại từ `paper1.pdf`
 
 Quan xác nhận không còn `main.tex` đúng bản. Chuyển sang phương án dựng lại.
+
+---
+
+# ✅ GIAI ĐOẠN 17 — Xuất thêm Fig 6, 7, 8 + manifest chống dùng nhầm hình cũ (2026-09-03)
+
+Quan cảnh báo "hình bỏ vào paper phải check kĩ tránh xài ảnh của code cũ". Đã kiểm kê:
+repo có **130+ file hình**, phần lớn từ code trước revision.
+
+## Đã xuất thêm 3 hình từ dữ liệu revision
+
+| Hình | Nguồn | Thay cho |
+|---|---|---|
+| **6** `fig6_entanglement_ablation` | `c2_revision/c2_kta_per_run.csv` + `c2_per_run.csv` | hình KTA 5 kernel cũ |
+| **7** `fig7_per_run_f1` | `c2_revision/c2_per_run.csv` (10 run × 7 model) | hình phân bố F1 5 seed cũ |
+| **8** `fig8_prior_shift` | `c3_revision/c3_prior_shift_per_run.csv` | hình prior-shift cũ |
+
+Fig 6 phải thiết kế lại: bản revision **không tính KTA cho kernel cổ điển** (`c2_per_run.csv`
+để NaN), nên không dựng lại được hình "KTA của 5 kernel". Vẽ đúng phép so sánh ghép cấp mà C2
+thực sự làm: KTA tăng **+0.1378** [+0.1267, +0.1489] nhưng ΔF1 chỉ **+0.0114**
+[−0.0054, +0.0281] — CI cắt 0. Đúng như Quang Anh nói: "KTA cải thiện đáng kể nhưng F1 không".
+
+## Phát hiện #32 🔴 — Chế độ prior-shift KHÔNG còn là bằng chứng mạnh nhất
+
+Bản đã nộp gọi C3/prior-shift là *"largest evidence"* cho lượng tử (d≈1.1–1.3). Thêm RF/XGBoost
+vào thì hết đúng:
+
+| Trên cả 3 điều kiện prior-shift | Δ trung bình | Số ô dương |
+|---|---|---|
+| QSVM-ZZ − XGBoost | **−0.0174** | 9/30 |
+| QSVM-ZZ − RandomForest | **−0.0129** | 8/30 |
+| QSVM-ZZ − SVM-RBF | +0.0083 | 21/30 |
+
+Và mức suy giảm 30%→70%: QSVM-ZZ **−0.032**, tệ hơn XGBoost (−0.021), SVM-RBF (−0.021),
+RF (−0.025). Tức QSVM-ZZ chỉ thắng **họ kernel**, thua **họ ensemble cây**, và **suy giảm
+nhiều hơn** cả hai. Đây là khẳng định thứ **năm** của bản cũ phải rút.
+
+## Manifest xuất xứ: `paper/paper1/figs_revision/MANIFEST.md`
+
+Ghi rõ từng hình lấy từ artifact nào, kèm **danh sách cấm** các thư mục hình code cũ, và ba
+file dễ nhầm nhất (`c1_fig_pareto_diagnostic.png` trông giống Fig 5 nhưng chính là cái Pareto
+R4 chỉ ra là vô dụng; `c6_learning_curves_test_f1.png` trông giống Fig 9 nhưng chỉ tới N=1000
+và không có crossover; `c3_regime_map_main_full_baselines.png` chỉ có khối C3).
+
+## Còn thiếu 4 hình
+
+| Hình | Loại | Ghi chú |
+|---|---|---|
+| 1 — mạch ZZFeatureMap | sơ đồ | xuất từ Qiskit, tất định |
+| 2 — phân rã 4 đóng góp | sơ đồ khối | vẽ lại, sửa nội dung theo revision |
+| 3 — pipeline | sơ đồ khối | vẽ lại, **bỏ khối Pareto** |
+| 4 — elbow SelectKBest | **DỮ LIỆU** | ⚠️ revision **không chạy lại K-sweep**; số duy nhất đang có là của code cũ. Phải chạy lại hoặc bỏ hình |
+
+## Lưu ý môi trường
+
+Sinh hình bị `MemoryError` một lần: máy chỉ còn **1.38 GB RAM trống**. Chạy lại thì được.
