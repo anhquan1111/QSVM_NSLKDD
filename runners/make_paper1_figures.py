@@ -574,6 +574,64 @@ def figure10():
 
 
 # --------------------------------------------------------------------------
+# Fig 4 -- quet K cho tang SelectKBest
+# --------------------------------------------------------------------------
+def figure4():
+    """Quet K, hai duong: truoc va sau khau nen PCA-4 cua pipeline that.
+
+    Hinh cu chi quet K trong {4, 6, 8, 10, 20} roi goi K=20 la "elbow". Mo rong
+    luoi den K=122 cho thay do khong phai diem bao hoa ma chi la diem cuoi cua
+    luoi quet. Ve ca hai duong de nguoi doc tu thay: giu K=20 la mot lua chon
+    giao thuc duoc ke thua, khong phai mot toi uu.
+    """
+    d = pd.read_csv(ROOT / "results/nslkdd/c1_revision/c1_ksweep.csv")
+    fig, ax = plt.subplots(figsize=(7.16, 3.0))
+    tidy(ax)
+
+    series = [("f1_raw", BLUE, "-", "o", "SelectKBest only"),
+              ("f1_pca4", ORANGE, (0, (5, 2)), "^",
+               "SelectKBest $\\to$ PCA-4 (pipeline used)")]
+    ends = []
+    for col, colour, ls, marker, label in series:
+        m, s = d[f"{col}_mean"].values, d[f"{col}_std"].values
+        ax.fill_between(d.K, m - s, m + s, color=colour, alpha=0.13, lw=0, zorder=3)
+        ax.plot(d.K, m, color=colour, ls=ls, lw=2.0, marker=marker, ms=5.0,
+                mec=SURFACE, mew=0.8, zorder=6)
+        ends.append((float(m[-1]), label))
+
+    k_used, k_best = 20, int(d.loc[d.f1_pca4_mean.idxmax(), "K"])
+    row = d.set_index("K")
+    ax.axvline(k_used, color=INK_MUTED, lw=1.0, ls=(0, (4, 3)), zorder=2)
+    ax.annotate(f"$K={k_used}$ (fixed by the\nsubmitted protocol)",
+                (k_used, ax.get_ylim()[0]), xytext=(6, 6),
+                textcoords="offset points", ha="left", va="bottom",
+                fontsize=7.5, color=INK_2)
+    gap = row.loc[k_best, "f1_pca4_mean"] - row.loc[k_used, "f1_pca4_mean"]
+    ax.annotate(f"$+{gap:.3f}$ macro-$F_1$ left on the table at $K={k_best}$",
+                (k_best, row.loc[k_best, "f1_pca4_mean"]), xytext=(-6, 14),
+                textcoords="offset points", ha="right", va="bottom",
+                fontsize=7.5, color=ORANGE)
+
+    ax.set_xscale("log")
+    ax.set_xticks(d.K.tolist())
+    ax.set_xticklabels([str(k) for k in d.K], fontsize=7)
+    ax.minorticks_off()
+    ax.set_xlim(3.5, d.K.max() * 2.4)
+    ax.set_xlabel("Number of features kept by SelectKBest, $K$ (log scale)")
+    ax.set_ylabel("Macro-$F_1$ (proxy linear SVM)")
+    place_right_labels(ax, ends, xanchor=d.K.max() * 1.06)
+
+    fig.suptitle("The elbow at $K=20$ was the end of the old sweep, not a plateau",
+                 x=0.012, y=0.995, ha="left", fontsize=10, fontweight="bold", color=INK)
+    fig.text(0.012, 0.90, "Five-fold stratified CV on the full training set; "
+                          "SelectKBest is refit inside each fold. Bands are one "
+                          "standard deviation.",
+             ha="left", fontsize=7.5, color=INK_MUTED)
+    fig.tight_layout(rect=(0, 0.01, 1, 0.87))
+    return save(fig, "fig4_selectkbest_sweep")
+
+
+# --------------------------------------------------------------------------
 # Fig 6 -- ablation entanglement (thay hinh KTA cu)
 # --------------------------------------------------------------------------
 def figure6():
@@ -749,6 +807,7 @@ def figure8():
 
 if __name__ == "__main__":
     print("Sinh hinh cho ban revision paper 1")
+    figure4()
     figure5()
     figure6()
     figure7()

@@ -12,6 +12,7 @@
 
 | Hình | File | Dữ liệu nguồn | Trạng thái |
 |---|---|---|---|
+| **4** | `fig4_selectkbest_sweep` | `c1_revision/c1_ksweep.csv` — sinh bởi `runners/run_ksweep.py` | ✅ **chạy lại 2026-09-03** |
 | **5** | `fig5_c1_dimension_selection` | `C1_revision.ipynb` block C/D/E · `u1_dimension_metrics.csv` · `u1_c1_selection_unsw.json` | ✅ thay hình Pareto cũ |
 | **6** | `fig6_entanglement_ablation` | `c2_revision/c2_kta_per_run.csv` · `c2_revision/c2_per_run.csv` (10 run) | ✅ thay hình KTA cũ |
 | **7** | `fig7_per_run_f1` | `c2_revision/c2_per_run.csv` (10 run × 7 model) | ✅ thay hình 5 seed cũ |
@@ -23,7 +24,7 @@
 Mỗi hình xuất **cả `.pdf` (vector, nộp bài) và `.png` (xem nhanh)**, 400 dpi,
 khổ 7.16 in = đúng chiều rộng 2 cột IEEE, `pdf.fonttype=42` để nhúng font được.
 
-**Điểm chung của cả 7 hình**: đều lấy từ artifact `*_revision` (10 run, tune đối xứng,
+**Điểm chung của cả 8 hình**: đều lấy từ artifact `*_revision` (10 run, tune đối xứng,
 Wilcoxon ghép cặp + Holm). Không hình nào đụng dữ liệu 5-seed của bản cũ.
 
 ---
@@ -33,18 +34,8 @@ Wilcoxon ghép cặp + Holm). Không hình nào đụng dữ liệu 5-seed của
 | Hình | Nội dung | Loại | Kế hoạch |
 |---|---|---|---|
 | **1** | Mạch ZZFeatureMap n=4, r=2, (a) tầng (b) phân rã CNOT–RZ–CNOT | sơ đồ mạch | Xuất từ Qiskit — tất định, không phụ thuộc dữ liệu |
-| **2** | Phân rã Problem 1 thành 4 đóng góp | sơ đồ khối | Vẽ lại bằng matplotlib; phải sửa nội dung cho khớp bản revision |
+| **2** | Phân rã Problem 1 thành 4 đóng góp | sơ đồ khối | Vẽ lại bằng matplotlib; sửa nội dung cho khớp bản revision |
 | **3** | Pipeline đầu-cuối | sơ đồ khối | Vẽ lại; **bỏ khối "Pareto search"**, thay bằng luật ba giai đoạn |
-| **4** | Elbow SelectKBest, F1 proxy linear SVM theo K | **DỮ LIỆU** | ⚠️ **Bản revision KHÔNG chạy lại K-sweep.** Xem cảnh báo dưới |
-
-> ⚠️ **Fig 4 là chỗ nguy hiểm nhất.** Số K-sweep duy nhất đang có (`K=4: 0.8596 … K=20: 0.8989`)
-> nằm trong `main.tex` — tức **code cũ**. Bản revision nhận thẳng `K=20` làm đầu vào, không
-> chạy lại quét K. Hai lựa chọn:
-> 1. **Chạy lại K-sweep bằng code hiện tại** (đúng chuẩn, nhưng linear SVM 5-fold trên
->    125.973 × K sẽ nặng — cần canh lúc máy rảnh);
-> 2. **Bỏ Fig 4** và nói rõ `K=20` kế thừa từ bản đã nộp, không thay đổi.
->
-> Tôi nghiêng về (1). Chưa làm vì máy chỉ còn ~1.4 GB RAM trống lúc sinh hình.
 
 ---
 
