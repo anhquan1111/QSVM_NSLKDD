@@ -1644,3 +1644,53 @@ từng mảnh đã làm → đúng mục/bảng/hình nó thay hoặc chèn vào
 | 1 | 🚨 Xin `.tex` — mô tả nhận dạng chính xác ở §0 của 09_BAN_DO_CHEN.md | thầy |
 | 2 | Nếu không xin được → dựng lại từ PDF (~1 buổi), chờ lệnh | Quan |
 | 3 | Dựng lại Table III (bỏ cột J, sửa nhãn cột F̃) | Quan |
+
+---
+
+# ✅ GIAI ĐOẠN 16 — Đối soát toàn bộ 33 item reviewer (2026-09-03)
+
+**File**: `docs/revision/10_DOI_SOAT_REVIEWER.md`
+
+Quan hỏi "đã giải quyết toàn bộ reviewer chưa và kết quả có khả quan không" trước khi viết
+bài. Rà từng item với bằng chứng thật trong repo.
+
+## Kết quả rà: 24 ✅ · 5 🟡 · 2 ✍️ · 2 ❌ (tổng 33)
+
+Xác nhận thêm được hai thứ trong lúc rà:
+
+- **Noise validation dùng FakeManilaV2 thật** (`NoiseModel.from_backend()`, gate + readout +
+  thermal relaxation theo gate duration, transpiled depth 59, 44 CX) → trả lời đủ AE-6, R1-6,
+  R3-4. Đáng chú ý: F1 **có nhiễu (0.8728) CAO HƠN** ideal statevector (0.8665) — nhiễu đóng
+  vai trò regularisation. Phải báo trung thực, không được lơ.
+- **`tune_quantum_C()` + hai arm** → trả lời R1-3 và R4-6 (tuning bất đối xứng).
+
+## Đánh giá thẳng: khả quan cho việc được nhận, nhưng câu chuyện bị lật
+
+| Bản đã nộp | Số thật |
+|---|---|
+| Lợi thế ở chế độ **ít dữ liệu** | **Ngược lại** — cổ điển thắng ở N nhỏ |
+| "+6.7 điểm rare, d=+0.68" | không tái tạo được |
+| Theorem 1: n*=4 cực đại J | sai, cực đại tại n=2 |
+| QSVM 0.854 > RBF 0.838 | **XGBoost 0.8503 > QSVM 0.8469** > RF 0.8446 |
+| "quantum advantage is real" | 21 thắng / 21 thua / 68 hoà |
+
+Bốn khẳng định phải rút. Nhưng đó **chính là thứ AE và R1/R4 yêu cầu** — họ chê đúng cái
+khẳng định quá rộng đó.
+
+## Rủi ro theo reviewer
+
+| Reviewer | Đánh giá |
+|---|---|
+| R4 (ủng hộ nhất) | 🟢 cao — 6/6 item xử lý, còn tự khai thêm lỗi họ chưa bắt |
+| R1 | 🟢 cao — 8/10 xong có số, câu hỏi crossover được trả lời bằng kết quả thật |
+| R2 | 🟢 cao — 4/6 xong, 2 cái còn lại chỉ là sửa reference |
+| **R3 (đề nghị từ chối)** | 🟡 **khó nhất** — họ chê "không có kernel/feature map/kết quả lý thuyết mới", mà ta **vẫn không có**. Chỉ đổi được cách định vị. |
+
+Về R3: không cãi được "kết quả đã có ở các benchmark trước". Cách khôn nhất là **đồng ý** rồi
+chỉ ra ta ra đúng kết quả như họ (21/21/68) nhưng trên trục họ không xét (sample complexity).
+Nếu R3 giữ nguyên thì quyết định ở AE — mà AE đã viết *"the majority of reviewers see
+sufficient new contribution"*, tức AE không đứng về phía R3.
+
+## Chốt: `.tex` nguồn không còn → dựng lại từ `paper1.pdf`
+
+Quan xác nhận không còn `main.tex` đúng bản. Chuyển sang phương án dựng lại.
