@@ -1467,3 +1467,64 @@ hay bị bỏ qua, notebook ghi rõ lý do kèm lệnh chạy lại.
 
 > Lưu ý cho khâu đóng gói supplementary: notebook đã lưu kèm output, nên người đọc thấy
 > ngay kết quả mà không cần chạy. Muốn số gate đầy đủ thì chạy `python runners/audit_c4.py`.
+
+---
+
+# ✅ GIAI ĐOẠN 13 — Caption 4 hình + novelty matrix (2026-09-03)
+
+## Sản phẩm
+
+| File | Nội dung |
+|---|---|
+| `paper/paper1/figs_revision/captions.tex` | Caption LaTeX cho 4 hình, dùng `\ref` chứ không viết số cứng |
+| `paper/paper1/novelty_matrix.tex` | Bảng định vị vs 4 bài reviewer chỉ + 1 bài mới tìm |
+| `paper/paper1/crossover_arms_table.tex` | Bảng robustness 2 arm (caption Fig 9 tham chiếu tới) |
+| `docs/revision/07_NOVELTY_MATRIX.md` | Phân tích + bản nháp rebuttal + BibTeX |
+
+Mọi số trong caption đã đối chiếu lại với artifact. Sửa hai chỗ khi kiểm:
+recall lớp hiếm UNSW là **0.95–0.99** (không phải 0.94–0.99); và "gấp đôi NSL-KDD" nay ghi rõ
+so với mốc nào (+0.045 vs +0.022 tại N=5000 — mức có ý nghĩa lớn nhất trên NSL-KDD).
+Chưa có `pdflatex` trên máy nên mới kiểm cân bằng cú pháp, **chưa compile thử**.
+
+## Phát hiện #27 🔴 — Có một bài 2026 gần như trùng đề tài, chưa ai nhắc
+
+**Gillani, Baig, Shah, Ali, Siddiqui (13-08-2026)**, *"How Quantum Is the Advantage? A Fair,
+Calibration- and Noise-Aware Benchmark and Attribution Audit of QML for NIDS"*,
+arXiv:2608.18155. Không nằm trong danh sách reviewer chỉ — tôi tìm ra khi tra literature.
+
+Trùng: **NSL-KDD + UNSW-NB15**, **official split**, QSVM fidelity kernel + hybrid VQC,
+baseline RF/XGBoost, noise sweep, kiểm định có hiệu chỉnh đa so sánh.
+Khác: họ 4 dataset / 8 qubit / 3–5 seed / BH-FDR trên 108 so sánh;
+ta 2 dataset / 4–6 qubit / **10 run** / Holm trong từng family.
+
+**Kết luận của họ**: cho model cổ điển dùng cùng front-end thì "quantum advantage" biến mất —
+lợi thế quy về **tiền xử lý**. Điều này **xác nhận** phát hiện độc lập của ta (phân rã A/B/C
+cô lập SelectKBest+PCA refit; trùng 90,5% feature, cosine PC1 = 0.9966 vẫn đủ lật dấu ablation).
+
+**Chỗ ta không bị trùng**: họ ablation **bề rộng mạch** (4/6/8/12 qubit) nhưng **không thay đổi
+`N`** — không bài nào trong cả 5 bài quét kích thước tập huấn luyện. Đó đúng là trục của C4.
+
+Ba việc phải làm:
+1. Trích dẫn và phân biệt — nộp sau họ 2 tháng mà lờ đi là reviewer tự tìm ra.
+2. Viết theo hướng *independent corroboration*, ta bổ sung phần cơ chế.
+3. 🔴 **Kiểm tác động lên Paper 2** (calibration, đã nộp IJNM 04-08-2026). Ta nộp trước họ
+   9 ngày nên không mất quyền ưu tiên, nhưng nếu IJNM cho revise thì phải trích.
+
+## Lập luận novelty đã chốt (chi tiết ở 07_NOVELTY_MATRIX.md)
+
+Không cãi R3, vì họ đúng một nửa. Ba bước: (1) đồng ý với kết luận của các benchmark đó và
+đưa ra chính số của ta — 21/21/68, ta không hề khẳng định ngược lại; (2) chỉ ra trục
+sample-complexity mà không bài nào chạm tới; (3) hai đóng góp phương pháp còn lại (luật chọn
+số chiều chuyển giao được, bản đồ chế độ).
+
+**Không được nói**: ta rộng hơn Gillani (thua về bề rộng), "quantum advantage",
+hay ta là bài đầu hỏi "khi nào" (Carducci đã hỏi cho malware).
+
+## Việc còn treo
+
+| # | Việc | Ai |
+|---|---|---|
+| 1 | Lấy toàn văn QMI 2026 + Carducci ICAD 2026 (Springer/IEEE chặn) → điền ô `n/r` | Quan |
+| 2 | Đọc phần calibration của Gillani et al. → đối chiếu Paper 2 | Quan |
+| 3 | Compile thử LaTeX (máy chưa có pdflatex) | Quan |
+| 4 | Mở rộng Table I bằng literature 2024–2026 | Quan / thầy |
