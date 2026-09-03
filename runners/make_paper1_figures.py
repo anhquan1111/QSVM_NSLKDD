@@ -577,57 +577,79 @@ def figure10():
 # Fig 4 -- quet K cho tang SelectKBest
 # --------------------------------------------------------------------------
 def figure4():
-    """Quet K, hai duong: truoc va sau khau nen PCA-4 cua pipeline that.
+    """Quet K: (a) K mua duoc gi ve do chinh xac, (b) K doi lai bao nhieu qubit.
 
     Hinh cu chi quet K trong {4, 6, 8, 10, 20} roi goi K=20 la "elbow". Mo rong
-    luoi den K=122 cho thay do khong phai diem bao hoa ma chi la diem cuoi cua
-    luoi quet. Ve ca hai duong de nguoi doc tu thay: giu K=20 la mot lua chon
-    giao thuc duoc ke thua, khong phai mot toi uu.
+    luoi den K=122 cho thay do la diem CUOI cua luoi quet chu khong phai diem
+    bao hoa. Nhung panel (b) moi la phan quan trong: giu 85% phuong sai voi K
+    lon hon doi hoi NHIEU QUBIT hon, nen do chinh xac tang them khong he mien
+    phi. Do la lap luan dung de giu K=20 -- ngan sach NISQ, khong phai elbow.
     """
     d = pd.read_csv(ROOT / "results/nslkdd/c1_revision/c1_ksweep.csv")
-    fig, ax = plt.subplots(figsize=(7.16, 3.0))
-    tidy(ax)
+    sens = pd.read_csv(ROOT / "results/nslkdd/c1_revision/c1_ksensitivity.csv")
+    star = json.loads(
+        (ROOT / "results/nslkdd/c1_revision/c1_ksensitivity.json").read_text())
+    k_used = 20
 
+    fig, axes = plt.subplots(1, 2, figsize=(7.16, 3.1))
+
+    # (a) Do chinh xac cua proxy tuyen tinh theo K, o kich thuoc mach co dinh n=4.
+    ax = axes[0]
+    tidy(ax)
     series = [("f1_raw", BLUE, "-", "o", "SelectKBest only"),
-              ("f1_pca4", ORANGE, (0, (5, 2)), "^",
-               "SelectKBest $\\to$ PCA-4 (pipeline used)")]
+              ("f1_pca4", ORANGE, (0, (5, 2)), "^", "SelectKBest + PCA-4 (fixed $n$)")]
     ends = []
     for col, colour, ls, marker, label in series:
-        m, s = d[f"{col}_mean"].values, d[f"{col}_std"].values
-        ax.fill_between(d.K, m - s, m + s, color=colour, alpha=0.13, lw=0, zorder=3)
-        ax.plot(d.K, m, color=colour, ls=ls, lw=2.0, marker=marker, ms=5.0,
+        m, sd = d[f"{col}_mean"].values, d[f"{col}_std"].values
+        ax.fill_between(d.K, m - sd, m + sd, color=colour, alpha=0.13, lw=0, zorder=3)
+        ax.plot(d.K, m, color=colour, ls=ls, lw=2.0, marker=marker, ms=4.5,
                 mec=SURFACE, mew=0.8, zorder=6)
         ends.append((float(m[-1]), label))
-
-    k_used, k_best = 20, int(d.loc[d.f1_pca4_mean.idxmax(), "K"])
-    row = d.set_index("K")
     ax.axvline(k_used, color=INK_MUTED, lw=1.0, ls=(0, (4, 3)), zorder=2)
-    ax.annotate(f"$K={k_used}$ (fixed by the\nsubmitted protocol)",
-                (k_used, ax.get_ylim()[0]), xytext=(6, 6),
-                textcoords="offset points", ha="left", va="bottom",
-                fontsize=7.5, color=INK_2)
-    gap = row.loc[k_best, "f1_pca4_mean"] - row.loc[k_used, "f1_pca4_mean"]
-    ax.annotate(f"$+{gap:.3f}$ macro-$F_1$ left on the table at $K={k_best}$",
-                (k_best, row.loc[k_best, "f1_pca4_mean"]), xytext=(-6, 14),
-                textcoords="offset points", ha="right", va="bottom",
-                fontsize=7.5, color=ORANGE)
-
     ax.set_xscale("log")
-    ax.set_xticks(d.K.tolist())
-    ax.set_xticklabels([str(k) for k in d.K], fontsize=7)
+    ax.set_xticks([4, 10, 20, 40, 80, 122])
+    ax.set_xticklabels(["4", "10", "20", "40", "80", "122"])
     ax.minorticks_off()
-    ax.set_xlim(3.5, d.K.max() * 2.4)
-    ax.set_xlabel("Number of features kept by SelectKBest, $K$ (log scale)")
+    ax.set_xlim(3.6, 300)
+    ax.set_xlabel("Features kept, $K$ (log scale)")
     ax.set_ylabel("Macro-$F_1$ (proxy linear SVM)")
-    place_right_labels(ax, ends, xanchor=d.K.max() * 1.06)
+    ax.set_title("(a) What a larger $K$ buys", loc="left", color=INK, pad=6)
+    place_right_labels(ax, ends, xanchor=134)
 
-    fig.suptitle("The elbow at $K=20$ was the end of the old sweep, not a plateau",
-                 x=0.012, y=0.995, ha="left", fontsize=10, fontweight="bold", color=INK)
-    fig.text(0.012, 0.90, "Five-fold stratified CV on the full training set; "
-                          "SelectKBest is refit inside each fold. Bands are one "
-                          "standard deviation.",
+    # (b) Cai gia phai tra: so qubit toi thieu de giu 85% phuong sai.
+    ax = axes[1]
+    tidy(ax)
+    ks = sorted(int(k) for k in star)
+    ns = [star[str(k)]["n_star"] for k in ks]
+    cnot = [2 * (n * (n - 1) // 2) * 2 for n in ns]
+    ax.plot(ks, ns, color=VIOLET, lw=2.0, marker="s", ms=6.0, mec=SURFACE,
+            mew=1.0, drawstyle="steps-post", zorder=6)
+    for k, n, c in zip(ks, ns, cnot):
+        ax.annotate(f"$n^\\ast\\!=\\!{n}$\n{c} CNOT", (k, n),
+                    xytext=(0, 11), textcoords="offset points", ha="center",
+                    fontsize=7, color=INK_2)
+    ax.plot([k_used], [star[str(k_used)]["n_star"]], marker="s", ms=9,
+            mfc="none", mec=VIOLET, mew=1.6, zorder=7)
+    ax.axvline(k_used, color=INK_MUTED, lw=1.0, ls=(0, (4, 3)), zorder=2)
+    ax.set_xscale("log")
+    ax.set_xticks(ks)
+    ax.set_xticklabels([str(k) for k in ks])
+    ax.minorticks_off()
+    ax.set_xlim(15, 190)
+    ax.set_ylim(3, 11.4)
+    ax.set_yticks(range(4, 11, 2))
+    ax.set_xlabel("Features kept, $K$ (log scale)")
+    ax.set_ylabel("Qubits for 85% variance")
+    ax.set_title("(b) What it costs", loc="left", color=INK, pad=6)
+
+    fig.suptitle("The accuracy a larger $K$ buys is paid for in qubits",
+                 x=0.012, y=0.995, ha="left", fontsize=10, fontweight="bold",
+                 color=INK)
+    fig.text(0.012, 0.895, "Five-fold stratified CV on the full training set; "
+                           "SelectKBest refit inside each fold. $K=20$ (dashed) "
+                           "is the value inherited from the submitted protocol.",
              ha="left", fontsize=7.5, color=INK_MUTED)
-    fig.tight_layout(rect=(0, 0.01, 1, 0.87))
+    fig.tight_layout(rect=(0, 0.01, 1, 0.86), w_pad=2.6)
     return save(fig, "fig4_selectkbest_sweep")
 
 
