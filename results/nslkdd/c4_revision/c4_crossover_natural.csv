@@ -1,0 +1,7 @@
+baseline,last_classical_favorable_N,first_qsvm_favorable_N,crossover
+QSVM_Z,100.0,5000.0,True
+RandomForest,1000.0,10000.0,True
+SVM_Linear,,1000.0,False
+SVM_Poly2,,2000.0,False
+SVM_RBF,,,False
+XGBoost,1000.0,5000.0,True

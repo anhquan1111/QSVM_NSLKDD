@@ -18,3 +18,7 @@ docs/Thuyet minh de tai ma so T2026-02-10TN.docx
 /_PRIVATE_move_out_of_repo/
 /.claude
 /.jupyter_tmp
+
+# C4 revision: cache statevector/gram - KHONG commit (dung luong lon)
+results/nslkdd/c4_revision/cache/
+results/unsw/c4_revision/cache/

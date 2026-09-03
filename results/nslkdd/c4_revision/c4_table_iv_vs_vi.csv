@@ -1,0 +1,5 @@
+repr_mode,test_split,QSVM_ZZ,QSVM_Z,SVM_RBF,RandomForest,XGBoost
+frozen_c1,fixed_300,0.846888,0.835528,0.836186,0.844636,0.85031
+frozen_c1,full_kddtest_plus,0.795856,0.772138,0.797737,0.800923,0.804271
+refit_per_N,fixed_300,0.852557,0.871545,0.864496,0.8673,0.866638
+refit_per_N,full_kddtest_plus,0.80718,0.824997,0.827307,0.824959,0.824159
