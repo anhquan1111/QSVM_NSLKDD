@@ -1266,3 +1266,86 @@ protocol dùng chung:
 
 **Bước tiếp theo**: Giai đoạn 2 — learning curve lõi, cả hai chế độ lấy mẫu, 10 run, 7 model,
 2 test set, tune đối xứng tại mỗi (N, run).
+
+---
+
+# ✅ GIAI ĐOẠN 10 — Vẽ lại bộ hình cho bản revision (2026-09-03)
+
+**Script**: `runners/make_paper1_figures.py` (một lệnh sinh cả 4 hình)
+**Output**: `paper/paper1/figs_revision/*.pdf` + `*.png` (400 dpi, `pdf.fonttype=42` để
+IEEE nhúng font được, khổ 7.16 in = đúng chiều rộng 2 cột)
+
+## Bốn hình
+
+| Hình | Nội dung | Nguồn số |
+|---|---|---|
+| **Fig 5** | Luật chọn số chiều 3 giai đoạn, 2 hàng (NSL-KDD / UNSW) × 3 panel: `V(n)`, KTA, `Q(n)` | `C1_revision.ipynb` block C/D/E + `u1_dimension_metrics.csv`, `u1_c1_selection_unsw.json` |
+| **Fig 9** | Learning curve NSL-KDD, 2×2: (a)(b) F1 tuyệt đối `natural` / `matched`, (c)(d) Δ ghép cặp kèm CI 95% | `c4_per_run_{natural,matched}_refit_per_N.csv`, `c4_pairwise_statistics_*.csv` |
+| **Fig 10** | Bản đồ chế độ — lưới điều kiện × baseline, 3 mức verdict | `regime_map_rows.csv` (110 dòng) |
+| **Fig 11** | Chuyển giao sang UNSW-NB15: learning curve + Δ ghép cặp | `c4_per_run_unsw_natural_refit_per_N.csv`, `c4_pairwise_statistics_natural.csv` (UNSW) |
+
+## Quyết định thiết kế đáng ghi
+
+1. **Bỏ Pareto khỏi Fig 5.** Bản cũ vẽ Pareto như thể nó chọn `n`; thật ra cả 9 candidate đều
+   Pareto-optimal (chính notebook C1 đã ghi "Pareto CHỈ là diagnostic"). Hình mới vẽ đúng
+   ba giai đoạn của luật: vùng xám = bị loại bởi `V < T`, vòng tròn rỗng = qua giai đoạn 1-2,
+   chấm đặc = `n*` chọn ở giai đoạn 3.
+
+2. **Fig 5 ghép hai bộ dữ liệu vào một hình.** Đây là câu trả lời trực tiếp cho R3-1: cùng một
+   thủ tục, không sửa tham số, ra `n*=4` trên NSL-KDD và `n*=6` trên UNSW. Một hình nói được
+   điều mà hai hình rời không nói được.
+
+3. **Fig 10 là lưới chấm, không phải forest plot.** 110 dòng effect size xếp dọc thì không ai
+   đọc nổi; nhưng dữ liệu vốn có cấu trúc lưới (điều kiện × baseline) nên vẽ đúng dạng lưới.
+   Verdict là phân cực 3 mức nên dùng 2 màu + xám trung tính ở giữa, kèm **hình dấu riêng**
+   (▲ / ● / ▼) — danh tính không bao giờ chỉ dựa vào màu.
+
+4. **Bốn panel của Fig 9 dùng chung một trục x** `[100, 10000]`. Nhóm `matched` cạn ở
+   `N=2000`; nếu để mỗi panel một thang đo thì hai cột không đọc chồng lên nhau được.
+   Phần không có dữ liệu tô xám và ghi rõ lý do thay vì để trục trống.
+
+5. **Panel Δ dùng thanh sai số, không dùng dải.** Bốn dải CI chồng nhau thành mảng màu
+   không đọc được; thanh sai số có lệch nhẹ theo x thì tách bạch.
+
+6. 🔴 **Đã sửa một chỗ suýt thành cherry-picking.** Bản vẽ đầu để panel Δ chỉ so với
+   QSVM-Z / XGBoost / RandomForest. Nhưng tại `N=10000` trên NSL-KDD, **SVM-RBF (0.7740) mới
+   là baseline cổ điển mạnh nhất**, mạnh hơn XGBoost (0.7706) — bỏ nó đi thành ra chỉ so với
+   đối thủ dễ hơn. Đã thêm SVM-RBF vào cả Fig 9 và Fig 11.
+
+   Thêm vào rồi mới lộ ra **hai điều quan trọng**:
+
+   | | NSL-KDD | UNSW-NB15 |
+   |---|---|---|
+   | ZZ − SVM_RBF tại `N=10000` | +0.0115, holm_p = **0.131** → inconclusive | +0.0401, holm_p = **0.0059** → QSVM-favorable |
+   | ZZ − SVM_RBF, mọi `N` | **không có N nào có ý nghĩa** | có ý nghĩa từ `N≥2000` |
+
+   - Trên NSL-KDD, QSVM-ZZ **chưa từng** thắng SVM-RBF có ý nghĩa ở bất kỳ `N` nào.
+     Đây là caveat phải giữ trong bài, không được để hình che đi.
+   - Trên UNSW thì ngược lại: QSVM-ZZ **thắng SVM-RBF có ý nghĩa** (+0.040, p=0.006).
+
+7. **Đổi tiêu đề Fig 11 cho đúng phạm vi.** Ban đầu đặt là "The crossover does not transfer to
+   UNSW-NB15" — đúng với ensemble cây nhưng sai với họ kernel. Đổi thành *"On UNSW-NB15 the
+   quantum kernel beats classical kernels, not tree ensembles"*: hẹp hơn, nhưng đúng và
+   thực ra mạnh hơn cho bài.
+
+## Kiểm tra màu
+
+Chạy `scripts/validate_palette.js` (skill dataviz) trước khi chốt bảng màu:
+
+```
+4 slot nhấn (#2a78d6, #eb6834, #1baf7a, #4a3aa7) — chế độ sáng, all-pairs
+  [PASS] dải sáng · [PASS] sàn chroma
+  [PASS] tách CVD        worst ΔE 9.2 (deutan), tritan 9.6   (ngưỡng 8)
+  [PASS] sàn thị lực thường  worst ΔE 16.3                   (ngưỡng 15)
+```
+
+Ba đường SVM cổ điển hạ xuống ba mức xám khác nhau, mỗi đường một kiểu nét + một marker
+riêng. Bảng in đen trắng vẫn phân biệt được: đây là yêu cầu bắt buộc vì TETC in giấy.
+
+## Việc còn treo của hình
+
+| # | Việc | Ghi chú |
+|---|---|---|
+| 1 | Viết caption LaTeX cho 4 hình | làm cùng lúc viết bài |
+| 2 | Fig 5 hàng UNSW chưa có bootstrap CI cho KTA | NSL-KDD có (B=200); UNSW chưa chạy. Legend đã ghi rõ "NSL-KDD only" nên không nói sai, nhưng chạy nốt thì cân đối hơn (~15 phút) |
+| 3 | Số hình cuối cùng (5 / 9 / 10 / 11) | phụ thuộc bố cục bài sau khi gộp, sẽ chốt khi có `.tex` |
