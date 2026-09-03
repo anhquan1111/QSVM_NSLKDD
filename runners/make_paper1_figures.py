@@ -111,10 +111,17 @@ def tidy(ax):
 
 
 def save(fig, name):
+    """Ghi ra dia roi TRA VE fig, de notebook con hien duoc inline.
+
+    `plt.close` chi go fig khoi trinh quan ly cua pyplot; doi tuong van ve
+    lai duoc bang `display(fig)`, nen dong o day khong mat gi ma tranh
+    duoc viec giu hang chuc figure trong bo nho.
+    """
     for ext in ("pdf", "png"):
         fig.savefig(OUT / f"{name}.{ext}")
     plt.close(fig)
     print(f"  -> {OUT.relative_to(ROOT)}/{name}.pdf  (+ .png)")
+    return fig
 
 
 def ci95(values: np.ndarray) -> float:
@@ -279,7 +286,7 @@ def figure5():
     fig.suptitle("Three-stage dimension selection reproduces on an unseen dataset",
                  x=0.012, ha="left", fontsize=10, fontweight="bold", color=INK)
     fig.tight_layout(rect=(0.035, 0.0, 1, 0.945))
-    save(fig, "fig5_c1_dimension_selection")
+    return save(fig, "fig5_c1_dimension_selection")
 
 
 # --------------------------------------------------------------------------
@@ -425,7 +432,7 @@ def figure9():
     fig.suptitle("Enriching rare attacks removes the crossover: NSL-KDD",
                  x=0.012, ha="left", fontsize=10, fontweight="bold", color=INK)
     fig.tight_layout(rect=(0, 0.035, 1, 0.95))
-    save(fig, "fig9_learning_curve_nslkdd")
+    return save(fig, "fig9_learning_curve_nslkdd")
 
 
 def figure11():
@@ -463,7 +470,7 @@ def figure11():
     fig.suptitle("On UNSW-NB15 the quantum kernel beats classical kernels, not tree ensembles",
                  x=0.012, y=0.995, ha="left", fontsize=10, fontweight="bold", color=INK)
     fig.tight_layout(rect=(0, 0.045, 1, 0.945))
-    save(fig, "fig11_unsw_transfer")
+    return save(fig, "fig11_unsw_transfer")
 
 
 # --------------------------------------------------------------------------
@@ -562,7 +569,7 @@ def figure10():
                            "(paired over 10 runs, Holm-corrected within family)",
              ha="left", fontsize=7.5, color=INK_MUTED)
     fig.tight_layout(rect=(0, 0.01, 1, 0.895))
-    save(fig, "fig10_regime_map")
+    return save(fig, "fig10_regime_map")
 
 
 if __name__ == "__main__":

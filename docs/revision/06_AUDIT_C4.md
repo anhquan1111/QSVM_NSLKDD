@@ -9,29 +9,29 @@ cái bẫy diễn giải) và **1 kết quả robustness mới** — chi tiết 
 
 ---
 
-## 0. Notebook C4 để ở đâu
+## 0. Notebook C4 — đã làm
 
-Câu hỏi của Quang Anh. **C4 không có notebook** — cố ý, và đây là lý do:
+Câu hỏi của Quang Anh. Trước đây C4 **không** có notebook, vì nó phải quét
+2 dataset × 2 chế độ lấy mẫu × 2 chế độ biểu diễn × 2 arm × 7 giá trị N × 10 run × 7 model —
+nhét vào notebook thì không đặt được cache theo ô, không chạy lại được riêng một ô hỏng, và
+mỗi lần treo máy là mất hết. Nên phần chạy nằm ở module + CLI.
 
-C1/C2/C3 mỗi cái chạy một lần trên một cấu hình, notebook là hợp lý. C4 phải quét
-**2 dataset × 2 chế độ lấy mẫu × 2 chế độ biểu diễn × 2 arm × 7 giá trị N × 10 run × 7 model**.
-Nhét vào notebook thì không đặt được cache, không chạy lại được từng ô, và mỗi lần treo máy
-là mất hết. Nên C4 tách thành module + CLI:
+Nay đã có **`notebooks/nslkdd/C4_revision.ipynb`** để review và đóng gói supplementary. Nó
+**không train lại gì cả** — nạp artifact, kiểm chứng lại, dựng bảng, vẽ cả 4 hình inline.
+Chạy hết khoảng một phút.
 
 | Đường dẫn | Vai trò |
 |---|---|
-| `src/c4_pipeline.py` | Toàn bộ logic: lấy mẫu lồng nhau, biểu diễn, kernel, tuning, thống kê, gate |
+| `notebooks/nslkdd/C4_revision.ipynb` | **MỚI** — đọc kết quả, vẽ hình, chạy audit; không train |
+| `src/c4_pipeline.py` | Logic: lấy mẫu lồng nhau, biểu diễn, kernel, tuning, thống kê, gate |
 | `runners/run_c4.py` | Chạy thí nghiệm — `--dataset --regime --repr-mode --arms --n-grid --run-ids` |
-| `runners/analyze_c4.py` | Sinh learning curve, thống kê ghép cặp, rare-attack, crossover |
+| `runners/analyze_c4.py` | Learning curve, thống kê ghép cặp, rare-attack, crossover |
 | `runners/pairwise_all_arms.py` | **MỚI** — bảng thống kê phủ hết arm/split |
 | `runners/audit_c4.py` | **MỚI** — script soát này |
 | `runners/make_paper1_figures.py` | Sinh 4 hình cho bản revision |
 | `configs/c4_protocol.json` | Protocol đóng băng + `_changelog` |
 
-Kết quả đọc được ở `notebooks/nslkdd/note/C4/*.md` (m đã xem và nói ổn rồi).
-
-Nếu m vẫn muốn có notebook để review/đóng gói supplementary thì t làm một cái mỏng: nạp
-artifact đã có, in bảng, vẽ hình, chạy audit — **không train lại**. Nói t một tiếng.
+Kết quả đọc được ở `notebooks/nslkdd/note/C4/*.md`.
 
 ---
 
@@ -160,7 +160,27 @@ ensemble cây không đổi dấu ở cả hai arm.
 
 | # | Việc | Ai |
 |---|---|---|
-| 1 | Có muốn t làm notebook C4 mỏng để đóng gói supplementary không | Quang Anh quyết |
+| 1 | ~~Notebook C4~~ — **đã làm**, xem §0 | xong |
 | 2 | Đưa kết quả robustness §3 vào bản thảo (một câu + bảng phụ lục) | Quan, lúc viết |
 | 3 | Ghi caveat arm `tuned_once` vào mục hạn chế | Quan, lúc viết |
 | 4 | Mục reproducibility phải nói XGBoost dao động ±0.001 giữa các máy | Quan, lúc viết |
+
+---
+
+## 5. Lưu ý khi chạy lại audit
+
+Nhóm gate dữ liệu phải nạp trọn bộ dữ liệu — đo được: NSL-KDD giữ ~290 MB frame (đỉnh
+~500 MB khi nạp), UNSW giữ ~620 MB (`df_train_all` một mình đã 282 MB). Nên mỗi dataset
+chạy trong **một tiến trình riêng**: trên Windows chỉ khi tiến trình kết thúc thì RAM mới
+thực sự trả về hệ điều hành.
+
+Nếu máy đang thiếu RAM, nhóm gate báo **SKIP** chứ không báo FAIL. Hết bộ nhớ không nói lên
+điều gì về tính đúng đắn của dữ liệu; đếm nó thành lỗi là báo động giả — nhưng vẫn in rõ
+để không ai tưởng là đã soát.
+
+```bash
+python runners/audit_c4.py            # luc may ranh: 96/96 PASS
+```
+
+Chạy trong notebook lúc máy đang tải thì gate UNSW hay bị bỏ qua — bình thường, chạy lại
+từ terminal là đủ.
