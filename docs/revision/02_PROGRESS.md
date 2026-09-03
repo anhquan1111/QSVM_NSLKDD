@@ -1598,3 +1598,49 @@ không trích ai — nay trích [17] Schölkopf & Smola.
 | 1 | 🚨 **Xin `.tex` nguồn bản đã nộp** — không có thì không làm được bản highlight vàng | thầy |
 | 2 | Viết Appendix A (proof BCH của Lemma 1) | Quan |
 | 3 | Compile thử | Quan |
+
+---
+
+# ✅ GIAI ĐOẠN 15 — Chứng minh `main.tex` không phải bản đã nộp + bản đồ chèn (2026-09-03)
+
+**File**: `docs/revision/09_BAN_DO_CHEN.md`
+
+Quan hỏi lại "file tex nguồn không phải main.tex à". Đã đối chiếu hẳn ra bằng chứng:
+
+| | `main.tex` | `paper1.pdf` |
+|---|---|---|
+| `\markboth` | **Cognitive Communications and Networking** | **Emerging Topics in Computing** |
+| Tiêu đề | "Six-Contribution Analysis on NSL-KDD **and UNSW-NB15**" | "**Regime-Specific Benchmark** on NSL-KDD" |
+| Đóng góp | C1–C**6** | C1–C**4** |
+| Tác giả | placeholder `First~Author` | 5 tác giả thật |
+| Lý thuyết | **không có** gì cả | Assumption 1, Problem 1, Def 1–4, Prop 1–4, Theorem 1 |
+| J(n) | `ω₁V − ω₂Q` (2 hạng) | `αV + βF̃ − γQ` (3 hạng) |
+| Ref | 37 | 36 |
+
+Toàn bộ phần lý thuyết reviewer chê **không tồn tại** trong `main.tex`. Blocker P0.1 vẫn còn.
+
+## Phát hiện #31 🟡 — Cột F̃ bị dán nhầm nhãn qua NHIỀU bản
+
+Cột số `0.9413 / 0.6275 / 0.4711 / 0.3777 / 0.3154 / 0.2717 / 0.1957`:
+
+- trong `main.tex` gắn nhãn **"1−V"** → sai (1 − 0.7418 = 0.258, không phải 0.941)
+- trong `paper1.pdf` gắn nhãn **"F̃(n) = 1/DBI(n)"** → cũng sai (1/DBI thật = 1.143/0.982/0.922)
+- thực chất là **thống kê Fisher** từ ANOVA
+
+Không phải lỗi đánh máy một lần mà là nhãn sai được mang theo qua các bản.
+
+## Đã dựng bản đồ chèn
+
+Trích cấu trúc bản đã nộp từ pdftotext: **8 mục, 7 bảng (I–VII), 10 hình**. Lập bảng ánh xạ
+từng mảnh đã làm → đúng mục/bảng/hình nó thay hoặc chèn vào, để khi có `.tex` là ghép ngay.
+
+**Lưu ý đánh số đã chốt**: đặt UNSW thành **V-F** (mục con của Results) chứ không phải mục cấp
+1, để không đẩy số mục VI/VII/VIII — reviewer trích theo số cũ, giữ nguyên thì họ dò lại dễ.
+
+## Việc còn treo
+
+| # | Việc | Ai |
+|---|---|---|
+| 1 | 🚨 Xin `.tex` — mô tả nhận dạng chính xác ở §0 của 09_BAN_DO_CHEN.md | thầy |
+| 2 | Nếu không xin được → dựng lại từ PDF (~1 buổi), chờ lệnh | Quan |
+| 3 | Dựng lại Table III (bỏ cột J, sửa nhãn cột F̃) | Quan |
