@@ -1,0 +1,91 @@
+{
+  "dataset": "UNSW-NB15",
+  "K": 35,
+  "candidate_n": [
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10
+  ],
+  "selection_rule": {
+    "variance_threshold": 0.85,
+    "kta_tolerance": 0.05,
+    "objective": "minimize CNOT-weighted hardware cost Q(n)"
+  },
+  "information_feasible_n": [
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10
+  ],
+  "kta_max_feasible": 0.19858703600360778,
+  "kta_max_feasible_n": 6,
+  "kta_threshold": 0.18865768420342738,
+  "kernel_quality_feasible_n": [
+    6
+  ],
+  "selected_n": 6,
+  "selected_variance": 0.9043825268745422,
+  "selected_kta": 0.19858703600360778,
+  "selected_cnot_total": 60,
+  "epsilon_sensitivity": {
+    "0.02": 6,
+    "0.05": 6,
+    "0.1": 6
+  },
+  "variance_threshold_sensitivity": {
+    "0.8": 3,
+    "0.85": 4,
+    "0.9": 6,
+    "0.95": 10
+  },
+  "nslkdd_selected_n": 4,
+  "kta_subset_size": 300,
+  "kta_subset_seed": 42,
+  "robustness_10_subsets": {
+    "method": "train_test_split(stratify=attack_category), seeds 42..51, N=300 - dung cach lay mau cua C1",
+    "n_star_by_eps": {
+      "0.02": {
+        "6": 10
+      },
+      "0.05": {
+        "6": 10
+      },
+      "0.1": {
+        "6": 7,
+        "5": 3
+      }
+    },
+    "conclusion": "n*=6 o 10/10 subset tai eps=0.02 va 0.05; tai eps=0.10 la 7/10 (3 subset cho n=5)"
+  },
+  "cost_note": {
+    "statevector_ms_per_sample": {
+      "n=4": 0.82,
+      "n=6": 2.06
+    },
+    "full_test_82332_minutes": {
+      "n=4": 1.1,
+      "n=6": 2.8
+    },
+    "kernel_equivalence_check": {
+      "n=4": "4.44e-15 PASS",
+      "n=6": "6.00e-15 PASS"
+    }
+  },
+  "data_ordering_warning": "UNSW_Train_Cleaned.parquet duoc SAP XEP THEO LOP (20.000 hang dau deu Normal). Moi thao tac cat theo chi so tuan tu deu sai; phai lay mau ngau nhien co phan tang.",
+  "duplication_note": {
+    "internal_dup_train": 0.473,
+    "test_rows_dup_in_train": 0.2497,
+    "generic_class_dup": 0.955,
+    "verified_on_raw": 0.2533,
+    "note": "Thuoc tinh cua UNSW-NB15, kiem chung tren du lieu tho. Phai khai trong Limitations."
+  }
+}

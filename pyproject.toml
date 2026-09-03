@@ -19,6 +19,8 @@ dependencies = [
     "gdown==5.1.0",
     "notebook==7.5.4",
     "pywinpty==3.0.3; sys_platform == 'win32'",
+    "qiskit-aer==0.17.2",
+    "qiskit-ibm-runtime==0.49.0",
 ]
 
 [tool.uv]

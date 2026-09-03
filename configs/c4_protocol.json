@@ -1,0 +1,521 @@
+{
+  "_meta": {
+    "contribution": "C4",
+    "title": "Sample-complexity sweep and rare-attack margin analysis (revision)",
+    "dataset": "NSL-KDD",
+    "created": "2026-09-01",
+    "owner": "Quan Tran Anh Vo",
+    "status": "FROZEN pending user approval",
+    "supersedes": [
+      "notebooks/nslkdd/c6_learning_curve_sample_complexity.ipynb",
+      "results/nslkdd/c6_results.json"
+    ],
+    "inherits_contract_from": "results/nslkdd/c2_revision/c2_downstream_tuned_parameters.json",
+    "closes_reviewer_items": [
+      "R1-7",
+      "R1-8",
+      "R1-9",
+      "R4-4",
+      "R2-3",
+      "R1-5"
+    ],
+    "audit_reference": "docs/revision/c4_claim_audit.md",
+    "rule": "Khong doi bat ky truong nao trong file nay sau khi da chay Giai doan 2, tru khi phat hien loi khoa hoc. Moi thay doi phai ghi vao _changelog."
+  },
+  "_changelog": [
+    {
+      "date": "2026-09-01",
+      "stage": "S0.2",
+      "change": "sampling.stratify_by: doi tu 'attack_category' (5 lop) sang nhan 4 lop {Normal, DoS, Probe, R2L_union_U2R}",
+      "reason": "train_run1.csv chi co 6 mau U2R tren 1000. Strat 5 lop se cho 0 mau U2R o N=100, lam bang rare-attack rong. Ban da nop cung dung nhan 4 lop nay (Sec. IV-B)."
+    },
+    {
+      "date": "2026-09-01",
+      "stage": "S0.2",
+      "change": "n_grid mo rong tu [100..5000] len [100..10000]; them kernel_computation.method = statevector_cache",
+      "reason": "Benchmark cho thay chi phi that thap hon uoc tinh ban dau rat nhieu. Uoc tinh cu (~7h) dua tren FidelityStatevectorKernel.evaluate() von mo phong lai statevector moi lan goi. Cache statevector bien chi phi kernel thanh O(N) mo phong + matmul. N=10000 chay het ~10 giay/run thay vi hang gio, nen mo rong dai N de tra loi R1-7 (crossover) thuyet phuc hon: xa gap 10 lan so voi N=1000 cua ban da nop."
+    },
+    {
+      "date": "2026-09-01",
+      "stage": "S1.1",
+      "change": "Them hai che do lay mau: 'matched' (giu thanh phan lop cua train_run{i}, Rare~10%) va 'natural' (ty le tu nhien cua KDDTrain+, Rare 0.83%). Chuoi subset bat buoc LONG NHAU.",
+      "reason": "Do thuc te: train_run{i}.csv cua C2 co Rare=10% trong khi KDDTrain+ chi co 0.83% -> giau gap ~12 lan. Neu mo rong N bang cach rut theo ty le tu nhien thi ty le rare tut tu 10% xuong 1.2% o N=10000, lam duong learning curve tron lan 'them du lieu' voi 'doi thanh phan lop'. Hai che do tach hai cau hoi khac nhau."
+    },
+    {
+      "date": "2026-09-01",
+      "stage": "S1.1",
+      "change": "n_grid tach theo che do: matched = [100,200,500,1000,2000]; natural = [100,200,500,1000,2000,5000,10000,20000]",
+      "reason": "Do overlap giua 10 run o che do matched: N=2000 chia se 24% mau rare, N=5000 la 59%, N=8000 la 94%. Vuot 2000 thi 10 run khong con doc lap, CI se hep gia tao. Che do natural giu overlap rare <= 10% toi tan N=10000 nen di xa duoc."
+    },
+    {
+      "date": "2026-09-01",
+      "stage": "S1.3",
+      "change": "XGBoost: bat buoc n_jobs=1 (thay vi n_jobs=-1 cua C2)",
+      "reason": "Do duoc: cung seed, cung du lieu, cung tham so nhung n_jobs=-1 (16 thread) cho F1=0.8365 con n_jobs=1 cho 0.8533 tren run 1. tree_method='hist' gop histogram theo thu tu thread nen ket qua phu thuoc so core cua may. Lap lai tren cung may thi giong nhau, doi may thi khac. Trung binh 10 run gan nhu khong doi (0.8503 vs 0.8516) nhung tung run lech toi 0.02."
+    },
+    {
+      "date": "2026-09-01",
+      "stage": "S1.3",
+      "change": "gate_reproduce_c2 doi tu mot nguong chung sang tach theo ban chat model",
+      "reason": "Model tat dinh phai TRUNG KHOP CHINH XAC (nguong 1e-9), nguong 0.005 qua long se che mat loi that. XGBoost tach ra 'report_only' vi phi tat dinh theo so thread."
+    },
+    {
+      "date": "2026-09-02",
+      "stage": "U1/U2",
+      "change": "Them muc dataset_overrides cho UNSW-NB15: n_qubits=6, K=35, chi regime 'natural', n_grid=[100,500,1000,2000,5000,10000]",
+      "reason": "U1 chay luat 3 tang cua C1 doc lap tren UNSW cho n*=6 (10/10 subset o eps=0.02 va 0.05), khac n*=4 cua NSL-KDD. K*=35 theo dung tieu chi elbow delta=0.01. Bo regime 'matched' vi UNSW khong co run frames neo san va cau hoi khoa hoc cua UNSW la 'crossover co chuyen giao khong' -> thuoc regime natural."
+    },
+    {
+      "date": "2026-09-02",
+      "stage": "U2",
+      "change": "build_nested_chain: nhanh tang dan loai tru theo CHI SO HANG thay vi theo CHU KY",
+      "reason": "UNSW-NB15 co ban sao that trong du lieu (lop Generic: 40.000 hang / 1.800 chu ky duy nhat = trung lap 95,5%). Loai theo chu ky chan tran N o ~8.000 va am tham khu trung lap tap train, tuc doi phan bo so voi dataset that. Voi NSL-KDD hai cach la mot (125.973/125.973 chu ky duy nhat) nen ket qua C4 NSL-KDD khong doi - da kiem chung."
+    }
+  ],
+  "embedding": {
+    "select_k": 20,
+    "n_components": 4,
+    "reps": 2,
+    "entanglement": "full",
+    "angle_range": [
+      0.0,
+      3.141592653589793
+    ],
+    "quantum_backend": "FidelityStatevectorKernel",
+    "enforce_psd": true,
+    "shots": null,
+    "source": "C1_revision -> data/nslkdd/processed_data/c1_selection.json"
+  },
+  "representation_modes": {
+    "_decision": "Q1",
+    "primary": {
+      "id": "refit_per_N",
+      "description": "SelectKBest(K=20) -> PCA(4) -> scaler duoc fit LAI tren dung N dong training cua moi run, roi transform ca train va test. Zero-leakage that su.",
+      "rationale": "Ban da nop (paper1.pdf Sec. III-F) da cam ket dung giao thuc nay. Neu dung artifact C1 (fit tren 125.973 dong) roi train tren 100 dong thi claim low-data khong con y nghia.",
+      "caveat_to_state_in_paper": "n=4 duoc thua ke tu C1 nhu mot design choice, khong duoc chon lai o moi N."
+    },
+    "secondary": {
+      "id": "frozen_c1",
+      "description": "Dung nguyen artifact C1 da fit (feature_selector_k20.joblib, pca_4components.joblib, scaler_minmax_pi.joblib), chi transform.",
+      "rationale": "Trung khop dieu kien cua C2/C3 -> cho phep noi 'ket luan khong doi duoi ca hai giao thuc' va la co so cho gate S1.3.",
+      "artifacts": {
+        "feature_selector": "models/nslkdd/feature_selector_k20.joblib",
+        "pca": "models/nslkdd/pca_4components.joblib",
+        "angle_scaler": "models/nslkdd/scaler_minmax_pi.joblib"
+      }
+    },
+    "classical_branch_scaler": "StandardScaler (fit tren train subset), dat SAU PCA - dung nhu C2",
+    "quantum_branch_scaler": "MinMaxScaler(0, pi) (fit tren train subset o che do refit; frozen o che do frozen_c1)"
+  },
+  "sampling": {
+    "_decision": "Q4",
+    "n_runs": 10,
+    "run_ids": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10
+    ],
+    "run_seeds": [
+      100,
+      101,
+      102,
+      103,
+      104,
+      105,
+      106,
+      107,
+      108,
+      109
+    ],
+    "stratify_by": {
+      "label": "four_way",
+      "definition": "{Normal, DoS, Probe, R2L_union_U2R}",
+      "rationale": "Ban da nop (paper1.pdf Sec. IV-B) dung dung nhan 4 lop nay de dam bao moi subset co it nhat 1 mau rare ngay ca o N=100. Neu strat 5 lop theo attack_category thi U2R (chi 6/1000 trong train_run1) se bien mat o N=100.",
+      "assert": "moi subset o moi N phai co >= 1 mau thuoc R2L_union_U2R"
+    },
+    "nesting_rule": {
+      "description": "Chuoi long nhau bat buoc: D_N1(i) subset D_N2(i) subset ... cho moi run i, trong tung regime.",
+      "anchor_matched": "N=1000 PHAI bang chinh xac data/nslkdd/processed_data/multi_run/train_run{i}.csv",
+      "downward": "N < anchor: rut long dan tu chinh run frame, quota theo composition muc tieu",
+      "upward": "N > anchor (hoac moi buoc cua regime natural): giu nguyen phan da co, chi boi them tu pool",
+      "train_pool_definition": "train_clean minus c2_tuning (KHONG loai cac train_run khac: 10 run cua C2 von khong roi nhau)",
+      "why": "Neu moi moc N la mot mau doc lap thi bien thien giua cac moc tron lan 'them du lieu' voi 'doi mau'",
+      "verified": "Gate G4 PASS cho ca hai regime, moi cap N lien tiep"
+    },
+    "tuning_set": {
+      "path": "data/nslkdd/processed_data/c2_tuning/train_tuning_2000.csv",
+      "size": 2000,
+      "seed": 200,
+      "role": "chi dung cho arm 'frozen_c2_hyperparameters'; KHONG dung cho arm tune-per-N"
+    },
+    "regimes": {
+      "matched": {
+        "description": "Giu nguyen thanh phan lop 4 lop cua train_run{i}: Normal 48.4%, DoS 33.1%, Probe 8.5%, Rare 10.0%",
+        "n_grid": [
+          100,
+          200,
+          500,
+          1000,
+          2000
+        ],
+        "anchor": "N=1000 = dung train_run{i}.csv cua C2",
+        "role": "PRIMARY cho sample-complexity: chi N thay doi, so sanh truc tiep duoc voi C2/C3",
+        "ceiling_reason": "Vuot N=2000 thi 10 run chia se qua nhieu mau rare (24% o 2000, 59% o 5000, 94% o 8000) -> mat tinh doc lap giua cac run",
+        "measured_rare_fraction": "10.0% o moi N"
+      },
+      "natural": {
+        "description": "Ty le lop tu nhien cua KDDTrain+: Normal 53.5%, DoS 36.5%, Probe 9.25%, Rare 0.83%",
+        "n_grid": [
+          100,
+          200,
+          500,
+          1000,
+          2000,
+          5000,
+          10000,
+          20000
+        ],
+        "anchor": null,
+        "role": "PRIMARY cho cau hoi crossover (R1-7) va cho boi canh trien khai that",
+        "measured_run_overlap_rare": {
+          "1000": "2%",
+          "5000": "4%",
+          "10000": "10%",
+          "20000": "20%"
+        }
+      }
+    }
+  },
+  "models": {
+    "core_7": [
+      "QSVM_ZZ",
+      "QSVM_Z",
+      "SVM_Linear",
+      "SVM_Poly2",
+      "SVM_RBF",
+      "RandomForest",
+      "XGBoost"
+    ],
+    "_note": "Bo 7 model PHAI trung khop C2/C3 de so sanh cheo giua cac contribution la hop le.",
+    "proposed_extensions_pending_approval": {
+      "CatBoost": "Reviewer R1 neu dich danh. Chua cai trong .venv. Neu them thi nen bao bang Quang Anh de C2/C3 cung them, tranh lech bo baseline giua cac contribution.",
+      "deep_tabular": "TabNet hoac FT-Transformer (can torch). Cung ly do nhu tren."
+    },
+    "xgboost_determinism": {
+      "n_jobs": 1,
+      "tree_method": "hist",
+      "reason": "n_jobs=-1 lam ket qua phu thuoc so thread cua may -> khong tai tao duoc tren may khac (R4-2)",
+      "measured": {
+        "run1_n_jobs_-1": 0.83652,
+        "run1_n_jobs_1": 0.853307,
+        "run1_C2_goc": 0.856627,
+        "mean10_n_jobs_-1": 0.851617,
+        "mean10_n_jobs_1": 0.85031,
+        "mean10_C2_goc": 0.851625
+      }
+    }
+  },
+  "hyperparameter_protocol": {
+    "_decision": "Q2",
+    "primary_arm": {
+      "id": "tuned_per_N",
+      "description": "Tai MOI (N, run), tune doi xung cho CA 7 model bang 5-fold StratifiedKFold tren dung tap train N mau do.",
+      "cv_folds": 5,
+      "cv_scoring": "f1_macro",
+      "selection_rule": "1SE (giong C2) cho ho SVM/QSVM; best_mean cho RF/XGB (giong C2)",
+      "quantum_cost_note": "Gram matrix KHONG phu thuoc C -> tinh Gram MOT lan cho moi (N, run, kernel), sau do slice theo fold de quet toan bo luoi C. Chi SVC.fit chay lai.",
+      "grids": {
+        "C_svm_and_qsvm": [
+          0.1,
+          0.3,
+          0.5,
+          1.0,
+          3.0,
+          5.0,
+          10.0
+        ],
+        "rf": {
+          "n_estimators": [
+            200,
+            500
+          ],
+          "max_depth": [
+            null,
+            10,
+            20
+          ],
+          "min_samples_leaf": [
+            1,
+            2
+          ]
+        },
+        "xgb": {
+          "n_estimators": [
+            200,
+            500
+          ],
+          "max_depth": [
+            3,
+            5
+          ],
+          "learning_rate": [
+            0.03,
+            0.1
+          ],
+          "subsample": [
+            0.8,
+            1.0
+          ]
+        }
+      },
+      "constraint": "C_QSVM_ZZ = C_QSVM_Z tai moi (N, run) - giu nguyen rang buoc controlled ablation cua C2."
+    },
+    "secondary_arm": {
+      "id": "frozen_c2_hyperparameters",
+      "description": "Dung nguyen hyperparameter da freeze cua C2 o moi N.",
+      "values": {
+        "QSVM_ZZ": {
+          "C": 3.0
+        },
+        "QSVM_Z": {
+          "C": 3.0
+        },
+        "SVM_Linear": {
+          "C": 0.1
+        },
+        "SVM_Poly2": {
+          "C": 0.1,
+          "degree": 2
+        },
+        "SVM_RBF": {
+          "C": 5.0,
+          "gamma": "scale"
+        },
+        "RandomForest": {
+          "n_estimators": 200,
+          "max_depth": null,
+          "min_samples_leaf": 1
+        },
+        "XGBoost": {
+          "n_estimators": 500,
+          "max_depth": 5,
+          "learning_rate": 0.1,
+          "subsample": 0.8
+        }
+      },
+      "role": "Doi chieu; tra loi cau hoi 'ket qua co phai artifact cua viec tune lai khong?'"
+    }
+  },
+  "evaluation": {
+    "_decision": "Q3",
+    "test_sets": {
+      "fixed_300": {
+        "path": "data/nslkdd/processed_data/NSL_KDD_Test_Sample300.csv",
+        "size": 300,
+        "role": "bac cau voi Table IV / C2 / C3"
+      },
+      "full_kddtest_plus": {
+        "path": "data/nslkdd/processed_data/NSL_KDD_Test_Cleaned.csv",
+        "size": 22544,
+        "role": "PRIMARY - trung voi Table VI cua ban da nop"
+      }
+    },
+    "metrics": [
+      "f1_macro",
+      "accuracy",
+      "precision_macro",
+      "recall_macro",
+      "f1_rare",
+      "recall_rare",
+      "precision_rare",
+      "n_support_vectors",
+      "train_time_s"
+    ],
+    "report_both_test_sets_at_every_N": true
+  },
+  "rare_attack_analysis": {
+    "_addresses": "R4-4",
+    "_audit": "docs/revision/c4_claim_audit.md sections K2, K3, K3b",
+    "definition": {
+      "rare_categories": [
+        "U2R",
+        "R2L"
+      ],
+      "subset_of": "full_kddtest_plus",
+      "expected_n_rare": 2952,
+      "note": "Phai assert dung 2952 mau de doi chieu duoc voi con so cu."
+    },
+    "margin": {
+      "primary": {
+        "id": "signed_margin",
+        "formula": "m_i = y_pm_i * decision_function(x_i), voi y_pm in {-1,+1}",
+        "why": "Dai luong dung. Duong = nam dung phia bien; do lon moi mang nghia 'bien an toan'."
+      },
+      "secondary": {
+        "id": "abs_margin",
+        "formula": "|decision_function(x_i)|",
+        "why": "CHI de bac cau voi so cu (C5/C6 dung dai luong nay). Phai ghi ro trong bai rang |margin| do do TU TIN chu khong do DUNG SAI.",
+        "must_state_limitation": true
+      }
+    },
+    "effect_size": {
+      "statistic": "Cohen's d, pooled std = sqrt((s1^2 + s2^2)/2)",
+      "primary_unit": "across_samples (tren toan bo mau rare cua tung run, roi gop qua 10 run)",
+      "secondary_unit": "across_seeds (paired d_z tren 10 run)",
+      "ci": {
+        "method": "bootstrap percentile",
+        "n_resamples": 10000,
+        "seed": 424242
+      },
+      "forbidden": "Glass's delta (chia cho std cua mot nhom) - vi day chinh la thu nghi da tao ra con so 0.68 sai trong ban nop"
+    },
+    "mandatory_outputs": [
+      "F1 va recall tren rare subset cho ca 7 model tai MOI N",
+      "mean/std signed margin va abs margin cho ca 7 model tai MOI N",
+      "Cohen's d + bootstrap CI cua QSVM_ZZ vs tung baseline tai MOI N"
+    ]
+  },
+  "statistics": {
+    "unit_of_inference": "10 training runs (paired)",
+    "per_comparison_report": [
+      "mean_delta",
+      "median_delta",
+      "ci95_low",
+      "ci95_high",
+      "wilcoxon_p",
+      "holm_p",
+      "cohens_dz",
+      "positive_run_fraction",
+      "verdict"
+    ],
+    "ci_method": [
+      "t_based",
+      "bootstrap_percentile"
+    ],
+    "bootstrap_resamples": 10000,
+    "multiple_comparison": {
+      "method": "holm",
+      "family_definition": "trong cung mot N, 6 so sanh QSVM_ZZ vs 6 baseline"
+    },
+    "verdict_labels": [
+      "QSVM-favorable",
+      "Classical-favorable",
+      "Inconclusive"
+    ],
+    "schema_compatible_with": "results/nslkdd/c3_revision/c3_pairwise_statistics.csv"
+  },
+  "kernel_computation": {
+    "_decision": "kien truc tinh kernel - do benchmark S0.2 quyet dinh",
+    "method": "statevector_cache",
+    "description": "KHONG cache Gram matrix. Cache STATEVECTOR Psi (N x 16 complex). Gram = |Psi_a.conj() @ Psi_b.T|^2 la mot phep matmul voi inner dim 16.",
+    "why": [
+      "Mo phong statevector la O(N): do duoc 0.84 ms/mau -> toan bo 22.544 mau test chi mat ~19 giay, tinh MOT lan.",
+      "Gram tro thanh matmul: 2000x12000 mat 0.24s.",
+      "Dung dan ve so hoc: doi chieu voi FidelityStatevectorKernel cho max|delta| = 4.4e-15.",
+      "Tiet kiem dia: cache Gram cho N=5000 se ton ~900 MB moi (run, kernel); cache statevector chi ton ~1.3 MB."
+    ],
+    "verification_required": "Moi lan chay phai assert Gram tu statevector khop FidelityStatevectorKernel tren mot subset 200 mau, nguong 1e-9.",
+    "dtype": {
+      "statevector": "complex128",
+      "gram_train": "float64",
+      "gram_test": "float32 khi N >= 5000 de tiet kiem RAM"
+    },
+    "measured_cost": {
+      "statevector_22544_test": "~19 s (mot lan)",
+      "gram_10000x10000": "1.7 s",
+      "svc_fit_precomputed_N10000": "1.6 s",
+      "gram_22544x10000": "4.6 s (1.8 GB float64)",
+      "predict_N10000": "1.2 s"
+    }
+  },
+  "caching": {
+    "root": "results/nslkdd/c4_revision/cache",
+    "statevector_key": "psi_{repr_mode}_{kernel}_{scope}_{N}_{run}.npy",
+    "run_result_key": "{repr_mode}_{arm}_{N}_run{run}.json",
+    "rule": "Khong bao gio mo phong lai statevector da co cache tru khi FORCE_RERUN. Gram luon tinh lai tu statevector (re hon doc dia).",
+    "gitignore_required": "results/nslkdd/c4_revision/cache/ PHAI duoc them vao .gitignore"
+  },
+  "audit_gates": {
+    "G1_smoke": "N=100, 2 run, 7 model chay < 5 phut, khong NaN, cache lan 2 < 10s",
+    "G2_reproduce_c2": "Model tat dinh (QSVM_ZZ, QSVM_Z, SVM_Linear, SVM_Poly2, SVM_RBF, RandomForest) phai khop CHINH XAC (<1e-9) o it nhat 9/10 run va max|chenh| < 0.005. XGBoost report_only vi phi tat dinh theo so thread. KET QUA: PASS.",
+    "G3_disjointness": "Voi moi (N, run): tap train giao tuning set = rong; tap train giao test set = rong",
+    "G4_nesting": "Voi moi run: D_100 subset D_200 subset D_500 subset D_1000 subset D_2000 subset D_5000",
+    "G5_rare_count": "So mau rare tren full test = 2952",
+    "G6_record_count": "len(n_grid) * n_runs * 7 model * 2 test set ban ghi day du, khong thieu o nao"
+  },
+  "outputs": {
+    "dir": "results/nslkdd/c4_revision",
+    "files": [
+      "c4_config.json",
+      "c4_per_run.csv",
+      "c4_hyperparameters.csv",
+      "c4_pairwise_statistics.csv",
+      "c4_rare_attack.csv",
+      "c4_rare_pairwise_statistics.csv",
+      "c4_crossover_analysis.csv",
+      "c4_table_iv_vs_vi.csv",
+      "c4_summary.json",
+      "figures/"
+    ]
+  },
+  "dataset_overrides": {
+    "unsw": {
+      "name": "UNSW-NB15",
+      "n_qubits": 6,
+      "select_k": 35,
+      "source": "results/unsw/c4_revision/u1_c1_selection_unsw.json",
+      "regimes": {
+        "natural": {
+          "description": "Ty le lop tu nhien cua UNSW train: Normal 31.9%, Generic 22.8%, Exploits 19.0%, Frequent 23.3%, Rare 2.86%",
+          "n_grid": [
+            100,
+            500,
+            1000,
+            2000,
+            5000,
+            10000
+          ],
+          "anchor": null,
+          "role": "PRIMARY - tra loi cau hoi crossover co chuyen giao sang dataset thu hai khong",
+          "pool_ceiling_n": 53742,
+          "ceiling_note": "Tran do lop Generic; N=10000 con cach xa tran"
+        }
+      },
+      "arms": [
+        "tuned_per_N",
+        "tuned_once"
+      ],
+      "arms_note": "UNSW khong co hyperparameter dong bang cua C2, nen arm doi chung la 'tuned_once' (tune mot lan tren tuning set rieng 2.000 mau) - tuong ung giao thuc cua C2",
+      "test_sets": {
+        "fixed_300": "stratified subsample 300 mau cua UNSW test, seed 777",
+        "full_test": "toan bo 82.332 mau UNSW test"
+      },
+      "rare_categories": [
+        "Worms",
+        "Shellcode",
+        "Backdoor",
+        "Analysis"
+      ],
+      "rare_fraction": {
+        "train": 0.0286,
+        "test": 0.0204
+      },
+      "known_data_issues": {
+        "internal_duplication_train": 0.473,
+        "internal_duplication_test": 0.413,
+        "test_rows_with_exact_duplicate_in_train": 0.2497,
+        "verified_on_raw_data": 0.2533,
+        "generic_class_duplication": 0.955,
+        "note": "Thuoc tinh cua UNSW-NB15, khong phai loi tien xu ly. Phai khai trong Limitations."
+      },
+      "data_ordering_warning": "UNSW_Train_Cleaned.parquet SAP XEP THEO LOP (20.000 hang dau deu Normal). Moi thao tac cat theo chi so tuan tu deu sai."
+    }
+  }
+}
