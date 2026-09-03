@@ -1,6 +1,7 @@
 # Xuất xứ hình — bản revision paper 1
 
-*Cập nhật 2026-09-03. Sinh bằng `python runners/make_paper1_figures.py`.*
+*Cập nhật 2026-09-04. Sinh bằng `python runners/make_paper1_figures.py` (hình có dữ liệu)
+và `python runners/make_paper1_schematics.py` (hình sơ đồ).*
 
 > ⛔ **Chỉ dùng hình trong thư mục này.** Mọi hình ở `reports/`, `data/*/processed_data/`,
 > `results/*/c3_multirun/`, `results/*/c4_multirun/`, `results/*/c4_paper2/` đều là **của code
@@ -12,6 +13,9 @@
 
 | Hình | File | Dữ liệu nguồn | Trạng thái |
 |---|---|---|---|
+| **1** | `fig1_zzfeaturemap_circuit` | Sơ đồ mạch — vẽ tay, số CNOT đối chiếu `count_ops()` của Qiskit = 24 | ✅ **mới 2026-09-04** |
+| **2** | `fig2_contribution_map` | Sơ đồ khối — nội dung cập nhật theo bản revision | ✅ **mới 2026-09-04** |
+| **3** | `fig3_pipeline` | Sơ đồ khối — **đã bỏ khối Pareto**, thay bằng luật ba giai đoạn | ✅ **mới 2026-09-04** |
 | **4** | `fig4_selectkbest_sweep` | `c1_revision/c1_ksweep.csv` — sinh bởi `runners/run_ksweep.py` | ✅ **chạy lại 2026-09-03** |
 | **5** | `fig5_c1_dimension_selection` | `C1_revision.ipynb` block C/D/E · `u1_dimension_metrics.csv` · `u1_c1_selection_unsw.json` | ✅ thay hình Pareto cũ |
 | **6** | `fig6_entanglement_ablation` | `c2_revision/c2_kta_per_run.csv` · `c2_revision/c2_per_run.csv` (10 run) | ✅ thay hình KTA cũ |
@@ -24,18 +28,21 @@
 Mỗi hình xuất **cả `.pdf` (vector, nộp bài) và `.png` (xem nhanh)**, 400 dpi,
 khổ 7.16 in = đúng chiều rộng 2 cột IEEE, `pdf.fonttype=42` để nhúng font được.
 
-**Điểm chung của cả 8 hình**: đều lấy từ artifact `*_revision` (10 run, tune đối xứng,
+**Điểm chung của 8 hình có dữ liệu**: đều lấy từ artifact `*_revision` (10 run, tune đối xứng,
 Wilcoxon ghép cặp + Holm). Không hình nào đụng dữ liệu 5-seed của bản cũ.
 
 ---
 
-## 2. Hình còn thiếu
+## 2. Đủ bộ 11 hình
 
-| Hình | Nội dung | Loại | Kế hoạch |
-|---|---|---|---|
-| **1** | Mạch ZZFeatureMap n=4, r=2, (a) tầng (b) phân rã CNOT–RZ–CNOT | sơ đồ mạch | Xuất từ Qiskit — tất định, không phụ thuộc dữ liệu |
-| **2** | Phân rã Problem 1 thành 4 đóng góp | sơ đồ khối | Vẽ lại bằng matplotlib; sửa nội dung cho khớp bản revision |
-| **3** | Pipeline đầu-cuối | sơ đồ khối | Vẽ lại; **bỏ khối "Pareto search"**, thay bằng luật ba giai đoạn |
+Không còn hình nào phải lấy từ bản cũ. Ba hình sơ đồ (1, 2, 3) không phụ thuộc dữ liệu nên
+được vẽ lại bằng matplotlib với cùng bộ token màu; hai chỗ nội dung **phải sửa** so với bản
+đã nộp:
+
+- **Fig 2**: cột "Protocol" của C1 ghi luật ba giai đoạn, không còn Pareto; C4 ghi hai chế độ
+  lấy mẫu và hai arm tune.
+- **Fig 3**: **bỏ hẳn khối "Pareto search"** — thay bằng khối `C1: three-stage selection rule`.
+  Giữ khối Pareto là mâu thuẫn với chính phần lý thuyết đã sửa.
 
 ---
 

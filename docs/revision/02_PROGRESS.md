@@ -1802,3 +1802,36 @@ tự khi tăng K hay không thì **chưa kiểm** — không được suy diễn
 
 `fig4_selectkbest_sweep` — hai đường kèm dải ±1 std, đánh dấu K=20 (đang dùng) và K=80
 (đỉnh sau PCA-4). Nay `figs_revision/` có **8/11 hình**; còn Fig 1 (mạch), 2, 3 (sơ đồ khối).
+
+---
+
+# ✅ GIAI ĐOẠN 19 — Ba hình sơ đồ, đủ bộ 11 hình (2026-09-04)
+
+**Script mới**: `runners/make_paper1_schematics.py`
+
+Phiên trước bị lỗi phải thoát; run K=80 chết theo nhưng **cache giữ được 47/70 ô** nên chạy
+lại chỉ tiếp phần còn thiếu. Đây là lợi ích trực tiếp của việc cache theo ô.
+
+## Ba hình còn thiếu, nay đã xong
+
+| Hình | Ghi chú |
+|---|---|
+| **1** mạch ZZFeatureMap | Vẽ tay. Không xuất từ Qiskit được vì `decompose()` cho ra `u`+`cx` chung chung, mất hết nhãn `H`, `P(2x_i)` và cấu trúc CNOT–RZ–CNOT mà bài cần chỉ ra. Số CNOT trong hình **đã đối chiếu `count_ops()`**: 24 |
+| **2** phân rã 4 đóng góp | Cột "Protocol" của C1 nay ghi **luật ba giai đoạn**, không còn Pareto; C4 ghi hai chế độ lấy mẫu + hai arm |
+| **3** pipeline | 🔴 **Bỏ hẳn khối "Pareto search"**, thay bằng khối `C1: three-stage selection rule`. Giữ khối cũ là mâu thuẫn với chính phần lý thuyết đã sửa |
+
+Ba hình này không phụ thuộc dữ liệu nên vẽ tay bằng matplotlib, dùng chung bộ token màu với
+8 hình có dữ liệu.
+
+**Hai cái bẫy của matplotlib mathtext** (mất thời gian mới ra): không nhận `\bm` (phải dùng
+`\mathbf`) và không nhận `\ge` (phải dùng `\geq`). Chuỗi `"$\to$"` trong f-string còn nguy
+hiểm hơn — `\t` thành ký tự TAB, render ra chữ "o" chứ không báo lỗi.
+
+## Bố cục Fig 3 phải làm lại
+
+Bản đầu nhét cả tên lẫn mô tả **vào trong** hộp → bề rộng hộp phải chạy theo chuỗi dài nhất,
+ở khổ hai cột IEEE thì các hộp đè lên nhau. Sửa: mô tả đặt **dưới** hộp, hộp nhỏ và đều.
+
+## Tình trạng: `figs_revision/` có đủ **11/11 hình**
+
+Không còn hình nào phải lấy từ bản cũ. MANIFEST đã cập nhật.
