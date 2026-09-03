@@ -1749,3 +1749,56 @@ và không có crossover; `c3_regime_map_main_full_baselines.png` chỉ có kh�
 ## Lưu ý môi trường
 
 Sinh hình bị `MemoryError` một lần: máy chỉ còn **1.38 GB RAM trống**. Chạy lại thì được.
+
+---
+
+# ✅ GIAI ĐOẠN 18 — Chạy lại K-sweep, xuất Fig 4 (2026-09-03)
+
+**Script mới**: `runners/run_ksweep.py` · **Dữ liệu**: `results/nslkdd/c1_revision/c1_ksweep.csv`
+
+Quan cho phép chạy nhưng dặn giới hạn RAM. Script có **chốt chặn RSS cứng**: một thread riêng
+theo dõi RSS, vượt ngưỡng thì `os._exit(2)` ngay. Bắt `MemoryError` không đủ vì numpy có thể
+giết cả tiến trình trước khi Python kịp ném lỗi. Thêm khoá thread BLAS về 1 và ép float32.
+
+**Kết quả chạy**: 125.973 hàng × 122 đặc trưng, 5-fold CV, **43 giây**, RSS đỉnh **471 MB /
+ngưỡng 2000 MB**. Không suýt soát gì.
+
+## Ba khác biệt so với code cũ (ghi rõ để không tưởng là cùng thí nghiệm)
+
+1. **Không rò rỉ** — `SelectKBest` fit **bên trong** từng fold. Fit trên toàn bộ rồi mới chia
+   fold thì điểm CV bị thổi phồng.
+2. **Proxy là `LinearSVC`** (liblinear, O(n)) chứ không phải `SVC(kernel="linear")` (libsvm,
+   O(n²) — không chạy nổi trên 126k hàng).
+3. Quét thêm **hai đường**: `raw` và `SelectKBest → PCA-4` (khâu nén của pipeline thật).
+
+## Phát hiện #33 🔴 — "Elbow tại K=20" là điểm cuối lưới quét, không phải điểm bão hoà
+
+Bản đã nộp quét K ∈ {4, 6, 8, 10, **20**} rồi kết luận *"F1 saturates at K=20"*. Mở rộng lưới
+tới K=122 thì thấy F1 **vẫn tăng đều**:
+
+| K | raw | PCA-4 (pipeline thật) |
+|---|---|---|
+| 4 | 0.8929 | 0.8930 |
+| 10 | 0.9030 | 0.8757 |
+| **20** | **0.9451** | **0.9007** ← đang dùng |
+| 40 | 0.9691 | 0.9202 |
+| **80** | 0.9707 | **0.9283** ← cao nhất |
+| 122 | 0.9727 | 0.9279 |
+
+Giữ K=20 **bỏ lỡ +0.028 macro-F1** sau PCA-4. Đáng chú ý: hình dạng đường cong ở K ≤ 20 khớp
+bản cũ (bằng phẳng 6–10, nhảy ở 20) nên không phải lỗi tái tạo — **bản cũ chỉ dừng quét quá
+sớm**.
+
+Khớp với kết quả UNSW (bước 1.6): QSVM plateau ở K≥80.
+
+**Xử lý**: không đổi K (đổi thì phải chạy lại toàn bộ C1→C2→C3→C4, không kịp 13-10). Thay vào
+đó **nói thẳng**: K=20 là lựa chọn giao thức **kế thừa**, giữ nguyên để kết quả so sánh được
+với bản đã nộp; và báo rằng nó không phải tối ưu về độ chính xác. Đưa vào mục hạn chế.
+
+**Lưu ý phạm vi**: đường cong này dùng proxy tuyến tính. Việc QSVM ở n=4 có hưởng lợi tương
+tự khi tăng K hay không thì **chưa kiểm** — không được suy diễn.
+
+## Hình
+
+`fig4_selectkbest_sweep` — hai đường kèm dải ±1 std, đánh dấu K=20 (đang dùng) và K=80
+(đỉnh sau PCA-4). Nay `figs_revision/` có **8/11 hình**; còn Fig 1 (mạch), 2, 3 (sơ đồ khối).
