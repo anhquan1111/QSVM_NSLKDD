@@ -1349,3 +1349,83 @@ riêng. Bảng in đen trắng vẫn phân biệt được: đây là yêu cầu
 | 1 | Viết caption LaTeX cho 4 hình | làm cùng lúc viết bài |
 | 2 | Fig 5 hàng UNSW chưa có bootstrap CI cho KTA | NSL-KDD có (B=200); UNSW chưa chạy. Legend đã ghi rõ "NSL-KDD only" nên không nói sai, nhưng chạy nốt thì cân đối hơn (~15 phút) |
 | 3 | Số hình cuối cùng (5 / 9 / 10 / 11) | phụ thuộc bố cục bài sau khi gộp, sẽ chốt khi có `.tex` |
+
+---
+
+# ✅ GIAI ĐOẠN 11 — Soát bug C4 + phản hồi Quang Anh (2026-09-03)
+
+## Quang Anh chốt gì
+
+| Việc | Phản hồi |
+|---|---|
+| Sửa noise validation C2 (`evaluate_in_blocks`) | **OK** — kết luận không đổi: KTA cải thiện đáng kể, F1 thì không |
+| C3 chạy lại trên máy Quan | **OK** — lấy số máy Quan |
+| C4 + UNSW | Đọc file MD thấy ổn; nhờ Quan tự soát bug |
+| Scope RF/XGBoost, bỏ CatBoost/TabNet | Gửi file `Reviewer_Response_Baseline_RF_XGBoost_Scope.md`, nhờ đưa vào note |
+
+## Kết quả soát: `runners/audit_c4.py` — **96/96 PASS**
+
+Báo cáo đầy đủ: `docs/revision/06_AUDIT_C4.md`.
+
+Nguyên tắc: **không dùng lại hàm thống kê của `src/c4_pipeline.py`** để kiểm tra chính nó —
+toàn bộ phần thống kê viết lại từ đầu bằng scipy/numpy rồi đối chiếu từng ô.
+
+- Thống kê ghép cặp dựng lại khớp tới **≤ 9.9e-17**; `raw_p` và `holm_p` lệch **đúng 0.0**
+- Ghép cặp dùng đúng cùng tập `run_id`; không có dòng trùng
+- Gate rò rỉ / lồng nhau / lớp hiếm: PASS trên cả 10 run × 3 tổ hợp dataset-chế độ
+- Nhân lượng tử đường tắt khớp Qiskit tới 1e-15 ở cả 4 và 6 qubit
+- Mọi khẳng định chính dựng lại được từ per-run thô
+
+**Không có bug trong C4.**
+
+## Phát hiện #23 🟡 — Khoảng trống artifact (ĐÃ SỬA)
+
+`analyze_c4.py` **ghi đè** `c4_pairwise_statistics_{regime}.csv` mỗi lần chạy một arm, nên
+chế độ `natural` chỉ còn `tuned_per_N × full_test` (42/168 dòng NSL, 36/144 UNSW);
+`matched` thì phủ đủ 120 dòng. Dữ liệu per-run có đủ, chỉ thiếu bảng.
+
+Đáng nói vì **nhánh `frozen_c2` là phép thử robustness** và câu hỏi đó đang bỏ trống.
+Đã thêm `runners/pairwise_all_arms.py` sinh `*_all_arms.csv` phủ hết; không đụng file cũ.
+
+## Phát hiện #24 🔴 — Arm `tuned_once` trên UNSW phạt SVM-RBF, đừng trích số
+
+Bảng mới cho `mean_delta` QSVM-ZZ − SVM-RBF = **+0.2223** tại `N=100` arm `tuned_once`.
+Không phải quantum thắng:
+
+| `N=100`, UNSW | `tuned_once` | `tuned_per_N` |
+|---|---|---|
+| SVM-RBF F1 | **0.3635** (recall_macro 0.504, gần suy biến) | 0.6289 |
+| QSVM-ZZ F1 | 0.5858 | 0.5953 |
+
+Siêu tham số tune một lần lệch hẳn khi xuống `N=100`: SVM-RBF mất 0.265 F1, QSVM-ZZ chỉ
+mất 0.010. Arm này **không công bằng ở N nhỏ**. Mọi hình/khẳng định đều dùng `tuned_per_N`
+nên bài không bị ảnh hưởng, nhưng phải ghi vào mục hạn chế.
+
+## Phát hiện #25 🟢 — Crossover KHÔNG phải tạo tác của việc tune lại
+
+Kết quả mới, nên đưa vào bài. NSL-KDD `natural`, tập test đầy đủ, `mean_delta` đổi dấu tại
+**`2000→5000` ở 6/6 tổ hợp**: {XGBoost, RandomForest, SVM-RBF} × {`frozen_c2`, `tuned_per_N`}.
+
+Đóng băng siêu tham số ở giá trị C2 thì crossover vẫn nằm nguyên chỗ cũ → trả lời thẳng phản
+biện *"crossover chỉ do tune lại ở mỗi N"*.
+
+## Đã sửa file phản hồi reviewer trước khi nộp vào repo
+
+Nộp vào `notebooks/nslkdd/note/general/Reviewer_Response_Baseline_RF_XGBoost_Scope.md`,
+sửa hai chỗ (ghi rõ trong phần "Ghi chú nội bộ" cuối file):
+
+1. Gỡ 5 chuỗi `citeturn23file4L516-L535` + ký tự private-use U+E200–E202 do công cụ soạn
+   thảo chèn — gửi nguyên thì reviewer thấy rác giữa câu.
+2. 🔴 XGBoost `0.8493` → **`0.8503`** cho khớp artifact trong repo. Số 0.8493 là máy Quang Anh.
+   Đối chiếu `master` vs `revisionC4`: **mọi số quantum trùng khít tới bit**, chỉ XGBoost
+   (+0.00101) và SVM_Poly2 (+0.00033) lệch — đúng hai Phát hiện #6 và #7. Thứ tự xếp hạng
+   không đổi ở cả hai máy.
+
+## Việc còn treo
+
+| # | Việc | Ai |
+|---|---|---|
+| 1 | Notebook C4 mỏng cho supplementary (nạp artifact, không train lại) | chờ Quang Anh quyết |
+| 2 | Đưa robustness #25 vào bản thảo | Quan, lúc viết |
+| 3 | Caveat arm `tuned_once` vào mục hạn chế | Quan, lúc viết |
+| 4 | Mục reproducibility ghi XGBoost dao động ±0.001 giữa máy | Quan, lúc viết |
