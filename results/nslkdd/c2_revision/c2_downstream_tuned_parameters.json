@@ -75,11 +75,11 @@
       },
       "tuning_summary": {
         "selection": "1SE",
-        "threshold": 0.8380514174448151,
+        "threshold": 0.8385792162447969,
         "chosen_mean_score": 0.8414757668402062,
         "chosen_se_score": 0.004410992492721528,
-        "best_mean_score": 0.8435505626773627,
-        "best_se_score": 0.0054991452325475676
+        "best_mean_score": 0.8440394384057258,
+        "best_se_score": 0.005460222160928855
       }
     },
     "SVM_RBF": {
@@ -134,10 +134,10 @@
       "tuning_summary": {
         "selection": "best_mean",
         "threshold": null,
-        "chosen_mean_score": 0.9349162836405315,
-        "chosen_se_score": 0.004477226616690313,
-        "best_mean_score": 0.9349162836405315,
-        "best_se_score": 0.004477226616690313
+        "chosen_mean_score": 0.9374063770996619,
+        "chosen_se_score": 0.003728599207650288,
+        "best_mean_score": 0.9374063770996619,
+        "best_se_score": 0.003728599207650288
       }
     }
   }

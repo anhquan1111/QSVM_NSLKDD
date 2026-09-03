@@ -15,7 +15,7 @@
     10
   ],
   "force_rerun": false,
-  "config_signature": "a4c9352cd09072fc",
+  "config_signature": "a89a6eb55d27b0a6",
   "train_size": 1000,
   "test_size": 300,
   "tuning_size": 2000,
@@ -25,13 +25,13 @@
   "C_Z": 3.0,
   "delta_f1_mean": 0.01136002423336412,
   "delta_f1_ci95": [
-    -0.0054082667196601875,
-    0.028128315186388426
+    -0.00540826671924587,
+    0.02812831518597411
   ],
-  "delta_kta_mean": 0.1378072101942575,
+  "delta_kta_mean": 0.13780718119546273,
   "delta_kta_ci95": [
-    0.12673839944570334,
-    0.1488760209428117
+    0.12673837059198634,
+    0.14887599179893912
   ],
   "noise_validation": {
     "included": true,
