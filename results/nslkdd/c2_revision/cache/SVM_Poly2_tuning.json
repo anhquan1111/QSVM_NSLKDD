@@ -15,13 +15,13 @@
     "params": {
       "svc__C": 3.0
     },
-    "mean_score": 0.8435505626773627,
-    "std_score": 0.01229646255812025,
-    "se_score": 0.0054991452325475676,
+    "mean_score": 0.8440394384057258,
+    "std_score": 0.012209427924087716,
+    "se_score": 0.005460222160928855,
     "n_folds": 5,
     "complexity": 3.0
   },
-  "threshold": 0.8380514174448151,
+  "threshold": 0.8385792162447969,
   "rows": [
     {
       "model": "SVM_Poly2",
@@ -61,9 +61,9 @@
       "params": {
         "svc__C": 1.0
       },
-      "mean_score": 0.8404628325086065,
-      "std_score": 0.010290709481026103,
-      "se_score": 0.00460214518725519,
+      "mean_score": 0.8409837440196177,
+      "std_score": 0.010224872405419508,
+      "se_score": 0.004572701951955961,
       "n_folds": 5,
       "complexity": 1.0
     },
@@ -72,9 +72,9 @@
       "params": {
         "svc__C": 3.0
       },
-      "mean_score": 0.8435505626773627,
-      "std_score": 0.01229646255812025,
-      "se_score": 0.0054991452325475676,
+      "mean_score": 0.8440394384057258,
+      "std_score": 0.012209427924087716,
+      "se_score": 0.005460222160928855,
       "n_folds": 5,
       "complexity": 3.0
     },
@@ -102,5 +102,5 @@
     }
   ],
   "selection": "1SE",
-  "config_signature": "a4c9352cd09072fc"
+  "config_signature": "a89a6eb55d27b0a6"
 }
