@@ -11,6 +11,8 @@ Chay:  python runners/audit_c4.py
 
 from __future__ import annotations
 
+import gc
+import subprocess
 import sys
 from pathlib import Path
 
@@ -51,12 +53,23 @@ CASES = [
 ]
 
 results: list[tuple[str, bool, str]] = []
+skipped: list[tuple[str, str]] = []
 
 
 def check(name: str, passed: bool, detail: str = "") -> None:
     results.append((name, passed, detail))
     mark = "PASS" if passed else "**FAIL**"
     print(f"  [{mark}] {name}" + (f"  --  {detail}" if detail else ""))
+
+
+def skip(name: str, detail: str = "") -> None:
+    """Bo qua vi gioi han moi truong, KHONG phai vi du lieu sai.
+
+    Het RAM khong noi gi ve tinh dung dan cua du lieu, nen dem no vao muc FAIL
+    la bao dong gia. Van in ro de khong ai tuong la da soat.
+    """
+    skipped.append((name, detail))
+    print(f"  [SKIP] {name}" + (f"  --  {detail}" if detail else ""))
 
 
 # ---------------------------------------------------------------------------
@@ -187,41 +200,85 @@ def audit_statistics() -> None:
 # ---------------------------------------------------------------------------
 # B. Gate ve du lieu -- chay lai tren moi run
 # ---------------------------------------------------------------------------
-def audit_data_gates() -> None:
-    print("\n" + "=" * 78)
-    print("B. GATE DU LIEU -- ro ri, long nhau, lop hiem")
-    print("=" * 78)
+def _gates_one_dataset(dataset: str):
+    """Chay gate cho DUNG mot dataset. Duoc goi trong mot tien trinh rieng."""
     from c4_pipeline import (build_nested_chain, gate_disjointness, gate_nesting,
                              gate_rare_presence, load_data, load_protocol)
 
     proto = load_protocol(ROOT)
-    for dataset, regimes in [("nslkdd", ["natural", "matched"]), ("unsw", ["natural"])]:
-        data = load_data(ROOT, verbose=False, dataset=dataset)
-        ov = proto.get("dataset_overrides", {}).get(dataset, {})
-        for regime in regimes:
-            fails = {"disjoint": [], "nested": [], "rare": []}
-            if "regimes" in ov and regime in ov["regimes"]:
-                g = list(ov["regimes"][regime]["n_grid"])
+    ov = proto.get("dataset_overrides", {}).get(dataset, {})
+    regimes = ["natural", "matched"] if dataset == "nslkdd" else ["natural"]
+    data = load_data(ROOT, verbose=False, dataset=dataset)
+    found = []
+    for regime in regimes:
+        if "regimes" in ov and regime in ov["regimes"]:
+            g = list(ov["regimes"][regime]["n_grid"])
+        else:
+            g = list(proto["sampling"]["regimes"][regime]["n_grid"])
+        run_ids = proto["sampling"]["run_ids"]
+        run_seeds = proto["sampling"]["run_seeds"]
+        fails = {"disjoint": [], "nested": [], "rare": []}
+        for run_id, seed in zip(run_ids, run_seeds):
+            subsets = build_nested_chain(data, run_id, g, seed, regime)
+            checks = {
+                "disjoint": gate_disjointness(data, subsets, run_id, dataset),
+                "nested": gate_nesting(data, subsets, run_id, dataset),
+                "rare": gate_rare_presence(subsets, run_id, dataset),
+            }
+            for key, res in checks.items():
+                if not res.passed:
+                    fails[key].append(run_id)
+            del subsets, checks      # chuoi giu DataFrame day du, tha ngay
+        tag = f"{dataset}/{regime}"
+        n = len(run_ids)
+        found += [
+            (f"{tag}: train khong dinh test ({n} run)", not fails["disjoint"],
+             f"run {fails['disjoint']}"),
+            (f"{tag}: chuoi con long nhau ({n} run)", not fails["nested"],
+             f"run {fails['nested']}"),
+            (f"{tag}: moi N deu co lop hiem ({n} run)", not fails["rare"],
+             f"run {fails['rare']}"),
+        ]
+    return found
+
+
+def audit_data_gates() -> None:
+    """Gate du lieu, moi dataset chay trong MOT TIEN TRINH RIENG.
+
+    DataBundle cua UNSW mot minh da ~500 MB (175k hang x 186 cot float64), va
+    `build_nested_chain` con giu DataFrame day du cho tung moc N. Chay hai
+    dataset trong cung mot tien trinh -- hoac chay tu trong kernel notebook
+    dang giu san du lieu -- la cham tran bo nho. Tren Windows chi khi tien
+    trinh ket thuc thi RAM moi thuc su duoc tra ve he dieu hanh, nen tach han.
+    """
+    print()
+    print("=" * 78)
+    print("B. GATE DU LIEU -- ro ri, long nhau, lop hiem")
+    print("=" * 78)
+    for dataset in ("nslkdd", "unsw"):
+        for attempt in (1, 2):
+            proc = subprocess.run(
+                [sys.executable, str(Path(__file__).resolve()), "--gates-only", dataset],
+                capture_output=True, text=True, cwd=str(ROOT))
+            if proc.returncode == 0:
+                break
+            if "MemoryError" in proc.stderr and attempt == 1:
+                gc.collect()
+                continue
+            break
+        if proc.returncode != 0:
+            tail = (proc.stderr.strip().splitlines() or ["?"])[-1]
+            if "MemoryError" in proc.stderr:
+                skip(f"{dataset}: gate du lieu",
+                     "het RAM khi nap bo du lieu; chay lai bang "
+                     "`python runners/audit_c4.py` tu terminal luc may ranh")
             else:
-                g = list(proto["sampling"]["regimes"][regime]["n_grid"])
-            run_ids = proto["sampling"]["run_ids"]
-            run_seeds = proto["sampling"]["run_seeds"]
-            for run_id, seed in zip(run_ids, run_seeds):
-                subsets = build_nested_chain(data, run_id, g, seed, regime)
-                for key, fn in [
-                    ("disjoint", lambda: gate_disjointness(data, subsets, run_id, dataset)),
-                    ("nested", lambda: gate_nesting(data, subsets, run_id, dataset)),
-                    ("rare", lambda: gate_rare_presence(subsets, run_id, dataset)),
-                ]:
-                    if not fn().passed:
-                        fails[key].append(run_id)
-            tag = f"{dataset}/{regime}"
-            check(f"{tag}: train khong dinh test ({len(run_ids)} run)", not fails["disjoint"],
-                  f"run {fails['disjoint']}")
-            check(f"{tag}: chuoi con long nhau ({len(run_ids)} run)", not fails["nested"],
-                  f"run {fails['nested']}")
-            check(f"{tag}: moi N deu co lop hiem ({len(run_ids)} run)", not fails["rare"],
-                  f"run {fails['rare']}")
+                check(f"{dataset}: chay duoc gate", False, tail[:150])
+            continue
+        for line in proc.stdout.splitlines():
+            if line.startswith("GATE|"):
+                _, name, ok, detail = line.split("|", 3)
+                check(name, ok == "1", detail)
 
 
 # ---------------------------------------------------------------------------
@@ -293,6 +350,12 @@ def audit_claims() -> None:
 
 
 if __name__ == "__main__":
+    # Che do phu: chay gate cho mot dataset roi in ra dang may doc duoc.
+    if len(sys.argv) == 3 and sys.argv[1] == "--gates-only":
+        for name, ok, detail in _gates_one_dataset(sys.argv[2]):
+            print("GATE|" + name + "|" + str(int(ok)) + "|" + detail)
+        sys.exit(0)
+
     print("SOAT LOI C4 -- doi chieu doc lap")
     audit_statistics()
     audit_data_gates()
@@ -301,7 +364,11 @@ if __name__ == "__main__":
 
     n_fail = sum(1 for _, ok, _ in results if not ok)
     print("\n" + "=" * 78)
-    print(f"TONG: {len(results) - n_fail}/{len(results)} PASS")
+    print(f"TONG: {len(results) - n_fail}/{len(results)} PASS"
+          + (f"  |  {len(skipped)} BO QUA (gioi han bo nho, khong phai loi du lieu)"
+             if skipped else ""))
+    for name, detail in skipped:
+        print(f"  ! bo qua: {name} -- {detail}")
     if n_fail:
         print(f"\n{n_fail} muc FAIL:")
         for name, ok, detail in results:

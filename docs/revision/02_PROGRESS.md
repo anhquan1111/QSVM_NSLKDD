@@ -1429,3 +1429,41 @@ sửa hai chỗ (ghi rõ trong phần "Ghi chú nội bộ" cuối file):
 | 2 | Đưa robustness #25 vào bản thảo | Quan, lúc viết |
 | 3 | Caveat arm `tuned_once` vào mục hạn chế | Quan, lúc viết |
 | 4 | Mục reproducibility ghi XGBoost dao động ±0.001 giữa máy | Quan, lúc viết |
+
+---
+
+# ✅ GIAI ĐOẠN 12 — Notebook C4 (2026-09-03)
+
+`notebooks/nslkdd/C4_revision.ipynb` — 36 cell, 20 cell code, **4 hình nhúng inline**,
+chạy hết ~1 phút, **không train lại gì**. Trả lời câu hỏi "notebook C4 để ở đâu" của Quang Anh.
+
+Nội dung: protocol đã đóng băng → chạy audit trực tiếp → C1 + Hình 5 → learning curve +
+Hình 9 → robustness crossover qua 2 arm → rare-attack (margin có dấu) → UNSW + Hình 11 →
+bản đồ chế độ + Hình 10 → Table IV vs VI → protocol vs literature → bảng caveat.
+
+Sinh lại bằng script trong scratchpad rồi `nbconvert --execute`; hàm vẽ trong
+`make_paper1_figures.py` nay trả về `fig` để hiện inline.
+
+## Phát hiện #26 🟡 — Audit hết RAM khi chạy trong notebook
+
+Chạy audit từ trong kernel notebook thì gặp `MemoryError` ở nhóm gate dữ liệu — có lúc chỉ
+vì **1.34 MiB**, tức máy đã sát trần chứ không phải dữ liệu sai. Đo được:
+
+| Bộ dữ liệu | Frame giữ lại | Đỉnh khi nạp | Nặng nhất |
+|---|---|---|---|
+| NSL-KDD | ~290 MB | ~500 MB | `df_train_all` 145 MB |
+| UNSW | ~620 MB | ~393 MB | `df_train_all` 282 MB |
+
+Đã sửa hai chỗ trong `runners/audit_c4.py`:
+
+1. **Mỗi dataset chạy trong một tiến trình riêng** (`--gates-only <dataset>`). Trên Windows
+   chỉ khi tiến trình kết thúc thì RAM mới thực sự trả về hệ điều hành.
+2. **Thêm trạng thái SKIP.** Hết bộ nhớ không nói lên điều gì về tính đúng đắn của dữ liệu,
+   đếm nó thành FAIL là báo động giả — nhưng vẫn in rõ để không ai tưởng là đã soát. Có thử
+   lại một lần trước khi bỏ qua.
+
+Chạy từ terminal lúc máy rảnh: **96/96 PASS**. Chạy trong notebook lúc máy tải: gate UNSW
+hay bị bỏ qua, notebook ghi rõ lý do kèm lệnh chạy lại.
+
+> Lưu ý cho khâu đóng gói supplementary: notebook đã lưu kèm output, nên người đọc thấy
+> ngay kết quả mà không cần chạy. Muốn số gate đầy đủ thì chạy `python runners/audit_c4.py`.
