@@ -1528,3 +1528,73 @@ hay ta là bài đầu hỏi "khi nào" (Carducci đã hỏi cho malware).
 | 2 | Đọc phần calibration của Gillani et al. → đối chiếu Paper 2 | Quan |
 | 3 | Compile thử LaTeX (máy chưa có pdflatex) | Quan |
 | 4 | Mở rộng Table I bằng literature 2024–2026 | Quan / thầy |
+
+---
+
+# ✅ GIAI ĐOẠN 14 — Sửa phần lý thuyết (2026-09-03)
+
+**File**: `paper/paper1/theory_revision.tex` · Phân tích: `docs/revision/08_THEORY_FIX.md`
+
+Đọc thẳng `paper1.pdf` (trang 2–6) để lấy đúng chữ của bản đã nộp, không suy đoán.
+
+## Phát hiện #28 🔴 — Theorem 1 SAI, R4 bắt đúng
+
+Chứng minh trong bài viết: *"Substituting numerical values from Table III (ΔV₃₄ = 0.045,
+ΔQ₃₄ = 0.068, and **F̃(4) > F̃(3)** for stratified NSL-KDD)"*.
+
+Table III của chính bài lại ghi `F̃(4) = 0.471 < F̃(3) = 0.628`. Tiền đề ngược với dữ liệu.
+
+Thay số đúng: `ΔJ₃₄ = 0.045α − 0.156β − 0.068γ`, tại α=β=γ=1/3 cho `−0.060 < 0`.
+Dựng lại cả cột J từ Table III: `0.551 / 0.457 / 0.397 / 0.349 / 0.303 / 0.249 / 0.059` —
+khớp đúng cột J in trong bài, **cực đại tại n=2**, giảm đơn điệu. Theorem 1 khẳng định n*=4
+là cực đại duy nhất với mọi γ ≥ 0.30 → sai.
+
+Đối chiếu độc lập với output notebook C1: Fisher `n=2: 0.9413, n=3: 0.6275, n=4: 0.4711` —
+khớp Table III tới 3 chữ số, nên **không phải lỗi in**.
+
+## Phát hiện #29 🔴 — Bước Pareto không lọc gì, R4 cũng đúng
+
+Với bộ ba `(V, F̃, −Q)`: V tăng đơn điệu, F̃ giảm, Q tăng → không điểm nào trội hơn điểm nào →
+**mọi candidate đều Pareto-optimal**. Chính notebook C1 đã ghi "Pareto CHỈ là diagnostic,
+KHÔNG được dùng để chọn n", nhưng bài đã nộp lại trình bày nó như một bước chọn
+(Definition 4 + Algorithm 1 + Fig. 5).
+
+## Phát hiện #30 🟡 — Table III ghi sai tên cột, chưa ai bắt
+
+Caption ghi `F̃(n) = 1/DBI(n)` nhưng số trong cột là **thống kê Fisher**. Nghịch đảo DBI thật
+là `1.143 / 0.982 / 0.922` tại n=2,3,4 — khác hẳn. Không kết luận nào của bản revision phụ
+thuộc vào nó, nhưng phải tự khai.
+
+## Cách sửa: bỏ hẳn chứ không vá
+
+Vì #29 cho thấy cả cấu trúc Pareto + J không làm việc mà bài gán cho nó.
+
+| Bản đã nộp | Bản revision |
+|---|---|
+| Proposition 1 (PSD), 3 (KTA bound), 4 (z-test) + proof | → **(F1)(F2)(F3)** trong Background, có trích dẫn, bỏ proof |
+| Proposition 2 (khai triển ZZ) | → **Lemma 1**, proof xuống Appendix A — giữ vì đây là dẫn xuất riêng của bài, không phải sự thật hiển nhiên |
+| Definition 4 + Algorithm 1 + Eq. (6) J(n) + **Theorem 1** | → **bỏ hẳn** |
+| — | → **Definition: luật ba giai đoạn từ vựng**, không trọng số |
+
+Proposition 4 không chỉ hiển nhiên mà còn **sai giao thức**: z-test hai mẫu coi hai nhánh độc
+lập trong khi chúng dùng chung subset huấn luyện — vứt mất đúng cái ghép cặp. Bản revision
+dùng Wilcoxon ghép cặp 10 run + Holm.
+
+**Không thêm ref mới** (reviewer đang yêu cầu ≤45 và đã bắt ref không tồn tại): 7 khoá trích
+dẫn đều ánh xạ vào tài liệu sẵn có [11][12][16][17][22][23][28]. Định lý Schur bản cũ nói
+không trích ai — nay trích [17] Schölkopf & Smola.
+
+## Hai chỗ khác của mục III-B phải sửa
+
+- Bản cũ: *"QSVM regulariser is held at C=1.0 throughout to avoid hyper-parameter tuning that
+  would bias the comparison; classical SVMs use the C value selected on a held-out validation
+  fold"* → đúng chỗ R4 bắt là tune bất đối xứng. Bản revision tune đối xứng cả hai.
+- Bản cũ: 5 seed `{0,1,2,3,4}` → bản revision 10 run.
+
+## Việc còn treo
+
+| # | Việc | Ai |
+|---|---|---|
+| 1 | 🚨 **Xin `.tex` nguồn bản đã nộp** — không có thì không làm được bản highlight vàng | thầy |
+| 2 | Viết Appendix A (proof BCH của Lemma 1) | Quan |
+| 3 | Compile thử | Quan |
