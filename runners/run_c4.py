@@ -15,6 +15,7 @@ Mỗi (regime, repr_mode, arm, N, run) được cache thành một JSON; chạy 
 from __future__ import annotations
 
 import argparse
+import dataclasses
 import json
 import sys
 import time
@@ -280,6 +281,12 @@ def main():
                     help="chay dung cac run nay (de chia viec cho nhieu tien trinh song song; "
                          "cache la file JSON rieng theo (N, run) nen khong dung nhau)")
     ap.add_argument("--force", action="store_true")
+    ap.add_argument("--select-k", type=int, default=None,
+                    help="Ghi de K cua SelectKBest. Doi K thi doi ca ten bien the "
+                         "nen cache/output KHONG bao gio dung chung voi ban goc.")
+    ap.add_argument("--n-qubits", type=int, default=None,
+                    help="Ghi de so qubit. Phai khop n* ma luat C1 cho ra o K do "
+                         "(xem runners/run_c1_ksens.py).")
     args = ap.parse_args()
 
     root = c4.find_project_root()
@@ -291,6 +298,23 @@ def main():
         d.mkdir(parents=True, exist_ok=True)
 
     spec = c4.get_spec(args.dataset)
+
+    # Bien the K/n: PHAI doi `spec.name` vi moi khoa cache va moi ten file output
+    # deu dan xuat tu no. Neu khong doi thi lan chay K=80 se doc trung cache cua
+    # K=20 va cho ra ket qua sai mot cach im lang.
+    if args.select_k is not None or args.n_qubits is not None:
+        k = args.select_k if args.select_k is not None else spec.select_k
+        nq = args.n_qubits if args.n_qubits is not None else spec.n_qubits
+        spec = dataclasses.replace(spec, name=f"{spec.name}-K{k}n{nq}",
+                                   select_k=k, n_qubits=nq)
+        c4.DATASETS[args.dataset] = spec      # de get_spec() o cac ham con thay ban moi
+        out_dir = out_dir / f"variant_K{k}n{nq}"
+        cache_dir = out_dir / "cache"
+        sv_dir = cache_dir / "statevectors"
+        for d in (out_dir, cache_dir, sv_dir):
+            d.mkdir(parents=True, exist_ok=True)
+        print(f"*** BIEN THE: K={k}, n_qubits={nq} -> {out_dir.name}/ ***")
+
     grid = args.n_grid or resolve_grid(protocol, spec, args.regime)
     ov = protocol.get("dataset_overrides", {}).get(args.dataset, {})
     if args.arms is None:
