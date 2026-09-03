@@ -1,0 +1,32 @@
+% =====================================================================
+%  Bang robustness: crossover khong phai tao tac cua viec tune lai
+%  Sinh tu results/nslkdd/c4_revision/c4_pairwise_statistics_natural_all_arms.csv
+%  (runners/pairwise_all_arms.py). Doi chieu doc lap: runners/audit_c4.py
+% =====================================================================
+\begin{table}[t]
+\centering
+\caption{The crossover is not an artefact of per-$N$ re-tuning. Paired mean
+$\Delta F_1 = $ QSVM-ZZ $-$ baseline over 10 runs on the full KDDTest+ set,
+natural class prior. \emph{frozen} keeps the hyper-parameters fixed at their
+C2 values; \emph{tuned} re-tunes every model, quantum and classical alike, at
+each $N$. All six baseline--arm combinations change sign between $N=2000$ and
+$N=5000$ (bold row).}
+\label{tab:crossover-arms}
+\footnotesize
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{@{}r rr rr rr@{}}
+\toprule
+ & \multicolumn{2}{c}{XGBoost} & \multicolumn{2}{c}{Random forest} & \multicolumn{2}{c}{SVM-RBF} \
+\cmidrule(lr){2-3}\cmidrule(lr){4-5}\cmidrule(lr){6-7}
+$N$ & frozen & tuned & frozen & tuned & frozen & tuned \
+\midrule
+100 & -0.0393 & -0.0812 & -0.0242 & -0.0705 & -0.0145 & -0.0307 \\
+200 & -0.0236 & -0.0641 & -0.0196 & -0.0627 & -0.0073 & -0.0284 \\
+500 & -0.0213 & -0.0293 & -0.0115 & -0.0293 & -0.0118 & -0.0292 \\
+1000 & -0.0309 & -0.0289 & -0.0171 & -0.0196 & -0.0021 & -0.0028 \\
+2000 & -0.0134 & -0.0129 & -0.0013 & -0.0059 & -0.0055 & -0.0138 \\
+\textbf{5000} & \textbf{+0.0114} & \textbf{+0.0100} & \textbf{+0.0103} & \textbf{+0.0082} & \textbf{+0.0008} & \textbf{+0.0026} \\
+10000 & +0.0169 & +0.0149 & +0.0144 & +0.0127 & +0.0092 & +0.0115 \\
+\bottomrule
+\end{tabular}
+\end{table}
