@@ -1,8 +1,8 @@
 % =====================================================================
-%  Caption cho bo hinh ban revision -- TETC-2026-05-0252
-%  Sinh boi runners/make_paper1_figures.py
-%  So hinh (5/9/10/11) la tam thoi; dung \ref{} chu dung viet so cung.
-% =====================================================================
+%  Caption cho ca 12 hinh cua ban revision -- TETC-2026-05-0252
+%  Sinh hinh: runners/make_paper1_figures.py + make_paper1_schematics.py
+%  Doi chieu so lieu: runners/audit_figures.py  (39/39 PASS)
+%  So hinh la tam thoi; luon dung \ref{} chu khong viet so cung.
 
 % ---------------------------------------------------------------------
 % Hinh 5 -- lua chon so chieu C1 (thay hinh Pareto cu)
@@ -109,4 +109,191 @@
     A single dataset would have supported a broader claim than the evidence
     warrants.}
   \label{fig:unsw-transfer}
+\end{figure*}
+
+% =====================================================================
+%  Caption cho 8 hinh con lai -- TETC-2026-05-0252
+%  Ghep voi captions.tex (da co Fig 5, 9, 10, 11).
+%  Moi con so o day deu doi chieu duoc bang `python runners/audit_figures.py`.
+% =====================================================================
+
+% ---------------------------------------------------------------------
+% Fig 1 -- mach ZZFeatureMap  (so do, khong phu thuoc du lieu)
+% ---------------------------------------------------------------------
+\begin{figure*}[t]
+  \centering
+  \includegraphics[width=\textwidth]{figs_revision/fig1_zzfeaturemap_circuit.pdf}
+  \caption{%
+    \textbf{The ZZFeatureMap at the operating point of this study:
+    $n=4$ qubits, $r=2$ repetitions, full entanglement.}
+    (a) Layered structure with the entangling block abstracted; each layer
+    applies a Hadamard, a single-qubit phase $P(2x_i)$, and then
+    $U_{\mathrm{ent}}(\mathbf{x})$.
+    (b) Gate-level decomposition of that block: every qubit pair contributes a
+    $\mathrm{CNOT}$--$R_Z(\varphi_{ij})$--$\mathrm{CNOT}$ trio, so full
+    entanglement on four qubits gives $\binom{4}{2}=6$ trios per layer and
+    $24$ two-qubit gates in total at $r=2$.
+    The pairwise phase $\varphi_{ij}(\mathbf{x})=2(\pi-x_i)(\pi-x_j)$ is the
+    only place where feature interactions enter the kernel; removing this block
+    yields the ZFeatureMap control used throughout the ablation. The quadratic
+    growth of these terms with $n$ is what drives the concentration reported in
+    Fig.~\ref{fig:width}.}
+  \label{fig:circuit}
+\end{figure*}
+
+% ---------------------------------------------------------------------
+% Fig 2 -- phan ra bai toan  (so do)
+% ---------------------------------------------------------------------
+\begin{figure*}[t]
+  \centering
+  \includegraphics[width=\textwidth]{figs_revision/fig2_contribution_map.pdf}
+  \caption{%
+    \textbf{Each contribution answers one question with its own protocol.}
+    Rows map a contribution to the data it consumes, the protocol it runs, the
+    metrics it computes, and where it is reported. The four protocols are
+    deliberately not interchangeable: C1 fixes the representation before any
+    downstream metric is inspected, C2 varies only the entangling layer, C3
+    varies only the test distribution, and C4 varies only the training-set size.
+    Holding everything else fixed in each row is what allows a difference to be
+    attributed to the factor named in that row.}
+  \label{fig:contributions}
+\end{figure*}
+
+% ---------------------------------------------------------------------
+% Fig 3 -- pipeline  (so do)
+% ---------------------------------------------------------------------
+\begin{figure*}[t]
+  \centering
+  \includegraphics[width=\textwidth]{figs_revision/fig3_pipeline.pdf}
+  \caption{%
+    \textbf{End-to-end pipeline. The three-stage rule replaces the Pareto search
+    of the submitted version.}
+    Raw records are one-hot encoded to $122$ dimensions, reduced by an ANOVA
+    $F$-test to $K=20$ features, projected to $n^\ast$ principal components, and
+    scaled into $[0,\pi]$ before the quantum feature map; classification is an
+    SVC on the precomputed Gram matrix. The block below fixes $n^\ast$ and is
+    the component that changed: the weighted Pareto objective has been removed
+    in favour of a lexicographic rule with no tunable weights
+    (Sec.~\ref{sec:erratum} explains why). The branch above is the
+    entanglement-free control that differs from the main path in exactly one
+    component. Every transformer is fit on the training fold only; in the
+    primary arm the whole front-end is refit at each $N$, so no representation
+    ever sees more data than the classifier it feeds.}
+  \label{fig:pipeline}
+\end{figure*}
+
+% ---------------------------------------------------------------------
+% Fig 4 -- quet K  (du lieu: c1_ksweep.csv, c1_ksensitivity.json)
+% ---------------------------------------------------------------------
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=\columnwidth]{figs_revision/fig4_selectkbest_sweep.pdf}
+  \caption{%
+    \textbf{The accuracy a larger feature budget buys is paid for in qubits.}
+    (a) Macro-$F_1$ of a proxy linear SVM against $K$, with and without the
+    PCA stage, under five-fold stratified cross-validation on the full training
+    set; SelectKBest is refit inside each fold, so the curve carries no
+    selection leakage. Bands are one standard deviation.
+    (b) The number of qubits the selection rule requires to retain $85\%$ of the
+    variance at that $K$, annotated with the resulting two-qubit gate count.
+    The submitted version swept only $K\in\{4,6,8,10,20\}$ and read the last
+    point as an elbow; extending the grid to $K=122$ shows accuracy still
+    rising. What stops it being free is panel~(b): $K=80$ would demand eight
+    qubits and $112$ CNOTs where $K=20$ needs four and $24$. We therefore retain
+    $K=20$ on a circuit-budget argument rather than an accuracy one, and
+    Fig.~\ref{fig:width} shows what happens if the budget is spent.}
+  \label{fig:ksweep}
+\end{figure}
+
+% ---------------------------------------------------------------------
+% Fig 6 -- ablation entanglement  (du lieu: c2_kta_per_run, c2_per_run)
+% ---------------------------------------------------------------------
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=\columnwidth]{figs_revision/fig6_entanglement_ablation.pdf}
+  \caption{%
+    \textbf{Entanglement moves the kernel geometry far more than it moves the
+    score.}
+    (a) Kernel--target alignment for the two feature maps, paired within each of
+    ten runs; every run is a line, and the markers are means with $95\%$
+    confidence intervals. (b) The paired differences.
+    Removing the entangling layer costs $0.1378$ alignment
+    $[0.1267,\,0.1489]$, an interval far from zero, but only $0.0114$
+    macro-$F_1$ $[-0.0054,\,0.0281]$, an interval that contains it. Alignment is
+    therefore a sensitive probe of what the entangler does to the kernel, and a
+    poor predictor of what it does to accuracy --- which is why we report both
+    and rest no claim on alignment alone.}
+  \label{fig:ablation}
+\end{figure}
+
+% ---------------------------------------------------------------------
+% Fig 7 -- phan bo F1 tung run  (du lieu: c2_per_run.csv)
+% ---------------------------------------------------------------------
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=\columnwidth]{figs_revision/fig7_per_run_f1.pdf}
+  \caption{%
+    \textbf{With strong tabular baselines in the comparison, the quantum kernel
+    no longer leads.}
+    Macro-$F_1$ over ten independent runs at $N_{\mathrm{train}}=1000$; dots are
+    individual runs, markers are means with $95\%$ confidence intervals, and the
+    value beside each label is the mean.
+    The submitted version compared only against SVM variants and reported
+    QSVM-ZZ as the best model. Adding a random forest and XGBoost under the
+    identical protocol changes the ordering: XGBoost attains $0.8503$ against
+    QSVM-ZZ's $0.8469$. The intervals overlap substantially, so this is an
+    ordering of point estimates and not a significant separation --- but it no
+    longer supports the claim the submitted version made.}
+  \label{fig:perrun}
+\end{figure}
+
+% ---------------------------------------------------------------------
+% Fig 8 -- dich chuyen prior  (du lieu: c3_prior_shift_per_run.csv)
+% ---------------------------------------------------------------------
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=\columnwidth]{figs_revision/fig8_prior_shift.pdf}
+  \caption{%
+    \textbf{Under class-prior shift the quantum kernel degrades more than the
+    tree ensembles, not less.}
+    (a) Macro-$F_1$ as the attack proportion in the test mixture moves from
+    $30\%$ to $70\%$, over ten runs with $95\%$ confidence bands on the
+    highlighted series. (b) The paired change from the $30\%$ to the $70\%$
+    mixture for each model, sorted.
+    The submitted version identified this regime as its strongest evidence for
+    the quantum kernel. With tree ensembles included that reading does not
+    survive: QSVM-ZZ trails XGBoost and the random forest at every mixture, and
+    it loses $0.032$ macro-$F_1$ across the shift against $0.021$ for XGBoost
+    and $0.025$ for the random forest. It does remain ahead of the classical
+    \emph{kernel} family, which is the narrower claim the data supports.}
+  \label{fig:priorshift}
+\end{figure}
+
+% ---------------------------------------------------------------------
+% Fig 12 -- mo rong mach  (du lieu: variant_K80n8, gram_concentration, width_sweep)
+% ---------------------------------------------------------------------
+\begin{figure*}[t]
+  \centering
+  \includegraphics[width=\textwidth]{figs_revision/fig12_width_concentration.pdf}
+  \caption{%
+    \textbf{Widening the circuit destroys the quantum kernel, and the kernel
+    geometry says why.}
+    (a) The full sample-complexity sweep re-run at $K=80$, where the selection
+    rule returns $n^\ast=8$. QSVM-ZZ falls below every baseline at every
+    training-set size; all $32$ paired comparisons are classical-favourable
+    after Holm correction, and the entanglement ablation reverses sign, with the
+    ZZ map now below its entanglement-free control.
+    (b) Dispersion of the off-diagonal Gram entries against circuit width, with
+    the fitted decay exponent of $\mathrm{std}(n)\propto n^{-\alpha}$. The ZZ
+    map concentrates roughly twice as fast as the Z map at $K=20$
+    ($\alpha=0.59$ vs.\ $0.29$), consistent with its $\binom{n}{2}$ pairwise
+    phase terms growing quadratically where the Z map's grow linearly.
+    (c) Macro-$F_1$ against that dispersion across $n=4$ to $10$ at fixed
+    $K=20$: the ZZ kernel tracks it ($r=+0.77$) while the Z kernel, which barely
+    concentrates, does not ($r=+0.32$).
+    Taken together these panels say that the four-qubit circuit is not a
+    convenience but a constraint: the regime in which this kernel helps is
+    bounded above by concentration, and the bound is measurable from the Gram
+    matrix alone.}
+  \label{fig:width}
 \end{figure*}

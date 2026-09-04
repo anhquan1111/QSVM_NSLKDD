@@ -2016,3 +2016,42 @@ và in đủ dự toán trước khi gửi.
 
 **Máy chưa có credential IBM Quantum** (`~/.qiskit` không tồn tại, không có biến môi trường).
 Quan phải tự lưu token rồi bỏ cờ `--dry-run`.
+
+---
+
+# ✅ GIAI ĐOẠN 24 — Mục hạn chế + đủ 12 caption (2026-09-04)
+
+## Phần cứng lượng tử: bế tắc mạng, xử lý bằng câu chữ
+
+Quan không lấy được token: `quantum.ibm.com` chặn IP (Cloudflare), bật VPN thì bị **đá âm thầm
+về trang marketing `ibm.com`** thay vì chặn hẳn — kiểu chặn mềm với IP VPN/proxy. Thử nhiều
+cách không được.
+
+**Quyết định: bỏ, không đuổi theo.** Lý do đã nêu và vẫn đúng: ngưỡng AE yêu cầu là *noisy
+simulations*, bài đã vượt; phần cứng không chạm lập luận cốt lõi của R3; và nó ngốn thời gian
+đúng lúc `.tex` chưa dựng xong. Script `run_hardware_kernel.py` vẫn giữ, ai có mạng thông thì
+chạy được bằng một lệnh.
+
+## `limitations_revision.tex` — viết lại toàn bộ mục VII
+
+Bản đã nộp hứa ba thứ là "ongoing work" hoặc "deferred to a companion study". **Cả ba nay đều
+có số đo**, nên mục hạn chế không còn là lời hứa mà là báo cáo kết quả kèm ranh giới:
+
+| Mục | Bản cũ | Bản mới |
+|---|---|---|
+| VII-A Hardware noise | "chỉ có finite-shot, hoãn phần nhiễu kết hợp" | Tách rõ **đã đo gì** (FakeManilaV2, `NoiseModel.from_backend`, depth 59, 44 CNOT) và **chưa đo gì** (không chạy QPU; không phủ được drift hiệu chuẩn và decoherence lúc chờ). Nói thẳng: đọc "NISQ-aware" là về **ngân sách mạch**, không phải kiểm chứng phần cứng |
+| VII-B Embedding size | "câu hỏi mở, ongoing work" | Đo xong: K=80 → n\*=8, 32/32 ô classical-favorable, ablation đảo dấu, kèm số mũ suy giảm và tương quan r=+0.77 |
+| VII-C Baseline | "chỉ có SVM" | RF + XGBoost xong; XGBoost 0.8503 > QSVM 0.8469, CI chồng nhau. CatBoost/TabNet cố ý không thêm, có biện minh |
+| VII-D Dataset breadth | "chỉ NSL-KDD" | Thêm UNSW; tách được cái gì chuyển giao và cái gì không |
+
+**Hai con số về trùng lặp đã kiểm lại trực tiếp trên dữ liệu**: NSL-KDD có **610** dòng test
+trùng train cả feature lẫn nhãn (617 nếu chỉ xét feature); UNSW-NB15 **47,3%** dòng train tự
+trùng lặp và **25,0%** dòng test trùng train.
+
+## Caption: từ 4/12 lên **12/12**
+
+Phát hiện `captions.tex` mới chỉ có caption cho Fig 5, 9, 10, 11 — tám hình làm sau chưa có.
+Đã viết đủ. Kiểm tra chéo: 12 caption, 12 label duy nhất, 12 `includegraphics`, ngoặc cân,
+`$` chẵn, và **không có `\ref` nào trỏ tới label không tồn tại**.
+
+Sửa một tự tham chiếu sai trong mục VII (trỏ vào chính nó) → nay trỏ `\ref{fig:ksweep}`.
