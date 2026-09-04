@@ -864,7 +864,12 @@ def figure12():
     conc = pd.read_csv(ROOT / "results/nslkdd/c1_revision/c1_gram_concentration.csv")
     conc = conc[conc.K == 80]
 
-    fig, axes = plt.subplots(1, 2, figsize=(7.16, 3.0))
+    # Ba panel ngang o kho 7.16in thi tieu de chong nhau; cho (a) chiem tron
+    # hang tren, (b) va (c) xuong hang duoi.
+    fig, mos = plt.subplot_mosaic([["a", "a"], ["b", "c"]],
+                                  figsize=(7.16, 5.0),
+                                  height_ratios=[1.0, 0.95])
+    axes = {0: mos["a"], 1: mos["b"], 2: mos["c"]}
 
     # (a) duong hoc o K=80 / n=8
     ax = axes[0]
@@ -911,12 +916,35 @@ def figure12():
                  color=INK, pad=6)
     ax.legend(loc="lower left", labelcolor=INK_2)
 
-    _curve_legend(fig, y=-0.03, ncol=8)
-    fig.suptitle("Widening the circuit does not help: it destroys the quantum "
-                 "kernel",
+    # (c) F1 co doan duoc tu do trai cua Gram khong -- day la mat xich dinh luong
+    ax = axes[2]
+    tidy(ax)
+    ws = pd.read_csv(ROOT / "results/nslkdd/c1_revision/c1_width_sweep.csv")
+    fit = json.loads(
+        (ROOT / "results/nslkdd/c1_revision/c1_width_sweep.json").read_text())
+    for kern, colour, marker, label in (("ZZ", BLUE, "o", "ZZFeatureMap"),
+                                        ("Z", VIOLET, "s", "ZFeatureMap")):
+        g = ws[ws.kernel == kern].groupby("n")[["f1_macro", "offdiag_std"]].mean()
+        ax.plot(g.offdiag_std, g.f1_macro, ls="none", marker=marker, ms=5.5,
+                color=colour, mec=SURFACE, mew=0.8, zorder=6)
+        xs = np.linspace(g.offdiag_std.min(), g.offdiag_std.max(), 20)
+        ax.plot(xs, fit[kern]["slope"] * xs + fit[kern]["intercept"],
+                color=colour, lw=1.4, ls=(0, (4, 2)), alpha=0.8, zorder=4)
+        ax.annotate(f"{label}\n$r={fit[kern]['pearson_r']:+.2f}$",
+                    (g.offdiag_std.iloc[-1], g.f1_macro.iloc[-1]),
+                    xytext=(8, -4 if kern == "ZZ" else 10),
+                    textcoords="offset points", ha="left", va="top",
+                    fontsize=7, color=INK_2)
+    ax.set_xlabel("Std. of off-diagonal Gram entries")
+    ax.set_ylabel("Macro-$F_1$")
+    ax.set_title("(c) Dispersion predicts $F_1$", loc="left", color=INK, pad=6)
+
+    _curve_legend(fig, y=-0.015, ncol=8)
+    fig.suptitle("Widening the circuit destroys the quantum kernel, and the "
+                 "kernel geometry says why",
                  x=0.012, y=0.995, ha="left", fontsize=10, fontweight="bold",
                  color=INK)
-    fig.tight_layout(rect=(0, 0.05, 1, 0.945))
+    fig.tight_layout(rect=(0, 0.035, 1, 0.955), h_pad=2.4)
     return save(fig, "fig12_width_concentration")
 
 
