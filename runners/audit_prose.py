@@ -518,7 +518,9 @@ def section_letter() -> None:
             ("da doc toan van ca bon bai truoc khi so sanh",
              "read all four in full before answering"),
             ("noi ro Carducci chi doc duoc abstract",
-             "suggestive rather than as evidence")):
+             "suggestive rather than as evidence"),
+            ("noi ro cai gi KHONG xac dinh duoc ve Carducci",
+             "not the qubit count nor whether")):
         check(f"thu noi thang: {what}", says(L, phrase), phrase[:40])
 
     # Bai hua "Sec IV-D co link repo va commit hash" -- phai co that, va hash

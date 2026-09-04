@@ -145,7 +145,7 @@ Script & Result & What it checks \\
 \texttt{audit\_figures.py} & 39/39 &
   Every figure is newer than its inputs, and every plotted number is re-derived
   from the artifacts \\
-\texttt{audit\_prose.py} & 114/114 &
+\texttt{audit\_prose.py} & 115/115 &
   Every number written in the manuscript text \emph{and in this letter} is
   re-derived from the artifacts \\
 \texttt{verify\_lemma1.py} & 15/15 &
@@ -572,6 +572,16 @@ UNSW-NB15, recovered on $10/10$ independent subsets. The submitted version
 presented $n=4$ as a result; it is properly a rule whose output depends on the
 data.
 
+We would add that the question itself is being treated as a legitimate research
+question elsewhere. The study Reviewer~4 pointed us to --- Carducci, ICAD 2026
+--- opens by arguing that malware analysts ``do not need another general claim
+that quantum computing is either broadly superior or broadly impractical'' but
+rather ``need to know which kinds of malware representations justify quantum
+effort'', and answers it by locating a bounded intermediate window. We reached the same shape of answer independently, on a
+different task and with a different primitive. That two studies in adjacent
+domains converge on ``bounded window'' rather than on ``advantage'' is, we
+think, a result about the technology rather than a shortfall of either paper.
+
 \emph{A measured mechanism with a quantitative form.} This is the closest we can
 honestly come to the reviewer's ``theoretical result establishing a regime'',
 and we present it as an empirical regularity rather than a theorem. The
@@ -699,11 +709,15 @@ are those dominated by local pairwise structure, which is what the
 $\binom{n}{2}$ pairwise phase terms of the \ZZ{} map encode.
 
 We must be clear about the evidentiary status. We were unable to obtain the full
-text through our institutional access, so the comparison rests on the abstract
-and the bibliographic record, and we say so in the text and present the parallel
-as suggestive rather than as evidence. For the same reason the study is
-discussed in prose but not tabulated in Table~I, whose cells are otherwise read
-from full texts.
+text through our institutional access. The comparison rests on the abstract, the
+opening of the introduction, and the index terms --- from which we can establish
+that the evaluation is a retrieval setting scored by Recall@$k$ and that kernel
+methods are among the techniques involved, but not the qubit count nor whether
+the training-set size is varied. We say exactly this in Sec.~II-D, present the
+parallel as suggestive rather than as evidence, and do not tabulate the study in
+Table~I, whose cells are otherwise read from full texts. If the reviewer has
+access and finds that our reading misstates the work, we would be glad to be
+corrected.
 \changed
 New Sec.~II-D; bibliography; Table~I caption states the exclusion and why.
 
