@@ -31,7 +31,8 @@ TEXT: dict[str, str] = {}
 for f in sorted(SEC.glob("*.tex")):
     TEXT[f.name] = io.open(f, encoding="utf-8").read()
 for extra in ("limitations_revision.tex", "theory_revision.tex",
-              "main_revision.tex", "appendix_lemma.tex"):
+              "main_revision.tex", "appendix_lemma.tex",
+              "response_letter.tex"):
     p = ROOT / "paper/paper1" / extra
     if p.exists():
         TEXT[extra] = io.open(p, encoding="utf-8").read()
@@ -446,7 +447,85 @@ def section_lemma() -> None:
           "phai chi con xuat hien trong phan erratum")
 
 
+def section_letter() -> None:
+    """Thu phan hoi gui reviewer -- moi con so trong do cung phai doi chieu duoc.
+
+    Day la tai lieu reviewer doc KY nhat, va la cho duy nhat ta tu khai loi.
+    Mot con so lech trong thu con hai hon lech trong bai.
+    """
+    print("\nJ. Thu phan hoi diem-theo-diem")
+    L = "response_letter.tex"
+    if L not in TEXT:
+        check("co file thu phan hoi", False, "chua tao")
+        return
+
+    # R1-8: bang tach hai nguon chenh lech Table IV vs Table VI
+    t = pd.read_csv(NSL / "c4_revision/c4_table_iv_vs_vi.csv")
+    t = t.set_index(["repr_mode", "test_split"])
+    cells = [("frozen_c1", "fixed_300", "QSVM_ZZ"),
+             ("frozen_c1", "fixed_300", "XGBoost"),
+             ("frozen_c1", "full_kddtest_plus", "QSVM_ZZ"),
+             ("frozen_c1", "full_kddtest_plus", "XGBoost"),
+             ("refit_per_N", "fixed_300", "QSVM_ZZ"),
+             ("refit_per_N", "fixed_300", "XGBoost"),
+             ("refit_per_N", "full_kddtest_plus", "QSVM_ZZ"),
+             ("refit_per_N", "full_kddtest_plus", "XGBoost")]
+    bad = [f"{r}/{s}/{m}" for r, s, m in cells
+           if f"{t.loc[(r, s), m]:.4f}" not in TEXT[L]]
+    check("R1-8: ca 8 o cua bang trong thu khop artifact", not bad, str(bad))
+    d_split = float(t.loc[("frozen_c1", "fixed_300"), "QSVM_ZZ"]
+                    - t.loc[("frozen_c1", "full_kddtest_plus"), "QSVM_ZZ"])
+    d_repr = float(t.loc[("refit_per_N", "fixed_300"), "QSVM_ZZ"]
+                   - t.loc[("frozen_c1", "fixed_300"), "QSVM_ZZ"])
+    claim("R1-8: phan do tap test gay ra", L, "about $-0.051$ macro-$F_1$",
+          -d_split, "{:+.3f}")
+    claim("R1-8: phan do refit gay ra", L, "for about $+0.006$",
+          d_repr, "{:+.3f}")
+
+    # R1-9: giao thuc, khong phai model, giai thich F1 thap
+    p = pd.read_csv(NSL / "c4_revision/c4_protocol_vs_literature.csv")
+    p = p.set_index(["setup", "model"]).f1_macro
+    for setup, mdl in (("A_full122_fulltrain_KDDTestPlus", "RandomForest"),
+                       ("A_full122_fulltrain_KDDTestPlus", "XGBoost"),
+                       ("B_full122_randomsplit_KDDTrain", "RandomForest"),
+                       ("B_full122_randomsplit_KDDTrain", "XGBoost")):
+        v = float(p.loc[(setup, mdl)])
+        check(f"R1-9: {setup[0]} / {mdl} = {v:.4f}", f"{v:.4f}" in TEXT[L],
+              f"{v:.4f}")
+
+    # R4-5: bay gio moi co so cho lop hiem -- dung cho reviewer hoi thang
+    r = pd.read_csv(NSL / "c4_revision/c4_rare_attack_natural.csv")
+    r = r[r.n_train == 10000].set_index("model").f1_rare
+    miss = [m for m in ("SVM_RBF", "QSVM_ZZ", "QSVM_Z", "XGBoost",
+                        "RandomForest", "SVM_Poly2", "SVM_Linear")
+            if f"{r[m]:.3f}" not in TEXT[L]]
+    check("R4-5: ca 7 gia tri F1 lop hiem co trong thu", not miss, str(miss))
+
+    # Nhung cho thu KHONG duoc phep noi giam nhe
+    for what, phrase in (
+            ("rut 5 khang dinh", "are withdrawn"),
+            ("khong tai tao duoc so rare cu", "cannot be reproduced"),
+            ("XGBoost dung tren QSVM", "XGBoost attains\n$0.8503$"),
+            ("SVM-RBF manh hon ve rare", "SVM-RBF is better still"),
+            ("khong chay tren phan cung that", "not do is execute on a quantum processor"),
+            ("khong them CatBoost/TabNet", "did \\emph{not} add CatBoost"),
+            ("tu khai loi Lemma", "had incorrect coefficients"),
+            ("tu khai tap train giau lop hiem", "were\nrare-enriched")):
+        check(f"thu noi thang: {what}", says(L, phrase), phrase[:40])
+
+    rm = pd.read_csv(NSL / "regime_map_rows.csv")
+    vc = rm.verdict.value_counts()
+    check("thu ke du 21/21/68 chu khong chi ke phan thang",
+          all(str(v) in TEXT[L] for v in (vc["QSVM-favorable"],
+                                          vc["classical-favorable"],
+                                          vc["inconclusive"])),
+          f"{vc.to_dict()}")
+    check("thu dem dung 33 item",
+          "33" in TEXT[L] and "29" in TEXT[L], "6+10+6+5+6 = 33, 29 xong + 4 mot phan")
+
+
 def main() -> int:
+    global OK, FAILED
     print("=" * 78)
     print("  DOI CHIEU SO LIEU TRONG THAN BAI VOI ARTIFACT")
     print("=" * 78)
@@ -457,8 +536,30 @@ def main() -> int:
         print(f"  Thieu file: {missing}")
         return 1
     for fn in (section_c1, section_c2, section_c3, section_c4, section_rare,
-               section_unsw, section_width, section_map, section_lemma):
+               section_unsw, section_width, section_map, section_lemma, section_letter):
         fn()
+    # Thu phan hoi trich dan chinh so kiem dinh cua script nay. Reviewer se
+    # chay thu -- neu con so trong thu lech voi con so script in ra thi do
+    # dung la kieu cau tha reviewer nay se bat. Nen tu doi chieu luon.
+    # +1 vi chinh muc kiem nay cung duoc dem, nen con so thu trich phai la
+    # tong CUOI CUNG ma script in ra.
+    total = OK + FAILED + 1
+    L = TEXT.get("response_letter.tex", "")
+    if L:
+        quoted = f"{total}/{total}"
+        # Chi tinh phan than bai cua thu, khong tinh dong chu thich LaTeX,
+        # neu khong thi chu thich se lam muc kiem nay tu thoa man chinh no.
+        body = "\n".join(ln for ln in L.split("\n")
+                         if not ln.lstrip().startswith("%"))
+        if quoted in body:
+            OK += 1
+            print(f"\n  [PASS] thu trich dung so kiem dinh cua chinh script nay"
+                  f"  --  {quoted}")
+        else:
+            FAILED += 1
+            print(f"\n  [FAIL] thu trich sai so kiem dinh cua audit_prose"
+                  f"  --  phai ghi {quoted}")
+
     print("\n" + "=" * 78)
     print(f"TONG: {OK}/{OK + FAILED} PASS" + (f"  ({FAILED} FAIL)" if FAILED else ""))
     print("=" * 78)

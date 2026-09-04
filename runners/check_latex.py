@@ -51,7 +51,11 @@ IEEEkeywords abstract thebibliography bibitem
 url href hidelinks
 ZZ Zmap QSVM Fmac
 """.split()) | set("Bigl Bigr ge le prime v widetilde eqref appendices appendix "
-            "tfrac hfill blacksquare otimes dagger mathbb Var".split())
+            "tfrac hfill blacksquare otimes dagger mathbb Var "
+            "bfseries itshape color definecolor newenvironment titleformat "
+            "titlespacing thesection parskip parindent hrule nobreak leftmargin "
+            "rightmargin tilde longtable geometry inputenc fontenc enumitem "
+            "resp changed itemhead".split())
 
 FAIL: list[str] = []
 INFO: list[str] = []
@@ -175,9 +179,12 @@ def check_file(path: Path) -> tuple[set[str], set[str], set[str], set[str]]:
                           r"|multline|split)\*?")
     in_tab = in_math_env = in_dollar = False
     for i, ln in enumerate(lines, 1):
-        if re.search(BS + BS + r"begin\{" + math_env.pattern, ln):
+        # Toan hien thi co hai dang: \begin{equation}...  va  \[ ... \]
+        if re.search(BS + BS + r"begin\{" + math_env.pattern, ln) \
+                or (BS + "[") in ln:
             in_math_env = True
-        if re.search(BS + BS + r"end\{" + math_env.pattern, ln):
+        if re.search(BS + BS + r"end\{" + math_env.pattern, ln) \
+                or (BS + "]") in ln:
             in_math_env = False
             continue
         if in_math_env or re.match(r"\s*" + BS + BS

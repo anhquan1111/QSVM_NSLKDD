@@ -35,6 +35,15 @@ README = """\
 3. Compiler: pdfLaTeX. Bien dich hai lan (lan dau de sinh .aux cho \\ref).
 4. IEEEtran.cls co san tren Overleaf, khong can tai kem.
 
+Zip nay chua HAI tai lieu doc lap, bien dich rieng, ra hai PDF:
+
+| File | La gi | Khi nao doi Main document sang no |
+|---|---|---|
+| `main_revision.tex` | ban thao revision | mac dinh |
+| `response_letter.tex` | thu phan hoi 33 y reviewer | khi muon xuat thu gui AE |
+
+Thu phan hoi KHONG duoc \\input vao ban thao va nguoc lai.
+
 ## Kiem truoc khi gui di
 
 Trong repo:
@@ -98,6 +107,16 @@ def main() -> int:
         return 1
 
     tex = [MAIN] + inputs_recursive(MAIN, {MAIN})
+
+    # Thu phan hoi la tai lieu DOC LAP (documentclass rieng), khong duoc
+    # \input vao ban thao. Phai them tay, khong thi no rot khoi zip.
+    letter = PAPER / "response_letter.tex"
+    if letter.exists():
+        tex.append(letter)
+        tex += inputs_recursive(letter, set(tex))
+    else:
+        print("  CANH BAO: khong co response_letter.tex")
+
     figs = graphics_of(tex)
     files = tex + figs
 
