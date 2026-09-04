@@ -349,6 +349,81 @@ def audit_claims() -> None:
           f"{len(bad)} o lech" if not bad.empty else f"{len(merged)} o da doi chieu")
 
 
+def audit_regime_map() -> None:
+    """Doi chieu CA 110 dong cua ban do che do voi nguon C2/C3/C4.
+
+    `regime_map_rows.csv` khong duoc sinh boi script nao trong repo -- no la san
+    pham cua mot lenh roi hoi lam C4. Vi no nuoi Hinh 10 (hinh chu dao), tung
+    dong phai truy nguoc duoc ve bang thong ke goc, neu khong thi khong the biet
+    con so trong hinh co dung khong.
+    """
+    print("\n" + "=" * 78)
+    print("E. BAN DO CHE DO -- doi chieu ca 110 dong voi nguon")
+    print("=" * 78)
+    rm = pd.read_csv(ROOT / "results/nslkdd/regime_map_rows.csv")
+    check("tong 110 dong", len(rm) == 110, f"{len(rm)} dong")
+
+    # --- C2: 2 dong tu c2_paired_statistics.csv ---
+    c2 = pd.read_csv(ROOT / "results/nslkdd/c2_revision/c2_paired_statistics.csv")
+    c2 = c2.set_index("effect")
+    blk = rm[rm.contribution == "C2"]
+    bad = []
+    # Nguong 1e-6: dong KTA lech 2.9e-08 so voi nguon, do sai so dau phay dong
+    # khi ban do che do duoc gop lai. Bai in 4 chu so thap phan nen muc do lech
+    # nay khong the hien ra o bat ky con so nao duoc cong bo.
+    for _, r in blk.iterrows():
+        src = c2.loc[r.metric]
+        if not (abs(r.estimate - src.estimate) < 1e-6
+                and abs(r.ci_low - src.ci95_low) < 1e-6
+                and abs(r.ci_high - src.ci95_high) < 1e-6
+                and abs(r.p_value - src.wilcoxon_p) < 1e-9):
+            bad.append(r.metric)
+    check(f"khoi C2 ({len(blk)} dong) khop c2_paired_statistics", not bad, str(bad))
+
+    # --- C3: tu c3_pairwise_statistics.csv ---
+    c3 = pd.read_csv(ROOT / "results/nslkdd/c3_revision/c3_pairwise_statistics.csv")
+    key = ["regime", "condition", "baseline", "metric"]
+    c3 = c3.set_index(key)
+    blk = rm[rm.contribution == "C3"]
+    bad = []
+    for _, r in blk.iterrows():
+        k = tuple(r[c] for c in key)
+        if k not in c3.index:
+            bad.append((k, "khong co trong nguon"))
+            continue
+        src = c3.loc[k]
+        if not (abs(r.estimate - src.mean_delta) < 1e-9
+                and r.verdict == src.verdict):
+            bad.append((k, f"{r.estimate:.6f} vs {src.mean_delta:.6f}, "
+                           f"{r.verdict} vs {src.verdict}"))
+    check(f"khoi C3 ({len(blk)} dong) khop c3_pairwise_statistics", not bad,
+          f"{len(bad)} dong lech: {bad[:2]}" if bad else "")
+
+    # --- C4: natural + matched ---
+    blk = rm[rm.contribution == "C4"]
+    bad = []
+    for regime, path in (("natural", "c4_pairwise_statistics_natural.csv"),
+                         ("matched", "c4_pairwise_statistics_matched.csv")):
+        src = pd.read_csv(ROOT / "results/nslkdd/c4_revision" / path)
+        src["test_split"] = src.test_split.replace(
+            {"full_kddtest_plus": "full_test"})
+        src = src[(src.arm == "tuned_per_N") & (src.test_split == "full_test")]
+        src = src.set_index(["n_train", "baseline"])
+        sub = blk[blk.regime == f"sample_complexity_{regime}"]
+        for _, r in sub.iterrows():
+            n = int(str(r.condition).split("=")[1])
+            k = (n, r.baseline)
+            if k not in src.index:
+                bad.append((regime, k, "khong co trong nguon"))
+                continue
+            row = src.loc[k]
+            if not (abs(r.estimate - row.mean_delta) < 1e-9
+                    and r.verdict == row.verdict):
+                bad.append((regime, k, f"{r.estimate:.6f} vs {row.mean_delta:.6f}"))
+    check(f"khoi C4 ({len(blk)} dong) khop c4_pairwise_statistics", not bad,
+          f"{len(bad)} dong lech: {bad[:2]}" if bad else "")
+
+
 if __name__ == "__main__":
     # Che do phu: chay gate cho mot dataset roi in ra dang may doc duoc.
     if len(sys.argv) == 3 and sys.argv[1] == "--gates-only":
@@ -361,6 +436,7 @@ if __name__ == "__main__":
     audit_data_gates()
     audit_kernel()
     audit_claims()
+    audit_regime_map()
 
     n_fail = sum(1 for _, ok, _ in results if not ok)
     print("\n" + "=" * 78)

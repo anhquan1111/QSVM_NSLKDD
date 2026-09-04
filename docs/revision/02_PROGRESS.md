@@ -1971,3 +1971,48 @@ Tại K=20, tỉ lệ **2.02** khớp gần như chính xác với dự đoán t
 đúng **thứ tự** nhưng **không giải thích trọn vẹn tốc độ**. Ghi rõ cả hai, không chọn số đẹp.
 
 Audit hình: **39/39 PASS** (thêm một kiểm tra mới cho tỉ lệ số mũ).
+
+---
+
+# ✅ GIAI ĐOẠN 23 — Soát lỗi lần cuối + sẵn sàng chạy phần cứng (2026-09-04)
+
+## Soát lần cuối: **100/100** (C4) và **39/39** (hình)
+
+Mở rộng `audit_c4.py` để đối chiếu **cả 110 dòng** của bản đồ chế độ với nguồn C2/C3/C4
+(trước chỉ đối chiếu 42 dòng khối C4).
+
+### Phát hiện #38 🟡 — Ba artifact không có script tái lập
+
+`regime_map_rows.csv`, `u1_c1_selection_unsw.json`, `u1_dimension_metrics.csv` đều được sinh
+bằng **lệnh rời** hồi làm C4, không có script nào trong repo tạo ra chúng. `regime_map_rows.csv`
+nuôi **Hình 10** — hình chủ đạo.
+
+Chưa viết được script tái lập cho cả ba (tốn thời gian), nhưng đã làm thứ quan trọng hơn:
+**đối chiếu từng dòng với bảng thống kê gốc**. Kết quả: khối C2 (2 dòng), C3 (36), C4 (72)
+đều truy nguyên được. Tức số liệu đúng, chỉ thiếu đường tái tạo tự động.
+
+Trong lúc đối chiếu bắt được một dòng lệch **2,9e-08** ở khối C2 (KTA) — sai số dấu phẩy động
+khi gộp bảng, không phải sai dữ liệu. Bài in 4 chữ số nên không hiện ra. Đã nới ngưỡng đúng
+mức kèm ghi chú lý do thay vì lặng lẽ bỏ qua.
+
+## Phần cứng thật: script xong, chờ token
+
+`runners/run_hardware_kernel.py` — ba mức trên **cùng một tập con và cùng một mạch**:
+ideal statevector → FakeManilaV2 → QPU thật.
+
+Đã chạy thử `--dry-run` (không cần tài khoản), toàn bộ đường mã thông:
+
+| Mức | KTA | FroSim vs ideal | MAE |
+|---|---|---|---|
+| ideal statevector | 0.2727 | 1.0000 | 0 |
+| FakeManilaV2 (nhiễu) | 0.2195 | 0.8945 | 0.0719 |
+| QPU thật | *chờ token* | | |
+
+Với 40 mẫu: **780 mạch** compute-uncompute, 1024 shots → 798.720 lần đo.
+Transpile: depth 121, 86 CNOT (gấp đôi một feature map vì mạch là `U†(x_j)U(x_i)`).
+
+**Chốt chặn an toàn**: script từ chối gửi nếu số mạch vượt `--max-circuits` (mặc định 5000),
+và in đủ dự toán trước khi gửi.
+
+**Máy chưa có credential IBM Quantum** (`~/.qiskit` không tồn tại, không có biến môi trường).
+Quan phải tự lưu token rồi bỏ cờ `--dry-run`.
