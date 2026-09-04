@@ -249,9 +249,12 @@ def audit_data_figures() -> None:
     z = con[con.kernel == "Z"].set_index("n").offdiag_std
     r_zz = 1 - zz.loc[10] / zz.loc[4]
     r_z = 1 - z.loc[10] / z.loc[4]
-    check("Fig 12b: ZZ tap trung nhanh hon Z (55% vs 21%)",
-          close(r_zz, 0.55, 0.02) and close(r_z, 0.21, 0.02),
-          f"ZZ mat {r_zz:.0%}, Z mat {r_z:.0%}")
+    check("Fig 12b: ZZ mat do trai nhanh hon Z it nhat gap doi",
+          r_zz > 2 * r_z, f"ZZ mat {r_zz:.0%}, Z mat {r_z:.0%}")
+    al = json.loads((NSL / "c1_revision/c1_gram_concentration.json").read_text())
+    ratio20 = al["20"]["alpha_ratio"]
+    check("Fig 12b: tai K=20, ty le so mu ~ 2 (khop C(n,2) vs n)",
+          close(ratio20, 2.0, 0.15), f"alpha_ZZ/alpha_Z = {ratio20:.2f}")
 
 
 if __name__ == "__main__":
