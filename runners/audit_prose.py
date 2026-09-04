@@ -16,6 +16,7 @@ from __future__ import annotations
 
 import io
 import json
+import re
 import sys
 from pathlib import Path
 
@@ -512,6 +513,27 @@ def section_letter() -> None:
             ("tu khai loi Lemma", "had incorrect coefficients"),
             ("tu khai tap train giau lop hiem", "were\nrare-enriched")):
         check(f"thu noi thang: {what}", says(L, phrase), phrase[:40])
+
+    # Bai hua "Sec IV-D co link repo va commit hash" -- phai co that, va hash
+    # phai la mot commit CO THAT trong repo nay.
+    import subprocess
+    setup = TEXT.get("04_setup.tex", "")
+    m = re.search(r"commit\s*\n?\\texttt\{([0-9a-f]{7,40})\}", setup)
+    check("bai co ghi link repo", "github.com/anhquan1111/QSVM_NSLKDD" in setup,
+          "thu khang dinh muc IV-D co link -- phai dung")
+    if m:
+        rc = subprocess.run(["git", "cat-file", "-e", m.group(1) + "^{commit}"],
+                            cwd=ROOT, capture_output=True)
+        check(f"commit hash {m.group(1)} co that trong repo", rc.returncode == 0,
+              "hash go tay khong tro toi commit nao" if rc.returncode else "co")
+    else:
+        check("bai co ghi commit hash", False, "khong tim thay")
+
+    # So bo audit ghi trong bai phai khop so bo audit that su co
+    for name, n in (("audit\\_c4.py} (100", 100), ("audit\\_figures.py} (39", 39),
+                    ("verify\\_lemma1.py} (15", 15)):
+        check(f"bai ghi dung so kiem dinh cua {name.split('}')[0]}",
+              name in setup, str(n))
 
     rm = pd.read_csv(NSL / "regime_map_rows.csv")
     vc = rm.verdict.value_counts()
