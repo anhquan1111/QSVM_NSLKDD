@@ -111,6 +111,31 @@ error-rate criterion. What they hold fixed is the training-set size --- the full
 $125{,}973$-record training partition on NSL-KDD --- and that is where our
 contribution lies.
 
+\subsection{Bounded advantage windows in adjacent domains}
+
+The question this paper asks is being asked elsewhere, and one answer is close
+enough to ours to be worth stating. Carducci \cite{carducci2026} studies quantum
+malware detection along an eleven-rank representational-complexity scale and
+reports that the measured advantage is confined to an \emph{intermediate}
+window: at the co-occurrence and local-order representations the quantum
+workflow retrieves malware where the classical baseline retrieves none
+($4.29\%$ against $0\%$), while classical methods remain stronger both at the
+lower-complexity statistical representations and at the higher-complexity ones.
+The advantage survives parameter tuning, which the author reports specifically
+to rule out a favourable-setting artefact, and the stated practical implication
+is to prefer classical methods wherever mature inductive biases already exist.
+
+Three features of that result recur in ours, on a different task and with a
+different quantum primitive. The advantage is bounded on \emph{both} sides
+rather than growing with capability; the authors test explicitly whether
+re-tuning explains it, as our frozen and tuned arms do in Sec.~\ref{sec:res-c4};
+and the region where the quantum method helps is characterised by \emph{local
+pairwise structure}, which is precisely what the $\binom{n}{2}$ pairwise phase
+terms of the \ZZ{} map encode and what Sec.~\ref{sec:res-width} shows to stop
+paying off once $n$ grows. We could not obtain the full text of
+\cite{carducci2026} through our institutional access, so this comparison rests
+on its abstract; we present the parallel as suggestive rather than as evidence.
+
 \subsection{Positioning}
 
 Table~\ref{tab:novelty} places this work against those four studies on the axes

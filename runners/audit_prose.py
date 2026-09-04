@@ -516,7 +516,9 @@ def section_letter() -> None:
             ("khong nhan be rong mach la truc cua minh",
              "an axis we can claim as ours, and we no longer do"),
             ("da doc toan van ca bon bai truoc khi so sanh",
-             "read all four in full before answering")):
+             "read all four in full before answering"),
+            ("noi ro Carducci chi doc duoc abstract",
+             "suggestive rather than as evidence")):
         check(f"thu noi thang: {what}", says(L, phrase), phrase[:40])
 
     # Bai hua "Sec IV-D co link repo va commit hash" -- phai co that, va hash
@@ -539,6 +541,17 @@ def section_letter() -> None:
                     ("verify\\_lemma1.py} (15", 15)):
         check(f"bai ghi dung so kiem dinh cua {name.split('}')[0]}",
               name in setup, str(n))
+
+    # Thu khang dinh da trich va ban ve Carducci -- phai co that o CA BA cho,
+    # khong duoc chi hua trong thu.
+    bib = io.open(ROOT / "paper/paper1/bibliography_revision.tex",
+                  encoding="utf-8").read()
+    check("Carducci co bibitem that",
+          "bibitem{carducci2026}" in bib.replace(chr(92), ""),
+          "thu noi 'cited', phai co that")
+    check("Carducci duoc ban trong than bai chu khong chi trong thu",
+          "carducci2026" in TEXT.get("02_background.tex", ""),
+          "R4-1 doi 'discussed', khong phai chi liet ke")
 
     rm = pd.read_csv(NSL / "regime_map_rows.csv")
     vc = rm.verdict.value_counts()
