@@ -63,19 +63,25 @@ def main() -> int:
         X_all = df[feature_cols].to_numpy(dtype=np.float32)
         y_all = df["label_binary"].to_numpy()
 
-        # Tap con cho KTA: dung dung cach lay mau cua C1 (N=300, seed 42, phan tang).
-        rng = np.random.default_rng(KTA_SEED)
-        idx_pos = np.where(y_all == 1)[0]
-        idx_neg = np.where(y_all == 0)[0]
-        half = KTA_SUBSET // 2
-        sub = np.sort(np.concatenate([rng.choice(idx_pos, half, replace=False),
-                                      rng.choice(idx_neg, KTA_SUBSET - half,
-                                                 replace=False)]))
+        # Tap con cho KTA: PHAI dung dung giao thuc cua C1 --
+        # train_test_split(stratify=attack_category), N=300, seed 42. Neu lay mau
+        # kieu khac thi cung mot (K, n) se co hai gia tri KTA khac nhau trong repo,
+        # va nguoi doc doi chieu hai artifact se thay mau thuan.
+        from sklearn.model_selection import train_test_split
+        idx_all = np.arange(len(y_all))
+        sub, _ = train_test_split(idx_all, train_size=KTA_SUBSET,
+                                  stratify=df["attack_category"].to_numpy(),
+                                  random_state=KTA_SEED)
+        sub = np.sort(sub)
         y_sub = np.where(y_all[sub] == 1, 1.0, -1.0)
         del df
 
-        # Q(n): chi phi CNOT, chuan hoa theo n=10. Khong phu thuoc K.
-        q = {n: (2 * (n * (n - 1) // 2)) / (2 * (10 * 9 // 2)) for n in N_GRID}
+        # Q(n) cua bai: Q_raw = 10n^2 - 8n, chuan hoa theo n=10 (=920).
+        # Da doi chieu voi cot Q_raw trong u1_dimension_metrics.csv.
+        def q_raw(n):
+            return 10 * n * n - 8 * n
+
+        q = {n: q_raw(n) / q_raw(10) for n in N_GRID}
 
         rows, summary = [], {}
         for K in K_LIST:
@@ -87,8 +93,12 @@ def main() -> int:
             for n in N_GRID:
                 pca = PCA(n_components=n, random_state=42).fit(X_sel_all)
                 v = float(pca.explained_variance_ratio_.sum())
-                ang = MinMaxScaler((0.0, float(np.pi))).fit_transform(
-                    pca.transform(X_sel_sub))
+                # Scaler PHAI fit tren FULL TRAIN roi moi transform tap con --
+                # dung nhu Block A cua C1_revision.ipynb. Fit ngay tren 300 dong
+                # cho ra goc khac han, va KTA se lech toi 0.08.
+                scaler = MinMaxScaler((0.0, float(np.pi))).fit(pca.transform(X_sel_all))
+                ang = np.clip(scaler.transform(pca.transform(X_sel_sub)),
+                              0.0, float(np.pi))
                 psi = c4.compute_statevectors_fast(ang, "ZZ", n, 2)
                 g = c4.gram_from_statevectors(psi)
                 rows.append({"K": K, "n": n, "V": v, "KTA": kta(g, y_sub),

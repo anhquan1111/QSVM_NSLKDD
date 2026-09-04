@@ -206,7 +206,26 @@ PANELS_C1 = [
 ]
 
 
+def _assert_nsl_c1_matches_artifact():
+    """Bang NSL_C1 duoc go cung tu output notebook C1; doi chieu lai voi artifact.
+
+    `runners/run_c1_ksens.py` tinh lai V/KTA/Q bang duong doc lap. Neu mot trong
+    hai ben troi thi build hinh phai gay ngay, chu khong duoc am tham ve sai so.
+    """
+    path = ROOT / "results/nslkdd/c1_revision/c1_ksensitivity.csv"
+    if not path.exists():
+        return
+    k20 = pd.read_csv(path).query("K == 20").set_index("n")
+    for col in ("V", "KTA", "Q"):
+        diff = (NSL_C1.set_index("n")[col] - k20[col]).abs().max()
+        assert diff < 5e-4, (
+            f"NSL_C1[{col}] lech {diff:.2e} so voi c1_ksensitivity.csv. "
+            "Chay lai `python runners/run_c1_ksens.py` va doi chieu truoc khi ve hinh."
+        )
+
+
 def figure5():
+    _assert_nsl_c1_matches_artifact()
     unsw = pd.read_csv(ROOT / "results/unsw/c4_revision/u1_dimension_metrics.csv")
     sel = json.loads((ROOT / "results/unsw/c4_revision/u1_c1_selection_unsw.json").read_text())
     unsw_meta = dict(

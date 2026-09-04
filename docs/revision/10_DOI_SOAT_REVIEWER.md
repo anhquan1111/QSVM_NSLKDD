@@ -175,3 +175,90 @@ tức AE không đứng về phía R3.
 |---|---|---|
 | 11 | U5: đánh giá UNSW trên tập test đã khử trùng lặp (25% dòng test trùng train) | chặn trước phản biện |
 | 12 | Sweep C cho QSVM để trả lời R1-3 bằng đồ thị độ nhạy | mạnh hơn |
+
+---
+
+# CẬP NHẬT 2026-09-04 — sau khi soát hình và chạy thêm
+
+## Soát hình: `runners/audit_figures.py` → **38/38 PASS**
+
+Hai câu hỏi tách bạch:
+
+1. **Xuất xứ** — mọi file hình đều **mới hơn** cả script sinh nó lẫn dữ liệu nguồn. Không có
+   hình nào là bản còn sót lại. 12/12 PASS.
+2. **Số liệu** — từng con số hình vẽ ra được dựng lại từ artifact. 26/26 PASS. Với ba hình sơ
+   đồ thì đối chiếu hằng số hiển thị (24 CNOT khớp `count_ops()` của Qiskit, K=20 và n\*=4
+   khớp `DatasetSpec`, 122 chiều khớp dữ liệu thật).
+
+### 🔴 Một lỗi thật tìm được khi soát
+
+Script `run_c1_ksens.py` của tôi **fit MinMax scaler trên 300 dòng tập con** thay vì trên
+toàn bộ train như notebook C1. Hậu quả: KTA lệch tới **0.082**, và ở K=20 luật cho ra
+**n\* = 5 thay vì 4**. Tức nếu không soát thì repo sẽ có hai giá trị `n*` mâu thuẫn.
+
+Sau khi sửa, script tái tạo notebook **chính xác**: KTA_max 0.2439 tại n=5, ngưỡng 0.2317,
+giai đoạn 2 = {4,5,6}, n\* = 4. Bảng gõ cứng trong Fig 5 nay **được kiểm chứng độc lập**,
+lệch lớn nhất 4.9e-05 (chỉ là làm tròn 4 chữ số). Đã thêm `assert` vào script vẽ hình để nếu
+sau này một trong hai bên trôi thì build hình gãy ngay chứ không âm thầm.
+
+Cũng sửa `Q(n)` cho đúng công thức của bài (`Q_raw = 10n² − 8n`) thay vì bản rút gọn theo CNOT.
+
+## Hai kết quả mới, cả hai đều củng cố bài
+
+**#33 — "Elbow tại K=20" là điểm cuối lưới quét cũ.** Mở rộng tới K=122 thì F1 vẫn tăng.
+Nhưng luật C1 cho thấy K lớn hơn đòi **nhiều qubit hơn** (K=20→n\*=4, K=80→n\*=8). Nên K=20
+được biện minh bằng **ngân sách NISQ**, một lập luận đúng và mạnh hơn "elbow".
+
+**#34 — Mở rộng mạch phá hỏng nhân lượng tử.** Chạy lại C4 ở K=80/n=8: **32/32 ô đều
+classical-favorable**, không đổi dấu ở bất kỳ N nào; ablation entanglement đảo chiều (ZZ thua
+Z từ −0.08 đến −0.17). Cơ chế **đo được**: độ lệch chuẩn off-diagonal của Gram, ZZ mất 55% độ
+trải khi n đi 4→10 còn Z chỉ mất 21%.
+
+### Ảnh hưởng tới trạng thái reviewer
+
+| ID | Trước | Sau | Vì |
+|---|---|---|---|
+| **R3-4** (toàn mô phỏng, qubit quá ít) | ✅ (có FakeManila) | ✅✅ **mạnh hơn hẳn** | Không phải ta chọn 4 qubit cho tiện — rộng hơn thì **hỏng**, và ta đo được cơ chế |
+| **R2-2** (nhắc exponential concentration) | ✅ (có nhắc) | ✅✅ **mạnh hơn hẳn** | Không nhắc suông mà **đo trực tiếp** trên đúng dữ liệu của bài |
+
+---
+
+# Đánh giá thẳng: đã đạt Q1 chưa
+
+## Phần chắc chắn đạt
+
+- **Nền bằng chứng**: 96/96 audit C4 + 38/38 audit hình. Mọi con số trong bài dựng lại được
+  từ artifact. Đây là mức nghiêm ngặt trên trung bình của Q1.
+- **Trục đóng góp thật**: không bài nào trong 5 bài đối chiếu quét kích thước tập huấn luyện.
+- **Có cơ chế, không chỉ có số**: crossover + K–n coupling + concentration ghép thành một
+  chuỗi giải thích, thay vì một bảng xếp hạng.
+- **Trung thực**: tự khai 3 lỗi của bản cũ (Theorem 1 sai, Pareto vô dụng, nhãn cột Table III),
+  trong đó có lỗi **chưa reviewer nào bắt**.
+
+## Ba rủi ro còn lại
+
+**1. 🔴 R3 vẫn là rủi ro lớn nhất.** Họ đòi "kernel mới / feature map mới / kết quả lý thuyết
+mới" — ta **vẫn không có**. Ta chỉ đổi được cách định vị sang *evaluation framework*. AE viết
+*"majority of reviewers see sufficient new contribution"* nên AE không đứng về phía R3, nhưng
+nếu R3 giữ nguyên thì phụ thuộc AE.
+
+**2. 🔴 Chưa có `.tex` — đây là rủi ro TIẾN ĐỘ, không phải khoa học.** Còn 39 ngày. Phải dựng
+lại toàn bộ bản thảo từ PDF rồi ghép 12 hình + phần lý thuyết + novelty matrix + rebuttal 33
+item. Đây mới là thứ dễ trượt deadline nhất.
+
+**3. 🟡 Bài Gillani et al. (arXiv:2608.18155)** trùng đề tài, trùng cả hai dataset. Phải chủ
+động trích và phân biệt.
+
+## Kết luận
+
+**Về mức độ chặt chẽ: đạt Q1, và vượt xa bản đã nộp.** Bản cũ có một định lý sai, một bước
+chọn không lọc gì, một khẳng định không tái tạo được, và một khẳng định lợi thế mà dữ liệu
+không đỡ nổi. Bản mới thay tất cả bằng số đo được, kiểm định có hiệu chỉnh đa so sánh, và
+hai bộ audit tự động.
+
+**Về khả năng được nhận: khá, nhưng không chắc chắn** — phụ thuộc hai thứ ta không kiểm soát
+hoàn toàn: R3 có đổi ý không, và ta có viết kịp trong 39 ngày không.
+
+**Điều quan trọng nhất khi viết**: bài phải được đóng khung là *"chúng tôi đo lại nghiêm ngặt
+hơn và tìm ra bức tranh có cấu trúc"*, **không phải** *"chúng tôi rút lại các khẳng định"*.
+Cùng một sự thật, hai cách kể, hai kết cục khác nhau.
