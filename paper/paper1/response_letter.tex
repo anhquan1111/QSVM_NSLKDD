@@ -145,7 +145,7 @@ Script & Result & What it checks \\
 \texttt{audit\_figures.py} & 39/39 &
   Every figure is newer than its inputs, and every plotted number is re-derived
   from the artifacts \\
-\texttt{audit\_prose.py} & 111/111 &
+\texttt{audit\_prose.py} & 114/114 &
   Every number written in the manuscript text \emph{and in this letter} is
   re-derived from the artifacts \\
 \texttt{verify\_lemma1.py} & 15/15 &
@@ -683,12 +683,29 @@ what that turned up, including in the one theoretical statement we retained.
 \itemhead{R4-1}{Related work: Carducci, ICAD 2026, on the same question for
 malware detection}
 \resp
-Cited and discussed in Sec.~II. We were unable to obtain the full text through
-our institutional access and have positioned it from the abstract and
-bibliographic record only; where the positioning table would need details from
-the full text, the cells are marked \emph{n/r}.
+Cited and discussed, in a subsection we added for it. We are grateful for the
+pointer: the parallel is closer than we expected, and it changed how we frame
+our own boundary.
+
+Carducci reports that the measured advantage is confined to an
+\emph{intermediate} representational window --- classical methods remain
+stronger both below and above it --- and that the pattern survives parameter
+tuning, tested specifically to rule out a favourable-setting artefact. All three
+features recur in our results on a different task: our favourable regime is
+bounded from below by training-set size and from above by circuit width; we
+report both a frozen and a re-tuned arm for exactly the reason that paper
+re-tunes; and the representations where that work finds quantum discovery useful
+are those dominated by local pairwise structure, which is what the
+$\binom{n}{2}$ pairwise phase terms of the \ZZ{} map encode.
+
+We must be clear about the evidentiary status. We were unable to obtain the full
+text through our institutional access, so the comparison rests on the abstract
+and the bibliographic record, and we say so in the text and present the parallel
+as suggestive rather than as evidence. For the same reason the study is
+discussed in prose but not tabulated in Table~I, whose cells are otherwise read
+from full texts.
 \changed
-Sec.~II-B, Table~I, bibliography.
+New Sec.~II-D; bibliography; Table~I caption states the exclusion and why.
 
 \itemhead{R4-2}{Theorem~1 appears misstated; and the Pareto step may not filter
 anything}
