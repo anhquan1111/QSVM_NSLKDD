@@ -18,13 +18,13 @@ where $H$ is the Hadamard gate and $U_{\Phi}$ is diagonal in the computational
 basis,
 \begin{equation}
 \label{eq:phase}
-  U_{\Phi}(\bm{x}) \;=\;
-  \exp\!\Bigl(\mathrm{i}\!\sum_{i=1}^{n}\! x_i Z_i
-  \;+\; \mathrm{i}\!\!\sum_{1\le i<j\le n}\!\!
-  \tfrac{1}{2}\varphi_{ij}(\bm{x})\,Z_iZ_j\Bigr),
-  \quad
-  \varphi_{ij}(\bm{x}) = 2(\pi-x_i)(\pi-x_j).
+  U_{\Phi}(\bm{x}) = \exp\Bigl(
+    \mathrm{i}\sum_{i=1}^{n} x_i Z_i
+    + \mathrm{i}\!\!\sum_{1\le i<j\le n}\!\!
+      \tfrac{1}{2}\varphi_{ij}(\bm{x})\,Z_iZ_j
+  \Bigr),
 \end{equation}
+with the pairwise phase $\varphi_{ij}(\bm{x}) = 2(\pi-x_i)(\pi-x_j)$.
 The induced kernel is the squared fidelity
 \begin{equation}
 \label{eq:kernel}
@@ -88,26 +88,24 @@ obtain are negative or inconclusive.
 
 \subsection{Pipeline}
 
-Fig.~\ref{fig:pipeline} shows the full path from raw records to a decision.
-Categorical fields are one-hot encoded to $d=122$ dimensions; an ANOVA
-$F$-test retains $K$ features; PCA projects to $n$ components; and a min--max
-scaler maps each component into $[0,\pi]$, the domain on which the feature map's
-phases are defined. The resulting $\bm{z}\in[0,\pi]^{n}$ enters the
-\ZZ{}FeatureMap of Fig.~\ref{fig:circuit}, and classification is a soft-margin
-SVC on the precomputed Gram matrix.
+The path from raw records to a decision is: one-hot encoding to $d=122$
+dimensions; an ANOVA $F$-test retaining $K$ features; PCA to $n$ components; a
+min--max scaler mapping each component into $[0,\pi]$, the domain on which the
+feature map's phases are defined; the \ZZ{}FeatureMap of
+Eq.~\eqref{eq:featuremap} on the resulting $\bm{z}\in[0,\pi]^{n}$; and a
+soft-margin SVC on the precomputed Gram matrix.
 
 Two properties of this pipeline carry the experimental design.
 
-\emph{One component varies at a time.} The entanglement-free control shown as
-the upper branch of Fig.~\ref{fig:pipeline} differs from the main path in
-exactly one block: the \Zmap{}FeatureMap applies the same Hadamard and
-single-qubit phase layers and omits the pairwise term. It has the same qubit
-count, the same repetitions, the same classical front-end, and the same
-classifier, so a difference between the two branches is attributable to
-entanglement and to nothing else. Fig.~\ref{fig:contributions} extends this
-discipline to the other three contributions: C1 fixes the representation before
-any downstream metric is inspected, C3 varies only the test distribution, and C4
-varies only $N$.
+\emph{One component varies at a time.} The entanglement-free control differs
+from the main path in exactly one block: the \Zmap{}FeatureMap applies the same
+Hadamard and single-qubit phase layers and omits the pairwise term of
+Eq.~\eqref{eq:phase}. It has the same qubit count, the same repetitions, the
+same classical front-end, and the same classifier, so a difference between the
+two branches is attributable to entanglement and to nothing else. The same
+discipline governs the other three contributions: C1 fixes the representation
+before any downstream metric is inspected, C3 varies only the test
+distribution, and C4 varies only $N$.
 
 \emph{The front-end is refit wherever the classifier is refit.} In the primary
 arm, feature selection, projection and scaling are re-estimated at every

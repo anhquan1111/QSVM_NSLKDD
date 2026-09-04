@@ -237,7 +237,7 @@ def figure5():
 
     rows = [("NSL-KDD", NSL_C1, NSL_C1_META, True),
             ("UNSW-NB15", unsw, unsw_meta, False)]
-    fig, axes = plt.subplots(2, 3, figsize=(7.16, 4.4), sharex=True)
+    fig, axes = plt.subplots(2, 3, figsize=(7.16, 3.15), sharex=True)
 
     for r, (dname, df, meta, has_ci) in enumerate(rows):
         n = df["n"].values
@@ -414,7 +414,7 @@ def figure9():
     # neu moi panel mot thang do thi hai cot khong the doc chong len nhau.
     ticks = [100, 200, 500, 1000, 2000, 5000, 10000]
 
-    fig, axes = plt.subplots(2, 2, figsize=(7.16, 5.3))
+    fig, axes = plt.subplots(2, 2, figsize=(7.16, 3.7))
 
     e_nat = _plot_curve(axes[0, 0], nat, ticks)
     axes[0, 0].set_title("(a) Natural prior (rare 0.83%)", loc="left", color=INK, pad=6)
@@ -461,7 +461,7 @@ def figure11():
     pairs = load_pairs(base / "c4_pairwise_statistics_natural.csv", "tuned_per_N", "full_test")
     ticks = [100, 500, 1000, 2000, 5000, 10000]
 
-    fig, axes = plt.subplots(1, 2, figsize=(7.16, 3.0))
+    fig, axes = plt.subplots(1, 2, figsize=(7.16, 2.35))
     ends = _plot_curve(axes[0], cur, ticks)
     axes[0].set_title("(a) UNSW-NB15 learning curve, natural prior", loc="left",
                       color=INK, pad=6)
@@ -545,7 +545,7 @@ def figure10():
         y += 0.55
     ymax = y - 0.55
 
-    fig, ax = plt.subplots(figsize=(7.16, 5.15))
+    fig, ax = plt.subplots(figsize=(7.16, 3.75))
     for side in ("top", "right", "left", "bottom"):
         ax.spines[side].set_visible(False)
 
@@ -610,7 +610,7 @@ def figure4():
         (ROOT / "results/nslkdd/c1_revision/c1_ksensitivity.json").read_text())
     k_used = 20
 
-    fig, axes = plt.subplots(1, 2, figsize=(7.16, 3.1))
+    fig, axes = plt.subplots(1, 2, figsize=(7.16, 2.35))
 
     # (a) Do chinh xac cua proxy tuyen tinh theo K, o kich thuoc mach co dinh n=4.
     ax = axes[0]
@@ -688,7 +688,7 @@ def figure6():
     per_run = pd.read_csv(base / "c2_per_run.csv")
     f1 = per_run.pivot_table(index="run_id", columns="model", values="f1_macro")
 
-    fig, axes = plt.subplots(1, 2, figsize=(7.16, 2.9))
+    fig, axes = plt.subplots(1, 2, figsize=(7.16, 2.25))
 
     # (a) Bieu do do doc: moi run mot doan noi Z -> ZZ.
     ax = axes[0]
@@ -749,7 +749,7 @@ def figure7():
     d = pd.read_csv(ROOT / "results/nslkdd/c2_revision/c2_per_run.csv")
     order = d.groupby("model")["f1_macro"].mean().sort_values().index.tolist()
 
-    fig, ax = plt.subplots(figsize=(7.16, 2.9))
+    fig, ax = plt.subplots(figsize=(7.16, 2.25))
     tidy(ax)
     rng = np.random.default_rng(20260903)
     means = {}
@@ -791,7 +791,7 @@ def figure8():
     frac = {"attack_30pct": 30, "attack_50pct": 50, "attack_70pct": 70}
     d["attack_pct"] = d.condition.map(frac)
 
-    fig, axes = plt.subplots(1, 2, figsize=(7.16, 2.9))
+    fig, axes = plt.subplots(1, 2, figsize=(7.16, 2.25))
 
     ax = axes[0]
     tidy(ax)
@@ -867,7 +867,7 @@ def figure12():
     # Ba panel ngang o kho 7.16in thi tieu de chong nhau; cho (a) chiem tron
     # hang tren, (b) va (c) xuong hang duoi.
     fig, mos = plt.subplot_mosaic([["a", "a"], ["b", "c"]],
-                                  figsize=(7.16, 5.0),
+                                  figsize=(7.16, 3.55),
                                   height_ratios=[1.0, 0.95])
     axes = {0: mos["a"], 1: mos["b"], 2: mos["c"]}
 

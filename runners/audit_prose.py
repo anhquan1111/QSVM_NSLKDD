@@ -539,7 +539,7 @@ def section_letter() -> None:
         check("bai co ghi commit hash", False, "khong tim thay")
 
     # So bo audit ghi trong bai phai khop so bo audit that su co
-    for name, n in (("audit\\_c4.py} (100", 100), ("audit\\_figures.py} (39", 39),
+    for name, n in (("audit\\_c4.py} (100", 100), ("audit\\_figures.py} (36", 36),
                     ("verify\\_lemma1.py} (15", 15)):
         check(f"bai ghi dung so kiem dinh cua {name.split('}')[0]}",
               name in setup, str(n))

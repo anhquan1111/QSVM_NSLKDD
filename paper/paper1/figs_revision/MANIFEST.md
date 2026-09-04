@@ -11,6 +11,13 @@ và `python runners/make_paper1_schematics.py` (hình sơ đồ).*
 
 ## 1. Hình đã xuất — dùng được
 
+> **Cập nhật 2026-09-04 (cắt trang).** Bản thảo còn **9 hình**. Ba hình sơ đồ
+> `fig1_zzfeaturemap_circuit`, `fig2_contribution_map`, `fig3_pipeline` **đã bỏ khỏi
+> bài** để lọt 12 trang — chúng không chứa dữ liệu nào, nội dung đã có trong thân bài.
+> File `.pdf` vẫn còn trên đĩa nhưng không được `\input`, và không còn trong
+> `audit_figures.py` (36/36). Chín hình còn lại đã hạ chiều cao và đều chạy full width;
+> caption cắt từ trung bình 142 từ xuống ~60.
+
 | Hình | File | Dữ liệu nguồn | Trạng thái |
 |---|---|---|---|
 | **1** | `fig1_zzfeaturemap_circuit` | Sơ đồ mạch — vẽ tay, số CNOT đối chiếu `count_ops()` của Qiskit = 24 | ✅ **mới 2026-09-04** |
