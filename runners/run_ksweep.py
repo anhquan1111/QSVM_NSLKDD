@@ -142,9 +142,11 @@ def main() -> int:
             """SelectKBest -> [PCA(n)] -> MinMax -> LinearSVC, fit trong tung fold."""
             steps = [("select", SelectKBest(f_classif, k=k))]
             if with_pca:
-                # Dung dung khau nen cua pipeline that: PCA ve n=4 chieu.
-                steps += [("prescale", MinMaxScaler()),
-                          ("pca", PCA(n_components=args.pca_components,
+                # PHAI khop dung RefitPerNRepresentation: SelectKBest -> PCA ->
+                # MinMax. Ban truoc co them mot MinMaxScaler TRUOC PCA; PCA nhay
+                # voi thang do nen buoc thua do lam doi ca thanh phan chinh, tuc
+                # duong cong khong con la pipeline that nua.
+                steps += [("pca", PCA(n_components=args.pca_components,
                                       random_state=42))]
             steps += [("scale", MinMaxScaler()),
                       ("clf", LinearSVC(C=1.0, dual="auto", max_iter=args.max_iter,
