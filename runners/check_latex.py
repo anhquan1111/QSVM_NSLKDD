@@ -256,8 +256,14 @@ def main() -> int:
     for r in sorted(all_ref - all_lab):
         if r:
             FAIL.append(f"\\ref{{{r}}} khong co \\label tuong ung")
+    # Thu phan hoi la tai lieu doc lap va KHONG co thebibliography. Neu ai do
+    # them \cite vao no thi LaTeX in ra [?] chu khong bao loi -- de lot.
     for c in sorted(all_cite - all_bib):
-        FAIL.append(f"\\cite{{{c}}} khong co \\bibitem tuong ung")
+        FAIL.append(
+            f"\\cite{{{c}}} khong co \\bibitem tuong ung"
+            + ("" if all_bib else
+               "  (tai lieu nay khong he co thebibliography, nen MOI \\cite "
+               "trong no se in ra [?] -- hay viet trich dan bang chu)"))
 
     unused = sorted(all_bib - all_cite)
     if unused:

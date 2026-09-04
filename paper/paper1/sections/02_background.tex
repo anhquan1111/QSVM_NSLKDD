@@ -113,17 +113,23 @@ contribution lies.
 
 \subsection{Bounded advantage windows in adjacent domains}
 
-The question this paper asks is being asked elsewhere, and one answer is close
-enough to ours to be worth stating. Carducci \cite{carducci2026} studies quantum
-malware detection along an eleven-rank representational-complexity scale and
-reports that the measured advantage is confined to an \emph{intermediate}
-window: at the co-occurrence and local-order representations the quantum
-workflow retrieves malware where the classical baseline retrieves none
-($4.29\%$ against $0\%$), while classical methods remain stronger both at the
-lower-complexity statistical representations and at the higher-complexity ones.
-The advantage survives parameter tuning, which the author reports specifically
-to rule out a favourable-setting artefact, and the stated practical implication
-is to prefer classical methods wherever mature inductive biases already exist.
+The question this paper asks is being asked elsewhere, and in at least one
+adjacent domain it has been given the same shape. Carducci \cite{carducci2026}
+opens by arguing that malware analysts ``do not need another general claim that
+quantum computing is either broadly superior or broadly impractical'' but rather
+``need to know which kinds of malware representations justify quantum effort''
+--- which is, on a different task, the reframing this revision makes.
+
+That study places malware representations on an eleven-rank
+representational-complexity scale and reports that the measured advantage is
+confined to an \emph{intermediate} window: at the co-occurrence and local-order
+representations the quantum workflow retrieves malware where the classical
+baseline retrieves none ($4.29\%$ against $0\%$), while classical methods remain
+stronger both at the lower-complexity statistical representations and at the
+higher-complexity ones. The advantage survives parameter tuning, which the
+author reports specifically to rule out a favourable-setting artefact, and the
+stated practical implication is to prefer classical methods wherever mature
+inductive biases already exist.
 
 Three features of that result recur in ours, on a different task and with a
 different quantum primitive. The advantage is bounded on \emph{both} sides
@@ -132,9 +138,16 @@ re-tuning explains it, as our frozen and tuned arms do in Sec.~\ref{sec:res-c4};
 and the region where the quantum method helps is characterised by \emph{local
 pairwise structure}, which is precisely what the $\binom{n}{2}$ pairwise phase
 terms of the \ZZ{} map encode and what Sec.~\ref{sec:res-width} shows to stop
-paying off once $n$ grows. We could not obtain the full text of
-\cite{carducci2026} through our institutional access, so this comparison rests
-on its abstract; we present the parallel as suggestive rather than as evidence.
+paying off once $n$ grows.
+
+We could not obtain the full text of \cite{carducci2026} through our
+institutional access. This comparison therefore rests on its abstract,
+introduction and index terms, which report a retrieval setting evaluated by
+Recall@$k$ rather than a classification benchmark, and which list kernel methods
+among the techniques involved; we could not establish its qubit count or whether
+it varies the size of its training data. We present the parallel as suggestive
+rather than as evidence, and we do not tabulate the study in
+Table~\ref{tab:novelty}, whose cells are read from full texts.
 
 \subsection{Positioning}
 
