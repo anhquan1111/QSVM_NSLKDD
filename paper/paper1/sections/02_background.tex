@@ -51,10 +51,33 @@ simultaneously.
 
 The most directly comparable study is the benchmark of Cirillo \emph{et al.}
 \cite{qmi2026}, which evaluates Pegasos-QSVC, a variational classifier and a
-hybrid quantum--classical network on ToN\_IoT and NSL-KDD under ideal and noisy
-IBM simulators, and reports Pegasos-QSVC best at $94.60\%$ accuracy. It varies the model family and the noise model; it does not vary the
-embedding width or the training-set size, and it does not include a gradient-%
-boosted tree baseline.
+hybrid quantum--classical network on ToN\_IoT and NSL-KDD under ideal and three
+backend-derived noise models, and reports Pegasos-QSVC best at $94.60\%$
+accuracy and $94.13\%$ $F_1$ on NSL-KDD.
+
+Two of their findings are close enough to ours to be worth stating precisely.
+First, they compare against SVM, XGBoost, random forest and a neural network at
+matched dimensionality, and conclude that the classical models retain higher
+peak accuracy --- XGBoost reaching $99.1\%$ on ToN\_IoT --- while the quantum
+models are competitive in low-dimensional feature spaces. Our own ranking
+agrees: XGBoost is the top model at our operating point
+(Sec.~\ref{sec:res-c2}). Second, they sweep the qubit count from $2$ to $10$ and
+plot $F_1$ against two-qubit gate count, finding performance concentrated in a
+$20$--$35$ CNOT band and degrading beyond about $60$ CNOTs. Our operating point,
+$24$ CNOTs, sits inside that band, and the width collapse we report at $112$
+CNOTs (Sec.~\ref{sec:res-width}) is consistent with their degradation threshold.
+
+The two studies diverge on the mechanism, and that divergence is part of our
+contribution. Cirillo \emph{et al.} attribute the degradation to two-qubit gate
+error accumulating on noisy backends. We observe the same collapse under
+\emph{exact, noiseless} statevector simulation, where no gate error exists, and
+trace it instead to concentration of the Gram matrix. Hardware noise is
+therefore not a necessary ingredient: the bound is intrinsic to the kernel.
+
+What neither that study nor any other we are aware of varies is the
+training-set size, which is fixed there at a single $15\%$ class-balanced
+subsample ($15{,}114$ training instances for NSL-KDD) drawn under a random
+$80/20$ split rather than the official partitions.
 
 \subsection{Benchmarking studies of quantum models}
 
