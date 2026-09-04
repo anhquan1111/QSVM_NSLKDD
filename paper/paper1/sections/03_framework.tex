@@ -6,11 +6,46 @@
 %  nam trong theory_revision.tex ngay sau day.
 % =====================================================================
 
+\subsection{Feature map, kernel and cost}
+
+The \ZZ{}FeatureMap on $n$ qubits with $r$ repetitions prepares
+\begin{equation}
+\label{eq:featuremap}
+  |\phi(\bm{x})\rangle \;=\;
+  \bigl[\,U_{\Phi}(\bm{x})\,H^{\otimes n}\,\bigr]^{r}\,|0\rangle^{\otimes n},
+\end{equation}
+where $H$ is the Hadamard gate and $U_{\Phi}$ is diagonal in the computational
+basis,
+\begin{equation}
+\label{eq:phase}
+  U_{\Phi}(\bm{x}) \;=\;
+  \exp\!\Bigl(\mathrm{i}\!\sum_{i=1}^{n}\! x_i Z_i
+  \;+\; \mathrm{i}\!\!\sum_{1\le i<j\le n}\!\!
+  \tfrac{1}{2}\varphi_{ij}(\bm{x})\,Z_iZ_j\Bigr),
+  \quad
+  \varphi_{ij}(\bm{x}) = 2(\pi-x_i)(\pi-x_j).
+\end{equation}
+The induced kernel is the squared fidelity
+\begin{equation}
+\label{eq:kernel}
+  K^{\mathrm{Q}}(\bm{x},\bm{x}^{\prime}) \;=\;
+  \bigl|\langle\phi(\bm{x}^{\prime})|\phi(\bm{x})\rangle\bigr|^{2},
+\end{equation}
+and the circuit cost we charge for it is
+\begin{equation}
+\label{eq:cost}
+  Q(n) \;=\; \frac{Q_{\mathrm{raw}}(n)}{Q_{\mathrm{raw}}(n_{\max})},
+  \qquad Q_{\mathrm{raw}}(n) = 10n^{2}-8n .
+\end{equation}
+Removing the pairwise term of Eq.~\eqref{eq:phase} while leaving everything else
+unchanged gives the \Zmap{}FeatureMap, which is the control used throughout the
+entanglement ablation.
+
 \subsection{Problem statement}
 
 Let $\mathcal{D}=\{(\bm{x}_i,y_i)\}_{i=1}^{N}$ be a labelled sample of network
 records with $\bm{x}_i\in\mathbb{R}^{d}$ and $y_i$ one of five classes, and let
-$K^{\mathrm{Q}}_{n}$ denote the fidelity kernel induced by an $n$-qubit feature
+$K^{\mathrm{Q}}_{n}$ denote the kernel of Eq.~\eqref{eq:kernel} on an $n$-qubit
 map. A quantum kernel is not free: evaluating $K^{\mathrm{Q}}_{n}$ over a
 training set of size $N$ requires $\Theta(N^2)$ circuit evaluations, each
 costing $Q(n)$ two-qubit gates on hardware whose error rate is dominated by
@@ -21,8 +56,8 @@ cost.
 \begin{assumption}[NISQ cost model]
 \label{ass:cost}
 Circuit cost is charged by width alone, through the CNOT-weighted count of
-Eq.~(5), $Q_{\mathrm{raw}}(n) = 10n^{2}-8n$, normalised by its value at the
-largest candidate so that $Q(n)\in(0,1]$. The quantity it tracks is the
+Eq.~\eqref{eq:cost}, normalised by its value at the largest candidate so
+that $Q(n)\in(0,1]$. The quantity it tracks is the
 entangling-gate budget: an $r$-repetition \ZZ{}FeatureMap with full entanglement
 places $2r\binom{n}{2}$ two-qubit gates, which at the operating point $n=4$,
 $r=2$ is $24$ and at $n=8$ is $112$. The $\Theta(N^{2})$ kernel evaluations are
@@ -86,10 +121,8 @@ investigation. Sec.~\ref{sec:res-c4} reports both arms.
 
 \subsection{Kernel evaluation}
 
-The fidelity kernel
-$K^{\mathrm{Q}}(\bm{x},\bm{x}^{\prime}) =
-|\langle\phi(\bm{x}^{\prime})|\phi(\bm{x})\rangle|^{2}$
-is evaluated exactly rather than by sampling. Because the \ZZ{}FeatureMap is
+The kernel of Eq.~\eqref{eq:kernel} is evaluated exactly rather than by
+sampling. Because the \ZZ{}FeatureMap is
 diagonal in the computational basis after each Hadamard layer, $|\phi(\bm{x})
 \rangle$ has a closed form, and the Gram matrix follows from dense linear
 algebra. Finite-shot estimation and backend-derived noise are then applied as

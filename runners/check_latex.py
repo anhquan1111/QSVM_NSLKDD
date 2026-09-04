@@ -50,7 +50,8 @@ definition lemma assumption problem remark proof
 IEEEkeywords abstract thebibliography bibitem
 url href hidelinks
 ZZ Zmap QSVM Fmac
-""".split()) | set("Bigl Bigr ge le prime v widetilde".split())
+""".split()) | set("Bigl Bigr ge le prime v widetilde eqref appendices appendix "
+            "tfrac hfill blacksquare otimes dagger mathbb Var".split())
 
 FAIL: list[str] = []
 INFO: list[str] = []
@@ -168,25 +169,36 @@ def check_file(path: Path) -> tuple[set[str], set[str], set[str], set[str]]:
     verbatim_arg = re.compile(
         BS + BS + r"(?:input|include|includegraphics(?:\[[^\]]*\])?|graphicspath"
         r"|label|ref|pageref|cite|bibitem|url|href|texttt|path)\{[^}]*\}")
+    #    Math trong dong co the vat qua nhieu dong, nen phai theo doi trang thai
+    #    xuyen dong chu khong quet tung dong roi cat cap `$...$` tai cho.
     math_env = re.compile(r"(equation|align|gather|eqnarray|displaymath|array"
                           r"|multline|split)\*?")
-    in_tab = in_math = False
+    in_tab = in_math_env = in_dollar = False
     for i, ln in enumerate(lines, 1):
-        m = re.search(BS + BS + r"begin\{" + math_env.pattern, ln)
-        if m:
-            in_math = True
+        if re.search(BS + BS + r"begin\{" + math_env.pattern, ln):
+            in_math_env = True
         if re.search(BS + BS + r"end\{" + math_env.pattern, ln):
-            in_math = False
+            in_math_env = False
             continue
-        if in_math or re.match(r"\s*" + BS + BS + r"(newcommand|renewcommand)", ln):
+        if in_math_env or re.match(r"\s*" + BS + BS
+                                   + r"(newcommand|renewcommand)", ln):
             continue
         if re.search(BS + BS + r"begin\{tabular", ln):
             in_tab = True
         if re.search(BS + BS + r"end\{tabular", ln):
             in_tab = False
-        outside = verbatim_arg.sub("", ln)
-        outside = re.sub(r"\$[^$]*\$", "", outside)
-        outside = re.sub(BS + BS + r"[A-Za-z]+", "", outside)
+
+        # Xoa doi so khong-phai-van-ban, roi xoa moi doan dang o trong math.
+        masked = list(verbatim_arg.sub(lambda m: " " * len(m.group()), ln))
+        for j, c in enumerate(masked):
+            if c == BS:
+                continue
+            if c == "$" and (j == 0 or masked[j - 1] != BS):
+                in_dollar = not in_dollar
+                masked[j] = " "
+            elif in_dollar:
+                masked[j] = " "
+        outside = re.sub(BS + BS + r"[A-Za-z]+", "", "".join(masked))
         for ch in ("_",) + (() if in_tab else ("&",)):
             for m in re.finditer(re.escape(ch), outside):
                 if m.start() and outside[m.start() - 1] == BS:

@@ -31,7 +31,7 @@ TEXT: dict[str, str] = {}
 for f in sorted(SEC.glob("*.tex")):
     TEXT[f.name] = io.open(f, encoding="utf-8").read()
 for extra in ("limitations_revision.tex", "theory_revision.tex",
-              "main_revision.tex"):
+              "main_revision.tex", "appendix_lemma.tex"):
     p = ROOT / "paper/paper1" / extra
     if p.exists():
         TEXT[extra] = io.open(p, encoding="utf-8").read()
@@ -389,6 +389,63 @@ def section_map() -> None:
           f"{(small.verdict != 'classical-favorable').sum()} o khong phai")
 
 
+def section_lemma() -> None:
+    """Phu luc A -- he so 1 va 1/4 phai la so tinh duoc, khong phai so go tay."""
+    print("\nI. Phu luc A -- Lemma 1")
+    sys.path.insert(0, str(ROOT))
+    from src.c4_pipeline import (compute_statevectors_fast,
+                                 gram_from_statevectors)
+
+    def fit(n_q: int, reps: int, seed: int, eps: float = 1e-3):
+        g = np.random.default_rng(seed)
+        base = g.uniform(0.4, np.pi - 0.4, n_q)
+        A, y = [], []
+        for _ in range(150):
+            u = g.normal(size=n_q)
+            u /= np.linalg.norm(u)
+            xp = base + eps * u
+            psi = compute_statevectors_fast(np.vstack([base, xp]), "ZZ",
+                                            n_q, reps)
+            k = float(gram_from_statevectors(psi)[0, 1])
+            d = base - xp
+            pair = sum((2 * (np.pi - base[i]) * (np.pi - base[j])
+                        - 2 * (np.pi - xp[i]) * (np.pi - xp[j])) ** 2
+                       for i in range(n_q) for j in range(i + 1, n_q))
+            A.append([float(np.sum(d ** 2)), pair])
+            y.append(1 - k)
+        A, y = np.array(A), np.array(y)
+        c, *_ = np.linalg.lstsq(A, y, rcond=None)
+        r2 = 1 - np.sum((y - A @ c) ** 2) / np.sum((y - y.mean()) ** 2)
+        return c, float(r2)
+
+    # Khop bang sai phan huu han nen chu so thu tu dao dong theo diem goc;
+    # bai viet ghi 3 chu so, va o day kiem bang dung sai chu khong bang chuoi.
+    c, r2 = fit(4, 1, 2026)
+    check("he so don le tai r=1 bang 1.000",
+          abs(c[0] - 1.0) < 1e-3 and says("appendix_lemma.tex", "$a=1.000$"),
+          f"a = {c[0]:.4f}")
+    check("he so cap tai r=1 bang 0.250",
+          abs(c[1] - 0.25) < 1e-3 and says("appendix_lemma.tex", "$b=0.250$"),
+          f"b = {c[1]:.4f}")
+    check("R^2 = 1.000000 tai r=1",
+          round(r2, 6) == 1.0 and says("appendix_lemma.tex", "$R^{2}=1.000000$"),
+          f"R^2 = {r2:.6f}")
+
+    _, r2b = fit(4, 2, 1)
+    check("r=2: dang hai so hang KHONG khop (0.60--0.94)",
+          0.60 <= r2b <= 0.94
+          and says("*", "$R^{2}=0.60$ to\n$0.94$"), f"R^2 = {r2b:.4f}")
+    check("erratum liet ke DU 4 muc",
+          says("theory_revision.tex", "Four defects")
+          and all(f"\\textbf{{({r})" in TEXT["theory_revision.tex"]
+                  for r in ("i", "ii", "iii", "iv")),
+          "muc (iii) la cai khong reviewer nao bat")
+    check("Lemma khong con dung he so r^2",
+          "r^2\\sum" not in TEXT["theory_revision.tex"].replace(" ", "")
+          or says("theory_revision.tex", "had incorrect coefficients"),
+          "phai chi con xuat hien trong phan erratum")
+
+
 def main() -> int:
     print("=" * 78)
     print("  DOI CHIEU SO LIEU TRONG THAN BAI VOI ARTIFACT")
@@ -400,7 +457,7 @@ def main() -> int:
         print(f"  Thieu file: {missing}")
         return 1
     for fn in (section_c1, section_c2, section_c3, section_c4, section_rare,
-               section_unsw, section_width, section_map):
+               section_unsw, section_width, section_map, section_lemma):
         fn()
     print("\n" + "=" * 78)
     print(f"TONG: {OK}/{OK + FAILED} PASS" + (f"  ({FAILED} FAIL)" if FAILED else ""))

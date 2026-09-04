@@ -56,20 +56,39 @@ now cited as background.
 % ---------------------------------------------------------------------
 % II-B  Lemma 1 -- day la dan xuat rieng cua bai, nen giu, chi doi ten
 % ---------------------------------------------------------------------
-\begin{lemma}[Local expansion of the ZZ kernel]
+\begin{lemma}[Local expansion of the \ZZ{} kernel at $r=1$]
 \label{lem:expansion}
-For $\bm{x},\bm{x}^{\prime}\in[0,\pi]^n$ with $\bm{x}^{\prime}$ sufficiently
-close to $\bm{x}$, the ZZFeatureMap kernel of Eq.~(2) admits the second-order
-expansion
+Let $r=1$ and let $\bm{x},\bm{x}^{\prime}\in[0,\pi]^n$ with $\bm{x}^{\prime}$
+sufficiently close to $\bm{x}$. Then the kernel of Eq.~\eqref{eq:kernel} admits
+the second-order expansion
 \begin{equation}
+\label{eq:expansion}
   K^{\mathrm{Q}}(\bm{x},\bm{x}^{\prime}) \;=\; 1
-  - r^2\sum_{i=1}^{n}\Delta_i^2
-  - r^2\!\!\sum_{1\le i<j\le n}\!\!\Delta\varphi_{ij}^2
+  - \sum_{i=1}^{n}\Delta_i^2
+  - \tfrac{1}{4}\!\!\sum_{1\le i<j\le n}\!\!\Delta\varphi_{ij}^2
   + O(\|\bm{x}-\bm{x}^{\prime}\|^4),
 \end{equation}
 where $\Delta_i := x_i - x_i^{\prime}$ and
 $\Delta\varphi_{ij} := \varphi_{ij}(\bm{x}) - \varphi_{ij}(\bm{x}^{\prime})$.
 \end{lemma}
+
+\begin{remark}[The expansion does not extend to $r\ge2$]
+\label{rem:reps}
+Eq.~\eqref{eq:expansion} is stated for a single repetition, and the restriction
+is not cosmetic. For $r\ge2$ the interleaved Hadamard layers make
+$U_{\Phi}(\bm{x}^{\prime})^{\dagger}U_{\Phi}(\bm{x})$ non-diagonal, and no pair
+of coefficients renders the two-invariant form correct: fitting
+$1-K^{\mathrm{Q}} = a\sum_i\Delta_i^2 + b\sum_{i<j}\Delta\varphi_{ij}^2$ by least
+squares around a fixed point at $r=2$ attains only $R^2=0.60$--$0.94$, with
+fitted coefficients that change sign between expansion points. The quantity
+$1-K^{\mathrm{Q}}$ remains a quadratic form in $\bm{x}-\bm{x}^{\prime}$ at every
+$r$ --- it is a Bures-type distance, and the full quadratic form fits to
+$R^2>0.999$ --- but at $r\ge2$ it is no longer expressible in these two
+invariants alone. Since the operating point of this study is $r=2$, we use
+Lemma~\ref{lem:expansion} for the structural reading below and not as a
+numerical statement about our kernels. The supporting computations are released
+as \texttt{runners/verify\_lemma1.py}.
+\end{remark}
 
 Lemma~\ref{lem:expansion} is retained because, unlike (F1)--(F3), it is specific
 to the comparison this paper makes: the linear part $\sum_i \Delta_i^2$ is the
@@ -78,8 +97,22 @@ part expands into the monomials a degree-2 polynomial kernel can represent. What
 the classical kernels lack is the higher-order oscillation carried by the
 exponentials, bounded above by~1 because $K^{\mathrm{Q}}$ is a squared fidelity
 whereas the polynomial inner product grows unboundedly with $\|\bm{x}\|$. This is
-why SVM-\textsc{Poly2} is the sharpest classical comparator. The proof is a
-Baker--Campbell--Hausdorff expansion and is given in Appendix~A.
+why SVM-\textsc{Poly2} is the sharpest classical comparator, and
+Sec.~\ref{sec:res-c2} confirms that it is. The proof is given in
+Appendix~\ref{app:lemma}.
+
+The factor $\tfrac{1}{4}$ is not a normalisation choice; it follows from the gate
+decomposition. A phase gate $P(2x_i)$ equals $\exp(-\mathrm{i}x_i Z_i)$ up to
+global phase, so the single-qubit generator carries weight $x_i$ rather than
+$2x_i$, whereas the
+$\mathrm{CNOT}$--$R_Z(\varphi_{ij})$--$\mathrm{CNOT}$ trio realises
+$\exp(-\mathrm{i}\tfrac{\varphi_{ij}}{2}Z_iZ_j)$ and so carries weight
+$\varphi_{ij}/2$. Squaring gives $1$ and $\tfrac{1}{4}$. The pairwise term is
+therefore \emph{suppressed} relative to the single-qubit term at fixed phase
+magnitude, which is worth keeping in mind when reading the entanglement ablation
+of Sec.~\ref{sec:res-c2}: the entangling layer changes the kernel's geometry
+substantially (Fig.~\ref{fig:ablation}) despite entering the local expansion
+with the smaller weight.
 
 % ---------------------------------------------------------------------
 % III-C  Luat chon so chieu -- THAY HAN cho Pareto + J(n) + Theorem 1
@@ -96,7 +129,7 @@ are involved and no trade-off among the three objectives has to be asserted.
 \label{def:three-stage}
 Let $\mathcal{N}$ be the candidate set, $V(n)$ the cumulative explained variance,
 $\mathrm{KTA}(n)$ the kernel--target alignment of the induced Gram matrix, and
-$Q(n)$ the CNOT-weighted cost of Eq.~(5). Fix $T=0.85$ and $\epsilon=0.05$
+$Q(n)$ the CNOT-weighted cost of Eq.~\eqref{eq:cost}. Fix $T=0.85$ and $\epsilon=0.05$
 \emph{before} inspecting any downstream metric. Then
 \begin{align}
   \mathcal{N}_1 &:= \{\, n \in \mathcal{N} : V(n) \ge T \,\}, \\
@@ -151,8 +184,10 @@ paired differences.
 \subsection{Corrections to the Submitted Version}
 \label{sec:erratum}
 
-Three defects in the submitted theory section are corrected here. We state them
-explicitly because two of them affect a claim and not merely its presentation.
+Four defects in the submitted theory section are corrected here. We state them
+explicitly because three of them affect a claim and not merely its presentation.
+Two were identified by reviewers; two we found ourselves while preparing this
+revision, and we report those on the same footing.
 
 \textbf{(i) Theorem~1 was false.} Its proof asserted
 $\widetilde{F}(4) > \widetilde{F}(3)$, whereas Table~III of the same submission
@@ -172,7 +207,26 @@ Pareto membership as a selection step was therefore misleading, and the frontier
 figure has been replaced by Fig.~\ref{fig:c1-selection}, which shows the three
 stages that do the selecting.
 
-\textbf{(iii) Table~III mislabelled its third column.} The caption defined
+\textbf{(iii) The former Proposition~2 had incorrect coefficients.} It asserted
+the expansion
+$K^{\mathrm{Q}} = 1 - r^{2}\sum_i\Delta_i^2 -
+r^{2}\sum_{i<j}\Delta\varphi_{ij}^2 + O(\|\cdot\|^4)$
+for all $r$. Two things are wrong with it. The coefficients are not equal: the
+correct weights are $1$ and $\tfrac{1}{4}$, as Lemma~\ref{lem:expansion} states
+and as the gate decomposition explains. And the $r^{2}$ prefactor does not hold
+at all --- for $r\ge2$ no coefficient pair makes the two-invariant form correct
+(Remark~\ref{rem:reps}). Numerically the difference is not marginal: with the
+submitted coefficients the residual decays only as $\|\cdot\|^{2}$ rather than
+$\|\cdot\|^{4}$, so the claimed second-order accuracy is not attained, while the
+corrected form at $r=1$ has residual $5\times10^{-11}$ at
+$\|\bm{x}-\bm{x}^{\prime}\|=10^{-3}$. No reviewer raised this. We found it while
+transcribing the proof into the appendix, and we report it because the
+proposition is the one theoretical statement this paper retains; the substantive
+consequence drawn from it --- that SVM-\textsc{Poly2} is the sharpest classical
+comparator --- is unaffected, since it depends on which monomials appear and not
+on their coefficients.
+
+\textbf{(iv) Table~III mislabelled its third column.} The caption defined
 $\widetilde{F}(n)=1/\mathrm{DBI}(n)$, but the tabulated values are the ANOVA
 $F$~statistic; the inverse Davies--Bouldin index takes the values
 $1.143$, $0.982$ and $0.922$ at $n=2,3,4$. No reviewer raised this, and no
