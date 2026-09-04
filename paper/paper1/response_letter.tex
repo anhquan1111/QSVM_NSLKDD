@@ -241,22 +241,34 @@ methods for intrusion detection on noisy quantum computers' (Quantum Machine
 Intelligence, 2026). This work should be discussed explicitly''
 \end{revcomment}
 \resp
-The work is now cited and discussed: Cirillo, Esposito and Seo,
-\emph{Quantum Machine Intelligence}, vol.~8, no.~1, art.~27, 2026.
+The work --- Cirillo, Esposito and Seo, \emph{Quantum Machine Intelligence},
+vol.~8, no.~1, art.~27, 2026 --- is now cited, read in full, and discussed in
+Sec.~II-B, with a row for it in Table~I. We are glad the reviewer insisted: it
+is the closest study to ours that we are aware of, and reading it changed what
+we say.
 
-We should report one limitation honestly. The publisher's full text is not
-accessible to us, so our discussion rests on the abstract and the bibliographic
-record; where our positioning table would require details only the full text
-contains, the cells are marked \emph{n/r} rather than filled by inference.
+Two of its findings corroborate ours from a different direction, and we now say
+so explicitly. It compares against SVM, XGBoost, random forest and a neural
+network at matched dimensionality and concludes that the classical models retain
+higher peak accuracy while the quantum models remain competitive in
+low-dimensional feature spaces --- the same ordering we now report, with XGBoost
+top at our operating point. And it sweeps the qubit count from $2$ to $10$ and
+plots $F_1$ against two-qubit gate count, locating good performance in a
+$20$--$35$ CNOT band with degradation beyond roughly $60$ CNOTs. Our operating
+point is $24$ CNOTs, inside that band, and the collapse we report at $112$ CNOTs
+is consistent with their threshold.
 
-What we can state is in Sec.~II-B: the study evaluates Pegasos-QSVC, a
-variational classifier and a hybrid quantum--classical network on ToN\_IoT and
-NSL-KDD under ideal and noisy IBM simulators, with Pegasos-QSVC best at
-$94.60\%$ accuracy. It varies the model family and the noise model; it does not
-vary the embedding width or the training-set size, and it does not include a
-gradient-boosted tree baseline. That is the axis on which our contribution lies,
-and we would welcome the reviewer's correction if the full text contradicts this
-reading.
+The two studies diverge on the mechanism, and we think that divergence is
+useful. They attribute the degradation to two-qubit gate error accumulating on
+noisy backends. We observe the same collapse under exact, noiseless statevector
+simulation, where no gate error exists, and trace it to concentration of the
+Gram matrix instead. Hardware noise is therefore not a necessary ingredient; the
+bound is intrinsic to the kernel.
+
+What that study does not vary --- and what, to our knowledge, no study in this
+area varies --- is the training-set size. It is fixed there at a single $15\%$
+class-balanced subsample under a random $80/20$ split rather than the official
+partitions. That is the axis on which our contribution lies.
 \changed
 Sec.~II-B; Table~I now covers Bowles \emph{et al.} (2024), Schnabel and Roth
 (2024), the QMI 2026 benchmark, Carducci (2026), and the concurrent study of
@@ -855,21 +867,20 @@ affiliations.
 & AE & R1 & R2 & R3 & R4 & Total \\
 \midrule
 Items raised                  & 6 & 10 & 6 & 5 & 6 & 33 \\
-Addressed with new results    & 6 &  8 & 6 & 4 & 5 & 29 \\
-Addressed in part, stated as such & 0 & 2 & 0 & 1 & 1 & 4 \\
+Addressed with new results    & 6 &  9 & 6 & 4 & 5 & 30 \\
+Addressed in part, stated as such & 0 & 1 & 0 & 1 & 1 & 3 \\
 \bottomrule
 \end{tabular}
 \end{center}
 
 \vspace{4pt}
-The four items we describe as addressed only in part, and what remains
+The three items we describe as addressed only in part, and what remains
 outstanding in each:
 
 \begin{itemize}[leftmargin=1.3em,itemsep=2pt,topsep=3pt]
-  \item \textbf{R1-1} and \textbf{R4-1} --- both works are cited with complete
-    bibliographic records and positioned in Table~I, but a publisher paywall
-    prevented us from reading either full text, so a small number of cells in
-    that table are marked \emph{n/r} rather than filled by inference.
+  \item \textbf{R4-1} --- Carducci (2026) is cited and positioned, but we were
+    unable to obtain the full text through our institutional access, so our
+    discussion of it rests on the abstract and the bibliographic record.
   \item \textbf{R1-5} --- we added a random forest and XGBoost, and deliberately
     did not add CatBoost, TabNet or FT-Transformer. We took the alternative the
     comment offers and softened the practical claims accordingly.

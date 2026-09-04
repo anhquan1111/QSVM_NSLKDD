@@ -28,3 +28,6 @@ results/*/c4_revision/variant_*/cache/
 
 # Zip dong goi cho Overleaf: sinh lai duoc bang runners/make_overleaf_zip.py
 paper/paper1/overleaf/*.zip
+
+# Ban PDF cua tai lieu tham khao: chi de doi chieu, KHONG duoc phat tan lai
+paper/paper1/refs/*.pdf

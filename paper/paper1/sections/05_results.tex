@@ -213,3 +213,14 @@ barely concentrates. As the Gram matrix flattens, accuracy follows it down.
 This is the exponential-concentration phenomenon of \cite{thanasilp2024} in a
 concrete applied setting, and it is why we present a bounded operating window
 rather than a method that scales.
+
+An independent measurement supports the boundary and sharpens its
+interpretation. Cirillo \emph{et al.} \cite{qmi2026}, sweeping qubit count on
+the same corpus under backend-derived noise, locate good performance in a
+$20$--$35$ two-qubit-gate band with degradation beyond roughly $60$ gates. Our
+operating point of $24$ gates sits inside that band and our collapse at $112$
+gates lies beyond their threshold, so the two studies agree on where the
+usable window ends. They differ on why: that study attributes the degradation
+to two-qubit gate error accumulating on hardware, whereas the results above are
+obtained under exact, noiseless simulation, in which no gate error exists. The
+window therefore does not widen with better hardware. It is set by the kernel.
