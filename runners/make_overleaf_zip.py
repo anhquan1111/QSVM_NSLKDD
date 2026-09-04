@@ -56,13 +56,11 @@ Trong repo:
 
 ## Nhung cho CON PHAI DIEN, khong duoc bo qua
 
-- `bibliography_revision.tex`: muc `qmi2026` thieu danh sach tac gia. Springer
-  chan toan van; da tim hai lan khong ra trang tac gia. KHONG duoc doan ten.
-- `bibliography_revision.tex`: muc [26] cu (Rahman et al., IEEE Access) da go
-  bo vi khong xac minh duoc la co that. Can chon mot survey CO THAT thay vao,
-  hai ung vien da ghi ngay trong file.
-- Muc Reproducibility trong `04_setup.tex`: can dien link repo va commit hash.
+- Muc Reproducibility trong `04_setup.tex`: commit hash hien la `19beb18`,
+  phai doi thanh commit cuoi truoc khi nop (trong bai co footnote nhac).
 - Ngay thang trong `\\thanks{Manuscript received ...}`.
+- Toan van QMI 2026 (Springer) va Carducci ICAD 2026 (IEEE Xplore): chi con
+  can de dien vai o `n/r` trong Table I. Ca hai trich dan da DAY DU.
 
 ## Danh muc file
 
