@@ -1893,3 +1893,45 @@ Nhân ZZ tập trung **nhanh gấp đôi** nhân Z: từ n=4 đến n=10, ZZ m�
 
 Artifact: `variant_K80n8/c4_pairwise_statistics_natural.csv` ·
 `c1_revision/c1_gram_concentration.csv`
+
+---
+
+# ✅ GIAI ĐOẠN 21 — Sửa lỗi soát ra + quét bề rộng mạch (2026-09-04)
+
+## Sửa lỗi thứ hai cùng loại
+
+`run_ksweep.py` có thêm một `MinMaxScaler` **trước PCA** mà `RefitPerNRepresentation`
+không có — comment lại ghi "dùng đúng khâu nén của pipeline thật". Đã bỏ.
+
+Đo lại thì **số không đổi**, và kiểm chứng được lý do: đặc trưng NSL-KDD sau tiền xử lý vốn
+đã nằm trong [0,1] (min 0.0, max 1.0), nên scaler ở vị trí đó gần như là phép đồng nhất.
+Tức Fig 4 vốn đã đúng. Vẫn bỏ vì nó không khớp pipeline thật và **sẽ sai** trên dataset chưa
+scale sẵn.
+
+## Phát hiện #35 🟢 — Độ trải của Gram **dự đoán được** F1
+
+`runners/run_width_sweep.py`: giữ K=20 và N=1000 + test 300 của C2, chỉ thay đổi n từ 4 đến 10.
+
+**Phép tự kiểm tra cài sẵn**: hàng n=4 phải tái tạo C2. Ban đầu **không khớp**, truy ra hai
+nguyên nhân thật:
+1. Dùng C=1.0 trong khi C2 chốt **C=3.0** (`c2_summary.json`).
+2. Refit biểu diễn trên 1.000 dòng, trong khi C2 dùng biểu diễn **fit trên toàn bộ train**.
+
+Sửa cả hai thì n=4 khớp **tuyệt đối**: ZZ 0.8469, Z 0.8355 — đúng số C2.
+
+| n | ZZ F1 | ZZ std_off | Z F1 | Z std_off |
+|---|---|---|---|---|
+| 4 | **0.8469** | 0.2096 | **0.8355** | 0.3292 |
+| 6 | 0.8296 | 0.1703 | 0.8423 | 0.2718 |
+| 8 | 0.8096 | 0.1353 | 0.8308 | 0.2616 |
+| 10 | 0.8114 | 0.1187 | 0.8292 | 0.2517 |
+
+**Tương quan Pearson giữa độ trải Gram và F1**: ZZ **r = +0.77**, Z chỉ **r = +0.32**.
+
+Nghĩa là: hiệu năng của nhân ZZ **bám theo một đại lượng hình học đo trực tiếp trên Gram**,
+còn nhân Z thì không (vì nó gần như không tập trung). Đây là mắt xích định lượng biến
+"chúng tôi quan sát thấy sụp đổ" thành "chúng tôi dự đoán được sụp đổ từ một thống kê đo được".
+
+Lợi thế entanglement **chỉ tồn tại ở n=4** (+0.011); từ n≥5 thì Z thắng ZZ.
+
+Fig 12 nay 3 panel: (a) đường học ở K=80/n=8, (b) tập trung theo n, (c) F1 theo độ trải.

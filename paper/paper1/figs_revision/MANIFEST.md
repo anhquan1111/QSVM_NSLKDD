@@ -1,6 +1,6 @@
 # Xuất xứ hình — bản revision paper 1
 
-*Cập nhật 2026-09-04. Sinh bằng `python runners/make_paper1_figures.py` (hình có dữ liệu)
+*Cập nhật 2026-09-04 (12 hình). Sinh bằng `python runners/make_paper1_figures.py` (hình có dữ liệu)
 và `python runners/make_paper1_schematics.py` (hình sơ đồ).*
 
 > ⛔ **Chỉ dùng hình trong thư mục này.** Mọi hình ở `reports/`, `data/*/processed_data/`,
@@ -23,6 +23,7 @@ và `python runners/make_paper1_schematics.py` (hình sơ đồ).*
 | **8** | `fig8_prior_shift` | `c3_revision/c3_prior_shift_per_run.csv` (10 run × 7 model × 3 điều kiện) | ✅ thay hình prior-shift cũ |
 | **9** | `fig9_learning_curve_nslkdd` | `c4_revision/c4_per_run_{natural,matched}_refit_per_N.csv` + `c4_pairwise_statistics_*` | ✅ thay hình learning curve cũ |
 | **10** | `fig10_regime_map` | `results/nslkdd/regime_map_rows.csv` (110 dòng) | ✅ thay regime map cũ |
+| **12** | `fig12_width_concentration` | `variant_K80n8/*` · `c1_gram_concentration.csv` · `c1_width_sweep.csv` | ✅ **mới 2026-09-04** |
 | **11** | `fig11_unsw_transfer` | `unsw/c4_revision/c4_per_run_unsw_natural_refit_per_N.csv` + pairwise | ✅ **mới** (R1 đòi dataset thứ hai) |
 
 Mỗi hình xuất **cả `.pdf` (vector, nộp bài) và `.png` (xem nhanh)**, 400 dpi,
