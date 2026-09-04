@@ -827,6 +827,80 @@ def figure8():
     return save(fig, "fig8_prior_shift")
 
 
+
+# --------------------------------------------------------------------------
+# Fig 12 -- mo rong mach lam hong loi the, va do duoc vi sao
+# --------------------------------------------------------------------------
+def figure12():
+    """Chay lai C4 o K=80 (luat C1 doi hoi n*=8) va do do tap trung cua Gram.
+
+    Day la cau tra loi truc tiep cho R3-4 ("tat ca thi nghiem deu o so qubit
+    rat nho"): mo rong mach KHONG giup, ma lam hong han loi the -- va co che
+    do duoc chu khong phai suy dien.
+    """
+    var = ROOT / "results/nslkdd/c4_revision/variant_K80n8"
+    d = pd.read_csv(var / "c4_per_run_nslkdd_natural_refit_per_N.csv")
+    d["test_split"] = d.test_split.replace({"full_kddtest_plus": "full_test"})
+    d = d[(d.arm == "tuned_per_N") & (d.test_split == "full_test")]
+    conc = pd.read_csv(ROOT / "results/nslkdd/c1_revision/c1_gram_concentration.csv")
+    conc = conc[conc.K == 80]
+
+    fig, axes = plt.subplots(1, 2, figsize=(7.16, 3.0))
+
+    # (a) duong hoc o K=80 / n=8
+    ax = axes[0]
+    ticks = sorted(d.n_train.unique())
+    ends = []
+    for m in MODEL_ORDER:
+        g = d[d.model == m]
+        if g.empty:
+            continue
+        s_ = STYLE[m]
+        piv = g.groupby("n_train")["f1_macro"]
+        x = np.array(sorted(piv.groups))
+        mean = piv.mean().values
+        err = np.array([ci95(g[g.n_train == v]["f1_macro"].values) for v in x])
+        if s_["z"] >= 5:
+            ax.fill_between(x, mean - err, mean + err, color=s_["color"],
+                            alpha=0.12, lw=0, zorder=s_["z"] - 3)
+            ends.append((float(mean[-1]), s_["label"]))
+        ax.plot(x, mean, color=s_["color"], ls=s_["ls"], lw=s_["lw"],
+                marker=s_["marker"], ms=s_["ms"], mec=SURFACE, mew=0.8,
+                zorder=s_["z"])
+    _log_axis(ax, ticks, right_margin=RIGHT_MARGIN)
+    ax.set_ylabel("Macro-$F_1$")
+    ax.set_title("(a) $K=80$, so the rule gives $n^{\\ast}=8$", loc="left",
+                 color=INK, pad=6)
+    place_right_labels(ax, ends)
+
+    # (b) do tap trung cua Gram: std cua phan ngoai duong cheo
+    ax = axes[1]
+    tidy(ax)
+    for kern, colour, marker, label in (("ZZ", BLUE, "o", "ZZFeatureMap"),
+                                        ("Z", VIOLET, "s", "ZFeatureMap")):
+        g = conc[conc.kernel == kern].sort_values("n")
+        ax.plot(g.n, g.offdiag_std, color=colour, lw=2.0, marker=marker, ms=5.5,
+                mec=SURFACE, mew=0.8, zorder=6, label=label)
+    ax.axvline(8, color=INK_MUTED, lw=1.0, ls=(0, (4, 3)), zorder=2)
+    ax.annotate("$n^{\\ast}=8$ at $K=80$", (8, ax.get_ylim()[1]),
+                xytext=(-6, -6), textcoords="offset points", ha="right",
+                va="top", fontsize=7, color=INK_2)
+    ax.set_xticks(sorted(conc.n.unique()))
+    ax.set_xlabel("Qubits $n$")
+    ax.set_ylabel("Std. of off-diagonal Gram entries")
+    ax.set_title("(b) The kernel concentrates as $n$ grows", loc="left",
+                 color=INK, pad=6)
+    ax.legend(loc="lower left", labelcolor=INK_2)
+
+    _curve_legend(fig, y=-0.03, ncol=8)
+    fig.suptitle("Widening the circuit does not help: it destroys the quantum "
+                 "kernel",
+                 x=0.012, y=0.995, ha="left", fontsize=10, fontweight="bold",
+                 color=INK)
+    fig.tight_layout(rect=(0, 0.05, 1, 0.945))
+    return save(fig, "fig12_width_concentration")
+
+
 if __name__ == "__main__":
     print("Sinh hinh cho ban revision paper 1")
     figure4()
@@ -837,4 +911,5 @@ if __name__ == "__main__":
     figure9()
     figure10()
     figure11()
+    figure12()
     print("Xong.")

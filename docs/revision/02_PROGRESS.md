@@ -1835,3 +1835,61 @@ Bản đầu nhét cả tên lẫn mô tả **vào trong** hộp → bề rộng
 ## Tình trạng: `figs_revision/` có đủ **11/11 hình**
 
 Không còn hình nào phải lấy từ bản cũ. MANIFEST đã cập nhật.
+
+---
+
+# ✅ GIAI ĐOẠN 20 — Chạy xong C4 ở K=80/n=8: crossover KHÔNG sống sót (2026-09-04)
+
+**Chạy**: 80 ô (8 mốc N × 10 run), xong lúc 01:50. Cache cách ly ở `variant_K80n8/`.
+
+## Phát hiện #34 🟢 — Mở rộng mạch KHÔNG giúp, mà phá hỏng nhân lượng tử
+
+macro-F1 trung bình, NSL-KDD `natural`, tập test đầy đủ:
+
+| N | ZZ (K=20,n=4) | **ZZ (K=80,n=8)** | Z (K=80,n=8) | XGBoost (K=80) |
+|---|---|---|---|---|
+| 100 | 0.6989 | **0.5693** | 0.7399 | 0.7772 |
+| 1000 | 0.7717 | **0.6837** | 0.7865 | 0.7730 |
+| 10000 | 0.7855 | **0.7140** | 0.8074 | 0.7893 |
+| 20000 | — | **0.7263** | 0.8087 | 0.7862 |
+
+**32/32 ô đều classical-favorable**, không đổi dấu ở bất kỳ N nào. Crossover **chỉ tồn tại ở
+chế độ mạch nhỏ**.
+
+Và ablation entanglement **đảo chiều hoàn toàn**: ở n=8 thì ZZ **thua** Z từ −0.08 đến −0.17,
+trong khi ở n=4 thì ZZ thắng.
+
+## Cơ chế: đo được, không suy đoán
+
+Độ lệch chuẩn phần ngoài đường chéo của Gram (400 mẫu) — nhỏ = kernel tập trung về hằng số:
+
+| n | ZZ | Z |
+|---|---|---|
+| 4 | 0.2275 | 0.3054 |
+| 6 | 0.1661 | 0.2865 |
+| **8** | **0.1275** | 0.2598 |
+| 10 | 0.1022 | 0.2425 |
+
+Nhân ZZ tập trung **nhanh gấp đôi** nhân Z: từ n=4 đến n=10, ZZ mất 55% độ trải còn Z chỉ mất
+21%. Lý do rõ: ZZ có `C(n,2)` pha cặp nên số hạng dao động tăng bậc hai theo n.
+
+Đây đúng là **exponential concentration** (Thanasilp et al., ref [22] của bài).
+
+## Vì sao đây là kết quả TỐT cho bài
+
+1. **Trả lời thẳng R3-4** (*"tất cả thí nghiệm đều ở số qubit rất nhỏ"*): không phải ta chọn
+   4 qubit vì tiện — mà vì rộng hơn thì **hỏng**, và ta đo được cơ chế.
+2. **Trả lời R2-2**: họ bảo phải *nhắc* tới exponential concentration. Ta không nhắc suông mà
+   **đo trực tiếp** trên đúng dữ liệu của bài.
+3. **Đóng kín lập luận K=20**: Fig 4 cho thấy K lớn hơn đòi nhiều qubit hơn; Fig 12 cho thấy
+   nhiều qubit hơn thì nhân sụp. Hai hình khép thành một lập luận NISQ hoàn chỉnh.
+4. **Củng cố crossover**: nó không phải hiện tượng chung chung mà gắn với một chế độ cụ thể —
+   đúng tinh thần "regime-specific" của bài.
+
+## Hình 12 mới
+
+`fig12_width_concentration`: (a) đường học ở K=80/n=8 — QSVM-ZZ sụp xuống dưới mọi baseline;
+(b) độ tập trung của Gram theo n cho ZZ và Z. `figs_revision/` nay có **12 hình**.
+
+Artifact: `variant_K80n8/c4_pairwise_statistics_natural.csv` ·
+`c1_revision/c1_gram_concentration.csv`
