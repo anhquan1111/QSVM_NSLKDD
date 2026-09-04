@@ -50,7 +50,7 @@ Trong repo:
 
     python runners/check_latex.py     # cau truc .tex
     python runners/audit_c4.py        # 100 kiem dinh thong ke
-    python runners/audit_figures.py   #  39 kiem dinh hinh
+    python runners/audit_figures.py   #  36 kiem dinh hinh
     python runners/audit_prose.py     #  84 con so trong cau van
     python runners/verify_lemma1.py   #  15 kiem dinh Lemma 1
 

@@ -46,9 +46,10 @@ def close(a, b, tol=5e-4) -> bool:
 # ---------------------------------------------------------------------------
 # hinh -> (script sinh no, cac file du lieu nguon)
 PROVENANCE = {
-    "fig1_zzfeaturemap_circuit": ("make_paper1_schematics.py", []),
-    "fig2_contribution_map": ("make_paper1_schematics.py", []),
-    "fig3_pipeline": ("make_paper1_schematics.py", []),
+    # Ba hinh so do (fig1 mach ZZ, fig2 ban do dong gop, fig3 pipeline) DA BO
+    # khoi ban thao de lot 12 trang: chung khong chua du lieu nao, noi dung da
+    # co trong than bai. File .pdf van con tren dia nhung khong duoc \input,
+    # nen khong con kiem o day.
     "fig4_selectkbest_sweep": ("make_paper1_figures.py", [
         "results/nslkdd/c1_revision/c1_ksweep.csv",
         "results/nslkdd/c1_revision/c1_ksensitivity.json"]),
