@@ -1,0 +1,99 @@
+% =====================================================================
+%  II. Background and Related Work
+%
+%  Ba viec muc nay phai lam, theo dung thu tu uu tien cua reviewer:
+%    R1-1  : them QMI 2026 (bai R1 chi dich danh) + cap nhat Table I
+%    R3-5  : dinh vi ro so voi arXiv:2403.07059 va 2409.04406
+%    tu giac: trich Gillani et al. (2608.18155) -- bai dong thoi, trung
+%             ca hai dataset. Nop sau ho 2 thang ma lo di la reviewer tu tim ra.
+%
+%  Giong van: KHONG cai nhau voi R3. Neu ho noi benchmark khong phai dong
+%  gop, ta neu su that la hai bai chinh ho tin cay cung la benchmark thuan
+%  tuy -- roi di tiep.
+% =====================================================================
+
+\subsection{Quantum kernels}
+
+A quantum kernel embeds a classical vector $\bm{x}$ into a state
+$|\phi(\bm{x})\rangle$ prepared by a parameterised circuit and reads off the
+fidelity $|\langle\phi(\bm{x}^{\prime})|\phi(\bm{x})\rangle|^{2}$ as a
+similarity \cite{havlicek2019,schuld2019}. The appeal is that the induced
+feature space can be classically hard to compute while the kernel entries remain
+cheap to \emph{estimate}, which is the basis of the proven separations for
+carefully constructed problems. Whether that translates into an advantage on
+natural tabular data is a separate empirical question, and it is the one this
+paper addresses.
+
+Two results bound expectations. Alignment-based bounds \cite{cristianini2002,%
+cortes2012} say that a kernel better aligned with the labels admits a tighter
+generalisation guarantee at equal empirical risk --- but they say nothing about
+whether a given circuit produces such a kernel. In the other direction,
+fidelity kernels from expressive maps concentrate exponentially toward a
+constant as the number of qubits grows \cite{thanasilp2024}, so the same
+expressivity that makes a map interesting makes its Gram matrix uninformative at
+width. Sec.~\ref{sec:res-width} measures both effects in our setting: the
+alignment gain is large and the concentration is what eventually destroys it.
+
+\subsection{Quantum machine learning for intrusion detection}
+
+Applications of quantum kernels and variational classifiers to network intrusion
+detection have grown quickly, most using NSL-KDD \cite{ref4} or a successor
+corpus \cite{ref25}. The recurring pattern is a single operating point --- one
+qubit count, one training-set size, one class prior --- with a reported accuracy
+compared against a small set of classical baselines. Reported numbers vary
+widely across studies that nominally use the same dataset, which is what one
+would expect when preprocessing, subset size and baseline strength all differ
+simultaneously.
+
+The most directly comparable study is a recent benchmark of Pegasos-QSVC, VQC
+and a hybrid quantum--classical network on ToN\_IoT and NSL-KDD under ideal and
+noisy IBM simulators \cite{qmi2026}, which reports Pegasos-QSVC best at $94.60\%$
+accuracy. It varies the model family and the noise model; it does not vary the
+embedding width or the training-set size, and it does not include a gradient-%
+boosted tree baseline.
+
+\subsection{Benchmarking studies of quantum models}
+
+Two broad benchmarks are relevant precisely because they are sceptical. Bowles,
+Ahmed and Schuld \cite{bowles2024} evaluate twelve QML models over $160$ datasets
+in noise-free simulation and find that quantum models rarely beat well-tuned
+classical baselines. Schnabel and Roth \cite{schnabel2024} run over $20{,}000$
+tuned models comparing fidelity and projected quantum kernels across five
+dataset families and analyse where the differences come from. Both conclude that
+general-purpose feature maps seldom win once the classical comparison is done
+properly, and our results agree with them at the aggregate level.
+
+Concurrently with this revision, Gillani \emph{et al.} \cite{gillani2026}
+benchmark quantum and classical models for intrusion detection across four
+corpora, including both of ours, with FDR control over $108$ comparisons and an
+attribution audit. Their conclusion --- that reported quantum gains are largely
+attributable to the classical preprocessing front-end once the same front-end is
+given to classical models --- corroborates, from a different direction, the
+decomposition we report in Sec.~\ref{sec:res-c4}. We do not claim breadth over
+that study: they evaluate four datasets to our two, at eight qubits to our four
+and six. What they do not vary is the training-set size, and that is where our
+contribution lies.
+
+\subsection{Positioning}
+
+Table~\ref{tab:novelty} places this work against those four studies on the axes
+that distinguish them. The distinguishing axis is not the model, the dataset or
+the noise treatment, on all of which we are comparable or narrower. It is that
+none of these studies sweeps the training-set size, and the training-set size is
+the variable that decides the answer here: the ordering between \QSVM{} and
+every strong classical baseline reverses inside the range $N\in[10^{2},10^{4}]$
+under the natural class prior, so a benchmark conducted at a single $N$ --- as
+all of them are, and as our own submitted version was --- can report either
+outcome and be internally consistent.
+
+We take the reviewers' point that benchmarking alone is not a contribution, and
+we note that the two studies most often cited as establishing what is already
+known \cite{bowles2024,schnabel2024} are themselves benchmarks without a new
+kernel, feature map, algorithm, hardware demonstration or theoretical result.
+What makes a benchmark worth publishing is not its novelty of apparatus but
+whether it changes what the field believes. We report an ordering that reverses
+with sample size, a selection rule whose output transfers across datasets, and a
+measured mechanism --- Gram-matrix concentration --- that predicts where the
+method stops working. The last of these is the closest we come to a theoretical
+contribution, and we present it as an empirical regularity rather than as a
+theorem, which is what our evidence supports.

@@ -1,0 +1,98 @@
+% =====================================================================
+%  III. NISQ-Aware QSVM Framework  (phan dau; theory_revision.tex noi tiep)
+%
+%  Muc nay chi dung khung: dat bai toan, ta pipeline, va neu ro gia thiet
+%  cost model. Phan ly thuyet (F1-F3, Lemma 1, luat ba giai doan, erratum)
+%  nam trong theory_revision.tex ngay sau day.
+% =====================================================================
+
+\subsection{Problem statement}
+
+Let $\mathcal{D}=\{(\bm{x}_i,y_i)\}_{i=1}^{N}$ be a labelled sample of network
+records with $\bm{x}_i\in\mathbb{R}^{d}$ and $y_i$ one of five classes, and let
+$K^{\mathrm{Q}}_{n}$ denote the fidelity kernel induced by an $n$-qubit feature
+map. A quantum kernel is not free: evaluating $K^{\mathrm{Q}}_{n}$ over a
+training set of size $N$ requires $\Theta(N^2)$ circuit evaluations, each
+costing $Q(n)$ two-qubit gates on hardware whose error rate is dominated by
+exactly those gates. The question this paper answers is therefore not whether
+$K^{\mathrm{Q}}_{n}$ can be made to win somewhere, but where it is worth this
+cost.
+
+\begin{assumption}[NISQ cost model]
+\label{ass:cost}
+Circuit cost is charged by width alone, through the CNOT-weighted count of
+Eq.~(5), $Q_{\mathrm{raw}}(n) = 10n^{2}-8n$, normalised by its value at the
+largest candidate so that $Q(n)\in(0,1]$. The quantity it tracks is the
+entangling-gate budget: an $r$-repetition \ZZ{}FeatureMap with full entanglement
+places $2r\binom{n}{2}$ two-qubit gates, which at the operating point $n=4$,
+$r=2$ is $24$ and at $n=8$ is $112$. The $\Theta(N^{2})$ kernel evaluations are
+excluded from $Q$ because they scale with $N$ rather than $n$ and so do not
+affect the choice of width; they are, however, the dominant cost of deploying
+the method at all, which is why Sec.~\ref{sec:regimemap} reports the $N$ at
+which the kernel becomes competitive and not merely that it does.
+\end{assumption}
+
+Assumption~\ref{ass:cost} is what makes the selection rule of
+Definition~\ref{def:three-stage} a statement about hardware rather than about
+taste, and it is also its main limitation: a device whose dominant error source
+is idle-time decoherence rather than entangling-gate infidelity would call for a
+different $Q$.
+
+\begin{problem}[Regime identification]
+\label{prob:regime}
+Given a family of operating conditions --- training-set size, class prior,
+attack composition, test distribution, and embedding width --- determine, for
+each condition, whether $K^{\mathrm{Q}}_{n^\ast}$ is preferable to a classical
+baseline, at a stated level of statistical confidence, and report the conditions
+in which it is not.
+\end{problem}
+
+Problem~\ref{prob:regime} is deliberately weaker than the claim the submitted
+version made. It admits negative answers as results, and most of the answers we
+obtain are negative or inconclusive.
+
+\subsection{Pipeline}
+
+Fig.~\ref{fig:pipeline} shows the full path from raw records to a decision.
+Categorical fields are one-hot encoded to $d=122$ dimensions; an ANOVA
+$F$-test retains $K$ features; PCA projects to $n$ components; and a min--max
+scaler maps each component into $[0,\pi]$, the domain on which the feature map's
+phases are defined. The resulting $\bm{z}\in[0,\pi]^{n}$ enters the
+\ZZ{}FeatureMap of Fig.~\ref{fig:circuit}, and classification is a soft-margin
+SVC on the precomputed Gram matrix.
+
+Two properties of this pipeline carry the experimental design.
+
+\emph{One component varies at a time.} The entanglement-free control shown as
+the upper branch of Fig.~\ref{fig:pipeline} differs from the main path in
+exactly one block: the \Zmap{}FeatureMap applies the same Hadamard and
+single-qubit phase layers and omits the pairwise term. It has the same qubit
+count, the same repetitions, the same classical front-end, and the same
+classifier, so a difference between the two branches is attributable to
+entanglement and to nothing else. Fig.~\ref{fig:contributions} extends this
+discipline to the other three contributions: C1 fixes the representation before
+any downstream metric is inspected, C3 varies only the test distribution, and C4
+varies only $N$.
+
+\emph{The front-end is refit wherever the classifier is refit.} In the primary
+arm, feature selection, projection and scaling are re-estimated at every
+training-set size on that size's training fold alone. This costs comparability
+across sizes --- the representation at $N=100$ is not the representation at
+$N=10^{4}$ --- and buys the guarantee that no representation is ever informed by
+more data than the classifier it feeds. We regard that trade as mandatory in a
+study whose headline concerns how behaviour changes with $N$: freezing a
+front-end fit on the largest subset would leak precisely the quantity under
+investigation. Sec.~\ref{sec:res-c4} reports both arms.
+
+\subsection{Kernel evaluation}
+
+The fidelity kernel
+$K^{\mathrm{Q}}(\bm{x},\bm{x}^{\prime}) =
+|\langle\phi(\bm{x}^{\prime})|\phi(\bm{x})\rangle|^{2}$
+is evaluated exactly rather than by sampling. Because the \ZZ{}FeatureMap is
+diagonal in the computational basis after each Hadamard layer, $|\phi(\bm{x})
+\rangle$ has a closed form, and the Gram matrix follows from dense linear
+algebra. Finite-shot estimation and backend-derived noise are then applied as
+\emph{separate} conditions (Sec.~\ref{sec:res-c2}) rather than being folded into
+the main results, which keeps sampling error from being confused with the
+effects under study.

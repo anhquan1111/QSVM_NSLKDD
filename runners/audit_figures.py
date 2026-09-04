@@ -240,9 +240,10 @@ def audit_data_figures() -> None:
 
     # --- Fig 12 ---
     var = pd.read_csv(NSL / "c4_revision/variant_K80n8/c4_pairwise_statistics_natural.csv")
-    var = var[var.baseline.isin(["QSVM_Z", "SVM_RBF", "RandomForest", "XGBoost"])]
-    check("Fig 12a: 32/32 o classical-favorable o K=80/n=8",
-          len(var) == 32 and (var.verdict == "classical-favorable").all(),
+    # Khong loc baseline: file co du 6 baseline x 8 co N = 48 o, tat ca deu
+    # classical-favorable. Bai viet trich con so day du nay.
+    check("Fig 12a: 48/48 o classical-favorable o K=80/n=8",
+          len(var) == 48 and (var.verdict == "classical-favorable").all(),
           f"{len(var)} o, {(var.verdict == 'classical-favorable').sum()} classical")
     con = pd.read_csv(NSL / "c1_revision/c1_gram_concentration.csv").query("K == 80")
     zz = con[con.kernel == "ZZ"].set_index("n").offdiag_std

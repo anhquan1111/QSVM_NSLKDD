@@ -1,0 +1,94 @@
+% =====================================================================
+%  I. Introduction
+%
+%  Ban da nop mo bai bang "QSVM dat 0.854, hon SVM-RBF 0.838". So do gio
+%  khong con dung (XGBoost 0.8503 dung dau). Ban nay mo bang CAU HOI, va
+%  noi thang ngay o trang 1 rang phan lon ket qua la am hoac khong ket luan
+%  duoc. Reviewer doc trang 1 phai thay ngay minh khong ban loi the.
+%
+%  Dong cuoi cua danh sach dong gop la cho tu khai 5 khang dinh phai rut.
+%  De o day chu khong giau xuong muc VII: neu reviewer tu tim ra thi mat
+%  het thien chi.
+% =====================================================================
+
+Network intrusion detection is an attractive target for quantum machine
+learning. The data are tabular and moderate-dimensional, the decision is a
+classification, and the operational value of a small accuracy gain is high.
+Quantum kernel methods are the natural instrument: a feature map prepares a
+state whose fidelities form a positive semi-definite kernel that can be dropped
+into a standard support vector machine \cite{havlicek2019,schuld2019}, so the
+quantum component is a single well-isolated block inside an otherwise classical
+pipeline.
+
+The literature reflects that attractiveness. Studies applying quantum kernels
+and variational classifiers to NSL-KDD \cite{ref4} and its successors
+\cite{ref25} report accuracies competitive with, and sometimes above, classical
+baselines. What they rarely report is the shape of the claim: at which training
+set size, against which class prior, at which circuit width, and against which
+classical opponent. Those choices are not incidental. We show below that varying
+only the training-set size, with everything else fixed, is enough to reverse the
+ordering between a quantum kernel and every strong classical baseline we tested.
+A benchmark conducted at one operating point can therefore report an advantage
+or a deficit and be internally consistent in either case.
+
+This paper asks a narrower question than the literature usually asks:
+\emph{where} is a NISQ-feasible quantum kernel worth its cost? The question is
+posed as a regime-identification problem (Problem~\ref{prob:regime}) whose
+answers include the regimes where the answer is ``nowhere we can detect''.
+
+Our protocol varies one factor at a time. The embedding dimension is fixed by a
+lexicographic rule that charges explicitly for two-qubit gates, before any
+downstream metric is inspected. The entangling layer is ablated against an
+otherwise identical control. The test distribution is shifted four ways. The
+training-set size is swept over two orders of magnitude under both the natural
+class prior and a rare-enriched one. Every comparison is paired within run over
+ten runs, both quantum and classical models are tuned by the same procedure on
+the same held-out set, and $p$-values are Holm-corrected within baseline
+families. The baselines include a random forest and XGBoost, which the submitted
+version of this work did not.
+
+The headline is a map, not a number. Of $110$ controlled comparisons, $21$
+favour the quantum kernel, $21$ favour a classical baseline, and $68$ are
+inconclusive. Inside that map there is structure worth reporting:
+
+\begin{itemize}
+  \item \textbf{An ordering that reverses with sample size.} Under the natural
+    class prior, \QSVM{} is the second-worst model at $N=100$ and the best at
+    $N=10^{4}$; the paired difference against XGBoost, the random forest and
+    SVM-RBF changes sign between $N=2000$ and $N=5000$ in all six
+    baseline--tuning-arm combinations, and survives freezing the
+    hyper-parameters rather than re-tuning them. Enriching rare attacks
+    twelvefold --- the sampling our own submitted protocol used --- removes the
+    effect.
+  \item \textbf{A selection rule that transfers.} The three-stage rule returns
+    $n^{\ast}=4$ on NSL-KDD and, applied without changing a threshold,
+    $n^{\ast}=6$ on UNSW-NB15, recovered on $10/10$ independent subsets. The
+    entanglement ablation transfers as well; the sample-size reversal does not.
+  \item \textbf{A measured boundary.} Spending a larger feature budget forces a
+    wider circuit, and widening destroys the kernel: at $K=80$, where the rule
+    returns $n^{\ast}=8$, all $48$ paired comparisons favour the classical
+    model and the entanglement ablation reverses sign. The mechanism is visible
+    in the Gram matrix, whose off-diagonal dispersion decays about twice as fast
+    for the \ZZ{} map as for its entanglement-free control --- the ratio the
+    $\binom{n}{2}$ versus $n$ phase-term counting predicts --- and correlates
+    with macro-$F_{1}$ at $r=+0.77$.
+\end{itemize}
+
+We also report where the method loses. It degrades faster than either tree
+ensemble under class-prior shift; it is the least robust of all seven models to
+feature perturbation; and although it detects rare attacks far better than the
+tree ensembles, an RBF-kernel SVM detects them better still.
+
+\subsection*{Relation to the submitted version}
+
+This paper is a substantially revised version of an earlier submission, and five
+of that version's claims do not survive the revised protocol. We state them
+here rather than in a footnote. (i)~The claimed advantage in the low-data regime
+is reversed in direction. (ii)~A reported rare-attack gain of $6.7$ points with
+$d=+0.68$ is withdrawn: no rare-class metric was computed by the code that
+produced it. (iii)~The former Theorem~1 was false, as one reviewer identified;
+it and the objective it maximised have been removed rather than repaired.
+(iv)~The former Pareto stage filtered no candidate on this data and has been
+replaced. (v)~With a tree ensemble in the comparison, \QSVM{} is no longer the
+top-ranked model at the main operating point. Sec.~\ref{sec:erratum} gives the
+technical detail, including one error no reviewer raised.
