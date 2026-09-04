@@ -1,0 +1,173 @@
+% =====================================================================
+%  TETC-2026-05-0252 -- BAN REVISION
+%
+%  Dung lai tu paper1.pdf vi file .tex goc khong con. Tieu de, danh sach
+%  tac gia va don vi GIU NGUYEN: IEEE cam doi tac gia neu khong co dong y
+%  bang van ban cua EiC, va reviewer trich dan theo so muc cu.
+%
+%  Bien dich:  pdflatex -> pdflatex   (bibliography la thebibliography,
+%              khong can BibTeX)
+%
+%  Cac manh duoc \input o duoi deu co the kiem doc lap:
+%      python runners/audit_c4.py        -> 100/100
+%      python runners/audit_figures.py   ->  39/39
+% =====================================================================
+\documentclass[journal]{IEEEtran}
+
+\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{amsthm}
+\usepackage{algorithmic}
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{xcolor}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{array}
+\usepackage{url}
+\usepackage{bm}
+\usepackage[hidelinks]{hyperref}
+
+\graphicspath{{./}}
+
+% Moi truong dinh ly. Ban da nop dung Proposition cho ca nhung su that hien
+% nhien; ban nay chi con Lemma (dan xuat rieng cua bai) va Definition.
+\newtheorem{definition}{Definition}
+\newtheorem{lemma}{Lemma}
+\newtheorem{assumption}{Assumption}
+\newtheorem{problem}{Problem}
+\theoremstyle{remark}
+\newtheorem{remark}{Remark}
+
+\newcommand{\ZZ}{\textsc{zz}}
+\newcommand{\Zmap}{\textsc{z}}
+\newcommand{\QSVM}{QSVM-\ZZ}
+\newcommand{\Fmac}{F_1^{\mathrm{macro}}}
+
+\begin{document}
+
+\title{NISQ-Aware Quantum Kernel SVM for Network\\
+  Intrusion Detection:\\
+  A Regime-Specific Benchmark on NSL-KDD}
+
+\author{Minh~Tuan~Pham,
+        Phuc~Hao~Do,
+        Nguyen~Nang~Hung~Van,
+        Quang~Anh~Nguyen,
+        and~Quan~Tran~Anh~Vo% <-- GIU NGUYEN, khong them/bot tac gia
+\thanks{Manuscript received [Date]; revised [Date]. This work was supported by
+The University of Danang --- University of Science and Technology under Project
+T2026-02-10TN. \emph{(Corresponding author: Quan Tran Anh Vo.)}}
+\thanks{Phuc Hao Do is with The Bonch-Bruevich Saint Petersburg State University
+of Telecommunications, Saint Petersburg 193232, Russia, and also with Danang
+Architecture University, Danang 550000, Vietnam (e-mail: do.hf@sut.ru;
+haodp@dau.edu.vn).}
+\thanks{Minh Tuan Pham, Nguyen Nang Hung Van, Quang Anh Nguyen, and Quan Tran
+Anh Vo are with the University of Science and Technology --- The University of
+Danang, Danang 550000, Vietnam (e-mail: pmtuan@dut.udn.vn;
+nguyenvan@dut.udn.vn; anh1303052005@gmail.com; votrananhquan1111@gmail.com).}}
+
+\markboth{IEEE Transactions on Emerging Topics in Computing,~Vol.~XX, No.~Y, 2026}%
+{Pham \MakeLowercase{\textit{et al.}}: NISQ-Aware Quantum Kernel SVM for Network Intrusion Detection}
+
+\maketitle
+
+% =====================================================================
+%  ABSTRACT -- viet lai. Ban da nop khang dinh loi the o che do it du lieu
+%  va o dich chuyen prior; ca hai deu khong con dung sau khi them baseline
+%  manh va do lai voi 10 run. Abstract moi dan bang cau hoi "o dau" chu
+%  khong bang mot con so thang cuoc.
+% =====================================================================
+\begin{abstract}
+Quantum support vector machines (QSVM) built on the \ZZ{}-feature map are
+routinely reported to help on network intrusion detection (NIDS), yet the
+conditions under which they help are rarely isolated. This paper asks where a
+NISQ-feasible quantum kernel is worth its cost, and answers with a protocol in
+which one factor is varied at a time: the embedding dimension is fixed by a
+lexicographic rule that charges explicitly for two-qubit gate count; the
+entangling layer is ablated against an otherwise identical control; the test
+distribution is shifted; and the training-set size is swept across two orders of
+magnitude under both the natural class prior and a rare-enriched one. Every
+comparison is paired within run over ten runs, tuned symmetrically for quantum
+and classical models alike, and corrected for multiplicity within baseline
+families. Against six baselines that now include a random forest and XGBoost, we
+find no general advantage: of 110 controlled comparisons, 21 favour the quantum
+kernel, 21 favour a classical baseline, and 68 are inconclusive. What we do find
+is structure. Under the natural class prior the ordering against every strong
+baseline reverses between $N=2000$ and $N=5000$, and the reversal survives
+freezing the hyper-parameters rather than re-tuning them; enriching rare attacks
+twelvefold, as the submitted protocol did, removes it. The selection rule
+transfers to UNSW-NB15 unchanged and returns six qubits rather than four, while
+the sample-complexity reversal does not transfer. Finally, spending a larger
+feature budget forces a wider circuit, and widening destroys the kernel: at
+eight qubits all 48 paired comparisons favour the classical model, with a
+mechanism visible directly in the Gram matrix, whose off-diagonal dispersion
+decays roughly twice as fast for the \ZZ{} map as for its entanglement-free
+control and predicts macro-$F_1$ across widths. We report the result as a regime
+map, including the regimes in which the quantum kernel loses.
+\end{abstract}
+
+\begin{IEEEkeywords}
+Quantum machine learning, quantum kernel, support vector machine, network
+intrusion detection, NSL-KDD, UNSW-NB15, NISQ, \ZZ{}FeatureMap, kernel
+concentration, sample complexity, class-prior shift.
+\end{IEEEkeywords}
+
+% =====================================================================
+\section{Introduction}
+\label{sec:intro}
+\input{sections/01_introduction}
+
+% =====================================================================
+\section{Background and Related Work}
+\label{sec:related}
+\input{sections/02_background}          % gom Background facts + Lemma 1
+\input{novelty_matrix}                  % Table: dinh vi vs 5 bai benchmark
+
+% =====================================================================
+\section{NISQ-Aware QSVM Framework}
+\label{sec:framework}
+\input{sections/03_framework}           % Assumption 1, Problem 1, pipeline
+\input{theory_revision}                 % luat ba giai doan + ablation + erratum
+
+% =====================================================================
+\section{Experimental Setup}
+\label{sec:setup}
+\input{sections/04_setup}
+
+% =====================================================================
+\section{Results}
+\label{sec:results}
+\input{sections/05_results}
+\input{crossover_arms_table}            % Table: crossover ben qua hai arm
+
+% =====================================================================
+\section{Regime Map: When to Use \QSVM{}}
+\label{sec:regimemap}
+\input{sections/06_regimemap}
+
+% =====================================================================
+\input{limitations_revision}            % Sec VII, da co \section ben trong
+
+% =====================================================================
+\section{Conclusion and Future Work}
+\label{sec:conclusion}
+\input{sections/08_conclusion}
+
+% =====================================================================
+\section*{Acknowledgment}
+This work was supported by The University of Danang --- University of Science
+and Technology, project T2026-02-10TN. The authors thank Danang Architecture
+University for computing resources, and the maintainers of Qiskit and
+scikit-learn.
+
+% =====================================================================
+%  Hinh: 12 hinh, sinh boi runners/make_paper1_figures.py va
+%  make_paper1_schematics.py. Xuat xu tung hinh o figs_revision/MANIFEST.md.
+% =====================================================================
+\input{figs_revision/captions}
+
+% =====================================================================
+\input{bibliography_revision}           % 35 muc; xem ghi chu trong file
+
+\end{document}
