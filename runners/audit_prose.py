@@ -511,7 +511,8 @@ def section_letter() -> None:
             ("khong chay tren phan cung that", "not do is execute on a quantum processor"),
             ("khong them CatBoost/TabNet", "did \\emph{not} add CatBoost"),
             ("tu khai loi Lemma", "had incorrect coefficients"),
-            ("tu khai tap train giau lop hiem", "were\nrare-enriched")):
+            ("tu khai tap train giau lop hiem", "were\nrare-enriched"),
+            ("thay ref [26] bang bai CO THAT", "10.3390/fi18050234")):
         check(f"thu noi thang: {what}", says(L, phrase), phrase[:40])
 
     # Bai hua "Sec IV-D co link repo va commit hash" -- phai co that, va hash

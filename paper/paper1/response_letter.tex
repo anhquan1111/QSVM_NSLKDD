@@ -145,7 +145,7 @@ Script & Result & What it checks \\
 \texttt{audit\_figures.py} & 39/39 &
   Every figure is newer than its inputs, and every plotted number is re-derived
   from the artifacts \\
-\texttt{audit\_prose.py} & 108/108 &
+\texttt{audit\_prose.py} & 109/109 &
   Every number written in the manuscript text \emph{and in this letter} is
   re-derived from the artifacts \\
 \texttt{verify\_lemma1.py} & 15/15 &
@@ -507,10 +507,20 @@ Bibliography, entry [15].
 misattributed}
 \resp
 We searched twice and independently --- by author and title, and by volume and
-page range --- and could not locate the item either. We have removed it. The
-sentence it supported has been rewritten so that it no longer requires that
-citation. We record the removal in the bibliography file with the original
+page range --- and could not locate the item either. We have removed it, and we
+record the removal in the released bibliography file together with the original
 string, so that the change is auditable rather than silent.
+
+Rather than simply delete the sentence it supported, we replaced the citation
+with a survey that does exist and that we verified before using: A.~Kaissar,
+A.~B. Nassif and A.~Bouridane, ``Enhancing network intrusion detection with
+quantum machine learning: A comprehensive survey of methods, metrics, and
+applications,'' \emph{Future Internet}, vol.~18, no.~5, art.~234, 2026, doi:
+10.3390/fi18050234. It fills the role the withdrawn reference was serving and,
+being a 2026 survey, also addresses part of AE-2. Two of its findings are
+relevant enough to state in our Sec.~II-B: most published QML--IDS approaches
+rely on simulated quantum environments and legacy datasets, and evaluation
+practice is inconsistent across studies.
 \changed
 Bibliography; Sec.~II-B.
 
