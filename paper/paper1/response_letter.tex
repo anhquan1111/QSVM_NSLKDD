@@ -145,7 +145,7 @@ Script & Result & What it checks \\
 \texttt{audit\_figures.py} & 39/39 &
   Every figure is newer than its inputs, and every plotted number is re-derived
   from the artifacts \\
-\texttt{audit\_prose.py} & 109/109 &
+\texttt{audit\_prose.py} & 111/111 &
   Every number written in the manuscript text \emph{and in this letter} is
   re-derived from the artifacts \\
 \texttt{verify\_lemma1.py} & 15/15 &
@@ -654,12 +654,21 @@ benchmark is not novelty of apparatus but whether it changes what the field
 believes.
 
 On that criterion the relevant question is what our study does that theirs does
-not. Bowles \emph{et al.} vary model family across $160$ datasets; Schnabel and
-Roth vary kernel type across $64$; the closest concurrent work on our exact
-datasets, Gillani \emph{et al.} (2026), varies circuit width. \emph{None varies
-the training-set size}, and that is the variable that determines the answer
-here. We do not claim breadth over these studies --- Gillani \emph{et al.}
-evaluate four datasets to our two, at eight qubits to our four and six.
+not. We read all four in full before answering, and Table~I is built from those
+full texts rather than from abstracts. Bowles \emph{et al.} vary model family
+across $160$ mostly synthetic datasets at up to $18$ qubits; Schnabel and Roth
+vary kernel type across $64$ datasets at up to $15$ qubits; Cirillo \emph{et al.}
+vary qubit count from $2$ to $10$ and plot performance against gate count;
+Gillani \emph{et al.} run a $4/6/8/12$-qubit ablation. Circuit width is
+therefore \emph{not} an axis we can claim as ours, and we no longer do.
+
+\emph{None of the four varies the training-set size.} Each fixes it at a single
+value: fixed per-task subsamples in the first, $M=240$ in the second, a $15\%$
+class-balanced subsample in the third, the full training partition in the
+fourth. That is the variable that determines the answer here, and it is the one
+axis on which this work is not duplicated. We do not claim breadth otherwise ---
+Gillani \emph{et al.} evaluate four datasets to our two, at eight qubits to our
+four and six, under a stricter error-rate criterion.
 \changed
 Sec.~II-C, Sec.~II-D, Table~I.
 

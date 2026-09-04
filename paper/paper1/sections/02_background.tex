@@ -83,35 +83,47 @@ $80/20$ split rather than the official partitions.
 
 Two broad benchmarks are relevant precisely because they are sceptical. Bowles,
 Ahmed and Schuld \cite{bowles2024} evaluate twelve QML models over $160$ datasets
-in noise-free simulation and find that quantum models rarely beat well-tuned
+--- predominantly synthetic, so that data properties can be controlled --- in
+noise-free statevector simulation at up to $18$ qubits, against an MLP, an
+RBF-kernel SVM and a CNN, and find that quantum models rarely beat well-tuned
 classical baselines. Schnabel and Roth \cite{schnabel2024} run over $20{,}000$
 tuned models comparing fidelity and projected quantum kernels across five
-dataset families and analyse where the differences come from. Both conclude that
+dataset families, at up to $15$ qubits against RBF-kernel baselines, and use
+correlation analysis to identify which design choices matter. Both conclude that
 general-purpose feature maps seldom win once the classical comparison is done
 properly, and our results agree with them at the aggregate level.
 
+Neither varies the training-set size: Bowles \emph{et al.} subsample fixed
+counts per task, and Schnabel and Roth fix $M=240$ training and $M'=60$ test
+points throughout.
+
 Concurrently with this revision, Gillani \emph{et al.} \cite{gillani2026}
 benchmark quantum and classical models for intrusion detection across four
-corpora, including both of ours, with FDR control over $108$ comparisons and an
-attribution audit. Their conclusion --- that reported quantum gains are largely
-attributable to the classical preprocessing front-end once the same front-end is
-given to classical models --- corroborates, from a different direction, the
-decomposition we report in Sec.~\ref{sec:res-c4}. We do not claim breadth over
-that study: they evaluate four datasets to our two, at eight qubits to our four
-and six. What they do not vary is the training-set size, and that is where our
+corpora, including both of ours, at eight qubits with a $4/6/8/12$-qubit
+ablation, against five tuned classical baselines including a random forest and
+XGBoost, with Benjamini--Hochberg control over $108$ comparisons on NSL-KDD.
+Their conclusion --- that reported quantum gains are largely attributable to the
+classical preprocessing front-end once the same front-end is given to classical
+models --- corroborates, from a different direction, the decomposition we report
+in Sec.~\ref{sec:res-c4}. We do not claim breadth over that study: they evaluate
+four datasets to our two, at eight qubits to our four and six, with a stricter
+error-rate criterion. What they hold fixed is the training-set size --- the full
+$125{,}973$-record training partition on NSL-KDD --- and that is where our
 contribution lies.
 
 \subsection{Positioning}
 
 Table~\ref{tab:novelty} places this work against those four studies on the axes
-that distinguish them. The distinguishing axis is not the model, the dataset or
-the noise treatment, on all of which we are comparable or narrower. It is that
-none of these studies sweeps the training-set size, and the training-set size is
-the variable that decides the answer here: the ordering between \QSVM{} and
-every strong classical baseline reverses inside the range $N\in[10^{2},10^{4}]$
-under the natural class prior, so a benchmark conducted at a single $N$ --- as
-all of them are, and as our own submitted version was --- can report either
-outcome and be internally consistent.
+that distinguish them; each cell was read from the full text rather than from an
+abstract. The distinguishing axis is not the model, the dataset, the circuit
+width or the noise treatment, on all of which we are comparable or narrower ---
+two of the four vary the qubit count, and two compare against tree ensembles. It
+is that \emph{none of the four sweeps the training-set size}, which each fixes at
+a single value, and the training-set size is the variable that decides the answer
+here: the ordering between \QSVM{} and every strong classical baseline reverses
+inside the range $N\in[10^{2},10^{4}]$ under the natural class prior. A benchmark
+conducted at a single $N$ --- as all four are, and as our own submitted version
+was --- can therefore report either outcome and be internally consistent.
 
 We take the reviewers' point that benchmarking alone is not a contribution, and
 we note that the two studies most often cited as establishing what is already
