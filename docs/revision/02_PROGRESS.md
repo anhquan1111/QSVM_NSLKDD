@@ -1935,3 +1935,39 @@ còn nhân Z thì không (vì nó gần như không tập trung). Đây là mắ
 Lợi thế entanglement **chỉ tồn tại ở n=4** (+0.011); từ n≥5 thì Z thắng ZZ.
 
 Fig 12 nay 3 panel: (a) đường học ở K=80/n=8, (b) tập trung theo n, (c) F1 theo độ trải.
+
+---
+
+# ✅ GIAI ĐOẠN 22 — Lỗi thứ ba cùng loại + số mũ suy giảm (2026-09-04)
+
+## Phát hiện #36 🔴 — `c1_gram_concentration.csv` cũng dính đúng lỗi đó
+
+File nuôi Fig 12b được sinh bằng **một lệnh rời**, và lệnh đó fit MinMaxScaler trên **tập con
+400 dòng** thay vì trên toàn bộ train — đúng lỗi đã sửa hai lần trước.
+
+Lệch tới **0.015** (12% tương đối tại n=8). Con số in trong hình đổi: "ZZ mất 55%" thành
+"ZZ mất 49%". Kết luận (ZZ tập trung nhanh hơn Z) không đổi, nhưng số thì sai.
+
+**Bài học**: mọi thứ đi vào bài phải có **script tái lập được**, không được sinh bằng lệnh rời.
+Đã viết `runners/run_gram_concentration.py` thay thế, dùng đúng giao thức của
+`RefitPerNRepresentation` (SelectKBest → PCA → MinMax, cả ba fit trên full train).
+
+Đây là **lần thứ ba** cùng một loại lỗi. Ba chỗ đã sửa: `run_c1_ksens.py`, `run_ksweep.py`,
+và lệnh rời sinh `c1_gram_concentration.csv`.
+
+## Phát hiện #37 🟢 — Số mũ suy giảm khớp cấu trúc mạch
+
+Hồi quy `std(n) ~ n^(-α)` trên thang log-log:
+
+| | α (ZZ) | α (Z) | Tỉ lệ |
+|---|---|---|---|
+| **K=20** (điểm vận hành của bài) | 0.590 | 0.292 | **2.02×** |
+| K=80 | 0.750 | 0.226 | 3.32× |
+
+Tại K=20, tỉ lệ **2.02** khớp gần như chính xác với dự đoán từ cấu trúc mạch: ZZFeatureMap có
+`C(n,2) ∝ n²` pha cặp, ZFeatureMap chỉ có `n` pha đơn — tỉ số bậc tăng là **2**.
+
+**Phải nói trung thực**: tại K=80 tỉ lệ là 3.32 chứ không phải 2. Nên lập luận đếm số hạng cho
+đúng **thứ tự** nhưng **không giải thích trọn vẹn tốc độ**. Ghi rõ cả hai, không chọn số đẹp.
+
+Audit hình: **39/39 PASS** (thêm một kiểm tra mới cho tỉ lệ số mũ).

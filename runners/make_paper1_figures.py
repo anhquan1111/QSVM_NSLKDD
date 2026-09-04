@@ -900,11 +900,15 @@ def figure12():
     # (b) do tap trung cua Gram: std cua phan ngoai duong cheo
     ax = axes[1]
     tidy(ax)
+    alpha = json.loads(
+        (ROOT / "results/nslkdd/c1_revision/c1_gram_concentration.json").read_text())
     for kern, colour, marker, label in (("ZZ", BLUE, "o", "ZZFeatureMap"),
                                         ("Z", VIOLET, "s", "ZFeatureMap")):
         g = conc[conc.kernel == kern].sort_values("n")
+        a = alpha["80"][kern]["alpha"]
         ax.plot(g.n, g.offdiag_std, color=colour, lw=2.0, marker=marker, ms=5.5,
-                mec=SURFACE, mew=0.8, zorder=6, label=label)
+                mec=SURFACE, mew=0.8, zorder=6,
+                label=f"{label}  ($\\alpha={a:.2f}$)")
     ax.axvline(8, color=INK_MUTED, lw=1.0, ls=(0, (4, 3)), zorder=2)
     ax.annotate("$n^{\\ast}=8$ at $K=80$", (8, ax.get_ylim()[1]),
                 xytext=(-6, -6), textcoords="offset points", ha="right",
