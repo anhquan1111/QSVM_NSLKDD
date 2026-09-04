@@ -22,3 +22,6 @@ docs/Thuyet minh de tai ma so T2026-02-10TN.docx
 # C4 revision: cache statevector/gram - KHONG commit (dung luong lon)
 results/nslkdd/c4_revision/cache/
 results/unsw/c4_revision/cache/
+# Bien the K/n (runners/run_c4.py --select-k): cache statevector cung rat lon
+results/*/c4_revision/variant_*/cache/
+
