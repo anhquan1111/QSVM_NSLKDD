@@ -19,7 +19,11 @@ docs/Thuyet minh de tai ma so T2026-02-10TN.docx
 /.claude
 /.jupyter_tmp
 
-# C4 revision: cache statevector/gram - KHONG commit (dung luong lon)
+# Cache statevector/gram - KHONG commit (dung luong lon, sinh lai duoc).
+# C3 bi sot: 340 file .npy = 1.7 GB, chiem 82% ca repo. Chi la cache tang toc
+# cho notebook (`if kernel_cache.exists() and not FORCE_RERUN`); ca 4 bo audit
+# chay binh thuong khi khong co no.
+results/*/c3_revision/cache/
 results/nslkdd/c4_revision/cache/
 results/unsw/c4_revision/cache/
 # Bien the K/n (runners/run_c4.py --select-k): cache statevector cung rat lon
