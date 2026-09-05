@@ -1,0 +1,18 @@
+% Sinh boi runners/make_paper1_figures.py; caption doi chieu bang
+% runners/audit_figures.py. File rieng cho tung hinh de \input DUNG CHO
+% trong than bai -- float cua LaTeX chi troi VE SAU, khai bao het o cuoi
+% tai lieu thi ca 9 hinh don xuong cuoi va tran vao danh muc tai lieu.
+
+\begin{figure*}[t]
+  \centering
+  \includegraphics[width=\textwidth]{figs_revision/fig4_selectkbest_sweep.pdf}
+  \caption{%
+    \textbf{The accuracy a larger feature budget buys is paid for in qubits.}
+    (a) Macro-$F_1$ of a proxy linear SVM against $K$, with and without the PCA
+    stage, under five-fold stratified cross-validation; SelectKBest is refit
+    inside each fold, so the curve carries no selection leakage. (b) The qubits
+    the rule requires at that $K$, annotated with the resulting two-qubit gate
+    count. $K=20$ is not the accuracy optimum; it is where the circuit is still
+    cheap.}
+  \label{fig:ksweep}
+\end{figure*}

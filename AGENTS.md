@@ -24,7 +24,7 @@ Pipeline chung:
 data/     { nslkdd/, unsw/ }   # raw + processed_data  (raw NSL-KDD bị gitignore, auto-download)
 models/   { nslkdd/, unsw/ }   # artifact: *.pkl, *.joblib, qsvm_cache/ (cache gitignore)
 results/  { nslkdd/, unsw/ }   # metric JSON/CSV + thư mục con c3_multirun/c4_multirun/c4_paper2
-reports/  { nslkdd/, unsw/ }   # hình PNG/PDF
+paper/paper1/figs_revision/   # hình của bản revision (reports/ cũ đã gỡ)
 notebooks/{ nslkdd/, unsw/ }   # thí nghiệm chính (executable chính của dự án)
 runners/                       # 6 script Paper 2 reliability (import src.reliability)
 src/                           # reliability.py (helper Paper 2) + __init__.py

@@ -1,0 +1,10 @@
+{
+  "subset": 40,
+  "n_qubits": 4,
+  "reps": 2,
+  "select_k": 20,
+  "shots": 1024,
+  "n_circuits": 780,
+  "seed": 42,
+  "dry_run": true
+}
