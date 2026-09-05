@@ -1,4 +1,4 @@
-"""Soat 12 hinh cua ban revision: so lieu co dung artifact khong, va co phai
+"""Soat 9 hinh cua ban revision: so lieu co dung artifact khong, va co phai
 hinh THAT sinh ra tu lan chay hay khong.
 
 Hai cau hoi tach bach:
@@ -7,8 +7,10 @@ Hai cau hoi tach bach:
    Neu mot hinh cu hon du lieu thi no la ban con sot lai, du noi dung co the
    trong giong het.
 2. **So lieu.** Tung con so ma hinh ve ra duoc doi chieu lai voi artifact goc.
-   Voi ba hinh so do (1-3) thi doi chieu cac HANG SO chung hien thi (so CNOT,
-   K, n*, so chieu, so run).
+
+Phep kiem xuat xu bao SKIP (khong phai FAIL) khi moi file deu sach so voi HEAD:
+git khong luu mtime, nen sau `git clone` thi mtime la thoi diem checkout va
+khong noi len dieu gi. Muon kiem that thi chay make_paper1_figures.py truoc.
 
 Chay:  python runners/audit_figures.py
 """
@@ -16,6 +18,7 @@ Chay:  python runners/audit_figures.py
 from __future__ import annotations
 
 import json
+import subprocess
 import sys
 from pathlib import Path
 
@@ -35,6 +38,19 @@ results: list[tuple[str, bool, str]] = []
 def check(name: str, ok: bool, detail: str = "") -> None:
     results.append((name, ok, detail))
     print(f"  [{'PASS' if ok else '**FAIL**'}] {name}" + (f"  --  {detail}" if detail else ""))
+
+
+skipped: list[tuple[str, str]] = []
+
+
+def skip(name: str, why: str) -> None:
+    """Khong ket luan duoc -- KHONG tinh la dat, cung khong tinh la truot.
+
+    Dem muc nay thanh FAIL la bao dong gia; dem thanh PASS la noi doi. Nen
+    tach ra mot nhom rieng va in ro so luong o cuoi.
+    """
+    skipped.append((name, why))
+    print(f"  [ SKIP ] {name}  --  {why}")
 
 
 def close(a, b, tol=5e-4) -> bool:
@@ -76,6 +92,22 @@ PROVENANCE = {
 }
 
 
+def _worktree_clean(rel_paths: list[str]) -> bool:
+    """Nhung file nay co dung y het ban da commit khong.
+
+    Git KHONG luu mtime. Sau `git clone` hay `git checkout`, mtime cua moi file
+    la thoi diem checkout, xep theo thu tu tuy y -- nen so sanh mtime luc do
+    khong noi len dieu gi. Neu ca hinh lan nguon deu sach so voi HEAD thi phep
+    kiem xuat xu bang mtime la VO NGHIA, phai bao SKIP chu khong duoc bao FAIL.
+    """
+    try:
+        r = subprocess.run(["git", "diff", "--quiet", "HEAD", "--", *rel_paths],
+                           cwd=ROOT, capture_output=True)
+        return r.returncode == 0
+    except Exception:            # khong co git -> khong ket luan duoc
+        return False
+
+
 def audit_provenance() -> None:
     print("\n" + "=" * 78)
     print("A. XUAT XU -- hinh co moi hon script va du lieu nguon khong")
@@ -91,6 +123,17 @@ def audit_provenance() -> None:
         s_path = ROOT / "runners" / script
         if s_path.exists() and s_path.stat().st_mtime > t_fig:
             newer.append(script)
+
+        if newer:
+            rel = [f"paper/paper1/figs_revision/{name}.pdf",
+                   f"paper/paper1/figs_revision/{name}.png",
+                   f"runners/{script}", *sources]
+            if _worktree_clean([p for p in rel if (ROOT / p).exists()]):
+                skip(f"{name}: xuat xu",
+                     "moi file deu sach so voi HEAD, nen mtime la cua lan "
+                     "checkout chu khong phai lan sinh hinh -- khong ket luan "
+                     "duoc. Chay make_paper1_figures.py neu muon kiem that.")
+                continue
         check(f"{name}: moi hon moi nguon", not newer,
               f"cu hon: {newer}" if newer else f"{pdf.stat().st_size // 1024} KB pdf")
 
@@ -100,7 +143,7 @@ def audit_provenance() -> None:
 # ---------------------------------------------------------------------------
 def audit_schematics() -> None:
     print("\n" + "=" * 78)
-    print("B1. HINH SO DO (1-3) -- doi chieu cac hang so hien thi")
+    print("B1. HANG SO DUNG TRONG BAI -- doi chieu voi code va du lieu")
     print("=" * 78)
     import c4_pipeline as c4
 
@@ -132,7 +175,7 @@ def audit_schematics() -> None:
 
 def audit_data_figures() -> None:
     print("\n" + "=" * 78)
-    print("B2. HINH CO DU LIEU (4-12) -- dung lai tung con so tu artifact")
+    print("B2. HINH CO DU LIEU -- dung lai tung con so tu artifact")
     print("=" * 78)
     from make_paper1_figures import NSL_C1
 
@@ -260,15 +303,23 @@ def audit_data_figures() -> None:
 
 
 if __name__ == "__main__":
-    print("SOAT 12 HINH CUA BAN REVISION")
+    print("SOAT 9 HINH CUA BAN REVISION")
     audit_provenance()
     audit_schematics()
     audit_data_figures()
     n_fail = sum(1 for _, ok, _ in results if not ok)
     print("\n" + "=" * 78)
-    print(f"TONG: {len(results) - n_fail}/{len(results)} PASS")
+    total = len(results) + len(skipped)
+    print(f"TONG: {len(results) - n_fail}/{len(results)} PASS"
+          + (f"  ({len(skipped)} SKIP)" if skipped else "")
+          + f"   -- {total} muc kiem")
     for name, ok, detail in results:
         if not ok:
             print(f"  - FAIL: {name}: {detail}")
-    print("=" * 78)
+    if skipped:
+        print("\n  Muc SKIP khong phai loi. Sau `git clone` hoac `git checkout`,"
+              "\n  mtime cua file la thoi diem checkout chu khong phai thoi diem"
+              "\n  sinh hinh, nen phep kiem xuat xu bang mtime khong ket luan"
+              "\n  duoc. Phan SO LIEU (muc B) van kiem day du, va do moi la phan"
+              "\n  xac nhan hinh ve dung so.")
     sys.exit(1 if n_fail else 0)
