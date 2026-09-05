@@ -143,6 +143,11 @@ Xem `paper/paper1/figs_revision/MANIFEST.md` để biết xuất xứ từng hì
 
 ---
 
+
+> **Về dung lượng.** Cache ma trận kernel (`results/*/c3_revision/cache/`,
+> `results/*/c4_revision/cache/`) **không** nằm trong repo — 1,7 GB và sinh lại được. Notebook
+> tự tính lại khi thiếu; bốn bộ kiểm ở trên chạy bình thường mà không cần chúng.
+
 ## Chạy lại
 
 ```bash
