@@ -436,7 +436,8 @@ def section_lemma() -> None:
     _, r2b = fit(4, 2, 1)
     check("r=2: dang hai so hang KHONG khop (0.60--0.94)",
           0.60 <= r2b <= 0.94
-          and says("*", "$R^{2}=0.60$ to\n$0.94$"), f"R^2 = {r2b:.4f}")
+          and (says("*", "$R^{2}=0.60$ to $0.94$")
+               or says("*", "$R^2=0.60$--$0.94$")), f"R^2 = {r2b:.4f}")
     check("erratum liet ke DU 4 muc",
           says("theory_revision.tex", "Four defects")
           and all(f"\\textbf{{({r})" in TEXT["theory_revision.tex"]

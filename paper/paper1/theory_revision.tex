@@ -74,20 +74,16 @@ $\Delta\varphi_{ij} := \varphi_{ij}(\bm{x}) - \varphi_{ij}(\bm{x}^{\prime})$.
 
 \begin{remark}[The expansion does not extend to $r\ge2$]
 \label{rem:reps}
-Eq.~\eqref{eq:expansion} is stated for a single repetition, and the restriction
-is not cosmetic. For $r\ge2$ the interleaved Hadamard layers make
-$U_{\Phi}(\bm{x}^{\prime})^{\dagger}U_{\Phi}(\bm{x})$ non-diagonal, and no pair
-of coefficients renders the two-invariant form correct: fitting
-$1-K^{\mathrm{Q}} = a\sum_i\Delta_i^2 + b\sum_{i<j}\Delta\varphi_{ij}^2$ by least
-squares around a fixed point at $r=2$ attains only $R^2=0.60$--$0.94$, with
-fitted coefficients that change sign between expansion points. The quantity
-$1-K^{\mathrm{Q}}$ remains a quadratic form in $\bm{x}-\bm{x}^{\prime}$ at every
-$r$ --- it is a Bures-type distance, and the full quadratic form fits to
-$R^2>0.999$ --- but at $r\ge2$ it is no longer expressible in these two
-invariants alone. Since the operating point of this study is $r=2$, we use
-Lemma~\ref{lem:expansion} for the structural reading below and not as a
-numerical statement about our kernels. The supporting computations are released
-as \texttt{runners/verify\_lemma1.py}.
+The restriction to one repetition is not cosmetic. For $r\ge2$ the interleaved
+Hadamard layers make $U_{\Phi}(\bm{x}^{\prime})^{\dagger}U_{\Phi}(\bm{x})$
+non-diagonal and no pair of coefficients renders the two-invariant form correct:
+a least-squares fit at $r=2$ attains only $R^2=0.60$--$0.94$, with coefficients
+that change sign between expansion points. The quantity $1-K^{\mathrm{Q}}$
+stays a quadratic form in $\bm{x}-\bm{x}^{\prime}$ at every $r$ (fitting to
+$R^2>0.999$) but is no longer expressible in these two invariants. Since our
+operating point is $r=2$, we use Lemma~\ref{lem:expansion} for the structural
+reading below and not as a numerical statement. See
+\texttt{runners/verify\_lemma1.py}.
 \end{remark}
 
 Lemma~\ref{lem:expansion} is retained because, unlike (F1)--(F3), it is specific
@@ -101,23 +97,12 @@ why SVM-\textsc{Poly2} is the sharpest classical comparator, and
 Sec.~\ref{sec:res-c2} confirms that it is. The proof is given in
 Appendix~\ref{app:lemma}.
 
-The factor $\tfrac{1}{4}$ is not a normalisation choice; it follows from the gate
-decomposition. A phase gate $P(2x_i)$ equals $\exp(-\mathrm{i}x_i Z_i)$ up to
-global phase, so the single-qubit generator carries weight $x_i$ rather than
-$2x_i$, whereas the
-$\mathrm{CNOT}$--$R_Z(\varphi_{ij})$--$\mathrm{CNOT}$ trio realises
-$\exp(-\mathrm{i}\tfrac{\varphi_{ij}}{2}Z_iZ_j)$ and so carries weight
-$\varphi_{ij}/2$. Squaring gives $1$ and $\tfrac{1}{4}$. The pairwise term is
-therefore \emph{suppressed} relative to the single-qubit term at fixed phase
-magnitude, which is worth keeping in mind when reading the entanglement ablation
-of Sec.~\ref{sec:res-c2}: the entangling layer changes the kernel's geometry
-substantially (Fig.~\ref{fig:ablation}) despite entering the local expansion
-with the smaller weight.
-
 % ---------------------------------------------------------------------
 % III-C  Luat chon so chieu -- THAY HAN cho Pareto + J(n) + Theorem 1
 % ---------------------------------------------------------------------
 \subsection{C1: A Three-Stage Rule for the Embedding Dimension}
+
+\input{figs_revision/fig_c1_selection}
 
 The submitted version selected $n$ by Pareto filtering followed by a weighted
 scalarisation $J(n) = \alpha V(n) + \beta\widetilde{F}(n) - \gamma Q(n)$. That
@@ -184,51 +169,31 @@ paired differences.
 \subsection{Corrections to the Submitted Version}
 \label{sec:erratum}
 
-Four defects in the submitted theory section are corrected here. We state them
-explicitly because three of them affect a claim and not merely its presentation.
-Two were identified by reviewers; two we found ourselves while preparing this
-revision, and we report those on the same footing.
+Four defects in the submitted theory section are corrected here; two were
+identified by reviewers and two we found ourselves, and we report them on the
+same footing. The accompanying letter gives the full derivations.
 
 \textbf{(i) Theorem~1 was false.} Its proof asserted
 $\widetilde{F}(4) > \widetilde{F}(3)$, whereas Table~III of the same submission
-reports $\widetilde{F}(4)=0.471 < \widetilde{F}(3)=0.628$. With the correct
-values the stated conclusion does not follow: at $\alpha=\beta=\gamma=1/3$ the
-objective is maximised at $n=2$ $(J=0.551)$ and decreases monotonically to
-$J=0.059$ at $n=10$, so $n=4$ is not a maximiser of $J$ for any weight triple in
-the range the theorem claims. We thank the reviewer for identifying this.
-Theorem~1 and the objective $J$ have been removed rather than repaired, because
-the second defect shows that the underlying construction was not doing the work
-attributed to it.
+reports $0.471 < 0.628$. With the correct values the objective is maximised at
+$n=2$ $(J=0.551)$, not at $n=4$. We thank the reviewer for identifying this.
 
-\textbf{(ii) The Pareto stage filtered nothing.} On this data $V(n)$ increases
-monotonically while $\widetilde{F}(n)$ decreases and $Q(n)$ increases, so no
-candidate dominates any other and every candidate is Pareto-optimal. Presenting
-Pareto membership as a selection step was therefore misleading, and the frontier
-figure has been replaced by Fig.~\ref{fig:c1-selection}, which shows the three
-stages that do the selecting.
+\textbf{(ii) The Pareto stage filtered nothing.} $V(n)$ increases monotonically
+while $\widetilde{F}(n)$ decreases and $Q(n)$ increases, so every candidate is
+Pareto-optimal. Theorem~1 and $J$ are removed rather than repaired, because this
+second defect shows the construction was not doing the work attributed to it.
 
 \textbf{(iii) The former Proposition~2 had incorrect coefficients.} It asserted
-the expansion
-$K^{\mathrm{Q}} = 1 - r^{2}\sum_i\Delta_i^2 -
-r^{2}\sum_{i<j}\Delta\varphi_{ij}^2 + O(\|\cdot\|^4)$
-for all $r$. Two things are wrong with it. The coefficients are not equal: the
-correct weights are $1$ and $\tfrac{1}{4}$, as Lemma~\ref{lem:expansion} states
-and as the gate decomposition explains. And the $r^{2}$ prefactor does not hold
-at all --- for $r\ge2$ no coefficient pair makes the two-invariant form correct
-(Remark~\ref{rem:reps}). Numerically the difference is not marginal: with the
-submitted coefficients the residual decays only as $\|\cdot\|^{2}$ rather than
-$\|\cdot\|^{4}$, so the claimed second-order accuracy is not attained, while the
-corrected form at $r=1$ has residual $5\times10^{-11}$ at
-$\|\bm{x}-\bm{x}^{\prime}\|=10^{-3}$. No reviewer raised this. We found it while
-transcribing the proof into the appendix, and we report it because the
-proposition is the one theoretical statement this paper retains; the substantive
-consequence drawn from it --- that SVM-\textsc{Poly2} is the sharpest classical
-comparator --- is unaffected, since it depends on which monomials appear and not
-on their coefficients.
+the expansion with $r^{2}$ on both sums. The correct weights are $1$ and
+$\tfrac{1}{4}$ (Lemma~\ref{lem:expansion}), and the $r^{2}$ prefactor does not hold
+at all for $r\ge2$ (Remark~\ref{rem:reps}). The difference is not marginal: with
+the submitted coefficients the residual decays as $\|\cdot\|^{2}$ rather than
+$\|\cdot\|^{4}$, so the claimed second-order accuracy is not attained. No reviewer
+raised this; we found it while transcribing the proof. The consequence drawn
+from it --- that SVM-\textsc{Poly2} is the sharpest classical comparator --- is
+unaffected, depending on which monomials appear and not on their coefficients.
 
 \textbf{(iv) Table~III mislabelled its third column.} The caption defined
 $\widetilde{F}(n)=1/\mathrm{DBI}(n)$, but the tabulated values are the ANOVA
-$F$~statistic; the inverse Davies--Bouldin index takes the values
-$1.143$, $0.982$ and $0.922$ at $n=2,3,4$. No reviewer raised this, and no
-conclusion in the revision depends on it since the quantity has been dropped
+$F$~statistic. No conclusion depends on it, the quantity having been dropped
 along with $J$, but we record it for completeness.

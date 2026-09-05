@@ -30,6 +30,35 @@
 
 \graphicspath{{./}}
 
+% =====================================================================
+%  Tham so dat float. Mac dinh cua LaTeX chi cho float chiem <=70% dinh
+%  trang va bat chua >=20% chu, nen hinh rong ca trang gan nhu luon bi day
+%  di cho khac; day du xa thi no roi xuong cuoi bai va xen vao danh muc tai
+%  lieu. Noi rong ra thi hinh dat duoc ngay trang no duoc nhac toi.
+% =====================================================================
+\setcounter{topnumber}{2}
+\setcounter{bottomnumber}{1}
+\setcounter{totalnumber}{3}
+\setcounter{dbltopnumber}{2}
+\renewcommand{\topfraction}{0.92}
+\renewcommand{\bottomfraction}{0.5}
+\renewcommand{\textfraction}{0.07}
+\renewcommand{\floatpagefraction}{0.80}
+\renewcommand{\dbltopfraction}{0.92}
+\renewcommand{\dblfloatpagefraction}{0.80}
+
+% Trang chi co float: mac dinh LaTeX can giua theo chieu doc, nen hai hinh
+% bi keo xa nhau bang mot khoang trang lon. Ep can tren, khoang cach co
+% dinh, phan du don xuong duoi.
+\makeatletter
+\setlength{\@fptop}{0pt}
+\setlength{\@fpsep}{10pt plus 1fil}
+\setlength{\@fpbot}{0pt plus 2fil}
+\setlength{\@dblfptop}{0pt}
+\setlength{\@dblfpsep}{10pt plus 1fil}
+\setlength{\@dblfpbot}{0pt plus 2fil}
+\makeatother
+
 % Moi truong dinh ly. Ban da nop dung Proposition cho ca nhung su that hien
 % nhien; ban nay chi con Lemma (dan xuat rieng cua bai) va Definition.
 \newtheorem{definition}{Definition}
@@ -121,8 +150,7 @@ concentration, sample complexity, class-prior shift.
 % =====================================================================
 \section{Background and Related Work}
 \label{sec:related}
-\input{sections/02_background}          % gom Background facts + Lemma 1
-\input{novelty_matrix}                  % Table: dinh vi vs 5 bai benchmark
+\input{sections/02_background}          % gom Background + bang dinh vi
 
 % =====================================================================
 \section{NISQ-Aware QSVM Framework}
@@ -139,7 +167,6 @@ concentration, sample complexity, class-prior shift.
 \section{Results}
 \label{sec:results}
 \input{sections/05_results}
-\input{crossover_arms_table}            % Table: crossover ben qua hai arm
 
 % =====================================================================
 \section{Regime Map: When to Use \QSVM{}}
@@ -168,11 +195,11 @@ University for computing resources, and the maintainers of Qiskit and
 scikit-learn.
 
 % =====================================================================
-%  Hinh: 12 hinh, sinh boi runners/make_paper1_figures.py va
-%  make_paper1_schematics.py. Xuat xu tung hinh o figs_revision/MANIFEST.md.
+%  Danh muc tai lieu. \clearpage o day de day het float con ton dong ra
+%  TRUOC khi bat dau phan tai lieu -- neu khong, LaTeX se in hinh xen ke
+%  vao giua cac muc tai lieu, dung nhu ban compile dau tien bi.
 % =====================================================================
-\input{figs_revision/captions}
-
+\clearpage
 % =====================================================================
 \input{bibliography_revision}           % 35 muc; xem ghi chu trong file
 

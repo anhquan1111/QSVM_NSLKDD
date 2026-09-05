@@ -15,6 +15,8 @@
 \subsection{Choosing the embedding size, and what it costs}
 \label{sec:res-c1}
 
+\input{figs_revision/fig_ksweep}
+
 The feature budget $K$ and the qubit count $n$ are not independent, and the
 selection rule makes the coupling explicit.
 
@@ -45,6 +47,9 @@ is actually paid.
 \subsection{Does entanglement help at the operating point?}
 \label{sec:res-c2}
 
+\input{figs_revision/fig_ablation}
+\input{figs_revision/fig_perrun}
+
 At $n^\ast=4$ we compare \QSVM{} against an otherwise identical circuit with the
 entangling layer removed, and against five classical baselines
 (Fig.~\ref{fig:perrun}). The answer splits by what is measured.
@@ -74,6 +79,8 @@ noise helping.
 
 \subsection{Distribution shift}
 \label{sec:res-c3}
+
+\input{figs_revision/fig_priorshift}
 
 Four shifts are applied to a fixed operating point (Fig.~\ref{fig:priorshift}).
 
@@ -106,6 +113,10 @@ present it as such.
 
 \subsection{Sample complexity: an ordering that reverses}
 \label{sec:res-c4}
+
+\input{crossover_arms_table}
+
+\input{figs_revision/fig_learning_curve}
 
 The submitted version claimed an advantage in the low-data regime from a sweep
 that stopped at $N=1000$. Extending it to $N=10^4$ under the natural class prior
@@ -166,6 +177,8 @@ metric was computed by the code that produced it, and we withdraw the number.
 \subsection{Transfer to UNSW-NB15}
 \label{sec:res-unsw}
 
+\input{figs_revision/fig_unsw_transfer}
+
 The selection rule is applied to UNSW-NB15 without changing a threshold or a
 constant (Fig.~\ref{fig:c1-selection}(b)). It returns $n^\ast=6$, at $V=0.9044$,
 $\mathrm{KTA}=0.1986$ and $60$ two-qubit gates. Re-running it on ten
@@ -184,6 +197,8 @@ one dataset and not the other is reported as exactly that.
 
 \subsection{Where the kernel breaks, and why}
 \label{sec:res-width}
+
+\input{figs_revision/fig_width}
 
 Sec.~\ref{sec:res-c1} showed that a larger feature budget forces a wider
 circuit. Paying that price is the sharpest test of whether the quantum kernel

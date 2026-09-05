@@ -65,26 +65,15 @@ the cubic term contributes only at fourth order after squaring, which is why the
 remainder is $O(\|\bm{\Delta}\|^{4})$ and not $O(\|\bm{\Delta}\|^{3})$.
 \hfill$\blacksquare$
 
-\subsection*{Why the argument stops at $r=1$}
-
-The step that fails for $r\ge2$ is the first one. With $r$ repetitions the
-operator of interest is
-$\bigl[U_{\Phi}(\bm{x}^{\prime})H^{\otimes n}\bigr]^{-r}
- \bigl[U_{\Phi}(\bm{x})H^{\otimes n}\bigr]^{r}$,
-in which Hadamard layers separate the diagonal factors; the product is no longer
-diagonal and Eq.~\eqref{eq:expectation} does not apply. One may still expand ---
-$1-K^{\mathrm{Q}}$ is a quadratic form in $\bm{\Delta}$ for every $r$, being a
-Bures-type distance --- but its matrix depends on the expansion point and does
-not reduce to the two invariants of Eq.~\eqref{eq:expansion}.
-
-We verified both halves of this numerically against the exact statevector
-kernel, itself checked against Qiskit to within $1.3\times10^{-15}$. At $r=1$ a
-least-squares fit of $1-K^{\mathrm{Q}} = a\sum_i\Delta_i^2 +
-b\sum_{i<j}\Delta\varphi_{ij}^2$ recovers $a=1.000$ and $b=0.250$ with
-$R^{2}=1.000000$ at $n=3,4,6$, and the residual of Eq.~\eqref{eq:expansion}
-decays as $\|\bm{\Delta}\|^{3.9}$, reaching $5\times10^{-11}$ at
-$\|\bm{\Delta}\|=10^{-3}$. At $r=2$ the same fit attains only $R^{2}=0.60$ to
-$0.94$ depending on the expansion point, with fitted coefficients that change
-sign between points, while the unrestricted quadratic form still attains
-$R^{2}=0.999996$. The script is released as
+The step that fails for $r\ge2$ is the first: with $r$ repetitions the
+Hadamard layers separate the diagonal factors, the product is no longer
+diagonal, and Eq.~\eqref{eq:expectation} does not apply
+(Remark~\ref{rem:reps}). Against the exact statevector kernel, itself checked
+against Qiskit to within $1.3\times10^{-15}$, a least-squares fit of
+$1-K^{\mathrm{Q}} = a\sum_i\Delta_i^2 + b\sum_{i<j}\Delta\varphi_{ij}^2$ at
+$r=1$ recovers $a=1.000$ and $b=0.250$ with $R^{2}=1.000000$ at $n=3,4,6$, and
+the residual of Eq.~\eqref{eq:expansion} decays as $\|\bm{\Delta}\|^{3.9}$,
+reaching $5\times10^{-11}$ at $\|\bm{\Delta}\|=10^{-3}$. At $r=2$ the same fit
+attains only $R^{2}=0.60$ to $0.94$ while the unrestricted quadratic form still
+attains $R^{2}=0.999996$. The script is released as
 \texttt{runners/verify\_lemma1.py}.
