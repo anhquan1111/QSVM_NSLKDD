@@ -1,80 +1,163 @@
-# QSVM-IDS NISQ — Quantum Kernel SVM for Network Intrusion Detection
+# QSVM-IDS NISQ — Quantum Kernel SVM cho phát hiện xâm nhập mạng
 
-Khung khoa học áp dụng **Quantum Support Vector Machine (QSVM)** với **ZZ-FeatureMap** cho
-phát hiện xâm nhập mạng, dưới ràng buộc **NISQ** (4 qubit). Mục tiêu: giải thích *khi nào* và
-*vì sao* quantum kernel có lợi — và *liệu dự đoán có đáng tin* khi triển khai.
+Khung thực nghiệm áp dụng **Quantum Support Vector Machine** với **ZZ-FeatureMap** cho phát
+hiện xâm nhập mạng, dưới ràng buộc phần cứng **NISQ**. Câu hỏi của đề tài không phải *"quantum
+có thắng không"* mà ***"thắng ở đâu, và có đáng cái giá của nó không"***.
 
 ```
-NSL-KDD (41 ft) → One-Hot (122D) → SelectKBest (20) → PCA (4D)
-                → MinMax [0, π] → ZZ-FeatureMap (4 qubit, reps=2, full) → SVM
+NSL-KDD (41 đặc trưng) → One-Hot (122D) → SelectKBest (K=20) → PCA (n*=4)
+   → MinMax [0, π] → ZZ-FeatureMap (4 qubit, r=2, full entanglement) → SVC (nhân đã tính sẵn)
 ```
 
-## Hai bài báo đồng hành
+---
 
-| | Trọng tâm | Câu hỏi | Trạng thái |
-|---|---|---|---|
-| **Paper 1** | Hiệu năng | *Khi nào QSVM thắng SVM cổ điển?* | Major revision @ IEEE TETC — xem [docs/PAPER1_overview.md](docs/PAPER1_overview.md) |
-| **Paper 2** | Độ tin cậy | *Xác suất cảnh báo của QSVM có đáng tin không?* | Đã nộp @ IJNM (Wiley Q2) — xem [docs/PAPER2_overview.md](docs/PAPER2_overview.md) |
+## Bắt đầu từ đâu
 
-Nội dung `paper/paper1/` (TETC) và `paper/paper2/` (bản reliability đã nộp IJNM).
+| Muốn biết | Đọc file này |
+|---|---|
+| Bản revision đã làm gì, còn gì phải làm | **[docs/REVISION_REPORT.md](docs/REVISION_REPORT.md)** ← *bắt đầu ở đây* |
+| Reviewer yêu cầu những gì | [docs/Review.md](docs/Review.md) — nguyên văn thư quyết định |
+| Bản thảo đang viết tới đâu | [paper/paper1/main_revision.tex](paper/paper1/main_revision.tex) |
+| Thư trả lời từng ý reviewer | [paper/paper1/response_letter.tex](paper/paper1/response_letter.tex) |
+| Paper 2 (đã nộp IJNM) | [docs/PAPER2_overview.md](docs/PAPER2_overview.md) |
 
-## Hai dataset
-| Dataset | Vai trò | Notebooks |
+Bản PDF đã compile để trong `paper/paper1/overleaf/`.
+
+---
+
+## Kiểm chứng — chạy được ngay, không cần chạy lại thí nghiệm
+
+Đây là phần đáng xem nhất của repo. Bốn bộ kiểm tự động **tính lại từ dữ liệu thô** và đối
+chiếu với mọi con số đã viết trong bài:
+
+```bash
+python runners/audit_c4.py        # 100/100  mọi thống kê công bố
+python runners/audit_figures.py   #  36/36   mọi con số trên hình
+python runners/audit_prose.py     # 115/115  mọi con số viết trong câu văn
+python runners/verify_lemma1.py   #  15/15   khai triển bậc hai của nhân ZZ
+python runners/check_latex.py     #          cấu trúc file .tex
+```
+
+Nguyên tắc thiết kế đáng lưu ý: **`audit_c4.py` không gọi lại hàm thống kê của
+`src/c4_pipeline.py`** — nó viết lại từ đầu bằng `scipy` rồi so kết quả. Dùng chính code đã
+sinh ra một con số để kiểm con số đó thì lỗi chung sẽ lọt qua cả hai lần.
+
+Bốn bộ kiểm này đã **bắt được 4 lỗi thật trong chính code revision** trước khi công bố, trong
+đó một lỗi làm `n*` ra 5 thay vì 4.
+
+---
+
+## Bản revision đã thay đổi những gì
+
+Chạy lại toàn bộ dưới giao thức đã sửa — **10 run thay vì 5, tune đối xứng cho cả mô hình
+lượng tử lẫn cổ điển, thêm Random Forest và XGBoost, báo cáo trên toàn bộ KDDTest⁺** — cho
+thấy **năm khẳng định của bản đã nộp không đứng vững**:
+
+| Bản đã nộp | Số đo được |
+|---|---|
+| Lợi thế ở chế độ ít dữ liệu | **Ngược lại** — cổ điển thắng ở N nhỏ |
+| "+6.7 điểm rare-attack, d = +0.68" | **Không tái tạo được** |
+| Theorem 1: n\* = 4 cực đại hoá J | **Sai** — J cực đại tại n = 2 |
+| QSVM 0.854 > SVM-RBF 0.838 | **XGBoost 0.8503 > QSVM 0.8469** |
+| "Quantum advantage is real" | **21 thắng / 21 thua / 68 hoà** trên 110 so sánh |
+
+Ba kết quả mới thay vào chỗ đó:
+
+1. **Thứ tự đảo chiều theo lượng dữ liệu** — QSVM gần chót ở N = 100, dẫn đầu ở N = 10⁴, đổi
+   dấu trong khoảng N = 2000–5000, bền qua **6/6** tổ hợp baseline × cách tune.
+2. **Luật chọn số chiều chuyển giao được** — cùng một luật, không sửa tham số: `n* = 4` trên
+   NSL-KDD, `n* = 6` trên UNSW-NB15, lặp lại đúng trên 10/10 tập con.
+3. **Ranh giới đo được kèm cơ chế** — mở rộng mạch lên 8 qubit thì **48/48 so sánh nghiêng về
+   cổ điển**; độ trải ma trận Gram giảm nhanh gấp đôi cho nhân ZZ (đúng tỉ lệ cấu trúc mạch dự
+   đoán) và **dự đoán được** macro-F1 (r = +0.77).
+
+Chi tiết đầy đủ, kèm đối soát 33 ý của reviewer: **[docs/REVISION_REPORT.md](docs/REVISION_REPORT.md)**.
+
+---
+
+## Cấu trúc repo
+
+```
+src/c4_pipeline.py        Lõi: nhân lượng tử, biểu diễn, giao thức lấy mẫu, thống kê
+src/reliability.py        Lõi Paper 2 (calibration)
+
+runners/                  Script chạy được, mỗi cái một việc
+  ├── audit_*.py          4 bộ kiểm độc lập  ← xem phần trên
+  ├── verify_lemma1.py    Kiểm số cho Lemma 1
+  ├── check_latex.py      Kiểm cấu trúc .tex khi máy không có LaTeX
+  ├── run_c4.py           Quét kích thước tập huấn luyện (kết quả chính)
+  ├── run_c1_ksens.py     Luật chọn số chiều theo K
+  ├── run_ksweep.py       Quét ngân sách đặc trưng K
+  ├── run_width_sweep.py  Quét bề rộng mạch
+  ├── run_gram_concentration.py   Đo độ tập trung ma trận Gram
+  ├── run_hardware_kernel.py      Chạy trên QPU thật (đã thử --dry-run)
+  ├── make_paper1_figures.py      Sinh 9 hình của bài
+  └── make_overleaf_zip.py        Đóng gói bản thảo để tải lên Overleaf
+
+configs/c4_protocol.json  Giao thức đã đóng băng: seed, lưới N, quy tắc lồng nhau
+config.py                 Đường dẫn trung tâm
+
+notebooks/nslkdd/         C1..C4_revision.ipynb là bản đang dùng
+notebooks/unsw/           Chuyển giao sang UNSW-NB15
+
+data/     { nslkdd/, unsw/ }   dữ liệu thô + đã tiền xử lý
+models/   { nslkdd/, unsw/ }   transformer đã fit (joblib) + ma trận Gram (npy)
+results/  { nslkdd/, unsw/ }   artifact JSON/CSV  ← nguồn của mọi con số trong bài
+
+paper/paper1/             Bản thảo revision + thư phản hồi + 9 hình
+paper/paper2/             Paper 2, đã nộp IJNM
+docs/                     Báo cáo revision, thư reviewer, tổng quan Paper 2
+```
+
+### Đọc kết quả ở đâu
+
+Mọi con số trong bài đều truy được về `results/`:
+
+| Kết quả | File |
+|---|---|
+| Bản đồ chế độ 110 ô | `results/nslkdd/regime_map_rows.csv` |
+| Quét kích thước tập huấn luyện | `results/nslkdd/c4_revision/c4_pairwise_statistics_natural.csv` |
+| Biến thể K=80 / n=8 | `results/nslkdd/c4_revision/variant_K80n8/` |
+| Luật chọn số chiều | `results/nslkdd/c1_revision/c1_ksensitivity.json` |
+| Độ tập trung Gram | `results/nslkdd/c1_revision/c1_gram_concentration.json` |
+| Chuyển giao UNSW | `results/unsw/c4_revision/` |
+
+---
+
+## ⛔ Hình nào KHÔNG được dùng
+
+Chỉ hình trong **`paper/paper1/figs_revision/`** là của bản revision.
+
+Hình nằm trong `results/*/c3_multirun/`, `results/*/c4_multirun/`,
+`data/*/processed_data/` đều là **của code cũ** — 5 seed, tune bất đối xứng, chưa có
+RF/XGBoost — và **mâu thuẫn với bài**. Thư mục `reports/` chứa 96 hình loại này đã được **gỡ
+khỏi repo** vì lý do đó; nếu cần tra cứu thì lấy trong lịch sử git.
+
+Xem `paper/paper1/figs_revision/MANIFEST.md` để biết xuất xứ từng hình.
+
+---
+
+## Chạy lại
+
+```bash
+uv sync                              # hoặc: pip install -e .
+python runners/run_c4.py             # kết quả chính (~vài giờ)
+python runners/make_paper1_figures.py
+python runners/audit_c4.py           # xác nhận kết quả khớp
+```
+
+Nhân lượng tử được tính bằng **statevector chính xác**, không lấy mẫu. Vì ZZ-FeatureMap chéo
+hoá sau mỗi lớp Hadamard nên trạng thái có dạng đóng, không cần mô phỏng từng cổng — nhanh hơn
+Qiskit vài trăm lần và đã đối chiếu khớp tới `1.3e-15`. Nhiễu và sai số lấy mẫu hữu hạn được
+áp **riêng** như hai điều kiện khảo sát, không trộn vào kết quả chính.
+
+Môi trường: NumPy 2.4 · SciPy 1.17 · scikit-learn 1.8 · XGBoost 3.3 · Qiskit 2.3.
+
+---
+
+## Hai bài báo
+
+| | Trọng tâm | Trạng thái |
 |---|---|---|
-| **NSL-KDD** | Benchmark chính (cả 2 paper) | `notebooks/nslkdd/` |
-| **UNSW-NB15** | Kiểm chứng cross-dataset | `notebooks/unsw/` |
-
-## Cấu trúc thư mục (theo dataset)
-```
-data/     { nslkdd/, unsw/ }   raw + processed_data
-models/   { nslkdd/, unsw/ }   artifact (pkl/joblib/qsvm_cache)
-results/  { nslkdd/, unsw/ }   metric JSON/CSV
-reports/  { nslkdd/, unsw/ }   hình PNG/PDF
-notebooks/{ nslkdd/, unsw/ }   thí nghiệm
-runners/     script Paper 2 reliability
-src/         reliability.py (helper Paper 2)
-scripts/     tiện ích (check_notebook, extract_results, read_docx)
-docs/        tài liệu (2 overview, revision plan, ...)
-paper/    { paper1/, paper2/ }
-config.py    đường dẫn trung tâm (dùng biến NSLKDD_*/UNSW_*)
-```
-
-## Notebooks NSL-KDD (`notebooks/nslkdd/`)
-Chạy top-to-bottom: `preprocess` → `selectkbest_nslkdd` (C1) → `pca` (C1) →
-`c2_quantum_kernel_expressibility` → `c2_5_fidelity_vs_statevector_kernel_fixed` →
-`c3_c_tuning_statevector` → `c3_kernel_geometry_statevector_multirun` →
-`c4_robustness_distribution_shift_multirun_fixed` → `c5_confidence_calibration_multirun` →
-`c6_learning_curve_sample_complexity` → `c4_paper2_reliability_complete_fixed` (Paper 2).
-
-## Notebooks UNSW-NB15 (`notebooks/unsw/`)
-`preprocess` → `selectkbest_unsw` → `pca_unsw` → `c_tuning_statevector` →
-`c1_dimreduction_multirun` → `c2_quantum_kernel_expressibility` →
-`c3_kernel_geometry_multirun_statevector(_C1)` → `c4_robustness_multirun(_C1)` →
-`c5_confidence_calibration_multirun`.
-> Kết quả UNSW: QSVM **competitive, không dominant** — lợi thế NSL-KDD phụ thuộc regime/dataset.
-
-## Setup (uv)
-```bash
-uv sync                 # tạo .venv + cài theo uv.lock (nhanh)
-uv run jupyter notebook # chạy notebook trong env
-```
-Dự án dùng **uv** (`pyproject.toml` + `uv.lock`). Thêm gói: `uv add <pkg>`.
-
-## Tái lập Paper 2 (reliability)
-```bash
-python runners/run_reliability_verify.py      # rare-attack calibration
-python runners/run_reliability_recompute.py   # prior-shift + low-data + Platt
-python runners/run_reliability_temporal.py    # temporal (KDDTest-21)
-python runners/run_reliability_figures.py      # hình + Cohen's d
-```
-Build PDF: upload `paper/paper1/` hoặc `paper/paper2/` lên [Overleaf](https://overleaf.com) (pdfLaTeX).
-
-## Ràng buộc chính
-- **Zero-leakage:** transformer `fit()` train, `transform()` test.
-- **Phần cứng:** cố định 4 feature = 4 qubit.
-- **Thống kê:** multi-run (5 seed), mean ± std, McNemar + Cohen's d.
-- **Code:** định danh tiếng Anh (PEP 8), comment tiếng Việt, `encoding='utf-8'` mọi file I/O (xem [AGENTS.md](AGENTS.md)).
-
-## Dependencies
-`numpy` · `pandas` · `scikit-learn` · `qiskit` 2.3 · `qiskit-machine-learning` 0.9 ·
-`xgboost` · `scipy` · `matplotlib` · `seaborn` · `joblib`
+| **Paper 1** | *Quantum kernel đáng giá ở chế độ nào?* | Major revision @ IEEE TETC, hạn 13-10-2026 |
+| **Paper 2** | *Xác suất cảnh báo của QSVM có đáng tin không?* | Đã nộp @ IJNM (Wiley Q2), 04-08-2026 |

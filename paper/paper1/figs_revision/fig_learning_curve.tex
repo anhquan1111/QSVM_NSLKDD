@@ -1,0 +1,17 @@
+% Sinh boi runners/make_paper1_figures.py; caption doi chieu bang
+% runners/audit_figures.py. File rieng cho tung hinh de \input DUNG CHO
+% trong than bai -- float cua LaTeX chi troi VE SAU, khai bao het o cuoi
+% tai lieu thi ca 9 hinh don xuong cuoi va tran vao danh muc tai lieu.
+
+\begin{figure*}[t]
+  \centering
+  \includegraphics[width=\textwidth]{figs_revision/fig9_learning_curve_nslkdd.pdf}
+  \caption{%
+    \textbf{Rare-attack enrichment, not sample size alone, decides whether the
+    quantum kernel leads on NSL-KDD.} (a,~b) Mean macro-$F_1$ over ten runs on
+    the full KDDTest+ set with $95\%$ bands; (c,~d) paired differences against
+    each baseline, circled where the Holm-adjusted $p<0.05$. Under the natural
+    prior the ordering reverses between $N=2000$ and $N=5000$ (band in c).
+    Twelvefold rare enrichment removes the reversal (d).}
+  \label{fig:learning-curve}
+\end{figure*}

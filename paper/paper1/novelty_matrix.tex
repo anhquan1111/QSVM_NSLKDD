@@ -1,0 +1,37 @@
+% =====================================================================
+%  Novelty matrix -- tra loi R3-1 / R3-5 va R1 (literature 2025-2026)
+%  Moi o deu lay tu abstract / toan van cua bai duoc trich; o nao chua
+%  kiem chung duoc thi de "n/r" chu KHONG doan.
+% =====================================================================
+\begin{table*}[t]
+\centering
+\caption{Positioning against the closest benchmarking studies. Columns are the
+works the reviewers pointed us to, plus the closest concurrent QML-IDS
+benchmark. Every cell was read from the full text of the cited work, except
+Carducci (2026), which we could not obtain and which is therefore discussed in
+the text but not tabulated; ``n/r'' means the item is not reported by that work
+at all. The last three rows are the axes on which this work is not duplicated;
+the rows above them are where we are comparable or weaker.}
+\label{tab:novelty}
+\footnotesize
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{@{}l p{2.05cm} p{2.05cm} p{2.05cm} p{2.35cm} p{2.6cm}@{}}
+\toprule
+ & \textbf{Bowles et al.\ \cite{bowles2024}} & \textbf{Schnabel \& Roth \cite{schnabel2024}} & \textbf{Cirillo et al.\ \cite{qmi2026}} & \textbf{Gillani et al.\ \cite{gillani2026}} & \textbf{This work} \\
+\midrule
+Domain          & general QML        & general QKM        & network IDS        & network IDS        & network IDS \\
+Datasets        & 6 tasks / 160 sets & 5 families / 64 sets & NSL-KDD, ToN\_IoT & NSL-KDD, UNSW-NB15, CICIDS2017, NF-ToN-IoT-v2 & NSL-KDD, UNSW-NB15 \\
+Test split      & synthetic splits   & fixed 240/60       & random 80/20 on a 15\% class-balanced subsample & official splits    & official splits \\
+Quantum model   & 12 QML models      & FQK, PQK           & Pegasos-QSVC, VQC, HQNN & hybrid VQC, IQP fidelity \& projected kernels & ZZ / Z fidelity kernels \\
+Qubits          & up to 18           & up to 15 ($=$ features) & 2--10 swept, best 7 & 8 (abl.\ 4/6/12)   & 4 (NSL), 6 (UNSW), \emph{selected by rule} \\
+RF + XGBoost baselines & no          & no                 & yes                & yes                & yes \\
+Repeats         & n/r                & $>$20{,}000 models (HPO) & 4 seeds      & 3--5 seeds         & 10 runs \\
+Multiplicity control & n/r           & correlation analysis & none (mean $\pm$ sd) & BH--FDR over 108 comparisons & Holm within baseline family \\
+Noise model     & noise-free         & noise-free         & ideal + noisy simulator & NISQ noise sweep & ideal, finite-shot, noisy simulator \\
+\midrule
+\textbf{Training-set size swept} & no & no                & no                 & \textbf{no} (width ablation only) & \textbf{yes}, $N{=}10^2$--$10^4$ \\
+\textbf{Regime decomposition} & aggregate ranking & aggregate correlations & $F_1$ vs.\ CNOT count & per-dataset verdict & \textbf{110 verdicts} over prior, composition, shift, size \\
+\textbf{Selection rule transferred} & --- & --- & ---           & ---                & \textbf{yes}: $n^\ast{=}4\!\to\!6$ unchanged \\
+\bottomrule
+\end{tabular}
+\end{table*}

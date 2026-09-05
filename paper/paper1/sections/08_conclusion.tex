@@ -1,0 +1,54 @@
+% =====================================================================
+%  VIII. Conclusion
+%
+%  Khong duoc ket bang "ket qua hua hen". Ket bang cai ta do duoc va cai
+%  ta khong do duoc. Cau cuoi cung phai la mot cau kiem chung duoc.
+% =====================================================================
+
+We set out to locate, rather than to demonstrate, the value of a NISQ-feasible
+quantum kernel for network intrusion detection. Varying one factor at a time
+over $110$ controlled comparisons, we find $21$ verdicts favouring the quantum
+kernel, $21$ favouring a classical baseline, and $68$ inconclusive --- and a
+structure inside that balance that a single-operating-point benchmark cannot
+see.
+
+The structure has three parts. The ordering between \QSVM{} and every strong
+classical baseline reverses between $N=2000$ and $N=5000$ under the natural class
+prior, in both tuning arms, and disappears when rare attacks are enriched. A
+lexicographic selection rule that charges for two-qubit gates returns
+$n^{\ast}=4$ on NSL-KDD and $n^{\ast}=6$ on UNSW-NB15 without any change of
+threshold, so the embedding dimension is a property of the dataset rather than a
+constant to be inherited. And the operating window is closed from above: at
+$K=80$, where the rule requires eight qubits, every one of $48$ comparisons
+favours the classical model, with off-diagonal Gram dispersion decaying about
+twice as fast for the \ZZ{} map as for its entanglement-free control and
+tracking macro-$F_1$ at $r=+0.77$.
+
+That last result is the one we would most like others to test. It ties a
+structural property of the circuit --- $\binom{n}{2}$ pairwise phase terms
+against $n$ single-qubit ones --- to a decay exponent we can measure and to an
+end-task metric that follows it down. If it holds on other corpora and other
+maps, then the practical question for quantum kernels on tabular data is not how
+to make them more expressive but how to keep them from concentrating, and the
+useful width is bounded well below where hardware limits bite.
+
+We are equally clear about what this study does not establish. The circuits were
+not executed on a quantum processor, and ``NISQ-aware'' here means a circuit
+budget chosen under an explicit cost model, not hardware validation. The
+comparison covers two datasets, two tree ensembles and three kernel baselines,
+not the deep tabular architectures. The favourable regime is narrow on every
+axis we varied. And five claims from the earlier version of this work do not
+survive the revised protocol; they are withdrawn in Sec.~\ref{sec:intro} and
+corrected in Sec.~\ref{sec:erratum}.
+
+Three directions follow directly. Executing the same kernels on hardware would
+close the one gap our simulations cannot: the released code contains the
+execution path and the three-tier comparison it would produce is already
+specified. Testing the dispersion--accuracy relationship on projected quantum
+kernels, which concentrate differently, would show whether the boundary we
+measured is a property of fidelity kernels specifically or of the approach.
+And since the crossover reproduces on one dataset and not the other, the
+mechanism behind it --- why more data helps this kernel more than it helps a
+tree ensemble, and only under a skewed prior --- remains open. Our full
+implementation, protocol files, intermediate artifacts and two independent audit
+scripts are released so that each of these can be started from where we stopped.

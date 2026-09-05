@@ -1,0 +1,79 @@
+% =====================================================================
+%  Phu luc A -- chung minh Lemma 1
+%
+%  Ban da nop chi co "proof sketch" ba dong voi ket luan SAI he so. Ban nay
+%  chung minh day du va he so khop dung voi kiem so (runners/verify_lemma1.py).
+%
+%  Cho then chot ma ban cu bo qua: khi r=1, U(x')^dag U(x) CHEO trong co so
+%  tinh toan, nen fidelity rut ve ky vong cua e^{i theta} tren dau ngau nhien
+%  +-1. Voi r>=2 dieu do khong con dung -- va do chinh la ly do cong thuc cu
+%  khong the co he so r^2.
+% =====================================================================
+
+\appendices
+\section{Proof of Lemma~\ref{lem:expansion}}
+\label{app:lemma}
+
+Let $r=1$, write $|+\rangle := H^{\otimes n}|0\rangle^{\otimes n}$, and let
+$\bm{\Delta} := \bm{x}-\bm{x}^{\prime}$. From Eq.~\eqref{eq:featuremap},
+\begin{equation*}
+  K^{\mathrm{Q}}(\bm{x},\bm{x}^{\prime})
+  = \bigl|\langle +|\,U_{\Phi}(\bm{x}^{\prime})^{\dagger}U_{\Phi}(\bm{x})\,
+    |+\rangle\bigr|^{2}.
+\end{equation*}
+Both factors are diagonal in the computational basis, so their product is the
+diagonal unitary $\mathrm{diag}\bigl(e^{\mathrm{i}\theta(\bm{s})}\bigr)$ indexed
+by the sign vectors $\bm{s}\in\{-1,+1\}^{n}$ that label the $Z$-eigenbasis, with,
+from Eq.~\eqref{eq:phase},
+\begin{equation}
+\label{eq:theta}
+  \theta(\bm{s}) \;=\; \sum_{i=1}^{n}\Delta_i\,s_i
+  \;+\; \tfrac{1}{2}\!\!\sum_{1\le i<j\le n}\!\!\Delta\varphi_{ij}\,s_is_j .
+\end{equation}
+Because $|+\rangle$ places equal amplitude $2^{-n/2}$ on every basis state,
+\begin{equation}
+\label{eq:expectation}
+  \langle +|\,U_{\Phi}(\bm{x}^{\prime})^{\dagger}U_{\Phi}(\bm{x})\,|+\rangle
+  \;=\; \mathbb{E}_{\bm{s}}\bigl[e^{\mathrm{i}\theta(\bm{s})}\bigr],
+\end{equation}
+the expectation being over $\bm{s}$ uniform on $\{-1,+1\}^{n}$.
+
+Under that distribution the parity functions $s_i$ and $s_is_j$ are orthonormal:
+each has mean zero and unit variance, and distinct ones are uncorrelated. Hence
+$\mathbb{E}[\theta]=0$ and, by Eq.~\eqref{eq:theta},
+\begin{equation}
+\label{eq:variance}
+  \mathrm{Var}(\theta) \;=\; \mathbb{E}[\theta^{2}]
+  \;=\; \sum_{i=1}^{n}\Delta_i^{2}
+  \;+\; \tfrac{1}{4}\!\!\sum_{1\le i<j\le n}\!\!\Delta\varphi_{ij}^{2}.
+\end{equation}
+Expanding Eq.~\eqref{eq:expectation} and using $\mathbb{E}[\theta]=0$,
+\begin{equation*}
+  \mathbb{E}\bigl[e^{\mathrm{i}\theta}\bigr]
+  = 1 - \tfrac{1}{2}\mathbb{E}[\theta^{2}]
+    - \tfrac{\mathrm{i}}{6}\mathbb{E}[\theta^{3}] + O(\|\bm{\Delta}\|^{4}),
+\end{equation*}
+so that, writing $a=\tfrac{1}{2}\mathbb{E}[\theta^{2}]$ and collecting the purely
+imaginary remainder into $b=O(\|\bm{\Delta}\|^{3})$,
+\begin{equation*}
+  \bigl|\mathbb{E}[e^{\mathrm{i}\theta}]\bigr|^{2}
+  = (1-a)^{2}+b^{2}
+  = 1 - \mathbb{E}[\theta^{2}] + O(\|\bm{\Delta}\|^{4}).
+\end{equation*}
+Substituting Eq.~\eqref{eq:variance} gives Eq.~\eqref{eq:expansion}. Note that
+the cubic term contributes only at fourth order after squaring, which is why the
+remainder is $O(\|\bm{\Delta}\|^{4})$ and not $O(\|\bm{\Delta}\|^{3})$.
+\hfill$\blacksquare$
+
+The step that fails for $r\ge2$ is the first: with $r$ repetitions the
+Hadamard layers separate the diagonal factors, the product is no longer
+diagonal, and Eq.~\eqref{eq:expectation} does not apply
+(Remark~\ref{rem:reps}). Against the exact statevector kernel, itself checked
+against Qiskit to within $1.3\times10^{-15}$, a least-squares fit of
+$1-K^{\mathrm{Q}} = a\sum_i\Delta_i^2 + b\sum_{i<j}\Delta\varphi_{ij}^2$ at
+$r=1$ recovers $a=1.000$ and $b=0.250$ with $R^{2}=1.000000$ at $n=3,4,6$, and
+the residual of Eq.~\eqref{eq:expansion} decays as $\|\bm{\Delta}\|^{3.9}$,
+reaching $5\times10^{-11}$ at $\|\bm{\Delta}\|=10^{-3}$. At $r=2$ the same fit
+attains only $R^{2}=0.60$ to $0.94$ while the unrestricted quadratic form still
+attains $R^{2}=0.999996$. The script is released as
+\texttt{runners/verify\_lemma1.py}.

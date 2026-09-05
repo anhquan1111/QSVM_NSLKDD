@@ -1,0 +1,109 @@
+% =====================================================================
+%  IV. Experimental Setup
+%
+%  Ban da nop dung 5 seed va tune bat doi xung (QSVM co dinh C=1.0 trong khi
+%  SVM co dien duoc chon C tren validation fold). R1-3 va R4-6 deu bat dung
+%  cho nay. Muc nay ghi lai giao thuc da sua.
+% =====================================================================
+
+\subsection{Data and preprocessing}
+
+NSL-KDD~\cite{ref4} is used with its official partitions. The training partition
+holds $125{,}973$ records and the test partition $22{,}544$; the class mix is
+Normal $53.5\%$, DoS $36.5\%$, Probe $9.3\%$, R2L $0.8\%$ and U2R $0.04\%$,
+so the two rare classes together account for $0.83\%$ of the data. One-hot
+encoding of the three categorical fields expands the feature space from $41$ to
+$122$ dimensions. UNSW-NB15~\cite{ref25} is used with its official CSV
+partitions and the same pipeline, expanding to $189$ columns.
+
+Two properties of these corpora are relevant to how the numbers should be read
+and are quantified in Sec.~\ref{sec:limitations}: NSL-KDD has $610$ test rows
+identical to a training row in both features and label, and UNSW-NB15 is far
+more heavily duplicated.
+
+\subsection{Protocol}
+
+\emph{Repetitions.} Every reported quantity is computed over ten independent
+runs with fixed seeds $\{100,\dots,109\}$. Subsets are drawn stratified on the
+four-way label $\{\text{Normal},\text{DoS},\text{Probe},\text{R2L}\cup
+\text{U2R}\}$, which guarantees at least one rare-attack instance even at
+$N=100$. The submitted version used five seeds; the increase to ten was
+prompted by the observation that five is a thin base for the interval estimates
+we report.
+
+\emph{Two test sets.} Results are reported both on the fixed $300$-sample
+stratified split used by the submitted version, which keeps continuity with it,
+and on the complete KDDTest$^+$ partition. The latter is the operative one for
+any deployment reading, and the two differ enough that quoting only the former
+would overstate absolute performance.
+
+\emph{Symmetric tuning.} The submitted version fixed the quantum regulariser at
+$C=1.0$ while selecting $C$ for the classical SVMs on a validation fold, and
+described this as avoiding bias. It does the opposite: it grants one family a
+search the other is denied. In this revision every model, quantum and classical,
+is tuned by the same procedure on the same disjoint tuning set of $2{,}000$
+records, and results are reported for two arms --- \emph{tuned per $N$}, in
+which the search is repeated at each training-set size, and \emph{frozen}, in
+which hyper-parameters are held at the values selected once. Because the
+quantum kernel does not depend on $C$, its grid costs only repeated fits on an
+already-computed Gram matrix.
+
+\emph{Zero leakage.} All transformers are fit on the training fold alone and
+applied unchanged to the test fold. In the primary arm the entire front-end,
+including feature selection and the projection, is refit at each $N$, so a
+representation never sees more data than the classifier it feeds. The nested
+subsets satisfy $\mathcal{D}_{N_1}\subset\mathcal{D}_{N_2}\subset\cdots$, so
+variation across sizes reflects added data rather than a changed sample.
+
+\subsection{Statistical methodology}
+
+Every comparison is paired within run: for run $i$ we form
+$\Delta_i = m(\text{\QSVM{}}) - m(\text{baseline})$ on the same subset and the
+same test rows. We report the mean of $\Delta$ with a $t$-based $95\%$
+confidence interval, a Wilcoxon signed-rank test, the paired effect size $d_z$,
+and the fraction of runs with $\Delta>0$.
+
+Because each contribution tests several baselines, $p$-values are Holm-corrected
+within baseline families --- \emph{entanglement} $\{$QSVM-\Zmap{}$\}$,
+\emph{classical kernel} $\{$linear, poly2, RBF$\}$, and \emph{strong tabular}
+$\{$random forest, XGBoost$\}$ --- and every verdict in this paper is the
+corrected one. A comparison is called favourable to one side only when the
+corrected $p<0.05$ \emph{and} the confidence interval excludes zero; otherwise
+it is inconclusive, and we report it as such rather than as a win.
+
+\subsection{Implementation and reproducibility}
+
+Experiments use NumPy 2.4, SciPy 1.17, scikit-learn 1.8, XGBoost 3.3,
+Qiskit 2.3 with qiskit-machine-learning 0.9, and Qiskit Aer 0.17. Quantum
+kernels are evaluated as exact statevector fidelities. Because the
+\ZZ{}FeatureMap is diagonal after each Hadamard layer, the state can be written
+in closed form rather than simulated gate by gate, which we verified against the
+Qiskit reference to within $4\times10^{-15}$ and which makes the sweeps in
+Sec.~\ref{sec:results} tractable.
+
+Two sources of run-to-run variation deserve mention because they set the
+precision of what follows. XGBoost with the histogram tree method varies by
+about $\pm0.001$ macro-$F_1$ between machines even with a single thread, so we
+report its values to three decimals and never rest a claim on a smaller
+difference. The fidelity statevector kernel exposes no seed of its own; its
+determinism is controlled through the global Qiskit seed, which we pin.
+
+\emph{Reproducibility.} The complete implementation, the frozen protocol files,
+every intermediate artifact, all figure-generation scripts, and four audit
+scripts are released at
+\url{https://github.com/anhquan1111/QSVM_NSLKDD}, at commit
+\texttt{19beb18}.\footnote{Commit hash to be updated to the final revision
+commit before publication.}
+
+The audits are not decorative, and running them is the intended way to check
+this paper. \texttt{audit\_c4.py} (100 checks) recomputes every published
+statistic from the raw per-run records using an independent implementation
+rather than calling the pipeline's own statistics functions, since using the
+code that produced a number to verify that number lets shared errors through.
+\texttt{audit\_figures.py} (36) checks that each figure is newer than its inputs
+and that every plotted number is re-derived from the artifacts.
+\texttt{audit\_prose.py} (115) re-derives every number written in the text of
+this paper. \texttt{verify\_lemma1.py} (15) checks the expansion of
+Lemma~\ref{lem:expansion} against the exact kernel. Together they found four
+errors in our own revision code before publication, one of which changed a
+reported $n^{\ast}$.
