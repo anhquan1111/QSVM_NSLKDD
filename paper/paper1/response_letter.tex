@@ -28,30 +28,55 @@
 \usepackage{titlesec}
 \usepackage[hidelinks]{hyperref}
 
-\definecolor{quotegray}{gray}{0.35}
-\definecolor{rulegray}{gray}{0.80}
+\definecolor{quotegray}{gray}{0.38}
+\definecolor{rulegray}{gray}{0.78}
+\definecolor{tagink}{HTML}{1F3D6B}   % xanh muc in, du dam de doc khi in den trang
 
-% Khoi trich y reviewer. Mau xam + gach doc de tach han khoi phan tra loi:
-% AE doc luot phai phan biet duoc ngay dau la loi ho, dau la loi minh.
+% ---------------------------------------------------------------------
+%  Trich y reviewer. Mot vach doc mau xam ben trai + chu nghieng xam: AE
+%  doc luot phai phan biet duoc ngay dau la loi ho, dau la loi minh.
+%  Boc trong begingroup de mau khong ro ri ra doan tra loi ben duoi.
+% ---------------------------------------------------------------------
 \newenvironment{revcomment}
-  {\par\vspace{4pt}\noindent
-   \begin{list}{}{\leftmargin=1.2em \rightmargin=0.4em}\item[]
-   \color{quotegray}\itshape}
-  {\end{list}\vspace{2pt}}
+  {\par\addvspace{6pt}\begingroup
+   \color{quotegray}\itshape\small
+   \begin{list}{}{%
+     \setlength{\leftmargin}{1.8em}\setlength{\rightmargin}{1.0em}%
+     \setlength{\topsep}{0pt}\setlength{\partopsep}{0pt}%
+     \setlength{\parsep}{3pt}\setlength{\itemsep}{0pt}}%
+   \item[]}
+  {\end{list}\endgroup\normalcolor\addvspace{6pt}}
 
+% ---------------------------------------------------------------------
+%  Dau muc cho tung y reviewer. Ban truoc dat gach ngang bang \par\nobreak
+%  ngay sau tieu de, nen khi tieu de xuong hai dong thi gach chay CAT NGANG
+%  giua tieu de (thay ro o AE-1 va AE-4). Bay gio: ma so mau xanh, tieu de
+%  in dam, xuong dong roi moi ke gach het chieu rong -- va khoang cach
+%  truoc "Response." co dinh nen moi muc deu nhau.
+% ---------------------------------------------------------------------
 \newcommand{\itemhead}[2]{%
-  \par\vspace{10pt}\noindent
-  {\bfseries #1}\quad{\bfseries #2}\par\nobreak\vspace{-2pt}
-  {\color{rulegray}\hrule height 0.4pt}}
+  \par\addvspace{15pt}%
+  \noindent{\bfseries\color{tagink}#1}\hspace{0.7em}{\bfseries #2}%
+  \par\addvspace{3.5pt}%
+  \noindent{\color{rulegray}\rule{\linewidth}{0.5pt}}%
+  \par\addvspace{5pt}%
+  \nobreak}
 
-\newcommand{\resp}{\par\vspace{3pt}\noindent\textbf{Response.}\ }
-\newcommand{\changed}{\par\vspace{2pt}\noindent\textbf{Changes.}\ }
+\newcommand{\resp}{\par\addvspace{2pt}\noindent\textbf{Response.}\ }
+\newcommand{\changed}{\par\addvspace{5pt}\noindent
+  {\bfseries\color{tagink}Changes.}\ }
 
-\titleformat{\section}{\large\bfseries}{\thesection.}{0.6em}{}
-\titlespacing*{\section}{0pt}{16pt}{6pt}
+% Tieu de muc: GIU so thu tu -- thu dai 15 trang, AE can co so de dan chieu,
+% va chinh trong thu co \ref{sec:selfreported} tro toi mot muc. Bo so la
+% cai \ref do in ra rong.
+\titleformat{\section}
+  {\normalfont\large\bfseries\color{tagink}}{\thesection.}{0.5em}{}
+  [\vspace{-5pt}{\color{tagink}\rule{\linewidth}{0.8pt}}]
+\titlespacing*{\section}{0pt}{22pt}{10pt}
 
-\setlength{\parskip}{3pt}
+\setlength{\parskip}{3.5pt}
 \setlength{\parindent}{0pt}
+\linespread{1.03}
 
 \begin{document}
 
