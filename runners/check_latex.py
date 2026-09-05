@@ -55,7 +55,7 @@ ZZ Zmap QSVM Fmac
             "bfseries itshape color definecolor newenvironment titleformat "
             "titlespacing thesection parskip parindent hrule nobreak leftmargin "
             "rightmargin tilde longtable geometry inputenc fontenc enumitem "
-            "resp changed itemhead".split())
+            "resp changed itemhead addvspace normalcolor linespread rule textcolor thesection nameref".split())
 
 MAIN_DIR: list[Path] = []
 FAIL: list[str] = []
