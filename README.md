@@ -32,7 +32,7 @@ chiếu với mọi con số đã viết trong bài:
 
 ```bash
 python runners/audit_c4.py        # 100/100  mọi thống kê công bố
-python runners/audit_figures.py   #  36/36   mọi con số trên hình
+python runners/audit_figures.py   #  36 mục  mọi con số trên hình
 python runners/audit_prose.py     # 115/115  mọi con số viết trong câu văn
 python runners/verify_lemma1.py   #  15/15   khai triển bậc hai của nhân ZZ
 python runners/check_latex.py     #          cấu trúc file .tex
@@ -44,6 +44,12 @@ sinh ra một con số để kiểm con số đó thì lỗi chung sẽ lọt qu
 
 Bốn bộ kiểm này đã **bắt được 4 lỗi thật trong chính code revision** trước khi công bố, trong
 đó một lỗi làm `n*` ra 5 thay vì 4.
+
+> `audit_figures.py` sẽ báo **9 mục SKIP** trên bản vừa clone về. Đó không phải lỗi: git không
+> lưu thời điểm sửa file, nên sau khi clone thì phép kiểm "hình có mới hơn dữ liệu nguồn
+> không" mất căn cứ và nó báo SKIP thay vì báo sai. 27 mục đối chiếu **số liệu** vẫn chạy đủ,
+> và đó mới là phần xác nhận hình vẽ đúng số. Muốn kiểm cả xuất xứ thì chạy
+> `python runners/make_paper1_figures.py` trước.
 
 ---
 
