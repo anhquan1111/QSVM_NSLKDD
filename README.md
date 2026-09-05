@@ -17,6 +17,7 @@ NSL-KDD (41 đặc trưng) → One-Hot (122D) → SelectKBest (K=20) → PCA (n*
 |---|---|
 | Bản revision đã làm gì, còn gì phải làm | **[docs/REVISION_REPORT.md](docs/REVISION_REPORT.md)** ← *bắt đầu ở đây* |
 | Reviewer yêu cầu những gì | [docs/Review.md](docs/Review.md) — nguyên văn thư quyết định |
+| Code bổ sung gồm những file nào | [docs/CODE_BO_SUNG.md](docs/CODE_BO_SUNG.md) |
 | Bản thảo đang viết tới đâu | [paper/paper1/main_revision.tex](paper/paper1/main_revision.tex) |
 | Thư trả lời từng ý reviewer | [paper/paper1/response_letter.tex](paper/paper1/response_letter.tex) |
 | Paper 2 (đã nộp IJNM) | [docs/PAPER2_overview.md](docs/PAPER2_overview.md) |
