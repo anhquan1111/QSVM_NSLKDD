@@ -57,6 +57,7 @@ ZZ Zmap QSVM Fmac
             "rightmargin tilde longtable geometry inputenc fontenc enumitem "
             "resp changed itemhead".split())
 
+MAIN_DIR: list[Path] = []
 FAIL: list[str] = []
 INFO: list[str] = []
 
@@ -84,13 +85,25 @@ def strip_comments(text: str) -> list[str]:
     return out
 
 
-def inputs_of(path: Path) -> list[Path]:
+def inputs_of(path: Path, seen: set[Path] | None = None) -> list[Path]:
+    """De quy: hinh duoc \\input tu file muc, tuc sau hai tang so voi main."""
+    if seen is None:
+        seen = {path.resolve()}
     text = io.open(path, encoding="utf-8").read()
     got = []
+    # LaTeX phan giai \input theo thu muc cua TAI LIEU CHINH (noi chay
+    # pdflatex), khong phai theo thu muc cua file dang chua lenh do. Nen
+    # \input{figs_revision/x} viet trong sections/05_results.tex van tro dung
+    # toi paper/paper1/figs_revision/x.
+    base = MAIN_DIR[0] if MAIN_DIR else path.parent
     for t in re.findall(BS + BS + r"input\{([^}]*)\}", text):
-        for cand in (path.parent / t, path.parent / (t + ".tex")):
+        for cand in (base / t, base / (t + ".tex"),
+                     path.parent / t, path.parent / (t + ".tex")):
             if cand.exists():
-                got.append(cand)
+                if cand.resolve() not in seen:
+                    seen.add(cand.resolve())
+                    got.append(cand)
+                    got += inputs_of(cand, seen)
                 break
         else:
             fail(path.name, 0, f"\\input khong co file: {t}")
@@ -232,6 +245,8 @@ def main() -> int:
     global ROOT
     if main_tex != MAIN:
         ROOT = main_tex.parent.parent
+    MAIN_DIR.clear()
+    MAIN_DIR.append(main_tex.parent)
     files = [main_tex] + inputs_of(main_tex)
     all_cmds: set[str] = set()
     all_lab: set[str] = set()

@@ -1,0 +1,17 @@
+% Sinh boi runners/make_paper1_figures.py; caption doi chieu bang
+% runners/audit_figures.py. File rieng cho tung hinh de \input DUNG CHO
+% trong than bai -- float cua LaTeX chi troi VE SAU, khai bao het o cuoi
+% tai lieu thi ca 9 hinh don xuong cuoi va tran vao danh muc tai lieu.
+
+\begin{figure*}[t]
+  \centering
+  \includegraphics[width=\textwidth]{figs_revision/fig7_per_run_f1.pdf}
+  \caption{%
+    \textbf{With strong tabular baselines the quantum kernel no longer leads.}
+    Macro-$F_1$ over ten independent runs at $N_{\mathrm{train}}=1000$; dots are
+    individual runs, markers are means with $95\%$ confidence intervals. Adding
+    a random forest and XGBoost under the identical protocol changes the
+    ordering: XGBoost attains $0.8503$ against \QSVM{}'s $0.8469$, with
+    overlapping intervals.}
+  \label{fig:perrun}
+\end{figure*}

@@ -70,8 +70,12 @@ Trong repo:
 def inputs_recursive(path: Path, seen: set[Path]) -> list[Path]:
     out: list[Path] = []
     text = io.open(path, encoding="utf-8").read()
+    # LaTeX phan giai \input theo thu muc TAI LIEU CHINH, khong theo thu muc
+    # cua file chua lenh -- nen \input{figs_revision/x} viet trong sections/
+    # van tro toi paper/paper1/figs_revision/x.
     for t in re.findall(BS + BS + r"input\{([^}]*)\}", text):
-        for cand in (path.parent / t, path.parent / (t + ".tex")):
+        for cand in (PAPER / t, PAPER / (t + ".tex"),
+                     path.parent / t, path.parent / (t + ".tex")):
             if cand.exists():
                 if cand not in seen:
                     seen.add(cand)
