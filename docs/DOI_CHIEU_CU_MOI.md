@@ -1,6 +1,6 @@
 # Đối chiếu bản đã nộp ↔ bản revision
 
-**TETC-2026-05-0252** · so sánh `paper/paper1/paper1.pdf` (đã nộp 05/2026, 11 trang) với
+**TETC-2026-05-0252** · so sánh `paper/paper1/v1_submitted/paper1.pdf` (đã nộp 05/2026, 11 trang) với
 bản revision hiện tại (`paper/paper1/main_revision.tex`, 16 trang).
 
 Mục đích: tách rõ **phần thêm mới** khỏi **phần cũ**, để quyết định nên giữ hay nên bỏ cái gì.
