@@ -17,22 +17,29 @@
 
 A quantum kernel embeds $\bm{x}$ into a state $|\phi(\bm{x})\rangle$ prepared by
 a parameterised circuit and reads off the fidelity as a similarity
-\cite{havlicek2019,schuld2019}. Two results bound expectations. Alignment-based
+\cite{havlicek2019,schuld2019}. The construction sits inside a broader quantum
+machine learning programme \cite{ref5,ref6,ref7}, and the identification of
+parameterised-circuit models with kernel machines \cite{ref9} is what makes the
+quantum component substitutable into a classical learner. Separations have been
+proved for constructed problems \cite{ref18}, but the conditions under which they
+extend to data that arise in practice are restrictive \cite{ref19,ref20}.
+Two results bound expectations. Alignment-based
 bounds \cite{cristianini2002,cortes2012} say that a kernel better aligned with
 the labels admits a tighter generalisation guarantee at equal empirical risk,
 but say nothing about whether a given circuit produces such a kernel. In the
 other direction, fidelity kernels from expressive maps concentrate exponentially
-toward a constant as the qubit count grows \cite{thanasilp2024}, so the same
-expressivity that makes a map interesting makes its Gram matrix uninformative at
-width. Sec.~\ref{sec:res-width} measures both effects here: the alignment gain
+toward a constant as the qubit count grows \cite{thanasilp2024} --- an effect
+distinct from, though related to, the barren plateaus of variational training
+\cite{ref10} --- so the same expressivity \cite{ref21} that makes a map interesting
+makes its Gram matrix uninformative at width. Sec.~\ref{sec:res-width} measures both effects here: the alignment gain
 is large, and the concentration is what eventually destroys it.
 
 \subsection{Quantum machine learning for intrusion detection}
 \revnote{rewrite}{Them survey 2026 va bai Cirillo et al. (QMI 2026) -- bai Reviewer 1 chi dich danh o y R1-1.}
 
 Applications of quantum kernels and variational classifiers to network intrusion
-detection have grown quickly, most using NSL-KDD \cite{ref4} or a successor
-corpus \cite{ref25}; a 2026 survey \cite{kaissar2026} covers the field through
+detection have grown quickly \cite{ref13,ref14,ref15}, most using NSL-KDD
+\cite{ref4} or a successor corpus \cite{ref25}; a 2026 survey \cite{kaissar2026} covers the field through
 January of that year and reaches two conclusions that bear directly on this
 paper: most published approaches rely on simulated quantum environments and
 legacy datasets, and evaluation practice is inconsistent across studies. The

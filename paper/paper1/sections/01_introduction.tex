@@ -13,8 +13,10 @@
 
 Network intrusion detection is an attractive target for quantum machine
 learning. The data are tabular and moderate-dimensional, the decision is a
-classification, and the operational value of a small accuracy gain is high.
-Quantum kernel methods are the natural instrument: a feature map prepares a
+classification, and the operational value of a small accuracy gain is high
+\cite{ref24}. Classical machine learning and deep learning are well established
+on the task \cite{ref1,ref2,ref3}, which sets the bar a quantum method has to
+clear. Quantum kernel methods are the natural instrument: a feature map prepares a
 state whose fidelities form a positive semi-definite kernel that can be dropped
 into a standard support vector machine \cite{havlicek2019,schuld2019}, so the
 quantum component is a single well-isolated block inside an otherwise classical
@@ -22,8 +24,8 @@ pipeline.
 
 The literature reflects that attractiveness. Studies applying quantum kernels
 and variational classifiers to NSL-KDD \cite{ref4} and its successors
-\cite{ref25} report accuracies competitive with, and sometimes above, classical
-baselines. What they rarely report is the shape of the claim: at which training
+\cite{ref25} report accuracies competitive with, and sometimes above,
+classical baselines \cite{ref13,ref14,ref15}. What they rarely report is the shape of the claim: at which training
 set size, against which class prior, at which circuit width, and against which
 classical opponent. Those choices are not incidental. We show below that varying
 only the training-set size, with everything else fixed, is enough to reverse the
