@@ -4,33 +4,46 @@ Hạn nộp lại: **13-10-2026**. TETC **không cho major revision lần hai**.
 
 | File | Nội dung |
 |---|---|
-| `main_revision.pdf` | Bản thảo revision, **16 trang** |
+| `main_revision.pdf` | Bản thảo sạch, **16 trang** |
 | `response_letter.pdf` | Thư phản hồi từng ý reviewer, 13 trang |
+| *(chưa có)* `main_annotated.pdf` | Bản đánh dấu thay đổi — compile từ `main_annotated.tex` |
 
-Hai file này là bản compile. **Mã nguồn nằm ở thư mục cha**, không nằm trong đây:
+Đây là các bản đã compile. **Mã nguồn nằm ở thư mục cha**, không nằm trong đây:
 
 ```
 paper/paper1/
-├── main_revision.tex          ← file chính, mở cái này
-├── sections/                  ← thân bài, 7 mục
-├── theory_revision.tex        ← Lemma 1 + luật ba giai đoạn + erratum
-├── limitations_revision.tex   ← mục VII
-├── appendix_lemma.tex         ← Phụ lục A
-├── novelty_matrix.tex         ← Bảng I
-├── crossover_arms_table.tex   ← Bảng II
-├── bibliography_revision.tex  ← 41 tài liệu
-├── response_letter.tex        ← thư phản hồi (tài liệu độc lập)
-└── figs_revision/             ← 9 hình + 9 file caption
+├── main_revision.tex      ← bản sạch          ─┐
+├── main_annotated.tex     ← bản đánh dấu      ─┼─ ba tài liệu compile được
+├── response_letter.tex    ← thư phản hồi      ─┘
+├── preamble.tex           ← gói, macro, tham số đặt hình   (dùng chung)
+├── document.tex           ← tiêu đề, tác giả, abstract, thứ tự mục (dùng chung)
+├── bibliography.tex       ← 41 tài liệu
+├── sections/              ← thân bài, 01…09 theo đúng số mục trong bài
+├── tables/                ← Bảng I và Bảng II
+└── figs_revision/         ← 9 hình + 9 file caption
 ```
 
-## Compile lại
+## Đóng gói lại để compile
 
 ```bash
-python runners/make_overleaf_zip.py      # -> v2_revision/TETC-2026-05-0252_revision.zip
+python runners/make_overleaf_zip.py
 ```
 
-Tải zip lên Overleaf, đổi **Main document** sang `main_revision.tex` (hoặc
-`response_letter.tex` khi muốn xuất thư), compile **hai lần** bằng pdfLaTeX.
+Ra **bốn** gói trong thư mục này. Mỗi gói riêng chỉ chứa **một** tài liệu, nên Overleaf
+tự nhận đúng Main document — không phải vào Settings chỉnh gì:
+
+| Muốn xuất PDF nào | Tải lên gói nào |
+|---|---|
+| Bản thảo sạch | `TETC-2026-05-0252_ban_sach.zip` |
+| Bản có đánh dấu thay đổi | `TETC-2026-05-0252_ban_danh_dau.zip` |
+| Thư phản hồi reviewer | `TETC-2026-05-0252_thu_phan_hoi.zip` |
+| (gộp cả ba, để lưu trữ) | `TETC-2026-05-0252_revision.zip` |
+
+Overleaf → **New Project → Upload Project**. Đừng kéo zip thả vào project đang có:
+Overleaf giải nén vào thư mục con, file main và `preamble.tex` nằm khác chỗ nhau,
+và báo `File preamble.tex not found`.
+
+Các file `.zip` **không** được đẩy lên repo (xem `.gitignore`) — chạy lệnh trên là có.
 
 ## Còn phải làm trước khi nộp
 
