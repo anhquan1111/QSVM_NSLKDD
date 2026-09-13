@@ -31,7 +31,11 @@ Circuits are transpiled onto that backend's coupling map and basis gate set,
 giving a depth of $59$ and $44$ two-qubit gates for the $n=4$, $r=2$ map.
 Under this model the entanglement conclusion is unchanged: the alignment gap
 between QSVM-ZZ and QSVM-Z survives, while the macro-$F_1$ difference remains
-within its confidence interval.
+within its confidence interval. This noisy re-run covers one of the ten runs
+and the $300$-record test split (Table~\ref{tab:protocol}); it establishes
+that the noise model does not move the operating point, not a noisy confidence
+interval, which would require the remaining nine runs at the same $512$ shots
+per kernel entry.
 
 \emph{What we do not measure.} The circuits were not executed on a quantum
 processor. Two effects are therefore outside our evidence: drift of calibration

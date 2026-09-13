@@ -98,6 +98,15 @@ feature map's phases are defined; the \ZZ{}FeatureMap of
 Eq.~\eqref{eq:featuremap} on the resulting $\bm{z}\in[0,\pi]^{n}$; and a
 soft-margin SVC on the precomputed Gram matrix.
 
+Every classical baseline in this paper, the three kernel SVMs, the random
+forest and XGBoost, consumes the same $n$-component vector $\bm{z}$ that the
+circuit encodes, not the $K$ selected features and not the $d=122$ one-hot
+columns. The comparison therefore isolates the kernel from the front-end: it
+asks whether a quantum kernel on a given four-dimensional embedding beats a
+classical learner on that same embedding. It does not ask whether the pipeline
+beats a tree ensemble on the raw record; Sec.~\ref{sec:res-c4} reports that
+comparison separately, as a reference arm outside the paired protocol.
+
 Two properties of this pipeline carry the experimental design.
 
 \emph{One component varies at a time.} The entanglement-free control differs

@@ -17,6 +17,16 @@ encoding of the three categorical fields expands the feature space from $41$ to
 $122$ dimensions. UNSW-NB15~\cite{ref25} is used with its official CSV
 partitions and the same pipeline, expanding to $189$ columns.
 
+Absolute scores on the official split are lower than the $\approx0.99$ often
+reported for NSL-KDD, and the difference is the protocol rather than the
+models. With all $122$ features and the full training partition, XGBoost
+reaches macro-$F_1$ $0.804$ and a random forest $0.777$ on KDDTest$^+$, whereas
+a random split \emph{within} KDDTrain$^+$ gives $0.999$ and $0.998$, because
+near-duplicate records then fall on both sides. Studies reporting
+$\approx0.99$ are, in the cases we could check, using the latter. We use the
+official partitions throughout, and $0.804$ is the reference against which
+every absolute number below should be read.
+
 Two properties of these corpora are relevant to how the numbers should be read
 and are quantified in Sec.~\ref{sec:limitations}: NSL-KDD has $610$ test rows
 identical to a training row in both features and label, and UNSW-NB15 is far
@@ -24,6 +34,18 @@ more heavily duplicated.
 
 \subsection{Protocol}
 \revnote{fix}{Ban da nop: 5 seed, va QSVM co dinh C=1.0 trong khi SVM co dien duoc tune -- Reviewer 1 chi ra o y R1-3 rang cach nay thien vi chinh phuong phap cua ta. Nay: 10 run, tune doi xung, hai nhanh, hai tap test.}
+
+\input{tables/protocol_by_contribution}
+
+\emph{Two sampling regimes.} Contributions C1 to C3 and the width sweep of
+Sec.~\ref{sec:res-width} use the training pool of the submitted version, in
+which the rare classes R2L and U2R are enriched to $10\%$ of each subset, and
+the fixed $300$-record test split of that version. The sample-complexity sweep
+(C4) and the rare-attack analysis draw subsets at the natural class prior
+($0.83\%$ rare) and are scored on the complete KDDTest$^+$ partition.
+Table~\ref{tab:protocol} states which regime each figure uses; the two are not
+interchangeable, and the same model at the same $N$ scores differently under
+them (Sec.~\ref{sec:res-c4}).
 
 \emph{Repetitions.} Every reported quantity is computed over ten independent
 runs with fixed seeds $\{100,\dots,109\}$. Subsets are drawn stratified on the

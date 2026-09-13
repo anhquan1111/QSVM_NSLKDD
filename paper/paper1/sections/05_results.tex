@@ -72,12 +72,15 @@ because it did not include a tree ensemble; with one included, \QSVM{} is second
 and the intervals overlap. We therefore describe this as an ordering of point
 estimates and not as a separation.
 
-Under the backend-derived noise model the conclusion is unchanged.
-\QSVM{} attains $0.8665$ under exact statevector simulation, $0.8598$ with
-finite shots, and $0.8728$ under \texttt{FakeManilaV2} noise, with QSVM-\Zmap{}
-at $0.8498$, $0.8464$ and $0.8528$; the noisy value is not lower than the ideal
-one, which we read as noise being immaterial at this scale rather than as
-noise helping.
+Under the backend-derived noise model the conclusion is unchanged. This check
+is a single run (run~1, $300$ test records, $512$ shots per kernel entry), so
+its resolution is about $\pm0.02$ macro-$F_1$ and we quote it to two decimals:
+\QSVM{} attains $0.87$ under exact statevector simulation, $0.86$ with finite
+shots, and $0.87$ under \texttt{FakeManilaV2} noise, with QSVM-\Zmap{} at
+$0.85$, $0.85$ and $0.85$. The noisy value is not lower than the ideal one,
+which we read as noise being immaterial at this depth rather than as noise
+helping; a ten-run version of this check is the obvious next step and is
+listed in Sec.~\ref{sec:limitations}.
 
 \subsection{Distribution shift}
 \label{sec:res-c3}
@@ -130,17 +133,19 @@ that stopped at $N=1000$. Extending it to $N=10^4$ under the natural class prior
 reverses the claim and, in doing so, produces the paper's main new finding
 (Fig.~\ref{fig:learning-curve}).
 
-At $N=100$ the ranking is XGBoost $0.7802$, random forest $0.7695$,
+All seven models share the four-component front-end of
+Sec.~\ref{sec:framework}, so the ranking below is a ranking of learners on
+that embedding. At $N=100$ the ranking is XGBoost $0.7802$, random forest $0.7695$,
 QSVM-\Zmap{} $0.7613$, SVM-RBF $0.7296$, linear $0.7261$, \QSVM{} $0.6989$: the
 quantum kernel is next to last, and the gap to XGBoost, $-0.0812$, is the
 largest in the sweep. At $N=10^4$ the ranking is \QSVM{} $0.7855$, QSVM-\Zmap{}
 $0.7787$, SVM-RBF $0.7740$, random forest $0.7728$, XGBoost $0.7706$: the
-quantum kernel is first. The paired difference against XGBoost passes through
+quantum kernel is first among them. The paired difference against XGBoost passes through
 zero between $N=2000$ and $N=5000$ ($-0.0129 \rightarrow +0.0100$), and is
 corrected-significant at both $N=5000$ ($p_{\text{Holm}}=0.027$, $d_z=1.22$) and
 $N=10^4$ ($+0.0149$, $p_{\text{Holm}}=0.0078$, $d_z=1.07$).
 
-Three qualifications keep this from being read as more than it is.
+Four qualifications keep this from being read as more than it is.
 
 First, the reversal is not an artefact of re-tuning.
 Table~\ref{tab:crossover-arms} repeats the sweep with hyper-parameters frozen at
@@ -164,6 +169,23 @@ samples, and independence between runs would be lost. Within the range where the
 two regimes overlap, changing only the class prior removes the effect. This is a
 direct consequence for the submitted protocol, whose enrichment concealed the
 very regime in which the kernel does best.
+
+Fourth, the reversal is a statement about the shared embedding, not about the
+dataset. Table~\ref{tab:ref-arm} adds a reference arm outside the paired
+protocol: XGBoost and the random forest trained on the same nested subsets and
+seeds but on all $122$ one-hot features, scored on the same full KDDTest$^+$.
+Full-feature XGBoost also declines with $N$ on this split, from
+$\refArmXgbPeak$ at $N=\refArmXgbPeakN$ to $\refArmXgbTenK$ at $N=10^4$, and at
+$N=5000$ and $N=10^4$ the paired difference against \QSVM{} is
+$\refArmDeltaXgbFiveK$ and $\refArmDeltaXgbTenK$: parity, not a crossover.
+Against the full-feature random forest the quantum kernel does lead at
+$N=10^4$ ($\refArmDeltaRfTenK$). With the entire $125{,}973$-record partition,
+full-feature XGBoost reaches $0.804$ (Sec.~\ref{sec:setup}), above the best
+score of any four-qubit model in this paper. The practical reading is
+therefore narrower than the ranking suggests: a four-qubit kernel matches, but
+does not beat, a tree ensemble given the raw record.
+
+\input{tables/ref_arm}
 
 \subsection{Rare attacks}
 \label{sec:res-rare}
