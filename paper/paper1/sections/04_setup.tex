@@ -63,8 +63,10 @@ variation across sizes reflects added data rather than a changed sample.
 Every comparison is paired within run: for run $i$ we form
 $\Delta_i = m(\text{\QSVM{}}) - m(\text{baseline})$ on the same subset and the
 same test rows. We report the mean of $\Delta$ with a $t$-based $95\%$
-confidence interval, a Wilcoxon signed-rank test, the paired effect size $d_z$,
-and the fraction of runs with $\Delta>0$.
+confidence interval, a Wilcoxon signed-rank test, the paired effect size $d_z$
+\cite{ref32}, and the fraction of runs with $\Delta>0$. Pairing within run is
+what licenses these tests here: it removes the subset-to-subset variance that
+otherwise dominates comparisons between learners on resampled data \cite{ref31}.
 
 Because each contribution tests several baselines, $p$-values are Holm-corrected
 within baseline families --- \emph{entanglement} $\{$QSVM-\Zmap{}$\}$,
@@ -77,8 +79,9 @@ it is inconclusive, and we report it as such rather than as a win.
 \subsection{Implementation and reproducibility}
 \revnote{new}{Them link repo, commit hash va bon bo kiem tu dong -- Reviewer 4 chi ra o y R4-3 rang ban cu noi reproducible ma khong dua gi.}
 
-Experiments use NumPy 2.4, SciPy 1.17, scikit-learn 1.8, XGBoost 3.3,
-Qiskit 2.3 with qiskit-machine-learning 0.9, and Qiskit Aer 0.17. Quantum
+Experiments use NumPy 2.4, SciPy 1.17, scikit-learn 1.8 \cite{ref30},
+XGBoost 3.3, Qiskit 2.3 \cite{ref29} with qiskit-machine-learning 0.9, and
+Qiskit Aer 0.17. Quantum
 kernels are evaluated as exact statevector fidelities. Because the
 \ZZ{}FeatureMap is diagonal after each Hadamard layer, the state can be written
 in closed form rather than simulated gate by gate, which we verified against the

@@ -282,11 +282,17 @@ def main() -> int:
                "  (tai lieu nay khong he co thebibliography, nen MOI \\cite "
                "trong no se in ra [?] -- hay viet trich dan bang chu)"))
 
+    # Muc co trong danh mục nhung khong duoc trich o dau: LaTeX in no ra binh
+    # thuong, khong bao gi. IEEE thi bat -- va no cung la dau hieu viet lai
+    # than bai roi danh roi lenh trich. Da xay ra that: sau khi viet lai toan
+    # bo cac muc, 26/41 muc mat lenh trich ma khong ai thay.
     unused = sorted(all_bib - all_cite)
     if unused:
-        INFO.append(f"{len(unused)} muc tai lieu chua duoc trich trong ban "
-                    f"revision (binh thuong neu con dang viet): "
-                    + ", ".join(unused[:12]) + (" ..." if len(unused) > 12 else ""))
+        FAIL.append(f"{len(unused)}/{len(all_bib)} muc tai lieu KHONG duoc "
+                    f"trich o dau trong than bai: "
+                    + ", ".join(unused[:12]) + (" ..." if len(unused) > 12 else "")
+                    + "  (moi muc phai duoc trich it nhat mot lan, hoac bo "
+                      "khoi danh muc)")
 
     print("=" * 78)
     print(f"  KIEM CAU TRUC {main_tex.name} -- {len(files)} file")

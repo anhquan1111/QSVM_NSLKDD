@@ -45,7 +45,7 @@ response_letter.tex      Thư phản hồi   ─┘
 
 preamble.tex             Gói, macro, tham số đặt hình   (bản sạch + bản đánh dấu dùng chung)
 document.tex             Tiêu đề, tác giả, abstract, thứ tự các mục   (dùng chung)
-bibliography.tex         41 tài liệu tham khảo
+bibliography.tex         38 tài liệu tham khảo
 
 sections/                Thân bài, đặt tên theo đúng số mục trong bài
   01_introduction.tex        I.    Introduction
@@ -124,13 +124,13 @@ python runners/verify_lemma1.py   #  15/15   khai triển Lemma 1
 | 2 | Cập nhật commit hash cuối vào `sections/04_setup.tex` |
 | 3 | Tiểu sử 5 tác giả — **đã có sẵn** ở `v1_submitted/paper1_with_bios.pdf` trang 11 |
 | 4 | Tô vàng phần tài liệu tham khảo thay đổi (TETC bắt buộc) |
-| 5 | Cover letter + mục riêng gửi EiC/AE giải trình thay đổi bibliography |
+| 5 | Cover letter gửi EiC/AE — *mục giải trình bibliography đã viết xong, nằm trong thư phản hồi* |
 
 ## Ràng buộc của TETC
 
 - Nộp **ba file**: bản sạch · bản đánh dấu · thư phản hồi
 - Quá **12 trang** thì trả phí trang vượt và **không được xin miễn** — bản hiện tại 16 trang
-- Tài liệu tham khảo **tối đa 45 mục** — hiện 41
+- Tài liệu tham khảo **tối đa 45 mục** — hiện 38
 - **Không được thêm/bớt tác giả**, **không được thêm/bớt tự trích dẫn**
 
 Xem `docs/DOI_CHIEU_CU_MOI.md` để biết bản này khác bản đã nộp chỗ nào, và
