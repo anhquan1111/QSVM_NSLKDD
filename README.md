@@ -19,7 +19,7 @@ NSL-KDD (41 đặc trưng) → One-Hot (122D) → SelectKBest (K=20) → PCA (n*
 | Reviewer yêu cầu những gì | [docs/Review.md](docs/Review.md) — nguyên văn thư quyết định |
 | Code bổ sung gồm những file nào | [docs/CODE_BO_SUNG.md](docs/CODE_BO_SUNG.md) |
 | Bản mới khác bản đã nộp chỗ nào | [docs/DOI_CHIEU_CU_MOI.md](docs/DOI_CHIEU_CU_MOI.md) |
-| Bản thảo đang viết tới đâu | [paper/paper1/main_revision.tex](paper/paper1/main_revision.tex) |
+| Bản thảo đang viết tới đâu | [paper/paper1/](paper/paper1/) — xem README trong đó |
 | Thư trả lời từng ý reviewer | [paper/paper1/response_letter.tex](paper/paper1/response_letter.tex) |
 | Paper 2 (đã nộp IJNM) | [docs/PAPER2_overview.md](docs/PAPER2_overview.md) |
 
@@ -113,9 +113,11 @@ data/     { nslkdd/, unsw/ }   dữ liệu thô + đã tiền xử lý
 models/   { nslkdd/, unsw/ }   transformer đã fit (joblib) + ma trận Gram (npy)
 results/  { nslkdd/, unsw/ }   artifact JSON/CSV  ← nguồn của mọi con số trong bài
 
-paper/paper1/             Mã nguồn bản revision + 9 hình
+paper/paper1/             Mã nguồn bản revision (có README riêng)
+  ├── main_revision.tex   bản sạch · main_annotated.tex  bản đánh dấu
+  ├── sections/ tables/ figs_revision/
   ├── v1_submitted/       Bản đã nộp 05/2026 (PDF, để đối chiếu)
-  └── v2_revision/        Bản revision đã compile (PDF)
+  └── v2_revision/        Bản revision đã compile (PDF + zip)
 paper/paper2/             Paper 2, đã nộp IJNM
 docs/                     Báo cáo revision, thư reviewer, tổng quan Paper 2
 ```

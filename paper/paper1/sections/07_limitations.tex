@@ -15,6 +15,7 @@
 \label{sec:limitations}
 
 \subsection{Hardware noise: what was and was not measured}
+\revnote{rewrite}{Ban da nop chi co sai so lay mau huu han. Nay them mo hinh nhieu dung tu calibration may that (y AE-6, R1-6), va noi ro cai gi KHONG do duoc.}
 
 The submitted version reported only finite-shot sampling error and deferred
 coherent noise to a companion study. Reviewers correctly objected that shot
@@ -43,6 +44,7 @@ Readers should read ``NISQ-aware'' as a statement about \emph{circuit budget}
 model --- and not as a claim of hardware validation.
 
 \subsection{Embedding size: now measured, and the news is not good for width}
+\revnote{fix}{Ban da nop de day la ``cau hoi mo''. Nay DA DO, va ket qua bat loi cho viec mo rong mach.}
 
 The submitted version listed the effect of moving along the frontier as an open
 question. We have since measured it, and the answer constrains the method more
@@ -73,6 +75,7 @@ rate. And the $F_1$--dispersion relation is measured on seven widths at a single
 training-set size; we present it as an empirical regularity, not a law.
 
 \subsection{Classical-baseline strength}
+\revnote{rewrite}{Da them RF+XGBoost. Noi thang la KHONG them CatBoost/TabNet/FT-Transformer, kem ly do (y R1-5).}
 
 The submitted version compared only against SVM variants. We have added a
 random forest and XGBoost under the identical protocol, and they change the
@@ -89,6 +92,7 @@ architectures. We therefore do not claim coverage of all strong tabular methods,
 and any practical reading of our results should be qualified accordingly.
 
 \subsection{Dataset breadth and protocol}
+\revnote{rewrite}{Da them UNSW-NB15. Them so lieu ve trung lap cua ca hai bo.}
 
 The submitted version rested almost entirely on NSL-KDD. We have added
 UNSW-NB15 under the same protocol, which is what allows us to separate findings

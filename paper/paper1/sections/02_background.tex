@@ -13,6 +13,7 @@
 % =====================================================================
 
 \subsection{Quantum kernels}
+\revnote{rewrite}{Ban da nop: Definition 1--2 + Proposition 1--2. Gop lai, Prop 1 ha xuong fact (F1) theo yeu cau R3-3.}
 
 A quantum kernel embeds $\bm{x}$ into a state $|\phi(\bm{x})\rangle$ prepared by
 a parameterised circuit and reads off the fidelity as a similarity
@@ -27,6 +28,7 @@ width. Sec.~\ref{sec:res-width} measures both effects here: the alignment gain
 is large, and the concentration is what eventually destroys it.
 
 \subsection{Quantum machine learning for intrusion detection}
+\revnote{rewrite}{Them survey 2026 va bai Cirillo et al. (QMI 2026) -- bai Reviewer 1 chi dich danh o y R1-1.}
 
 Applications of quantum kernels and variational classifiers to network intrusion
 detection have grown quickly, most using NSL-KDD \cite{ref4} or a successor
@@ -66,6 +68,7 @@ class-balanced subsample ($15{,}114$ training instances for NSL-KDD) drawn under
 a random $80/20$ split rather than the official partitions.
 
 \subsection{Benchmarking studies of quantum models}
+\revnote{new}{Muc moi. Hai bai Reviewer 3 dan lam bang chung ``ket qua da co san'' (y R3-5). Da doc toan van ca hai.}
 
 Two broad benchmarks are relevant precisely because they are sceptical. Bowles,
 Ahmed and Schuld \cite{bowles2024} evaluate twelve QML models over $160$ datasets
@@ -98,6 +101,7 @@ $125{,}973$-record training partition on NSL-KDD --- and that is where our
 contribution lies.
 
 \subsection{Bounded advantage windows in adjacent domains}
+\revnote{new}{Muc moi. Bai Carducci ICAD 2026 -- Reviewer 4 chi dich danh o y R4-1.}
 
 The question this paper asks is being asked elsewhere, and in at least one
 adjacent domain it has been given the same shape. Carducci \cite{carducci2026}
@@ -132,8 +136,9 @@ parallel as suggestive rather than as evidence, and do not tabulate the study in
 Table~\ref{tab:novelty}, whose cells are read from full texts.
 
 \subsection{Positioning}
+\revnote{rewrite}{Bang I dung lai han: 4 bai/3 cot -> 5 bai/13 dong, moi o doc tu toan van.}
 
-\input{novelty_matrix}
+\input{tables/novelty_matrix}
 
 Table~\ref{tab:novelty} places this work against those four studies on the axes
 that distinguish them; each cell was read from the full text rather than from an

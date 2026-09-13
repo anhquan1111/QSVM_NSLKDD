@@ -31,12 +31,16 @@ UNSW = ROOT / "results/unsw"
 TEXT: dict[str, str] = {}
 for f in sorted(SEC.glob("*.tex")):
     TEXT[f.name] = io.open(f, encoding="utf-8").read()
-for extra in ("limitations_revision.tex", "theory_revision.tex",
-              "main_revision.tex", "appendix_lemma.tex",
-              "response_letter.tex"):
-    p = ROOT / "paper/paper1" / extra
+# Cac manh khac cua ban thao. Khoa trong TEXT giu TEN CU de cac muc kiem
+# ben duoi khong phai sua theo moi lan doi cho file.
+for key, rel in (("limitations_revision.tex", "sections/07_limitations.tex"),
+                 ("theory_revision.tex", "sections/03b_theory.tex"),
+                 ("appendix_lemma.tex", "sections/09_appendix.tex"),
+                 ("main_revision.tex", "document.tex"),
+                 ("response_letter.tex", "response_letter.tex")):
+    p = ROOT / "paper/paper1" / rel
     if p.exists():
-        TEXT[extra] = io.open(p, encoding="utf-8").read()
+        TEXT[key] = io.open(p, encoding="utf-8").read()
 
 OK = FAILED = 0
 
@@ -547,7 +551,7 @@ def section_letter() -> None:
 
     # Thu khang dinh da trich va ban ve Carducci -- phai co that o CA BA cho,
     # khong duoc chi hua trong thu.
-    bib = io.open(ROOT / "paper/paper1/bibliography_revision.tex",
+    bib = io.open(ROOT / "paper/paper1/bibliography.tex",
                   encoding="utf-8").read()
     check("Carducci co bibitem that",
           "bibitem{carducci2026}" in bib.replace(chr(92), ""),
