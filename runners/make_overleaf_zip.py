@@ -34,11 +34,12 @@ README = """\
 3. Compiler: pdfLaTeX. Bien dich hai lan (lan dau de sinh .aux cho \\ref).
 4. IEEEtran.cls co san tren Overleaf, khong can tai kem.
 
-Zip nay chua HAI tai lieu doc lap, bien dich rieng, ra hai PDF:
+Zip nay chua BA tai lieu doc lap, bien dich rieng, ra ba PDF:
 
 | File | La gi | Khi nao doi Main document sang no |
 |---|---|---|
-| `main_revision.tex` | ban thao revision | mac dinh |
+| `main_revision.tex` | ban thao SACH -- ban nop cho tap chi | mac dinh |
+| `main_annotated.tex` | ban CO DANH DAU thay doi -- TETC bat buoc nop kem | khi muon xuat ban danh dau |
 | `response_letter.tex` | thu phan hoi 33 y reviewer | khi muon xuat thu gui AE |
 
 Thu phan hoi KHONG duoc \\input vao ban thao va nguoc lai.
@@ -109,14 +110,17 @@ def main() -> int:
 
     tex = [MAIN] + inputs_recursive(MAIN, {MAIN})
 
-    # Thu phan hoi la tai lieu DOC LAP (documentclass rieng), khong duoc
-    # \input vao ban thao. Phai them tay, khong thi no rot khoi zip.
-    letter = PAPER / "response_letter.tex"
-    if letter.exists():
-        tex.append(letter)
-        tex += inputs_recursive(letter, set(tex))
-    else:
-        print("  CANH BAO: khong co response_letter.tex")
+    # Hai tai lieu DOC LAP nua, moi cai co \documentclass rieng nen khong
+    # duoc \input vao ban thao -- phai them tay, khong thi rot khoi zip:
+    #   main_annotated.tex  ban co danh dau (TETC bat buoc nop kem)
+    #   response_letter.tex thu phan hoi reviewer
+    for extra in ("main_annotated.tex", "response_letter.tex"):
+        f = PAPER / extra
+        if f.exists():
+            tex.append(f)
+            tex += inputs_recursive(f, set(tex))
+        else:
+            print(f"  CANH BAO: khong co {extra}")
 
     figs = graphics_of(tex)
     files = tex + figs
