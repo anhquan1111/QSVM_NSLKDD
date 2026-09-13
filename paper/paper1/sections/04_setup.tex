@@ -7,7 +7,8 @@
 % =====================================================================
 
 \subsection{Data and preprocessing}
-\revnote{rewrite}{Them UNSW-NB15 thanh dataset chinh (y AE-3, R1-2) va so lieu ve trung lap cua ca hai bo.}
+\revnote{rewrite}{UNSW-NB15 added as a primary dataset (AE-3, R1-2), with duplication statistics for both corpora; the official-split versus random-split comparison of R1-9 added.}
+\begin{revbody}
 
 NSL-KDD~\cite{ref4} is used with its official partitions. The training partition
 holds $125{,}973$ records and the test partition $22{,}544$; the class mix is
@@ -31,11 +32,13 @@ Two properties of these corpora are relevant to how the numbers should be read
 and are quantified in Sec.~\ref{sec:limitations}: NSL-KDD has $610$ test rows
 identical to a training row in both features and label, and UNSW-NB15 is far
 more heavily duplicated.
+\end{revbody}
 
 \subsection{Protocol}
-\revnote{fix}{Ban da nop: 5 seed, va QSVM co dinh C=1.0 trong khi SVM co dien duoc tune -- Reviewer 1 chi ra o y R1-3 rang cach nay thien vi chinh phuong phap cua ta. Nay: 10 run, tune doi xung, hai nhanh, hai tap test.}
-
+\revnote{fix}{Submitted version: 5 seeds, QSVM fixed at C=1.0 while the classical SVMs were tuned (R1-3, R4-6). Now: 10 runs, symmetric tuning, two arms, two test sets, and a protocol-by-contribution table (R1-8).}
 \input{tables/protocol_by_contribution}
+\begin{revbody}
+
 
 \emph{Two sampling regimes.} Contributions C1 to C3 and the width sweep of
 Sec.~\ref{sec:res-width} use the training pool of the submitted version, in
@@ -78,9 +81,11 @@ including feature selection and the projection, is refit at each $N$, so a
 representation never sees more data than the classifier it feeds. The nested
 subsets satisfy $\mathcal{D}_{N_1}\subset\mathcal{D}_{N_2}\subset\cdots$, so
 variation across sizes reflects added data rather than a changed sample.
+\end{revbody}
 
 \subsection{Statistical methodology}
-\revnote{rewrite}{Them hieu chinh Holm trong tung ho baseline (y R2-3, R2-4).}
+\revnote{rewrite}{Holm correction within baseline families added (R2-3, R2-4).}
+\begin{revbody}
 
 Every comparison is paired within run: for run $i$ we form
 $\Delta_i = m(\text{\QSVM{}}) - m(\text{baseline})$ on the same subset and the
@@ -97,9 +102,11 @@ $\{$random forest, XGBoost$\}$, and every verdict in this paper is the
 corrected one. A comparison is called favourable to one side only when the
 corrected $p<0.05$ \emph{and} the confidence interval excludes zero; otherwise
 it is inconclusive, and we report it as such rather than as a win.
+\end{revbody}
 
 \subsection{Implementation and reproducibility}
-\revnote{new}{Them link repo, commit hash va bon bo kiem tu dong -- Reviewer 4 chi ra o y R4-3 rang ban cu noi reproducible ma khong dua gi.}
+\revnote{new}{Repository link, commit hash and four audit scripts added; R4-3 noted that the submitted version claimed reproducibility without providing anything.}
+\begin{revbody}
 
 Experiments use NumPy 2.4, SciPy 1.17, scikit-learn 1.8 \cite{ref30},
 XGBoost 3.3, Qiskit 2.3 \cite{ref29} with qiskit-machine-learning 0.9, and
@@ -136,3 +143,4 @@ this paper. \texttt{verify\_lemma1.py} (15) checks the expansion of
 Lemma~\ref{lem:expansion} against the exact kernel. Together they found four
 errors in our own revision code before publication, one of which changed a
 reported $n^{\ast}$.
+\end{revbody}

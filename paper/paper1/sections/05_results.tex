@@ -14,9 +14,10 @@
 
 \subsection{Choosing the embedding size, and what it costs}
 \label{sec:res-c1}
-\revnote{rewrite}{Bo Fig. 5 (Pareto frontier) cua ban cu; thay bang hinh quet K va hinh luat ba giai doan tren CA HAI dataset.}
-
+\revnote{rewrite}{Fig. 5 (Pareto frontier) of the submitted version removed; replaced by the K sweep and the three-stage rule on both datasets (R4-2).}
 \input{figs_revision/fig_ksweep}
+\begin{revbody}
+
 
 The feature budget $K$ and the qubit count $n$ are not independent, and the
 selection rule makes the coupling explicit.
@@ -44,13 +45,15 @@ which the circuit is still cheap. Moving from $K=20$ to $K=80$ buys $0.028$
 macro-$F_1$ for the classical proxy and costs a rise from $24$ to $112$
 two-qubit gates. Sec.~\ref{sec:res-width} reports what happens when that price
 is actually paid.
+\end{revbody}
 
 \subsection{Does entanglement help at the operating point?}
 \label{sec:res-c2}
-\revnote{fix}{So lieu QSVM GIU NGUYEN. Nhung them Random Forest va XGBoost (y AE-4, R1-5, R2-1) thi THU HANG DOI: XGBoost 0.8503 vuot QSVM-ZZ 0.8469. Ban da nop ghi QSVM dung dau.}
-
+\revnote{fix}{QSVM numbers unchanged. Adding a random forest and XGBoost (AE-4, R1-5, R2-1) changes the ordering: XGBoost 0.8503 above QSVM-ZZ 0.8469. The submitted version placed QSVM first.}
 \input{figs_revision/fig_ablation}
 \input{figs_revision/fig_perrun}
+\begin{revbody}
+
 
 At $n^\ast=4$ we compare \QSVM{} against an otherwise identical circuit with the
 entangling layer removed, and against five classical baselines
@@ -81,12 +84,14 @@ $0.85$, $0.85$ and $0.85$. The noisy value is not lower than the ideal one,
 which we read as noise being immaterial at this depth rather than as noise
 helping; a ten-run version of this check is the obvious next step and is
 listed in Sec.~\ref{sec:limitations}.
+\end{revbody}
 
 \subsection{Distribution shift}
 \label{sec:res-c3}
-\revnote{fix}{Them RF/XGBoost thi KET LUAN DOI CHIEU: QSVM tut nhanh hon ca hai ensemble cay. Ban da nop goi che do nay la bang chung manh nhat cua loi the.}
-
+\revnote{fix}{With RF/XGBoost added the conclusion reverses: QSVM degrades faster than both tree ensembles. The submitted version called this regime its strongest evidence of advantage.}
 \input{figs_revision/fig_priorshift}
+\begin{revbody}
+
 
 Four shifts are applied to a fixed operating point (Fig.~\ref{fig:priorshift}).
 Each is a form of dataset shift in the standard taxonomy \cite{ref33}: the first
@@ -119,14 +124,17 @@ No reading of this regime favours the quantum kernel.
 comparisons classical-favourable, slopes from $-0.69$ to $-1.11$, all effect
 sizes beyond $2.8$. This is the clearest negative result in the paper and we
 present it as such.
+\end{revbody}
 
 \subsection{Sample complexity: an ordering that reverses}
 \label{sec:res-c4}
-\revnote{fix}{KET QUA DAO CHIEU. Ban da nop quet N toi 1000 va ket luan co loi the o che do it du lieu. Quet toi $N=10^4$ o ti le lop tu nhien thi nguoc lai: co dien thang o N nho. Tra loi truc tiep y R1-7.}
-
+\revnote{fix}{Result reversed. The submitted sweep stopped at N=1000 and claimed a low-data advantage; extended to $N=10^4$ at the natural prior, the classical models win at small N. Answers R1-7 directly.}
 \input{tables/crossover_arms}
-
 \input{figs_revision/fig_learning_curve}
+\input{tables/ref_arm}
+\begin{revbody}
+
+
 
 The submitted version claimed an advantage in the low-data regime from a sweep
 that stopped at $N=1000$. Extending it to $N=10^4$ under the natural class prior
@@ -185,11 +193,12 @@ score of any four-qubit model in this paper. The practical reading is
 therefore narrower than the ranking suggests: a four-qubit kernel matches, but
 does not beat, a tree ensemble given the raw record.
 
-\input{tables/ref_arm}
+\end{revbody}
 
 \subsection{Rare attacks}
 \label{sec:res-rare}
-\revnote{new}{MUC MOI. Ban da nop khang dinh ``+6.7 diem rare, d=+0.68'' nhung code cu khong he tinh metric nao cho lop hiem -- Reviewer 4 hoi thang o y R4-5. Khang dinh do da rut.}
+\revnote{new}{New subsection. The submitted version claimed ``+6.7 points on rare attacks, d=+0.68'' but the released code computed no rare-class metric (R4-5). That claim is withdrawn.}
+\begin{revbody}
 
 Because R2L and U2R are the classes an operator cares about, we report them
 separately rather than only inside the macro average. At $N=10^4$ under the
@@ -203,12 +212,14 @@ But SVM-RBF is better still, by $0.078$, so the honest statement is that an RBF
 kernel is the strongest rare-attack detector in this study. The submitted
 version reported a $+6.7$-point rare-attack gain with $d=+0.68$; no rare-class
 metric was computed by the code that produced it, and we withdraw the number.
+\end{revbody}
 
 \subsection{Transfer to UNSW-NB15}
 \label{sec:res-unsw}
-\revnote{new}{MUC MOI. Ban da nop chi nhac UNSW mot cau trong phan han che; Reviewer 1 va AE doi dataset thu hai lam that (y AE-3, R1-2).}
-
+\revnote{new}{New subsection. The submitted version mentioned UNSW-NB15 in one sentence of the limitations; AE-3 and R1-2 asked for a second dataset in full.}
 \input{figs_revision/fig_unsw_transfer}
+\begin{revbody}
+
 
 The selection rule is applied to UNSW-NB15 without changing a threshold or a
 constant (Fig.~\ref{fig:c1-selection}(b)). It returns $n^\ast=6$, at $V=0.9044$,
@@ -225,12 +236,14 @@ $p_{\text{Holm}}=0.0059$) and against its own entanglement-free control
 tested ($-0.0204$ at $N=10^4$, classical-favourable), and no crossover against
 either tree ensemble occurs anywhere in the sweep. A finding that reproduces on
 one dataset and not the other is reported as exactly that.
+\end{revbody}
 
 \subsection{Where the kernel breaks, and why}
 \label{sec:res-width}
-\revnote{new}{MUC MOI. Tra loi y R3-4 (``toan mo phong o so qubit rat nho''): mo rong len 8 qubit thi 48/48 so sanh nghieng ve co dien, kem co che do duoc tu ma tran Gram.}
-
+\revnote{new}{New subsection. Answers R3-4 (``very few qubits''): at 8 qubits all 48 comparisons favour the classical side, with the Gram-matrix mechanism measured.}
 \input{figs_revision/fig_width}
+\begin{revbody}
+
 
 Sec.~\ref{sec:res-c1} showed that a larger feature budget forces a wider
 circuit. Paying that price is the sharpest test of whether the quantum kernel
@@ -271,3 +284,4 @@ usable window ends. They differ on why: that study attributes the degradation
 to two-qubit gate error accumulating on hardware, whereas the results above are
 obtained under exact, noiseless simulation, in which no gate error exists. The
 window therefore does not widen with better hardware. It is set by the kernel.
+\end{revbody}

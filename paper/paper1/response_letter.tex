@@ -202,7 +202,7 @@ withdrawn. The paper is reframed from ``where is there an advantage'' to
 regime map in which negative and inconclusive verdicts appear on the same
 footing as positive ones: $21$ / $21$ / $68$ over $110$ comparisons.
 \changed
-New Sec.~VI (Regime Map), Fig.~10, and a rewritten abstract and introduction.
+New Sec.~VI (Regime Map), Fig.~9, and a rewritten abstract and introduction.
 The introduction states the withdrawn claims on its first page.
 
 \itemhead{AE-2}{Insufficient literature coverage, including non-existent
@@ -221,7 +221,7 @@ UNSW-NB15 has been added under the identical protocol. This is what allows us to
 separate findings that transfer from findings that do not: the selection rule
 and the entanglement ablation transfer; the sample-complexity reversal does not.
 \changed
-Sec.~V-F, Fig.~11.
+Sec.~V-F, Fig.~7.
 
 \itemhead{AE-4}{Comparison with non-SVM methods as a prerequisite for practical
 advantage claims}
@@ -229,8 +229,19 @@ advantage claims}
 A random forest and XGBoost were added to every experiment, tuned by the same
 procedure as every other model. They change the headline: XGBoost attains the
 highest mean macro-$F_1$ at the main operating point.
+
+Two points of scope are now stated in the manuscript so that the comparison is
+not read as more than it is. First, every classical baseline consumes the same
+four-component representation as the circuit (Sec.~III-B); the paired protocol
+isolates the kernel, not the pipeline. Second, a reference arm outside the
+paired protocol trains XGBoost and the random forest on all $122$ one-hot
+features on the same subsets, seeds and test set (Table~IV). Against
+full-feature XGBoost the quantum kernel reaches parity at $N\geq5000$, not a
+lead, and full-feature XGBoost on the entire training partition scores $0.804$,
+above every four-qubit model in the paper. The practical claim is worded
+accordingly.
 \changed
-All results sections; Figs.~7--12.
+All results sections; Figs.~3--8; Sec.~III-B; Sec.~V-D, fourth qualification, and Table~IV.
 
 \itemhead{AE-5}{Reviewer~4 identified issues in the theory}
 \resp
@@ -248,7 +259,11 @@ The pipeline is re-run under a noise model derived from the calibration data of
 a real superconducting backend (\texttt{FakeManilaV2}) carrying gate errors,
 readout errors and thermal relaxation. We are explicit that this is
 \emph{not} hardware validation: the circuits were not executed on a quantum
-processor, and the manuscript now says so in those words.
+processor, and the manuscript now says so in those words. The noisy re-run
+covers one of the ten runs on the $300$-record test split; the manuscript
+states this, quotes the result to two decimals, and lists the ten-run version
+as the next step rather than implying a noisy confidence interval it does not
+have.
 \changed
 Sec.~V-B and Sec.~VII-A, which separates what we measure from what we do not.
 
@@ -309,7 +324,7 @@ label, and UNSW-NB15 is far more heavily duplicated ($47.3\%$ of training rows
 are internal repeats; $25.0\%$ of test rows have an exact duplicate in
 training).
 \changed
-Sec.~IV-A, Sec.~V-F, Sec.~VII-D, Fig.~11.
+Sec.~IV-A, Sec.~V-F, Sec.~VII-D, Fig.~7.
 
 \itemhead{R1-3}{Asymmetric hyper-parameter protocol: QSVM fixed at $C=1.0$,
 classical SVMs validation-selected}
@@ -330,7 +345,7 @@ repeated at each training-set size, and \emph{frozen}, in which hyper-parameters
 are held at the values selected once. Reporting both is what lets us show that
 the paper's main new result is not an artefact of re-tuning (see R1-7).
 \changed
-Sec.~IV-B; Table~II reports both arms across all sizes.
+Sec.~IV-B; Table~III reports both arms across all sizes.
 
 \itemhead{R1-4}{Conclusions overstated; cannot claim general quantum advantage}
 \resp
@@ -362,7 +377,7 @@ All experiments; Sec.~VII-C.
 Addressed with a backend-derived noise model; see AE-6. Circuits are transpiled
 onto the backend's coupling map and basis set, giving depth $59$ and $44$
 two-qubit gates at $n=4$, $r=2$. The entanglement conclusion is unchanged under
-noise.
+noise. As stated under AE-6, this check is a single run and is reported as such.
 \changed
 Sec.~V-B, Sec.~VII-A.
 
@@ -405,7 +420,7 @@ That third point is the reason the submitted version reported the opposite
 conclusion, and we regard identifying it as the most useful thing this revision
 does.
 \changed
-Sec.~V-D, Fig.~9, Table~II.
+Sec.~V-D, Fig.~6, Table~III.
 
 \itemhead{R1-8}{Table~VI ($N=1000$) inconsistent with Table~IV}
 \resp
@@ -427,10 +442,15 @@ refit per $N$ & full KDDTest$^{+}$ & 0.8072 & 0.8242 \\
 \end{center}
 
 The test set accounts for about $-0.051$ macro-$F_1$ and the representation mode
-for about $+0.006$. The revision reports both test sets everywhere and states
-which is which.
+for about $+0.006$. The revision reports both test sets and states which is
+which: Table~II (``Protocol by contribution'') lists, for every figure and
+table, the training pool (rare-enriched, as in the submitted protocol, or the
+natural prior), the test set ($300$-record split or full KDDTest$^+$), $N$ and
+the number of runs, and the captions of Figs.~3--5 repeat it. The same model at
+the same $N$ therefore appears with two different scores in the paper, and the
+reader can see why.
 \changed
-Sec.~IV-B; \texttt{c4\_table\_iv\_vs\_vi.csv} in the repository.
+Sec.~IV-B and Table~II; \texttt{c4\_table\_iv\_vs\_vi.csv} in the repository.
 
 \itemhead{R1-9}{Classical $F_1$ low relative to values commonly reported on
 NSL-KDD}
@@ -454,8 +474,9 @@ Random split \emph{within} KDDTrain$^{+}$ & 0.9978 & 0.9993 \\
 Studies reporting $\approx0.99$ on NSL-KDD are, in the cases we could check,
 splitting randomly within the training partition rather than using the official
 train/test partitions, which places near-duplicate records on both sides. We use
-the official split throughout. This is now stated in the manuscript so that our
-absolute numbers are not read as underperformance.
+the official split throughout. The four numbers above are now in Sec.~IV-A of
+the manuscript, with $0.804$ named as the reference against which every absolute
+score should be read.
 \changed
 Sec.~IV-A; \texttt{c4\_protocol\_vs\_literature.csv} in the repository.
 
@@ -492,7 +513,7 @@ a ratio of $2.02$, matching the $\binom{n}{2}$ versus $n$ growth in the number
 of phase terms. Across the same widths the dispersion correlates with
 macro-$F_1$ at $r=+0.77$ for the ZZ kernel and $r=+0.32$ for the Z kernel.
 \changed
-Sec.~III (F3), Sec.~V-G, Fig.~12, Sec.~VII-B.
+Sec.~III (F3), Sec.~V-G, Fig.~8, Sec.~VII-B.
 
 \itemhead{R2-3}{$N_{\text{train}}=1000$ with five seeds is a thin statistical
 base}
@@ -530,7 +551,7 @@ The clearest of them: under feature perturbation, six of six comparisons favour
 the classical model with effect sizes beyond $2.8$. The manuscript presents this
 as the paper's clearest negative result rather than in a closing caveat.
 \changed
-Sec.~V-C, Sec.~VI, Fig.~10; \texttt{regime\_map\_rows.csv}, all $110$ rows
+Sec.~V-C, Sec.~VI, Fig.~9; \texttt{regime\_map\_rows.csv}, all $110$ rows
 independently re-derived by \texttt{audit\_c4.py}.
 
 \itemhead{R2-5}{Reference [15]: article number 116990F should be 116990B}
@@ -671,7 +692,7 @@ which effects are consequently outside our evidence. The execution path for a
 real backend is in the released code and has been verified in dry run; we report
 no hardware numbers and make no claim about them.
 \changed
-Sec.~V-G, Fig.~12, Sec.~VII-A, Assumption~1.
+Sec.~V-G, Fig.~8, Sec.~VII-A, Assumption~1.
 
 \itemhead{R3-5}{Results are already established in prior benchmarking studies
 (arXiv:2403.07059, arXiv:2409.04406)}
@@ -775,7 +796,7 @@ among those take the smallest $Q(n)$. On NSL-KDD this returns $n^{\ast}=4$; on
 UNSW-NB15, unchanged, $n^{\ast}=6$.
 \changed
 Sec.~III-C (new Definition~1 replacing Definition~4, Algorithm~1, Eq.~(6) and
-Theorem~1), erratum subsection, Fig.~5 replacing the Pareto frontier figure.
+Theorem~1), erratum subsection, Fig.~1 replacing the Pareto frontier figure.
 
 \itemhead{R4-3}{Reproducibility is asserted but no machinery is provided}
 \resp
@@ -903,64 +924,75 @@ the enrichment is stated in the protocol.
 % =====================================================================
 \section{Note on the marked-up manuscript}
 
-A marked-up version accompanies this submission. Because essentially every
-paragraph of the manuscript is new text (the abstract, introduction, related
-work, framework, experimental setup, results, limitations and conclusion have
-all been rewritten, the theory section has had one theorem, one definition, one
-algorithm and one equation removed and a new definition, lemma, remark and
-appendix added, and all figures are regenerated from re-run experiments),
-marking individual sentences would convey no information. We have instead
-tagged the manuscript at \emph{subsection} granularity. Each subsection heading
-in the marked copy carries one of four tags, \textsc{new}, \textsc{rewritten},
-\textsc{corrects an error} or \textsc{retained}, together with one sentence
-stating what changed and the item in this letter that prompted it.
+A marked copy accompanies this submission. New or changed text is set on a
+yellow background: the abstract, the body of every subsection that is new,
+rewritten or corrected with respect to the submitted version, and every
+bibliography entry that was added or corrected. Because essentially every
+paragraph of the manuscript is new text, most of the copy is yellow; to make
+the marking informative, each subsection heading additionally carries one of
+four tags (\textsc{new}, \textsc{rewritten}, \textsc{corrected},
+\textsc{retained}) with one sentence stating what changed and the item in this
+letter that prompted it. Subsections tagged \textsc{retained} are left plain.
 
 The marked copy also lists, on its cover page, the material \emph{removed} from
-the submitted version, which by its nature cannot be tagged anywhere in the
-body: Theorem~1, Definition~4, Algorithm~1, the objective $J(n)$, three tables
-and four figures.
-
-Both files are generated from a single source and differ in one flag, so the
-marked copy and the clean copy cannot drift apart.
-
-Two things did \emph{not} change, and we note them so their absence from the
-above is not read as an oversight: the title, and the author list and their
-affiliations.
+the submitted version, which by its nature cannot be shown in the body:
+Theorem~1, Definition~4, Algorithm~1, the objective $J(n)$, three tables and
+four figures. Both files are generated from a single source and differ in one
+flag, so the marked copy and the clean copy cannot drift apart.
 
 % =====================================================================
-\section{Changes to the bibliography}
+\section{Changes to the bibliography (for the Editor-in-Chief and the Associate Editor)}
 
-TETC requires bibliography changes to be itemised. There are eleven, in four
-groups.
+Per the TETC policy on references, every change to the bibliography with
+respect to the submitted version is listed here with its reason. The submitted
+version had $36$ entries; the revision has $38$. Added and corrected entries
+are set on a yellow background in the reference list of the marked copy. No
+self-citation was added or removed; the manuscript contains none.
 
-\emph{Six entries added}, four because reviewers named them and two because we
-found them ourselves while checking the literature. Cirillo, Esposito and Seo,
-\emph{Quantum Machine Intelligence}, 2026, named at R1-1. Bowles, Ahmed and
-Schuld, arXiv:2403.07059, and Schnabel and Roth, arXiv:2409.04406, both named at
-R3-5. Carducci, ICAD 2026, named at R4-1. Kaissar, Nassif and Bouridane,
-\emph{Future Internet}, 2026, which replaces the withdrawn entry below. And
-Gillani \emph{et al.}, arXiv:2608.18155, a concurrent study covering both of our
-datasets that no reviewer raised and that we cite because omitting it would be a
-material omission.
+\emph{Six entries added.} All six are cited in the body and discussed, not
+merely listed.
+\begin{itemize}[leftmargin=1.3em,itemsep=2pt,topsep=3pt]
+  \item Cirillo, Esposito and Seo, \emph{Quantum Machine Intelligence} 8(1):27,
+    2026. Named by Reviewer~1 (R1-1) as a missing benchmark; now the closest
+    prior study in Table~I and Sec.~II-B.
+  \item Bowles, Ahmed and Schuld, arXiv:2403.07059, 2024, and Schnabel and
+    Roth, arXiv:2409.04406, 2024. Both named by Reviewer~3 (R3-5) as evidence
+    that our results were already established; discussed in Sec.~II-C.
+  \item Carducci, \emph{Proc. IEEE Int. Conf. AI and Data Analytics (ICAD)},
+    2026. Named by Reviewer~4 (R4-1); discussed in Sec.~II-D.
+  \item Gillani \emph{et al.}, arXiv:2608.18155, 2026, a calibration- and
+    noise-aware benchmark of QML for intrusion detection on the same datasets,
+    found by the authors while answering R1-1 and R3-5; without it Table~I
+    would be incomplete.
+  \item Kaissar, Nassif and Bouridane, \emph{Future Internet} 18(5):234, 2026,
+    a survey of quantum methods for intrusion detection. It takes the role the
+    unverifiable former [26] held, and its DOI (10.3390/fi18050234) was checked
+    to resolve to the item.
+\end{itemize}
 
-\emph{One entry removed as unlocatable.} Former reference~[26] could not be
-found by two independent searches; see R2-6. The released bibliography file
-records the removal together with the original string, so the change is
-auditable rather than silent.
+\emph{Four entries removed.}
+\begin{itemize}[leftmargin=1.3em,itemsep=2pt,topsep=3pt]
+  \item Former [26], Rahman, Kayed, Aljahdali and Ali, ``Quantum machine
+    learning for cybersecurity: a comprehensive review,'' attributed to
+    \emph{IEEE Access} 2023. Reviewer~2 (R2-6) could not locate it; neither
+    could we, by author and title or by volume and page range. Removed, and the
+    removal is recorded in the released bibliography file.
+  \item Former [34]--[36], Platt 1999, Naeini \emph{et al.} 2015, Guo
+    \emph{et al.} 2017. These supported the probability-calibration material
+    of the submitted version, which was withdrawn together with the advantage
+    claims it accompanied; the revision does not discuss calibration, and no
+    sentence cites them.
+\end{itemize}
 
-\emph{One entry corrected.} Former reference~[15] carried a wrong DOI; see R2-5.
+\emph{One entry corrected.} [15], Payares and Mart\'inez-Santos, SPIE 11699:
+article number 116990F corrected to 116990B (DOI 10.1117/12.2593297), as
+Reviewer~2 pointed out (R2-5).
 
-\emph{Three entries removed as no longer relevant.} The submitted version's
-contribution C5 was a confidence-calibration and rare-attack study reporting
-Expected Calibration Error and AUC-PR. That contribution is not in this
-revision, and with it go the three references that supported it alone: Platt
-(1999), Naeini \emph{et al.} (2015) and Guo \emph{et al.} (2017), all on
-probability calibration. We record the removal here rather than leave three
-uncited entries standing in the list.
-
-After these changes the bibliography holds $38$ entries, every one of them cited
-at least once in the manuscript text, against the journal's limit of $45$. No
-self-citation was added or removed.
+\emph{Affiliations, acknowledgments, funding.} No co-author has changed
+affiliation since the original submission. The funding statement (University of
+Danang - University of Science and Technology, Project T2026-02-10TN) is
+unchanged. Author biographies are included in the revised manuscript, as the
+decision letter requests.
 
 % =====================================================================
 \section{Summary}

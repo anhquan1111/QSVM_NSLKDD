@@ -1,0 +1,109 @@
+% =====================================================================
+%  Cover letter cho ban revise TETC-2026-05-0252 (them 13/09/2026).
+%  Thu quyet dinh 14/08 doi: (a) ban sach; (b) ban to vang; (c) thu tra loi;
+%  (d) bai >12 trang thi cover letter PHAI co nguyen van cau MOPC;
+%  (e) thay doi affiliation / acknowledgment / tieu su phai khai o day.
+%  Bien dich: pdflatex cover_letter.tex
+% =====================================================================
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[margin=2.4cm]{geometry}
+\usepackage{xcolor}
+\usepackage{enumitem}
+\usepackage[hidelinks]{hyperref}
+\definecolor{rulegray}{gray}{0.78}
+\setlength{\parskip}{5pt}
+\setlength{\parindent}{0pt}
+\linespread{1.05}
+
+\begin{document}
+
+\begin{flushright}
+Danang, Vietnam\\
+\today
+\end{flushright}
+
+Dr.\ Patrick Schaumont, Editor-in-Chief\\
+IEEE Transactions on Emerging Topics in Computing
+
+\vspace{6pt}
+{\color{rulegray}\hrule height 0.8pt}
+\vspace{8pt}
+
+\textbf{Subject: Revised manuscript TETC-2026-05-0252, ``NISQ-Aware Quantum
+Kernel SVM for Network Intrusion Detection: A Regime-Specific Benchmark on
+NSL-KDD''}
+
+Dear Dr.\ Schaumont,
+
+Please find enclosed the revised version of the manuscript above, submitted in
+response to the decision of 14 August 2026 (major revision). We are grateful to
+the Associate Editor and the four reviewers; their comments led us to re-run
+every experiment under a corrected protocol, and the revised paper reports a
+narrower and partly negative result than the one we submitted.
+
+\textbf{Files enclosed.}
+\begin{enumerate}[leftmargin=1.6em,itemsep=2pt]
+  \item The clean revised manuscript, without annotations or highlighting
+    (\texttt{main\_revision.pdf}).
+  \item An annotated copy in which new or changed text, and every added or
+    corrected bibliography entry, is set on a yellow background, and every
+    subsection heading carries a tag stating what changed and which reviewer
+    item prompted it (\texttt{main\_annotated.pdf}).
+  \item A response letter addressing each comment of the Associate Editor and
+    of Reviewers 1 to 4 individually, with a summary of differences, a section
+    on corrections we identified ourselves, and a dedicated section for the
+    Editor-in-Chief and the Associate Editor itemising every change to the
+    bibliography with its reason (\texttt{response\_letter.pdf}).
+\end{enumerate}
+
+\textbf{Page length and Mandatory Overlength Page Charges.} The original
+submission was 11 pages. The revised manuscript, which now includes the
+biographies of all five authors, the second dataset, the two additional
+baselines and the sample-complexity sweep the reviewers requested, is 17 pages
+in the IEEE two-column format. As requested in the decision letter, we state
+the following: ALL submissions exceeding 12 pages at any time of the review
+process should explicitly report, in the related cover letter, a declaration
+that the authors are aware of the MOPC policies and, when due, will pay the
+related charges without requesting any future waiving. Please note that the
+MOPC policies and the amount of final charges do effectively apply to ALL
+submissions exceeding 12 pages after final layout of the accepted manuscript.
+We are aware of the MOPC policies and, when due, will pay the related charges
+without requesting any future waiving.
+
+\textbf{Bibliography.} The revised bibliography has 38 entries (the submitted
+version had 36): six entries were added, four removed and one corrected. No
+self-citation was added or removed; the manuscript contains none. Each change
+and its reason is listed in the section ``Changes to the bibliography'' of the
+response letter, and the added and corrected entries are highlighted in the
+annotated copy.
+
+\textbf{Authors, affiliations, acknowledgments.} The author list and the order
+of authors are unchanged. No co-author has changed affiliation since the
+original submission. The funding acknowledgment (The University of Danang -
+University of Science and Technology, Project T2026-02-10TN) is unchanged.
+Author biographies, which the submitted version carried, are included in the
+revised manuscript.
+
+\textbf{Reproducibility.} The complete implementation, the frozen protocol
+files, every intermediate artifact, the figure-generation scripts and four audit
+scripts are released at \url{https://github.com/anhquan1111/QSVM_NSLKDD}; the
+commit hash is stated in Sec.~IV-D of the manuscript.
+
+The manuscript has not been published previously and is not under
+consideration elsewhere. All authors have approved the revised version.
+
+Thank you for your consideration.
+
+\vspace{10pt}
+Sincerely, on behalf of all authors,
+
+\vspace{18pt}
+Quan Tran Anh Vo (corresponding author)\\
+Minh Tuan Pham (submitting author)\\
+The University of Danang - University of Science and Technology\\
+Danang 550000, Vietnam\\
+\texttt{votrananhquan1111@gmail.com}, \texttt{pmtuan@dut.udn.vn}
+
+\end{document}

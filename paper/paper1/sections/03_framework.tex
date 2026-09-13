@@ -7,7 +7,8 @@
 % =====================================================================
 
 \subsection{Feature map, kernel and cost}
-\revnote{rewrite}{Ban da nop chi co Eq. (5). Nay viet tuong minh Eq. (1)--(4).}
+\revnote{rewrite}{The submitted version had only Eq. (5); Eqs. (1)--(4) are now written out.}
+\begin{revbody}
 
 The \ZZ{}FeatureMap on $n$ qubits with $r$ repetitions prepares
 \begin{equation}
@@ -41,9 +42,11 @@ and the circuit cost we charge for it is
 Removing the pairwise term of Eq.~\eqref{eq:phase} while leaving everything else
 unchanged gives the \Zmap{}FeatureMap, which is the control used throughout the
 entanglement ablation.
+\end{revbody}
 
 \subsection{Problem statement}
-\revnote{rewrite}{Problem 1 yeu di co y: chap nhan cau tra loi AM la ket qua.}
+\revnote{rewrite}{Problem 1 deliberately weakened: a negative answer is admitted as a result (AE-1, R1-4).}
+\begin{revbody}
 
 Let $\mathcal{D}=\{(\bm{x}_i,y_i)\}_{i=1}^{N}$ be a labelled sample of network
 records with $\bm{x}_i\in\mathbb{R}^{d}$ and $y_i$ one of five classes, and let
@@ -87,9 +90,11 @@ in which it is not.
 Problem~\ref{prob:regime} is deliberately weaker than the claim the submitted
 version made. It admits negative answers as results, and most of the answers we
 obtain are negative or inconclusive.
+\end{revbody}
 
 \subsection{Pipeline}
-\revnote{rewrite}{Ban da nop co Fig. 2, Fig. 3 va Table II cho muc nay; ca ba da bo, mo ta bang chu.}
+\revnote{rewrite}{The submitted version had Fig. 2, Fig. 3 and Table II here; all three removed and replaced by prose. A statement that every baseline consumes the same four-component representation is added.}
+\begin{revbody}
 
 The path from raw records to a decision is: one-hot encoding to $d=122$
 dimensions; an ANOVA $F$-test retaining $K$ features; PCA to $n$ components; a
@@ -128,9 +133,10 @@ more data than the classifier it feeds. We regard that trade as mandatory in a
 study whose headline concerns how behaviour changes with $N$: freezing a
 front-end fit on the largest subset would leak precisely the quantity under
 investigation. Sec.~\ref{sec:res-c4} reports both arms.
+\end{revbody}
 
 \subsection{Kernel evaluation}
-\revnote{keep}{Giu nguyen y cua ban da nop.}
+\revnote{keep}{Retained from the submitted version.}
 
 The kernel of Eq.~\eqref{eq:kernel} is evaluated exactly rather than by
 sampling. Because the \ZZ{}FeatureMap is

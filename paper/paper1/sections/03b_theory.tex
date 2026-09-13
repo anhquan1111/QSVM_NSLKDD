@@ -20,7 +20,8 @@
 % III-B  Preliminaries -- khong con proposition/proof cho su that hien nhien
 % ---------------------------------------------------------------------
 \subsection{Preliminaries}
-\revnote{rewrite}{Proposition 1, 3, 4 kem chung minh -> ha xuong fact (F1)(F2)(F3), chi trich dan. Theo yeu cau R3-3 va R4-4.}
+\revnote{rewrite}{Propositions 1, 3 and 4 with proofs demoted to cited facts (F1)--(F3), as R3-3 and R4-4 ask.}
+\begin{revbody}
 
 We use three standard facts, stated here for reference rather than proved,
 since each is established in the literature.
@@ -97,14 +98,16 @@ whereas the polynomial inner product grows unboundedly with $\|\bm{x}\|$. This i
 why SVM-\textsc{Poly2} is the sharpest classical comparator, and
 Sec.~\ref{sec:res-c2} confirms that it is. The proof is given in
 Appendix~\ref{app:lemma}.
+\end{revbody}
 
 % ---------------------------------------------------------------------
 % III-C  Luat chon so chieu -- THAY HAN cho Pareto + J(n) + Theorem 1
 % ---------------------------------------------------------------------
 \subsection{C1: A Three-Stage Rule for the Embedding Dimension}
-\revnote{fix}{THAY HAN. Ban da nop dung Eq. (6) J(n) + Definition 4 (Pareto) + Algorithm 1 + Theorem 1. Reviewer 4 chi ra Theorem 1 SAI va buoc Pareto khong loc duoc ung vien nao. Thay bang luat ba giai doan tu vung, khong trong so.}
-
+\revnote{fix}{Replaced entirely. The submitted version used Eq. (6) J(n), Definition 4 (Pareto), Algorithm 1 and Theorem 1; Reviewer 4 showed Theorem 1 false and the Pareto step vacuous (R4-2). Replaced by a lexicographic three-stage rule with no weights.}
 \input{figs_revision/fig_c1_selection}
+\begin{revbody}
+
 
 The submitted version selected $n$ by Pareto filtering followed by a weighted
 scalarisation $J(n) = \alpha V(n) + \beta\widetilde{F}(n) - \gamma Q(n)$. That
@@ -142,12 +145,14 @@ and $n^{\ast}=6$, recovered on $10/10$ independent subsets and under every
 threshold perturbation we tested (Fig.~\ref{fig:c1-selection}). We therefore
 present C1 as a transferable \emph{procedure} whose output is a property of the
 dataset, and not as the constant $n=4$.
+\end{revbody}
 
 % ---------------------------------------------------------------------
 % III-D  Thay z-test cua Proposition 4 bang giao thuc ghep cap
 % ---------------------------------------------------------------------
 \subsection{Identifying the Entanglement Contribution}
-\revnote{fix}{Ban da nop dung Proposition 4 + kiem dinh z hai mau, coi hai nhanh la doc lap trong khi chung dung chung tap train. Thay bang giao thuc ghep cap trong tung run + hieu chinh Holm.}
+\revnote{fix}{The submitted version used Proposition 4 and a two-sample z-test that treated the two branches as independent although they share the training set. Replaced by a within-run paired protocol with Holm correction.}
+\begin{revbody}
 
 The submitted version certified the entanglement effect with a two-sample
 $z$-test over $m=5$ subsets (former Proposition~4). Two things are wrong with
@@ -165,13 +170,15 @@ tests several baselines, $p$-values are Holm-corrected within baseline families
 verdict reported in this paper is the corrected one. This is strictly more
 conservative than the former $z$-test and assumes nothing beyond symmetry of the
 paired differences.
+\end{revbody}
 
 % ---------------------------------------------------------------------
 % Erratum -- phai noi thang, khong de reviewer tu tim ra
 % ---------------------------------------------------------------------
 \subsection{Corrections to the Submitted Version}
 \label{sec:erratum}
-\revnote{new}{MUC MOI -- tu khai 4 loi cua ban da nop. Hai loi do Reviewer 4 chi ra; hai loi con lai KHONG reviewer nao bat, nhom tu tim ra.}
+\revnote{new}{New subsection: erratum listing four errors of the submitted version. Two were found by Reviewer 4; the other two by the authors and raised by no reviewer.}
+\begin{revbody}
 
 Four defects in the submitted theory section are corrected here; two were
 identified by reviewers and two we found ourselves, and we report them on the
@@ -201,3 +208,4 @@ unaffected, depending on which monomials appear and not on their coefficients.
 $\widetilde{F}(n)=1/\mathrm{DBI}(n)$, but the tabulated values are the ANOVA
 $F$~statistic. No conclusion depends on it, the quantity having been dropped
 along with $J$, but we record it for completeness.
+\end{revbody}

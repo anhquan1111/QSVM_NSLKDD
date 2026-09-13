@@ -13,7 +13,8 @@
 % =====================================================================
 
 \subsection{Quantum kernels}
-\revnote{rewrite}{Ban da nop: Definition 1--2 + Proposition 1--2. Gop lai, Prop 1 ha xuong fact (F1) theo yeu cau R3-3.}
+\revnote{rewrite}{Submitted version had Definitions 1--2 and Propositions 1--2; merged, and Proposition 1 demoted to a cited fact (F1) as R3-3 asks.}
+\begin{revbody}
 
 A quantum kernel embeds $\bm{x}$ into a state $|\phi(\bm{x})\rangle$ prepared by
 a parameterised circuit and reads off the fidelity as a similarity
@@ -33,9 +34,11 @@ distinct from, though related to, the barren plateaus of variational training
 \cite{ref10}, so the same expressivity \cite{ref21} that makes a map interesting
 makes its Gram matrix uninformative at width. Sec.~\ref{sec:res-width} measures both effects here: the alignment gain
 is large, and the concentration is what eventually destroys it.
+\end{revbody}
 
 \subsection{Quantum machine learning for intrusion detection}
-\revnote{rewrite}{Them survey 2026 va bai Cirillo et al. (QMI 2026) -- bai Reviewer 1 chi dich danh o y R1-1.}
+\revnote{rewrite}{Adds the 2026 survey and Cirillo et al. (QMI 2026), the study Reviewer 1 named in R1-1.}
+\begin{revbody}
 
 Applications of quantum kernels and variational classifiers to network intrusion
 detection have grown quickly \cite{ref13,ref14,ref15}, most using NSL-KDD
@@ -73,9 +76,11 @@ the kernel.
 What that study does not vary is the training-set size, fixed at a single $15\%$
 class-balanced subsample ($15{,}114$ training instances for NSL-KDD) drawn under
 a random $80/20$ split rather than the official partitions.
+\end{revbody}
 
 \subsection{Benchmarking studies of quantum models}
-\revnote{new}{Muc moi. Hai bai Reviewer 3 dan lam bang chung ``ket qua da co san'' (y R3-5). Da doc toan van ca hai.}
+\revnote{new}{New subsection. The two benchmarking studies Reviewer 3 cited as prior evidence (R3-5), read in full.}
+\begin{revbody}
 
 Two broad benchmarks are relevant precisely because they are sceptical. Bowles,
 Ahmed and Schuld \cite{bowles2024} evaluate twelve QML models over $160$ datasets
@@ -106,9 +111,11 @@ four datasets to our two, at eight qubits to our four and six, with a stricter
 error-rate criterion. What they hold fixed is the training-set size, the full
 $125{,}973$-record training partition on NSL-KDD, and that is where our
 contribution lies.
+\end{revbody}
 
 \subsection{Bounded advantage windows in adjacent domains}
-\revnote{new}{Muc moi. Bai Carducci ICAD 2026 -- Reviewer 4 chi dich danh o y R4-1.}
+\revnote{new}{New subsection. Carducci, ICAD 2026, the study Reviewer 4 named in R4-1.}
+\begin{revbody}
 
 The question this paper asks is being asked elsewhere, and in at least one
 adjacent domain it has been given the same shape. Carducci \cite{carducci2026}
@@ -141,11 +148,13 @@ comparison rests on its abstract, introduction and index terms; we could not
 establish its qubit count or whether it varies training-set size. We present the
 parallel as suggestive rather than as evidence, and do not tabulate the study in
 Table~\ref{tab:novelty}, whose cells are read from full texts.
+\end{revbody}
 
 \subsection{Positioning}
-\revnote{rewrite}{Bang I dung lai han: 4 bai/3 cot -> 5 bai/13 dong, moi o doc tu toan van.}
-
+\revnote{rewrite}{Table I rebuilt: from 4 studies and 3 columns to 5 studies and 13 rows, every cell read from the full text (AE-2, R3-5).}
 \input{tables/novelty_matrix}
+\begin{revbody}
+
 
 Table~\ref{tab:novelty} places this work against those four studies on the axes
 that distinguish them; each cell was read from the full text rather than from an
@@ -170,3 +179,4 @@ measured mechanism, Gram-matrix concentration, that predicts where the
 method stops working. The last of these is the closest we come to a theoretical
 contribution, and we present it as an empirical regularity rather than as a
 theorem, which is what our evidence supports.
+\end{revbody}
