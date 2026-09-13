@@ -219,7 +219,9 @@ def check_file(path: Path) -> tuple[set[str], set[str], set[str], set[str]]:
             elif in_dollar:
                 masked[j] = " "
         outside = re.sub(BS + BS + r"[A-Za-z]+", "", "".join(masked))
-        for ch in ("_",) + (() if in_tab else ("&",)):
+        # `^` ngoai math cung la loi that ("Missing $ inserted"), cung loai
+        # voi `_`. Da tung lot vao ghi chu revnote cua ban danh dau.
+        for ch in ("_", "^") + (() if in_tab else ("&",)):
             for m in re.finditer(re.escape(ch), outside):
                 if m.start() and outside[m.start() - 1] == BS:
                     continue

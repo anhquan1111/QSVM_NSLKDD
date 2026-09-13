@@ -7,6 +7,7 @@
 % =====================================================================
 
 \subsection{Data and preprocessing}
+\revnote{rewrite}{Them UNSW-NB15 thanh dataset chinh (y AE-3, R1-2) va so lieu ve trung lap cua ca hai bo.}
 
 NSL-KDD~\cite{ref4} is used with its official partitions. The training partition
 holds $125{,}973$ records and the test partition $22{,}544$; the class mix is
@@ -22,6 +23,7 @@ identical to a training row in both features and label, and UNSW-NB15 is far
 more heavily duplicated.
 
 \subsection{Protocol}
+\revnote{fix}{Ban da nop: 5 seed, va QSVM co dinh C=1.0 trong khi SVM co dien duoc tune -- Reviewer 1 chi ra o y R1-3 rang cach nay thien vi chinh phuong phap cua ta. Nay: 10 run, tune doi xung, hai nhanh, hai tap test.}
 
 \emph{Repetitions.} Every reported quantity is computed over ten independent
 runs with fixed seeds $\{100,\dots,109\}$. Subsets are drawn stratified on the
@@ -56,6 +58,7 @@ subsets satisfy $\mathcal{D}_{N_1}\subset\mathcal{D}_{N_2}\subset\cdots$, so
 variation across sizes reflects added data rather than a changed sample.
 
 \subsection{Statistical methodology}
+\revnote{rewrite}{Them hieu chinh Holm trong tung ho baseline (y R2-3, R2-4).}
 
 Every comparison is paired within run: for run $i$ we form
 $\Delta_i = m(\text{\QSVM{}}) - m(\text{baseline})$ on the same subset and the
@@ -72,6 +75,7 @@ corrected $p<0.05$ \emph{and} the confidence interval excludes zero; otherwise
 it is inconclusive, and we report it as such rather than as a win.
 
 \subsection{Implementation and reproducibility}
+\revnote{new}{Them link repo, commit hash va bon bo kiem tu dong -- Reviewer 4 chi ra o y R4-3 rang ban cu noi reproducible ma khong dua gi.}
 
 Experiments use NumPy 2.4, SciPy 1.17, scikit-learn 1.8, XGBoost 3.3,
 Qiskit 2.3 with qiskit-machine-learning 0.9, and Qiskit Aer 0.17. Quantum
