@@ -1,12 +1,11 @@
 """Dong goi bo ban thao de tai len Overleaf.
 
-Chi lay dung nhung file main_revision.tex thuc su \\input, cong 12 hinh PDF.
-CO Y bo `main.tex` cu: no la ban dung lai tu paper1.pdf de doi chieu, neu de
-lan trong zip thi Overleaf rat de chon nham lam tai lieu chinh.
+Chi lay dung nhung file main_revision.tex thuc su \\input, cong 9 hinh PDF.
+Ban da nop va ban dung lai tu no nam o v1_submitted/, khong dinh toi zip nay.
 
     python runners/make_overleaf_zip.py
 
-Ket qua: paper/paper1/overleaf/TETC-2026-05-0252_revision.zip
+Ket qua: paper/paper1/v2_revision/TETC-2026-05-0252_revision.zip
 """
 
 from __future__ import annotations
@@ -20,7 +19,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 PAPER = ROOT / "paper/paper1"
 MAIN = PAPER / "main_revision.tex"
-OUT_DIR = PAPER / "overleaf"
+OUT_DIR = PAPER / "v2_revision"
 ZIP = OUT_DIR / "TETC-2026-05-0252_revision.zip"
 
 BS = chr(92)
@@ -51,7 +50,7 @@ Trong repo:
     python runners/check_latex.py     # cau truc .tex
     python runners/audit_c4.py        # 100 kiem dinh thong ke
     python runners/audit_figures.py   #  36 kiem dinh hinh
-    python runners/audit_prose.py     #  84 con so trong cau van
+    python runners/audit_prose.py     # 115 con so trong cau van
     python runners/verify_lemma1.py   #  15 kiem dinh Lemma 1
 
 ## Nhung cho CON PHAI DIEN, khong duoc bo qua
@@ -142,8 +141,8 @@ def main() -> int:
     print("\nDanh sach:")
     for line in listing:
         print("  " + line.replace("`", ""))
-    print("\n  KHONG dua vao zip: main.tex (ban dung lai tu paper1.pdf de doi "
-          "chieu),\n  cac file .png trung lap voi .pdf, va toan bo paper1.pdf.")
+    print("\n  KHONG dua vao zip: thu muc v1_submitted/ (ban da nop) va cac "
+          "file .png\n  trung lap voi .pdf.")
     return 0
 
 
