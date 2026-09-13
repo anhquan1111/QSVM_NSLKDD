@@ -1,0 +1,82 @@
+% =====================================================================
+%  TETC-2026-05-0252 -- BAN CO DANH DAU THAY DOI
+%
+%  Giong het ban sach (main_revision.tex), chi khac: bat co \annottrue nen
+%  moi tieu de muc hien them mot nhan mau noi muc do MOI / VIET LAI / SUA
+%  LOI / GIU, kem mot cau giai thich va ma y reviewer tuong ung.
+%
+%  Dung de:
+%    1. Thay va dong tac gia doc soat -- nhin la biet cho nao moi, cho nao
+%       con nguyen cua ban da nop, khong phai do hai ban canh nhau.
+%    2. TETC bat buoc nop ban danh dau thay doi cung voi ban sach.
+%
+%  Noi dung than bai KHONG khac ban sach mot chu nao -- ca hai deu
+%  \input{document} va \input{preamble}. Sua o sections/ thi ca hai cung doi.
+%
+%  Bien dich: pdflatex -> pdflatex
+% =====================================================================
+\documentclass[journal]{IEEEtran}
+
+\input{preamble}
+\annottrue
+
+\begin{document}
+
+% ---------------------------------------------------------------------
+%  Trang bia cua ban danh dau. Khong co trong ban sach.
+% ---------------------------------------------------------------------
+\thispagestyle{empty}
+\begin{center}
+  {\LARGE\bfseries Annotated copy}\\[6pt]
+  {\large Manuscript TETC-2026-05-0252}\\[10pt]
+  {\itshape NISQ-Aware Quantum Kernel SVM for Network Intrusion Detection:\\
+   A Regime-Specific Benchmark on NSL-KDD}
+\end{center}
+
+\vspace{10pt}
+
+This copy is identical to the clean version except that every subsection
+carries a tag recording what changed with respect to the submitted version,
+together with the reviewer item that prompted it. The tags appear only in this
+copy; the manuscript text is the same file in both.
+
+\vspace{6pt}
+\begin{center}
+\begin{tabular}{@{}ll@{}}
+\toprule
+Tag & Meaning \\
+\midrule
+\revtagnew      & Subsection is new; the submitted version had nothing here \\
+\revtagrewrite  & Present in the submitted version but rewritten \\
+\revtagfix      & Corrects an error in the submitted version \\
+\revtagkeep     & Retained from the submitted version \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\vspace{10pt}
+
+\textbf{Not tagged, because they did not change:} the title, the author list and
+affiliations, the circuit configuration ($K=20$, $n^{\ast}=4$, $r=2$, full
+entanglement), and Assumption~1.
+
+\textbf{Removed from the submitted version} and therefore not visible anywhere
+in this copy: Theorem~1, Definition~4 (Pareto optimality), Algorithm~1, the
+objective $J(n)$ of Eq.~(6), Table~II (notation), Table~III (Pareto data),
+Table~VII (shot noise), and Figs.~1, 2, 3 and~5. Sec.~III-D of the manuscript
+states why for each.
+
+\textbf{Bibliography.} Six entries added, one removed, one corrected. The
+removal and the correction are both changes Reviewer~2 asked for. Every
+bibliography change is itemised in a dedicated section of the response letter,
+as TETC requires.
+
+\vspace{8pt}
+A section-by-section comparison with the submitted version, including page
+estimates for each addition, is in \texttt{docs/DOI\_CHIEU\_CU\_MOI.md} of the
+released repository.
+
+\clearpage
+
+\input{document}
+\end{document}

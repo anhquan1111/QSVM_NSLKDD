@@ -14,6 +14,7 @@
 
 \subsection{Choosing the embedding size, and what it costs}
 \label{sec:res-c1}
+\revnote{rewrite}{Bo Fig. 5 (Pareto frontier) cua ban cu; thay bang hinh quet K va hinh luat ba giai doan tren CA HAI dataset.}
 
 \input{figs_revision/fig_ksweep}
 
@@ -46,6 +47,7 @@ is actually paid.
 
 \subsection{Does entanglement help at the operating point?}
 \label{sec:res-c2}
+\revnote{fix}{So lieu QSVM GIU NGUYEN. Nhung them Random Forest va XGBoost (y AE-4, R1-5, R2-1) thi THU HANG DOI: XGBoost 0.8503 vuot QSVM-ZZ 0.8469. Ban da nop ghi QSVM dung dau.}
 
 \input{figs_revision/fig_ablation}
 \input{figs_revision/fig_perrun}
@@ -79,6 +81,7 @@ noise helping.
 
 \subsection{Distribution shift}
 \label{sec:res-c3}
+\revnote{fix}{Them RF/XGBoost thi KET LUAN DOI CHIEU: QSVM tut nhanh hon ca hai ensemble cay. Ban da nop goi che do nay la bang chung manh nhat cua loi the.}
 
 \input{figs_revision/fig_priorshift}
 
@@ -113,8 +116,9 @@ present it as such.
 
 \subsection{Sample complexity: an ordering that reverses}
 \label{sec:res-c4}
+\revnote{fix}{KET QUA DAO CHIEU. Ban da nop quet N toi 1000 va ket luan co loi the o che do it du lieu. Quet toi $N=10^4$ o ti le lop tu nhien thi nguoc lai: co dien thang o N nho. Tra loi truc tiep y R1-7.}
 
-\input{crossover_arms_table}
+\input{tables/crossover_arms}
 
 \input{figs_revision/fig_learning_curve}
 
@@ -160,6 +164,7 @@ very regime in which the kernel does best.
 
 \subsection{Rare attacks}
 \label{sec:res-rare}
+\revnote{new}{MUC MOI. Ban da nop khang dinh ``+6.7 diem rare, d=+0.68'' nhung code cu khong he tinh metric nao cho lop hiem -- Reviewer 4 hoi thang o y R4-5. Khang dinh do da rut.}
 
 Because R2L and U2R are the classes an operator cares about, we report them
 separately rather than only inside the macro average. At $N=10^4$ under the
@@ -176,6 +181,7 @@ metric was computed by the code that produced it, and we withdraw the number.
 
 \subsection{Transfer to UNSW-NB15}
 \label{sec:res-unsw}
+\revnote{new}{MUC MOI. Ban da nop chi nhac UNSW mot cau trong phan han che; Reviewer 1 va AE doi dataset thu hai lam that (y AE-3, R1-2).}
 
 \input{figs_revision/fig_unsw_transfer}
 
@@ -197,6 +203,7 @@ one dataset and not the other is reported as exactly that.
 
 \subsection{Where the kernel breaks, and why}
 \label{sec:res-width}
+\revnote{new}{MUC MOI. Tra loi y R3-4 (``toan mo phong o so qubit rat nho''): mo rong len 8 qubit thi 48/48 so sanh nghieng ve co dien, kem co che do duoc tu ma tran Gram.}
 
 \input{figs_revision/fig_width}
 
