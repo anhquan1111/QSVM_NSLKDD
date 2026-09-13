@@ -83,8 +83,26 @@ xuống cuối bài và chèn lẫn vào danh mục tài liệu tham khảo — 
 python runners/make_overleaf_zip.py
 ```
 
-Ra `v2_revision/TETC-2026-05-0252_revision.zip` — chỉ gồm những file thật sự được `\input`,
-cộng 9 hình. Thư mục `v1_submitted/` **không** nằm trong gói.
+Ra **bốn** gói trong `v2_revision/`. Ba gói đầu, mỗi gói chứa **đúng một** tài liệu compile
+được cộng toàn bộ phụ thuộc của nó:
+
+| Muốn xuất PDF nào | Tải lên gói nào |
+|---|---|
+| Bản thảo sạch | `TETC-2026-05-0252_ban_sach.zip` |
+| Bản có đánh dấu thay đổi | `TETC-2026-05-0252_ban_danh_dau.zip` |
+| Thư phản hồi reviewer | `TETC-2026-05-0252_thu_phan_hoi.zip` |
+| (gộp cả ba, để lưu trữ) | `TETC-2026-05-0252_revision.zip` |
+
+Mỗi gói riêng chỉ có **một** file mang `\documentclass`, nên Overleaf tự nhận đúng
+Main document — tải lên rồi bấm Recompile, không phải vào Settings chỉnh gì.
+
+**New Project → Upload Project.** Đừng kéo file zip thả vào một project Overleaf đang có:
+Overleaf giải nén vào một thư mục con, file main nằm một nơi còn `preamble.tex` nằm nơi khác,
+và báo `File preamble.tex not found`.
+
+Script tự kiểm ba điều trước khi báo OK: mỗi gói đúng một `\documentclass`, mọi `\input`
+trong gói trỏ tới file **có trong gói**, và mọi `\includegraphics` cũng vậy.
+Thư mục `v1_submitted/` không nằm trong gói nào.
 
 ---
 
