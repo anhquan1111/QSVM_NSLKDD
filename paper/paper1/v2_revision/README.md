@@ -17,7 +17,7 @@ paper/paper1/
 ├── response_letter.tex    ← thư phản hồi      ─┘
 ├── preamble.tex           ← gói, macro, tham số đặt hình   (dùng chung)
 ├── document.tex           ← tiêu đề, tác giả, abstract, thứ tự mục (dùng chung)
-├── bibliography.tex       ← 41 tài liệu
+├── bibliography.tex       ← 38 tài liệu
 ├── sections/              ← thân bài, 01…09 theo đúng số mục trong bài
 ├── tables/                ← Bảng I và Bảng II
 └── figs_revision/         ← 9 hình + 9 file caption
@@ -53,13 +53,13 @@ Các file `.zip` **không** được đẩy lên repo (xem `.gitignore`) — ch�
 | 2 | Cập nhật commit hash cuối vào mục Reproducibility |
 | 3 | Thêm tiểu sử 5 tác giả — **đã có sẵn** ở `../v1_submitted/paper1_with_bios.pdf` trang 11 |
 | 4 | Bản đánh dấu vàng phần tài liệu tham khảo (TETC bắt buộc) |
-| 5 | Cover letter + mục riêng gửi EiC/AE giải trình thay đổi bibliography |
+| 5 | Cover letter gửi EiC/AE — *mục giải trình bibliography đã viết xong, nằm trong thư phản hồi* |
 
 ## Ràng buộc của TETC
 
 - Nộp **ba file**: bản sạch · bản đánh dấu vàng · thư phản hồi
 - Quá **12 trang** thì trả phí trang vượt (MOPC) và **không được xin miễn** — bản hiện tại 16 trang
-- Danh mục tài liệu **tối đa 45 mục** — hiện 41
+- Danh mục tài liệu **tối đa 45 mục** — hiện 38
 - **Không được thêm/bớt tác giả** nếu không có văn bản đồng ý của EiC
 - **Không được thêm/bớt tự trích dẫn**
 
