@@ -77,8 +77,8 @@ different $Q$.
 
 \begin{problem}[Regime identification]
 \label{prob:regime}
-Given a family of operating conditions --- training-set size, class prior,
-attack composition, test distribution, and embedding width --- determine, for
+Given a family of operating conditions (training-set size, class prior,
+attack composition, test distribution, and embedding width), determine, for
 each condition, whether $K^{\mathrm{Q}}_{n^\ast}$ is preferable to a classical
 baseline, at a stated level of statistical confidence, and report the conditions
 in which it is not.
@@ -113,8 +113,8 @@ distribution, and C4 varies only $N$.
 \emph{The front-end is refit wherever the classifier is refit.} In the primary
 arm, feature selection, projection and scaling are re-estimated at every
 training-set size on that size's training fold alone. This costs comparability
-across sizes --- the representation at $N=100$ is not the representation at
-$N=10^{4}$ --- and buys the guarantee that no representation is ever informed by
+across sizes (the representation at $N=100$ is not the representation at
+$N=10^{4}$) and buys the guarantee that no representation is ever informed by
 more data than the classifier it feeds. We regard that trade as mandatory in a
 study whose headline concerns how behaviour changes with $N$: freezing a
 front-end fit on the largest subset would leak precisely the quantity under

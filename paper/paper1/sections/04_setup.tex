@@ -44,7 +44,7 @@ $C=1.0$ while selecting $C$ for the classical SVMs on a validation fold, and
 described this as avoiding bias. It does the opposite: it grants one family a
 search the other is denied. In this revision every model, quantum and classical,
 is tuned by the same procedure on the same disjoint tuning set of $2{,}000$
-records, and results are reported for two arms --- \emph{tuned per $N$}, in
+records, and results are reported for two arms: \emph{tuned per $N$}, in
 which the search is repeated at each training-set size, and \emph{frozen}, in
 which hyper-parameters are held at the values selected once. Because the
 quantum kernel does not depend on $C$, its grid costs only repeated fits on an
@@ -69,9 +69,9 @@ what licenses these tests here: it removes the subset-to-subset variance that
 otherwise dominates comparisons between learners on resampled data \cite{ref31}.
 
 Because each contribution tests several baselines, $p$-values are Holm-corrected
-within baseline families --- \emph{entanglement} $\{$QSVM-\Zmap{}$\}$,
+within baseline families, namely \emph{entanglement} $\{$QSVM-\Zmap{}$\}$,
 \emph{classical kernel} $\{$linear, poly2, RBF$\}$, and \emph{strong tabular}
-$\{$random forest, XGBoost$\}$ --- and every verdict in this paper is the
+$\{$random forest, XGBoost$\}$, and every verdict in this paper is the
 corrected one. A comparison is called favourable to one side only when the
 corrected $p<0.05$ \emph{and} the confidence interval excludes zero; otherwise
 it is inconclusive, and we report it as such rather than as a win.

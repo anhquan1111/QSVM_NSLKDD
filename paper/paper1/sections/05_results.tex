@@ -39,7 +39,7 @@ Re-running the same rule at larger budgets (Fig.~\ref{fig:ksweep}(b)) gives
 $n^\ast = 4, 7, 8, 9$ for $K = 20, 40, 80, 122$. The mechanism is the variance
 gate: spreading the same variance over more retained features pushes $V(n)$ down
 at every $n$, so the gate opens later. This is the honest reading of $K=20$. It
-is not an elbow in accuracy --- accuracy keeps improving --- it is the point at
+is not an elbow in accuracy (accuracy keeps improving); it is the point at
 which the circuit is still cheap. Moving from $K=20$ to $K=80$ buys $0.028$
 macro-$F_1$ for the classical proxy and costs a rise from $24$ to $112$
 two-qubit gates. Sec.~\ref{sec:res-width} reports what happens when that price
@@ -112,7 +112,7 @@ classical-favourable) and is inconclusive against SVM-RBF and both ensembles.
 No reading of this regime favours the quantum kernel.
 
 \emph{Feature perturbation.} Under additive noise of increasing $\sigma$,
-\QSVM{}'s degradation slope is steeper than every baseline's --- six of six
+\QSVM{}'s degradation slope is steeper than every baseline's: six of six
 comparisons classical-favourable, slopes from $-0.69$ to $-1.11$, all effect
 sizes beyond $2.8$. This is the clearest negative result in the paper and we
 present it as such.
@@ -150,14 +150,14 @@ re-tuning artefact would not survive freezing the tuning.
 
 Second, the reversal is not uniform across baselines. Against SVM-RBF the
 difference does turn positive, but no cell in the sweep reaches
-corrected significance --- the quantum kernel never demonstrably beats an RBF
+corrected significance; the quantum kernel never demonstrably beats an RBF
 kernel at any size we tested. Significance is reached against XGBoost at
 $N\geq5000$, against the random forest only at $N=10^4$, and against the linear
 and poly-2 kernels from $N=1000$ and $N=2000$ respectively.
 
 Third, the reversal is a property of the natural prior, not of the data volume
-alone. Repeating the sweep with rare attacks enriched twelvefold to $10\%$ ---
-the sampling the submitted protocol used --- leaves $26$ of $30$ comparisons
+alone. Repeating the sweep with rare attacks enriched twelvefold to $10\%$,
+the sampling the submitted protocol used, leaves $26$ of $30$ comparisons
 inconclusive, with no crossover anywhere in range. That regime cannot be pushed
 past $N=2000$: at $N=5000$ the ten runs would share $59\%$ of their rare
 samples, and independence between runs would be lost. Within the range where the
@@ -215,8 +215,8 @@ circuit. Paying that price is the sharpest test of whether the quantum kernel
 has headroom, and it fails it (Fig.~\ref{fig:width}).
 
 Re-running the entire sample-complexity sweep at $K=80$, where the rule returns
-$n^\ast=8$, produces $48$ paired comparisons --- six baselines across eight
-training-set sizes --- and every one of them is classical-favourable. The
+$n^\ast=8$, produces $48$ paired comparisons (six baselines across eight
+training-set sizes), and every one of them is classical-favourable. The
 entanglement ablation reverses sign as well: at eight qubits \QSVM{} falls
 \emph{below} its entanglement-free control at every size, by $0.082$ to $0.171$
 macro-$F_1$. Widening the circuit does not extend the advantage; it removes it.
@@ -224,7 +224,7 @@ macro-$F_1$. Widening the circuit does not extend the advantage; it removes it.
 The mechanism is measurable in the Gram matrix rather than inferred. Writing
 $s(n)$ for the standard deviation of the off-diagonal entries and fitting
 $s(n)\propto n^{-\alpha}$ over $n=4,\dots,10$, we obtain $\alpha_{\ZZ}=0.590$
-against $\alpha_{\Zmap}=0.292$ at $K=20$ --- a ratio of $2.02$. That ratio is
+against $\alpha_{\Zmap}=0.292$ at $K=20$, a ratio of $2.02$. That ratio is
 what the circuit structure predicts: the \ZZ{} map contributes
 $\binom{n}{2}$ pairwise phase terms where the \Zmap{} map contributes $n$
 single-qubit terms, so the former's phase content grows quadratically and the

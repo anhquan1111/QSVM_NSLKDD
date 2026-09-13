@@ -38,13 +38,13 @@ Sec.~\ref{sec:res-width} shows that a wider circuit does not extend it upward.
 \emph{Balanced binary composition.} On a $50/50$ Normal--DoS mixture the quantum
 kernel is favourable against all four kernel baselines, with effect sizes up to
 $3.02$. This is the condition under which quantum-kernel IDS results are most
-often reported in the literature, and our numbers reproduce that impression ---
+often reported in the literature, and our numbers reproduce that impression;
 which is part of why we report the other conditions too.
 
 \emph{Rare-attack detection relative to tree ensembles.} At $N=10^{4}$ the
 rare-class $F_{1}$ of \QSVM{} is $0.507$ against $0.334$ for XGBoost and $0.331$
 for the random forest. If the deployment objective is rare-attack recall rather
-than macro-averaged accuracy, the ranking changes substantially --- though
+than macro-averaged accuracy, the ranking changes substantially, though
 SVM-RBF, at $0.585$, remains ahead of both.
 
 \subsection{Where it is not}
@@ -95,5 +95,5 @@ qubits, under the natural prior but not under enrichment, on NSL-KDD but not on
 UNSW-NB15 for the sample-size effect. A method whose advantage is confined to a
 box this small is not yet a practical instrument, and we do not present it as
 one. What it is, on this evidence, is a phenomenon with a measurable boundary
---- and the boundary, being predicted by the circuit's phase-term count, is the
+and the boundary, being predicted by the circuit's phase-term count, is the
 part most likely to hold beyond these two datasets.
