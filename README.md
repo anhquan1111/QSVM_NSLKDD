@@ -36,7 +36,7 @@ chiếu với mọi con số đã viết trong bài:
 ```bash
 python runners/audit_c4.py        # 100/100  mọi thống kê công bố
 python runners/audit_figures.py   #  36 mục  mọi con số trên hình
-python runners/audit_prose.py     # 115/115  mọi con số viết trong câu văn
+python runners/audit_prose.py     # 122/122  mọi con số viết trong câu văn
 python runners/verify_lemma1.py   #  15/15   khai triển bậc hai của nhân ZZ
 python runners/check_latex.py     #          cấu trúc file .tex
 ```

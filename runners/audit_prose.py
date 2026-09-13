@@ -149,10 +149,15 @@ def section_c2() -> None:
                           ("ZZ shot", "ideal_finite_shot", "QSVM_ZZ"),
                           ("ZZ noisy", "realistic_noisy_simulator", "QSVM_ZZ")):
         v = float(n.loc[mdl][col])
-        check(f"nhieu: {lbl} = {v:.4f}", f"${v:.4f}$" in TEXT["05_results.tex"],
-              f"{v:.4f}")
+        # 13/09/2026: ket qua nhieu la MOT run (noise_run_id=1, 300 test) nen bai in 2 chu so
+        # va khai ro n=1; cong kiem theo 2 chu so + cau khai "single run".
+        check(f"nhieu: {lbl} = {v:.2f} (1 run, in 2 chu so)", f"${v:.2f}$" in TEXT["05_results.tex"],
+              f"{v:.4f} -> {v:.2f}")
+    check("bai KHAI ket qua nhieu la mot run",
+          says("05_results.tex", "is a single run (run~1"),
+          "n=1 khong duoc in nhu phep do 10 run")
     check("cau van noi ro nhieu KHONG lam giam",
-          says("05_results.tex", "the noisy value is not lower than the ideal"),
+          says("05_results.tex", "The noisy value is not lower than the ideal"),
           "phai giu -- day la cho de bi doc thanh 'nhieu giup'")
 
 
@@ -192,6 +197,26 @@ def section_c3() -> None:
           (tmp.verdict == "classical-favorable").sum() == 3
           and (tmp.verdict == "QSVM-favorable").sum() == 0,
           tmp.verdict.value_counts().to_dict())
+
+
+def section_ref_arm() -> None:
+    """13/09/2026: Table IV (nhanh tham chieu 122 dac trung). Macro trong tables/ref_arm_macros.tex
+    phai bang so tinh lai tu ref_arm_fullfeat.csv + c4_per_run (ghep cap cung run, cung N)."""
+    print("\nD'. Table IV -- nhanh tham chieu XGBoost/RF du dac trung")
+    ref = pd.read_csv(NSL / "c4_revision/ref_arm_fullfeat.csv")
+    q = nsl_runs()
+    macros = io.open(ROOT / "paper/paper1/tables/ref_arm_macros.tex", encoding="utf-8").read()
+    check("nhanh tham chieu du 10 run x 7 N x 4 o", len(ref) == 280 and ref.run_id.nunique() == 10, f"{len(ref)} dong")
+    x = ref[(ref.featset == "all122") & (ref.model == "XGBoost")].groupby("n_train").f1_macro.mean()
+    check("macro refArmXgbTenK khop CSV", f"{{{x.loc[10000]:.4f}}}" in macros, f"{x.loc[10000]:.4f}")
+    check("macro refArmXgbPeak khop CSV", f"{{{x.max():.4f}}}" in macros and f"{{{int(x.idxmax())}}}" in macros, f"{x.max():.4f} @ {int(x.idxmax())}")
+    for mdl, mac in (("XGBoost", "refArmDeltaXgbTenK"), ("RandomForest", "refArmDeltaRfTenK")):
+        a = ref[(ref.featset == "all122") & (ref.model == mdl) & (ref.n_train == 10000)].set_index("run_id").f1_macro
+        b = q[(q.model == "QSVM_ZZ") & (q.n_train == 10000)].set_index("run_id").f1_macro
+        dlt = (b - a).dropna()
+        check(f"macro {mac} = hieu ghep cap thu cong", f"{{{dlt.mean():+.4f}$" in macros, f"{dlt.mean():+.4f}, {len(dlt)} run")
+    check("bai noi 'parity' voi XGBoost 122 dac trung",
+          says("05_results.tex", "parity, not a crossover"), "N=5000/10^4 CI chua 0")
 
 
 def section_c4() -> None:
@@ -582,7 +607,7 @@ def main() -> int:
     if missing:
         print(f"  Thieu file: {missing}")
         return 1
-    for fn in (section_c1, section_c2, section_c3, section_c4, section_rare,
+    for fn in (section_c1, section_c2, section_c3, section_c4, section_ref_arm, section_rare,
                section_unsw, section_width, section_map, section_lemma, section_letter):
         fn()
     # Thu phan hoi trich dan chinh so kiem dinh cua script nay. Reviewer se
