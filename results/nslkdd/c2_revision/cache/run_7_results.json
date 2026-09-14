@@ -12,8 +12,8 @@
         122,
         118
       ],
-      "elapsed_sec": 8.36943531036377,
-      "kta": 0.20800920298548561
+      "elapsed_sec": 10.186614751815796,
+      "kta": 0.20800921614377543
     },
     "QSVM_Z": {
       "f1_macro": 0.8432898027229786,
@@ -23,38 +23,38 @@
         133,
         130
       ],
-      "elapsed_sec": 6.811979055404663,
-      "kta": 0.06634388185529953
+      "elapsed_sec": 7.744038820266724,
+      "kta": 0.06634388074661009
     },
     "SVM_Linear": {
       "f1_macro": 0.8227642095172276,
       "accuracy": 0.8233333333333334,
       "n_support_vectors": null,
-      "elapsed_sec": 0.011676788330078125
+      "elapsed_sec": 0.008623123168945312
     },
     "SVM_Poly2": {
       "f1_macro": 0.8429406850459482,
       "accuracy": 0.8433333333333334,
       "n_support_vectors": null,
-      "elapsed_sec": 0.008463621139526367
+      "elapsed_sec": 0.008447408676147461
     },
     "SVM_RBF": {
       "f1_macro": 0.8566650740563784,
       "accuracy": 0.8566666666666667,
       "n_support_vectors": null,
-      "elapsed_sec": 0.010452747344970703
+      "elapsed_sec": 0.013054609298706055
     },
     "RandomForest": {
       "f1_macro": 0.8566650740563784,
       "accuracy": 0.8566666666666667,
       "n_support_vectors": null,
-      "elapsed_sec": 0.4014449119567871
+      "elapsed_sec": 0.3879508972167969
     },
     "XGBoost": {
       "f1_macro": 0.8633196652998634,
       "accuracy": 0.8633333333333333,
       "n_support_vectors": null,
-      "elapsed_sec": 0.11775350570678711
+      "elapsed_sec": 0.12076997756958008
     }
   },
   "kta_protocol": {
@@ -263,5 +263,5 @@
       813
     ]
   },
-  "config_signature": "a89a6eb55d27b0a6"
+  "config_signature": "5d3dcb38329a0dbf"
 }
