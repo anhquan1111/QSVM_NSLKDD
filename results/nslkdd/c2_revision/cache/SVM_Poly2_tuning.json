@@ -61,9 +61,9 @@
       "params": {
         "svc__C": 1.0
       },
-      "mean_score": 0.8409837440196177,
-      "std_score": 0.010224872405419508,
-      "se_score": 0.004572701951955961,
+      "mean_score": 0.8404628325086065,
+      "std_score": 0.010290709481026103,
+      "se_score": 0.00460214518725519,
       "n_folds": 5,
       "complexity": 1.0
     },
@@ -102,5 +102,5 @@
     }
   ],
   "selection": "1SE",
-  "config_signature": "a89a6eb55d27b0a6"
+  "config_signature": "5d3dcb38329a0dbf"
 }
