@@ -15,7 +15,7 @@
     10
   ],
   "force_rerun": false,
-  "config_signature": "a89a6eb55d27b0a6",
+  "config_signature": "5d3dcb38329a0dbf",
   "train_size": 1000,
   "test_size": 300,
   "tuning_size": 2000,
@@ -28,14 +28,20 @@
     -0.00540826671924587,
     0.02812831518597411
   ],
-  "delta_kta_mean": 0.13780718119546273,
+  "delta_kta_mean": 0.1378072101942575,
   "delta_kta_ci95": [
-    0.12673837059198634,
-    0.14887599179893912
+    0.1267383994459768,
+    0.1488760209425382
   ],
   "noise_validation": {
     "included": true,
     "selection_independent": true,
+    "run_ids": [
+      1,
+      2,
+      3
+    ],
+    "n_runs": 3,
     "realistic_noise_validation": true,
     "noisy_f1_available": true,
     "noisy_kernel_changed": true
