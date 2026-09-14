@@ -322,10 +322,16 @@ def _plot_curve(ax, curve, ticks):
             continue
         x, y, e = d.n_train.values, d["mean"].values, d["ci"].values
         if s["z"] >= 5:
-            ax.fill_between(x, y - e, y + e, color=s["color"], alpha=0.12, lw=0,
+            # Dai CI nhat han. Bon dai chong nhau o do dam 0,12 bien vung giua
+            # panel thanh mot mang mau khong doc ra duong nao.
+            ax.fill_between(x, y - e, y + e, color=s["color"], alpha=0.06, lw=0,
                             zorder=s["z"] - 3)
-        ax.plot(x, y, color=s["color"], ls=s["ls"], lw=s["lw"], marker=s["marker"],
-                ms=s["ms"], mec=SURFACE, mew=0.8, zorder=s["z"])
+        # Bay duong nam trong mot dai chi rong chung 0,1 macro-F1. O do day goc
+        # (2,0pt, marker 6,0pt) chung bet vao nhau. Thu nho RIENG trong panel
+        # duong hoc; cac hinh khac van dung STYLE nguyen.
+        ax.plot(x, y, color=s["color"], ls=s["ls"], lw=s["lw"] * 0.72,
+                marker=s["marker"], ms=s["ms"] * 0.68, mec=SURFACE, mew=0.6,
+                zorder=s["z"])
         if s["z"] >= 5:
             ends.append((float(y[-1]), s["label"]))
     _log_axis(ax, ticks, right_margin=RIGHT_MARGIN)
@@ -333,8 +339,10 @@ def _plot_curve(ax, curve, ticks):
     return ends
 
 
-# Be rong le phai (theo ti le truc log) danh cho cac nhan truc tiep.
-RIGHT_MARGIN = 1.95
+# Be rong le phai (theo ti le truc log). Truoc de 1,95 de chua cum nhan dat o
+# le phai; cum nhan do da bo (hang legend duoi da goi ten day du), nen le nay
+# thanh dat chet chiem gan nua panel va don het du lieu vao mot goc.
+RIGHT_MARGIN = 1.06
 
 
 def _log_axis(ax, ticks, *, right_margin=1.22):
@@ -367,17 +375,17 @@ def _plot_delta(ax, pairs, ticks, *, band=None):
         xj = x * jitter[m]
         # Trong panel nay moi baseline deu la nhan vat chinh, nen SVM-RBF duoc
         # ve day bang cac duong khac (mau van la mau cua chinh no o panel tren).
-        lw, ms = 2.0, max(s["ms"], 5.5)
+        lw, ms = 1.5, max(s["ms"], 5.5) * 0.78
         ax.errorbar(xj, y, yerr=[y - d.ci_low.values, d.ci_high.values - y],
-                    fmt="none", ecolor=s["color"], elinewidth=1.0, capsize=2.0,
-                    capthick=1.0, alpha=0.85, zorder=s["z"] - 1)
+                    fmt="none", ecolor=s["color"], elinewidth=0.85, capsize=1.8,
+                    capthick=0.85, alpha=0.8, zorder=s["z"] - 1)
         ax.plot(x, y, color=s["color"], ls=s["ls"], lw=lw, zorder=s["z"] - 1)
         ax.plot(xj, y, ls="none", marker=s["marker"], ms=ms, color=s["color"],
                 mec=SURFACE, mew=0.8, zorder=s["z"])
         sig = d[d.holm_p < 0.05]
         if not sig.empty:
             ax.plot(sig.n_train.values * jitter[m], sig.mean_delta.values, ls="none",
-                    marker="o", ms=ms + 5.5, mfc="none", mec=s["color"], mew=1.3,
+                    marker="o", ms=ms + 4.5, mfc="none", mec=s["color"], mew=1.1,
                     zorder=s["z"] + 1)
     _log_axis(ax, ticks)
     # Huong cua truc ghi ngay tren nhan truc y. Nhan truc y xoay 90 do nen dau
@@ -414,7 +422,7 @@ def figure9():
     # neu moi panel mot thang do thi hai cot khong the doc chong len nhau.
     ticks = [100, 200, 500, 1000, 2000, 5000, 10000]
 
-    fig, axes = plt.subplots(2, 2, figsize=(7.16, 3.7))
+    fig, axes = plt.subplots(2, 2, figsize=(7.16, 4.15))
 
     e_nat = _plot_curve(axes[0, 0], nat, ticks)
     axes[0, 0].set_title("(a) Natural prior (rare 0.83%)", loc="left", color=INK, pad=6)
@@ -462,7 +470,7 @@ def figure11():
     pairs = load_pairs(base / "c4_pairwise_statistics_natural.csv", "tuned_per_N", "full_test")
     ticks = [100, 500, 1000, 2000, 5000, 10000]
 
-    fig, axes = plt.subplots(1, 2, figsize=(7.16, 2.35))
+    fig, axes = plt.subplots(1, 2, figsize=(7.16, 2.62))
     ends = _plot_curve(axes[0], cur, ticks)
     # Tieu de ngan lai: ban dai dam vao nhan truc dung cua panel (b).
     # Ten bo du lieu da nam o tieu de ca hinh roi.
