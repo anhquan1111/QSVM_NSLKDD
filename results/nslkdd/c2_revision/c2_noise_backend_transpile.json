@@ -178,5 +178,425 @@
         "sx": 8
       }
     }
+  },
+  "4": {
+    "QSVM_ZZ": {
+      "backend_name": "fake_manila",
+      "optimization_level": 1,
+      "seed_transpiler": 42,
+      "backend_supported_operations": [
+        "cx",
+        "delay",
+        "for_loop",
+        "id",
+        "if_else",
+        "measure",
+        "reset",
+        "rz",
+        "switch_case",
+        "sx",
+        "x"
+      ],
+      "transpiled_gates_used": [
+        "cx",
+        "rz",
+        "sx"
+      ],
+      "coupling_map": "[[0, 1], [1, 0], [1, 2], [2, 1], [2, 3], [3, 2], [3, 4], [4, 3]]",
+      "transpiled_depth": 59,
+      "transpiled_op_counts": {
+        "cx": 44,
+        "rz": 36,
+        "sx": 8
+      }
+    },
+    "QSVM_Z": {
+      "backend_name": "fake_manila",
+      "optimization_level": 1,
+      "seed_transpiler": 42,
+      "backend_supported_operations": [
+        "cx",
+        "delay",
+        "for_loop",
+        "id",
+        "if_else",
+        "measure",
+        "reset",
+        "rz",
+        "switch_case",
+        "sx",
+        "x"
+      ],
+      "transpiled_gates_used": [
+        "rz",
+        "sx"
+      ],
+      "coupling_map": "[[0, 1], [1, 0], [1, 2], [2, 1], [2, 3], [3, 2], [3, 4], [4, 3]]",
+      "transpiled_depth": 8,
+      "transpiled_op_counts": {
+        "rz": 24,
+        "sx": 8
+      }
+    }
+  },
+  "5": {
+    "QSVM_ZZ": {
+      "backend_name": "fake_manila",
+      "optimization_level": 1,
+      "seed_transpiler": 42,
+      "backend_supported_operations": [
+        "cx",
+        "delay",
+        "for_loop",
+        "id",
+        "if_else",
+        "measure",
+        "reset",
+        "rz",
+        "switch_case",
+        "sx",
+        "x"
+      ],
+      "transpiled_gates_used": [
+        "cx",
+        "rz",
+        "sx"
+      ],
+      "coupling_map": "[[0, 1], [1, 0], [1, 2], [2, 1], [2, 3], [3, 2], [3, 4], [4, 3]]",
+      "transpiled_depth": 59,
+      "transpiled_op_counts": {
+        "cx": 44,
+        "rz": 36,
+        "sx": 8
+      }
+    },
+    "QSVM_Z": {
+      "backend_name": "fake_manila",
+      "optimization_level": 1,
+      "seed_transpiler": 42,
+      "backend_supported_operations": [
+        "cx",
+        "delay",
+        "for_loop",
+        "id",
+        "if_else",
+        "measure",
+        "reset",
+        "rz",
+        "switch_case",
+        "sx",
+        "x"
+      ],
+      "transpiled_gates_used": [
+        "rz",
+        "sx"
+      ],
+      "coupling_map": "[[0, 1], [1, 0], [1, 2], [2, 1], [2, 3], [3, 2], [3, 4], [4, 3]]",
+      "transpiled_depth": 8,
+      "transpiled_op_counts": {
+        "rz": 24,
+        "sx": 8
+      }
+    }
+  },
+  "6": {
+    "QSVM_ZZ": {
+      "backend_name": "fake_manila",
+      "optimization_level": 1,
+      "seed_transpiler": 42,
+      "backend_supported_operations": [
+        "cx",
+        "delay",
+        "for_loop",
+        "id",
+        "if_else",
+        "measure",
+        "reset",
+        "rz",
+        "switch_case",
+        "sx",
+        "x"
+      ],
+      "transpiled_gates_used": [
+        "cx",
+        "rz",
+        "sx"
+      ],
+      "coupling_map": "[[0, 1], [1, 0], [1, 2], [2, 1], [2, 3], [3, 2], [3, 4], [4, 3]]",
+      "transpiled_depth": 59,
+      "transpiled_op_counts": {
+        "cx": 44,
+        "rz": 36,
+        "sx": 8
+      }
+    },
+    "QSVM_Z": {
+      "backend_name": "fake_manila",
+      "optimization_level": 1,
+      "seed_transpiler": 42,
+      "backend_supported_operations": [
+        "cx",
+        "delay",
+        "for_loop",
+        "id",
+        "if_else",
+        "measure",
+        "reset",
+        "rz",
+        "switch_case",
+        "sx",
+        "x"
+      ],
+      "transpiled_gates_used": [
+        "rz",
+        "sx"
+      ],
+      "coupling_map": "[[0, 1], [1, 0], [1, 2], [2, 1], [2, 3], [3, 2], [3, 4], [4, 3]]",
+      "transpiled_depth": 8,
+      "transpiled_op_counts": {
+        "rz": 24,
+        "sx": 8
+      }
+    }
+  },
+  "7": {
+    "QSVM_ZZ": {
+      "backend_name": "fake_manila",
+      "optimization_level": 1,
+      "seed_transpiler": 42,
+      "backend_supported_operations": [
+        "cx",
+        "delay",
+        "for_loop",
+        "id",
+        "if_else",
+        "measure",
+        "reset",
+        "rz",
+        "switch_case",
+        "sx",
+        "x"
+      ],
+      "transpiled_gates_used": [
+        "cx",
+        "rz",
+        "sx"
+      ],
+      "coupling_map": "[[0, 1], [1, 0], [1, 2], [2, 1], [2, 3], [3, 2], [3, 4], [4, 3]]",
+      "transpiled_depth": 59,
+      "transpiled_op_counts": {
+        "cx": 44,
+        "rz": 36,
+        "sx": 8
+      }
+    },
+    "QSVM_Z": {
+      "backend_name": "fake_manila",
+      "optimization_level": 1,
+      "seed_transpiler": 42,
+      "backend_supported_operations": [
+        "cx",
+        "delay",
+        "for_loop",
+        "id",
+        "if_else",
+        "measure",
+        "reset",
+        "rz",
+        "switch_case",
+        "sx",
+        "x"
+      ],
+      "transpiled_gates_used": [
+        "rz",
+        "sx"
+      ],
+      "coupling_map": "[[0, 1], [1, 0], [1, 2], [2, 1], [2, 3], [3, 2], [3, 4], [4, 3]]",
+      "transpiled_depth": 8,
+      "transpiled_op_counts": {
+        "rz": 24,
+        "sx": 8
+      }
+    }
+  },
+  "8": {
+    "QSVM_ZZ": {
+      "backend_name": "fake_manila",
+      "optimization_level": 1,
+      "seed_transpiler": 42,
+      "backend_supported_operations": [
+        "cx",
+        "delay",
+        "for_loop",
+        "id",
+        "if_else",
+        "measure",
+        "reset",
+        "rz",
+        "switch_case",
+        "sx",
+        "x"
+      ],
+      "transpiled_gates_used": [
+        "cx",
+        "rz",
+        "sx"
+      ],
+      "coupling_map": "[[0, 1], [1, 0], [1, 2], [2, 1], [2, 3], [3, 2], [3, 4], [4, 3]]",
+      "transpiled_depth": 59,
+      "transpiled_op_counts": {
+        "cx": 44,
+        "rz": 36,
+        "sx": 8
+      }
+    },
+    "QSVM_Z": {
+      "backend_name": "fake_manila",
+      "optimization_level": 1,
+      "seed_transpiler": 42,
+      "backend_supported_operations": [
+        "cx",
+        "delay",
+        "for_loop",
+        "id",
+        "if_else",
+        "measure",
+        "reset",
+        "rz",
+        "switch_case",
+        "sx",
+        "x"
+      ],
+      "transpiled_gates_used": [
+        "rz",
+        "sx"
+      ],
+      "coupling_map": "[[0, 1], [1, 0], [1, 2], [2, 1], [2, 3], [3, 2], [3, 4], [4, 3]]",
+      "transpiled_depth": 8,
+      "transpiled_op_counts": {
+        "rz": 24,
+        "sx": 8
+      }
+    }
+  },
+  "9": {
+    "QSVM_ZZ": {
+      "backend_name": "fake_manila",
+      "optimization_level": 1,
+      "seed_transpiler": 42,
+      "backend_supported_operations": [
+        "cx",
+        "delay",
+        "for_loop",
+        "id",
+        "if_else",
+        "measure",
+        "reset",
+        "rz",
+        "switch_case",
+        "sx",
+        "x"
+      ],
+      "transpiled_gates_used": [
+        "cx",
+        "rz",
+        "sx"
+      ],
+      "coupling_map": "[[0, 1], [1, 0], [1, 2], [2, 1], [2, 3], [3, 2], [3, 4], [4, 3]]",
+      "transpiled_depth": 59,
+      "transpiled_op_counts": {
+        "cx": 44,
+        "rz": 36,
+        "sx": 8
+      }
+    },
+    "QSVM_Z": {
+      "backend_name": "fake_manila",
+      "optimization_level": 1,
+      "seed_transpiler": 42,
+      "backend_supported_operations": [
+        "cx",
+        "delay",
+        "for_loop",
+        "id",
+        "if_else",
+        "measure",
+        "reset",
+        "rz",
+        "switch_case",
+        "sx",
+        "x"
+      ],
+      "transpiled_gates_used": [
+        "rz",
+        "sx"
+      ],
+      "coupling_map": "[[0, 1], [1, 0], [1, 2], [2, 1], [2, 3], [3, 2], [3, 4], [4, 3]]",
+      "transpiled_depth": 8,
+      "transpiled_op_counts": {
+        "rz": 24,
+        "sx": 8
+      }
+    }
+  },
+  "10": {
+    "QSVM_ZZ": {
+      "backend_name": "fake_manila",
+      "optimization_level": 1,
+      "seed_transpiler": 42,
+      "backend_supported_operations": [
+        "cx",
+        "delay",
+        "for_loop",
+        "id",
+        "if_else",
+        "measure",
+        "reset",
+        "rz",
+        "switch_case",
+        "sx",
+        "x"
+      ],
+      "transpiled_gates_used": [
+        "cx",
+        "rz",
+        "sx"
+      ],
+      "coupling_map": "[[0, 1], [1, 0], [1, 2], [2, 1], [2, 3], [3, 2], [3, 4], [4, 3]]",
+      "transpiled_depth": 59,
+      "transpiled_op_counts": {
+        "cx": 44,
+        "rz": 36,
+        "sx": 8
+      }
+    },
+    "QSVM_Z": {
+      "backend_name": "fake_manila",
+      "optimization_level": 1,
+      "seed_transpiler": 42,
+      "backend_supported_operations": [
+        "cx",
+        "delay",
+        "for_loop",
+        "id",
+        "if_else",
+        "measure",
+        "reset",
+        "rz",
+        "switch_case",
+        "sx",
+        "x"
+      ],
+      "transpiled_gates_used": [
+        "rz",
+        "sx"
+      ],
+      "coupling_map": "[[0, 1], [1, 0], [1, 2], [2, 1], [2, 3], [3, 2], [3, 4], [4, 3]]",
+      "transpiled_depth": 8,
+      "transpiled_op_counts": {
+        "rz": 24,
+        "sx": 8
+      }
+    }
   }
 }

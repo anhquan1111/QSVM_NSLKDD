@@ -87,7 +87,14 @@
   "noise_run_ids": [
     1,
     2,
-    3
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10
   ],
   "noise_f1_test_size": 300,
   "noise_backend_candidates": [
@@ -100,5 +107,5 @@
       "FakeManilaV2"
     ]
   ],
-  "config_signature": "5d3dcb38329a0dbf"
+  "config_signature": "0ba76fd2efd5b493"
 }

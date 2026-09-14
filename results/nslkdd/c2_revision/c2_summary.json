@@ -15,7 +15,7 @@
     10
   ],
   "force_rerun": false,
-  "config_signature": "5d3dcb38329a0dbf",
+  "config_signature": "0ba76fd2efd5b493",
   "train_size": 1000,
   "test_size": 300,
   "tuning_size": 2000,
@@ -39,9 +39,16 @@
     "run_ids": [
       1,
       2,
-      3
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10
     ],
-    "n_runs": 3,
+    "n_runs": 10,
     "realistic_noise_validation": true,
     "noisy_f1_available": true,
     "noisy_kernel_changed": true
