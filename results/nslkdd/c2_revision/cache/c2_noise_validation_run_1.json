@@ -1,0 +1,145 @@
+{
+  "noise_cache_signature": "55aac0bf021087ac",
+  "C_ZZ": 3.0,
+  "C_Z": 3.0,
+  "rows": [
+    {
+      "run_id": 1,
+      "condition": "ideal_statevector",
+      "shots": "statevector",
+      "model": "QSVM_ZZ",
+      "kta": 0.1964722835,
+      "relative_frobenius_distance": 0.0,
+      "f1_macro": 0.8664529915,
+      "selection_independent": true,
+      "noise_source": null,
+      "transpiled_depth": null,
+      "transpiled_op_counts": null
+    },
+    {
+      "run_id": 1,
+      "condition": "ideal_statevector",
+      "shots": "statevector",
+      "model": "QSVM_Z",
+      "kta": 0.0737443656,
+      "relative_frobenius_distance": 0.0,
+      "f1_macro": 0.8497980618,
+      "selection_independent": true,
+      "noise_source": null,
+      "transpiled_depth": null,
+      "transpiled_op_counts": null
+    },
+    {
+      "run_id": 1,
+      "condition": "ideal_finite_shot",
+      "shots": "512",
+      "model": "QSVM_ZZ",
+      "kta": 0.1947870395,
+      "relative_frobenius_distance": 0.1010006207,
+      "f1_macro": 0.8598442714,
+      "selection_independent": true,
+      "noise_source": null,
+      "transpiled_depth": null,
+      "transpiled_op_counts": null
+    },
+    {
+      "run_id": 1,
+      "condition": "ideal_finite_shot",
+      "shots": "512",
+      "model": "QSVM_Z",
+      "kta": 0.0725684731,
+      "relative_frobenius_distance": 0.0304781263,
+      "f1_macro": 0.8464209402,
+      "selection_independent": true,
+      "noise_source": null,
+      "transpiled_depth": null,
+      "transpiled_op_counts": null
+    },
+    {
+      "run_id": 1,
+      "condition": "realistic_noisy_simulator",
+      "shots": "512",
+      "model": "QSVM_ZZ",
+      "kta": 0.1490051105,
+      "relative_frobenius_distance": 0.5995572624,
+      "f1_macro": 0.8727678571,
+      "selection_independent": true,
+      "noise_source": "FakeManilaV2-derived (qiskit_ibm_runtime.fake_provider)",
+      "transpiled_depth": 59.0,
+      "transpiled_op_counts": "{'cx': 44, 'rz': 36, 'sx': 8}"
+    },
+    {
+      "run_id": 1,
+      "condition": "realistic_noisy_simulator",
+      "shots": "512",
+      "model": "QSVM_Z",
+      "kta": 0.07087354,
+      "relative_frobenius_distance": 0.1655477523,
+      "f1_macro": 0.8528034257,
+      "selection_independent": true,
+      "noise_source": "FakeManilaV2-derived (qiskit_ibm_runtime.fake_provider)",
+      "transpiled_depth": 8.0,
+      "transpiled_op_counts": "{'rz': 24, 'sx': 8}"
+    }
+  ],
+  "backend_transpile_stats": {
+    "QSVM_ZZ": {
+      "backend_name": "fake_manila",
+      "optimization_level": 1,
+      "seed_transpiler": 42,
+      "backend_supported_operations": [
+        "cx",
+        "delay",
+        "for_loop",
+        "id",
+        "if_else",
+        "measure",
+        "reset",
+        "rz",
+        "switch_case",
+        "sx",
+        "x"
+      ],
+      "transpiled_gates_used": [
+        "cx",
+        "rz",
+        "sx"
+      ],
+      "coupling_map": "[[0, 1], [1, 0], [1, 2], [2, 1], [2, 3], [3, 2], [3, 4], [4, 3]]",
+      "transpiled_depth": 59,
+      "transpiled_op_counts": {
+        "cx": 44,
+        "rz": 36,
+        "sx": 8
+      }
+    },
+    "QSVM_Z": {
+      "backend_name": "fake_manila",
+      "optimization_level": 1,
+      "seed_transpiler": 42,
+      "backend_supported_operations": [
+        "cx",
+        "delay",
+        "for_loop",
+        "id",
+        "if_else",
+        "measure",
+        "reset",
+        "rz",
+        "switch_case",
+        "sx",
+        "x"
+      ],
+      "transpiled_gates_used": [
+        "rz",
+        "sx"
+      ],
+      "coupling_map": "[[0, 1], [1, 0], [1, 2], [2, 1], [2, 3], [3, 2], [3, 4], [4, 3]]",
+      "transpiled_depth": 8,
+      "transpiled_op_counts": {
+        "rz": 24,
+        "sx": 8
+      }
+    }
+  }
+}
