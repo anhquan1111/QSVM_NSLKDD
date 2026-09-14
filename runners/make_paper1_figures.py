@@ -425,9 +425,10 @@ def figure9():
     hi = max(nat["mean"].max(), mat["mean"].max()) + 0.015
     for ax in (axes[0, 0], axes[0, 1]):
         ax.set_ylim(lo, hi)
-    # Chi panel (a) mang nhan truc tiep: o panel (b) duong ket thuc giua do thi
-    # nen nhan se roi vao vung xam "khong co du lieu" va gay hieu nham.
-    place_right_labels(axes[0, 0], e_nat)
+    # Bay gio KHONG dat nhan o le phai nua. Bay duong ket thuc trong mot dai
+    # cao 0,02 macro-F1, nen bon nhan bi don chong len nhau khong doc duoc --
+    # ma hang legend duoi cung da goi ten ca bay mo hinh roi.
+    del e_nat
     shade_unavailable(axes[0, 1], 2000, ticks)
     axes[0, 1].annotate("rare-enriched pool\nexhausts at $N=2000$", (2400, lo),
                         xytext=(0, 8), textcoords="offset points", fontsize=7,
@@ -463,28 +464,29 @@ def figure11():
 
     fig, axes = plt.subplots(1, 2, figsize=(7.16, 2.35))
     ends = _plot_curve(axes[0], cur, ticks)
-    axes[0].set_title("(a) UNSW-NB15 learning curve, natural prior", loc="left",
+    # Tieu de ngan lai: ban dai dam vao nhan truc dung cua panel (b).
+    # Ten bo du lieu da nam o tieu de ca hinh roi.
+    axes[0].set_title("(a) Learning curve, natural prior", loc="left",
                       color=INK, pad=6)
     axes[0].set_ylim(cur["mean"].min() - 0.03, cur["mean"].max() + 0.02)
-    place_right_labels(axes[0], ends)
+    del ends                     # xem ghi chu o figure9: hang legend duoi du roi
 
     _plot_delta(axes[1], pairs, ticks)
     axes[1].set_title("(b) Paired $\\Delta$ vs. each baseline", loc="left", color=INK, pad=6)
     d = pairs[pairs.baseline.isin(STRONG)]
-    pad = 0.09 * (d.ci_high.max() - d.ci_low.min())
-    axes[1].set_ylim(d.ci_low.min() - pad, d.ci_high.max() + pad)
+    span = d.ci_high.max() - d.ci_low.min()
+    # Chua mot dai trong o day panel de dat cau ghi chu: truoc day cau nay
+    # nam giua vung du lieu va de len cac diem o N=100..1000.
+    axes[1].set_ylim(d.ci_low.min() - 0.30 * span, d.ci_high.max() + 0.09 * span)
 
     # Ghi dung pham vi: doi dau CO xay ra so voi hai baseline kernel
     # (QSVM-Z va SVM-RBF) nhung KHONG xay ra so voi hai ensemble cay,
     # ngay ca tai N = 10.000.
-    axes[1].annotate("crosses zero vs. the kernel baselines,",
-                     (900, d.ci_low.min() - pad), xytext=(0, 15),
-                     textcoords="offset points", ha="center", va="bottom",
-                     fontsize=7.5, color=INK_2)
-    axes[1].annotate("never vs. the tree ensembles",
-                     (900, d.ci_low.min() - pad), xytext=(0, 5),
-                     textcoords="offset points", ha="center", va="bottom",
-                     fontsize=7.5, color=INK_2)
+    axes[1].annotate("crosses zero vs. the kernel baselines,\n"
+                     "never vs. the tree ensembles",
+                     (1.0, 0.0), xycoords="axes fraction", xytext=(-6, 5),
+                     textcoords="offset points", ha="right", va="bottom",
+                     linespacing=1.35, fontsize=7, color=INK_2)
 
     _curve_legend(fig, y=-0.03, ncol=8)
     fig.suptitle("On UNSW-NB15 the quantum kernel beats classical kernels, not tree ensembles",
@@ -895,7 +897,7 @@ def figure12():
     ax.set_ylabel("Macro-$F_1$")
     ax.set_title("(a) $K=80$, so the rule gives $n^{\\ast}=8$", loc="left",
                  color=INK, pad=6)
-    place_right_labels(ax, ends)
+    del ends            # xem ghi chu o figure9: hang legend duoi cung du roi
 
     # (b) do tap trung cua Gram: std cua phan ngoai duong cheo
     ax = axes[1]
@@ -907,18 +909,29 @@ def figure12():
         g = conc[conc.kernel == kern].sort_values("n")
         a = alpha["80"][kern]["alpha"]
         ax.plot(g.n, g.offdiag_std, color=colour, lw=2.0, marker=marker, ms=5.5,
-                mec=SURFACE, mew=0.8, zorder=6,
-                label=f"{label}  ($\\alpha={a:.2f}$)")
+                mec=SURFACE, mew=0.8, zorder=6)
+        # Ghi nhan thang o duoi moi duong. O legend dat o dau cung bi mot
+        # trong hai duong cat qua, vi ca hai deu di cheo het chieu rong panel.
+        ax.annotate(f"{label[:-10]} map\n$\\alpha={a:.2f}$",
+                    (10, g.offdiag_std.iloc[-1]),
+                    xytext=(7, 0), textcoords="offset points", va="center",
+                    ha="left", fontsize=6.5, color=colour, linespacing=1.3)
     ax.axvline(8, color=INK_MUTED, lw=1.0, ls=(0, (4, 3)), zorder=2)
+    # Ca hai duong di xuong, nen vung trong la tam giac duoi-trai va dai hep
+    # tren dinh. Noi them 8% o dinh de nhan cua vach n*=8 co cho dung.
+    ylo, yhi = ax.get_ylim()
+    ax.set_ylim(ylo - 0.05 * (yhi - ylo), yhi + 0.08 * (yhi - ylo))
     ax.annotate("$n^{\\ast}=8$ at $K=80$", (8, ax.get_ylim()[1]),
-                xytext=(-6, -6), textcoords="offset points", ha="right",
+                xytext=(5, -3), textcoords="offset points", ha="left",
                 va="top", fontsize=7, color=INK_2)
     ax.set_xticks(sorted(conc.n.unique()))
+    ax.set_xlim(3.75, 12.3)          # chua nhan o duoi duong
     ax.set_xlabel("Qubits $n$")
-    ax.set_ylabel("Std. of off-diagonal Gram entries")
+    # Nhan cu dai gap doi chieu cao panel nen bi day ra ngoai va de len hang
+    # legend duoi cung cua ca hinh.
+    ax.set_ylabel("Off-diagonal Gram std.")
     ax.set_title("(b) The kernel concentrates as $n$ grows", loc="left",
                  color=INK, pad=6)
-    ax.legend(loc="lower left", labelcolor=INK_2)
 
     # (c) F1 co doan duoc tu do trai cua Gram khong -- day la mat xich dinh luong
     ax = axes[2]
@@ -930,18 +943,23 @@ def figure12():
                                         ("Z", VIOLET, "s", "ZFeatureMap")):
         g = ws[ws.kernel == kern].groupby("n")[["f1_macro", "offdiag_std"]].mean()
         ax.plot(g.offdiag_std, g.f1_macro, ls="none", marker=marker, ms=5.5,
-                color=colour, mec=SURFACE, mew=0.8, zorder=6)
+                color=colour, mec=SURFACE, mew=0.8, zorder=6,
+                label=f"{label[:-10]} map,  $r={fit[kern]['pearson_r']:+.2f}$")
         xs = np.linspace(g.offdiag_std.min(), g.offdiag_std.max(), 20)
         ax.plot(xs, fit[kern]["slope"] * xs + fit[kern]["intercept"],
                 color=colour, lw=1.4, ls=(0, (4, 2)), alpha=0.8, zorder=4)
-        ax.annotate(f"{label}\n$r={fit[kern]['pearson_r']:+.2f}$",
-                    (g.offdiag_std.iloc[-1], g.f1_macro.iloc[-1]),
-                    xytext=(8, -4 if kern == "ZZ" else 10),
-                    textcoords="offset points", ha="left", va="top",
-                    fontsize=7, color=INK_2)
-    ax.set_xlabel("Std. of off-diagonal Gram entries")
+    # Truoc day hai nhan nay neo vao diem CUOI cua moi cum: nhan ZZ cham sang
+    # cum Z, con nhan Z chay ra ngoai mep phai va bi cat. Dua ca hai vao mot o
+    # legend o goc phai-duoi, la vung khong co diem nao.
+    ax.set_xlabel("Off-diagonal Gram std.")
     ax.set_ylabel("Macro-$F_1$")
     ax.set_title("(c) Dispersion predicts $F_1$", loc="left", color=INK, pad=6)
+    ylo, yhi = ax.get_ylim()
+    ax.set_ylim(ylo - 0.22 * (yhi - ylo), yhi)
+    # Goc phai-duoi: cum ZZ nam ben trai, cum Z nam cao hon: khong diem nao o day.
+    ax.legend(loc="lower right", labelcolor=INK_2, fontsize=6.5,
+              framealpha=0.95, borderpad=0.35, handlelength=1.2,
+              handletextpad=0.5, borderaxespad=0.4)
 
     _curve_legend(fig, y=-0.015, ncol=8)
     fig.suptitle("Widening the circuit destroys the quantum kernel, and the "
