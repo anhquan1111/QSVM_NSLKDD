@@ -170,7 +170,7 @@ Script & Result & What it checks \\
 \texttt{audit\_figures.py} & 36/36 &
   Every figure is newer than its inputs, and every plotted number is re-derived
   from the artifacts \\
-\texttt{audit\_prose.py} & 115/115 &
+\texttt{audit\_prose.py} & 132/132 &
   Every number written in the manuscript text \emph{and in this letter} is
   re-derived from the artifacts \\
 \texttt{verify\_lemma1.py} & 15/15 &
@@ -361,8 +361,9 @@ All experiments; Sec.~VII-C.
 \resp
 Addressed with a backend-derived noise model; see AE-6. Circuits are transpiled
 onto the backend's coupling map and basis set, giving depth $59$ and $44$
-two-qubit gates at $n=4$, $r=2$. The entanglement conclusion is unchanged under
-noise.
+two-qubit gates at $n=4$, $r=2$. The check runs on all ten training runs at
+$512$ shots per kernel entry, so it carries a paired confidence interval rather
+than a point estimate. The entanglement conclusion is unchanged under noise.
 \changed
 Sec.~V-B, Sec.~VII-A.
 

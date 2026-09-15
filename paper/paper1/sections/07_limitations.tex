@@ -29,9 +29,12 @@ carries gate errors, readout errors, and gate-duration-dependent thermal
 relaxation.
 Circuits are transpiled onto that backend's coupling map and basis gate set,
 giving a depth of $59$ and $44$ two-qubit gates for the $n=4$, $r=2$ map.
+The check covers all ten training runs at $512$ shots per kernel entry, so
+Sec.~\ref{sec:res-c2} reports a paired interval and not a single point.
 Under this model the entanglement conclusion is unchanged: the alignment gap
-between QSVM-ZZ and QSVM-Z survives, while the macro-$F_1$ difference remains
-within its confidence interval.
+between QSVM-ZZ and QSVM-Z survives, and the macro-$F_1$ gap, although it
+widens under noise to $+0.0194$ $[+0.0026,+0.0363]$, does not clear Holm
+correction and we do not claim it.
 
 \emph{What we do not measure.} The circuits were not executed on a quantum
 processor. Two effects are therefore outside our evidence: drift of calibration

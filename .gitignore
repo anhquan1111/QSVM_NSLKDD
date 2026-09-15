@@ -51,3 +51,8 @@ docs/PAPER1_final_report.docx
 # lich su git van con.
 notebooks/**/note/
 docs/Reviewer_Response_QuangAnh_RF_XGBoost.md
+
+# Ghi chu phan tich cua Quang Anh cho dot noise 10 run. Ket luan da vao
+# docs/BAO_CAO_REVISION.md muc 4b, phan so hoc da vao runners/verify_noise10.py,
+# nen khong theo doi rieng file nay (giong cac ghi chu lam viec khac).
+C2_noise_validation_10run_analysis.md

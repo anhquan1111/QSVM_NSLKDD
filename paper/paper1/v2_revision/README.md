@@ -2,13 +2,13 @@
 
 Hạn nộp lại: **13-10-2026**. TETC **không cho major revision lần hai**.
 
-| File | Nội dung |
-|---|---|
-| `main_revision.pdf` | Bản thảo sạch, **16 trang** |
-| `response_letter.pdf` | Thư phản hồi từng ý reviewer, 13 trang |
-| *(chưa có)* `main_annotated.pdf` | Bản đánh dấu thay đổi — compile từ `main_annotated.tex` |
+Thư mục này **không giữ PDF đã compile nữa** — chỉ giữ gói `.zip` để tải lên Overleaf
+rồi tự xuất PDF. Lý do: PDF trong đây liên tục lạc hậu so với nguồn (đã có lần gửi thầy
+bản compile trước khi sửa hình), còn zip thì luôn được sinh lại từ nguồn hiện tại.
 
-Đây là các bản đã compile. **Mã nguồn nằm ở thư mục cha**, không nằm trong đây:
+Riêng `ban_thay_revise_2026-09-14.pdf` giữ lại: đó là bản thầy tự revise, để đối chiếu.
+
+**Mã nguồn nằm ở thư mục cha**, không nằm trong đây:
 
 ```
 paper/paper1/
