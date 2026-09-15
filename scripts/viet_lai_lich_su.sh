@@ -30,7 +30,16 @@
 set -euo pipefail
 
 cd "$(dirname "$0")/.."
-BACKUP_DIR="D:/Documents/Project/NCKH_Document"
+
+# Thu muc sao luu. Duong dan kieu Windows "D:/..." chi dung duoc trong Git Bash;
+# chay bang WSL thi no bi hieu la duong dan TUONG DOI va bundle se do vao
+# /mnt/d/QSVM_NSLKDD/D:/... -- dung loi da lam script chet lan dau.
+if [ -d /mnt/d ]; then
+    BACKUP_DIR="/mnt/d/Documents/Project/NCKH_Document"     # WSL
+else
+    BACKUP_DIR="D:/Documents/Project/NCKH_Document"          # Git Bash
+fi
+[ -d "$BACKUP_DIR" ] || { echo "LOI: khong thay thu muc sao luu $BACKUP_DIR"; exit 1; }
 
 echo "== 1. Kiem tra dieu kien =="
 [ -z "$(git status --porcelain)" ] || { echo "LOI: cay lam viec chua sach. Commit hoac stash truoc."; exit 1; }
