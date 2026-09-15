@@ -22,6 +22,7 @@ from pathlib import Path
 
 import numpy as np
 import pandas as pd
+from scipy import stats
 
 ROOT = Path(__file__).resolve().parents[1]
 SEC = ROOT / "paper/paper1/sections"
@@ -144,16 +145,84 @@ def section_c2() -> None:
     check("CI cua dF1 that su cat 0", f1.ci_low < 0 < f1.ci_high,
           f"[{f1.ci_low:+.4f}, {f1.ci_high:+.4f}]")
 
-    n = pd.read_csv(NSL / "c2_revision/c2_noise_f1_summary.csv").set_index("model")
-    for lbl, col, mdl in (("ZZ ideal", "ideal_statevector", "QSVM_ZZ"),
-                          ("ZZ shot", "ideal_finite_shot", "QSVM_ZZ"),
-                          ("ZZ noisy", "realistic_noisy_simulator", "QSVM_ZZ")):
-        v = float(n.loc[mdl][col])
-        check(f"nhieu: {lbl} = {v:.4f}", f"${v:.4f}$" in TEXT["05_results.tex"],
+    # Phep kiem nhieu gio chay du 10 run. Ban truoc doc
+    # c2_noise_f1_summary.csv -- file do la ket qua cua RIENG run 1, va run 1
+    # hoa ra la run co F1 CAO NHAT trong ca 10 (0.8728 so voi trung binh
+    # 0.8501), nen trich mot minh no la trich cho lech.
+    nz = pd.read_csv(NSL / "c2_revision/c2_noise_validation_10run.csv")
+    check("bang nhieu du 60 hang (10 run x 3 dieu kien x 2 model)",
+          len(nz) == 60 and nz.run_id.nunique() == 10, f"{len(nz)} hang")
+    g = nz.groupby(["model", "condition"])
+
+    for mdl, cond in (("QSVM_ZZ", "ideal_statevector"),
+                      ("QSVM_ZZ", "ideal_finite_shot"),
+                      ("QSVM_ZZ", "realistic_noisy_simulator"),
+                      ("QSVM_Z", "ideal_statevector"),
+                      ("QSVM_Z", "ideal_finite_shot"),
+                      ("QSVM_Z", "realistic_noisy_simulator")):
+        v = float(g.f1_macro.mean().loc[(mdl, cond)])
+        check(f"nhieu 10 run: {mdl} / {cond} = {v:.4f}",
+              f"${v:.4f}$" in TEXT["05_results.tex"], f"{v:.4f}")
+
+    # Do meo Gram va alignment duoi nhieu -- doan thu hai cua muc V-B
+    for mdl, want in (("QSVM_ZZ", 0.602), ("QSVM_Z", 0.165)):
+        v = float(g.relative_frobenius_distance.mean()
+                  .loc[(mdl, "realistic_noisy_simulator")])
+        check(f"meo Gram duoi nhieu: {mdl} = {v:.3f}",
+              abs(v - want) < 5e-4 and f"${want}$" in TEXT["05_results.tex"],
               f"{v:.4f}")
-    check("cau van noi ro nhieu KHONG lam giam",
-          says("05_results.tex", "the noisy value is not lower than the ideal"),
+    for mdl, cond, want in (("QSVM_ZZ", "ideal_statevector", 0.194),
+                            ("QSVM_ZZ", "realistic_noisy_simulator", 0.149),
+                            ("QSVM_Z", "ideal_statevector", 0.070),
+                            ("QSVM_Z", "realistic_noisy_simulator", 0.068)):
+        v = float(g.kta.mean().loc[(mdl, cond)])
+        check(f"KTA {mdl} / {cond} = {v:.3f}",
+              abs(v - want) < 5e-4 and f"${want:.3f}$" in TEXT["05_results.tex"],
+              f"{v:.4f}")
+
+    # So sanh ghep cap: tinh lai tu bang dai, khong lay so nao co san
+    piv = nz.pivot_table(index="run_id", columns=["model", "condition"],
+                         values="f1_macro")
+    for mdl, m_want, lo_want, hi_want in (
+            ("QSVM_ZZ", +0.0172, +0.0021, +0.0324),
+            ("QSVM_Z", -0.0002, -0.0115, +0.0111)):
+        dd = (piv[(mdl, "realistic_noisy_simulator")]
+              - piv[(mdl, "ideal_statevector")]).values
+        m = float(dd.mean())
+        half = float(stats.t.ppf(0.975, len(dd) - 1) * stats.sem(dd))
+        claim(f"nhieu vs ly tuong, {mdl}", "05_results.tex",
+              f"${m:+.4f}$ $[{m - half:+.4f},{m + half:+.4f}]$", m, "{:+.4f}")
+        check(f"khoang tin cay {mdl} khop artifact",
+              abs(m - m_want) < 5e-5 and abs(m - half - lo_want) < 5e-5
+              and abs(m + half - hi_want) < 5e-5,
+              f"{m:+.4f} [{m - half:+.4f}, {m + half:+.4f}]")
+
+    dd = (piv[("QSVM_ZZ", "realistic_noisy_simulator")]
+          - piv[("QSVM_Z", "realistic_noisy_simulator")]).values
+    m = float(dd.mean())
+    half = float(stats.t.ppf(0.975, len(dd) - 1) * stats.sem(dd))
+    check("khoang cach ZZ-Z duoi nhieu co trong muc VII",
+          f"${m:+.4f}$" in TEXT["limitations_revision.tex"], f"{m:+.4f}")
+
+    # p nho nhat khong qua noi nguong Holm dau tien o BAT KY family nao
+    p_min = min(float(stats.wilcoxon(
+        piv[(mdl, ca)].values, piv[(mdl, cb)].values).pvalue)
+        for mdl in ("QSVM_ZZ", "QSVM_Z")
+        for ca, cb in (("ideal_finite_shot", "ideal_statevector"),
+                       ("realistic_noisy_simulator", "ideal_statevector"),
+                       ("realistic_noisy_simulator", "ideal_finite_shot")))
+    check("p nho nhat = 0.027 va KHONG qua Holm du family = 2",
+          abs(p_min - 0.027) < 1e-3 and p_min > 0.05 / 2
+          and says("05_results.tex", "clears no first Holm threshold"),
+          f"p={p_min:.4f} > 0.05/2 = 0.025")
+
+    check("van con noi ro nhieu KHONG lam giam",
+          says("05_results.tex", "does not measurably degrade"),
           "phai giu -- day la cho de bi doc thanh 'nhieu giup'")
+    check("khong con trich so cua rieng run 1",
+          not says("05_results.tex", "0.8728")
+          and not says("05_results.tex", "0.8665"),
+          "0.8728 / 0.8665 la run 1, cao hon trung binh 10 run")
 
 
 def section_c3() -> None:

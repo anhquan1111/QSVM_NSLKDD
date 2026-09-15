@@ -112,7 +112,7 @@ Thư mục `v1_submitted/` không nằm trong gói nào.
 python runners/check_latex.py     # cấu trúc .tex, khi máy không có LaTeX
 python runners/audit_c4.py        # 100/100  thống kê
 python runners/audit_figures.py   #  36 mục  hình
-python runners/audit_prose.py     # 115/115  số viết trong câu văn
+python runners/audit_prose.py     # 132/132  số viết trong câu văn
 python runners/verify_lemma1.py   #  15/15   khai triển Lemma 1
 ```
 
