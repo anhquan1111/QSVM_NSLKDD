@@ -85,7 +85,7 @@ Qiskit Aer 0.17. Quantum
 kernels are evaluated as exact statevector fidelities. Because the
 \ZZ{}FeatureMap is diagonal after each Hadamard layer, the state can be written
 in closed form rather than simulated gate by gate, which we verified against the
-Qiskit reference to within $4\times10^{-15}$ and which makes the sweeps in
+Qiskit reference to within $1.3\times10^{-15}$ and which makes the sweeps in
 Sec.~\ref{sec:results} tractable.
 
 Two sources of run-to-run variation deserve mention because they set the
@@ -96,7 +96,7 @@ difference. The fidelity statevector kernel exposes no seed of its own; its
 determinism is controlled through the global Qiskit seed, which we pin.
 
 \emph{Reproducibility.} The complete implementation, the frozen protocol files,
-every intermediate artifact, all figure-generation scripts, and four audit
+every intermediate artifact, all figure-generation scripts, and five audit
 scripts are released at
 \url{https://github.com/anhquan1111/QSVM_NSLKDD}, at commit
 \texttt{19beb18}.\footnote{Commit hash to be updated to the final revision
@@ -111,6 +111,8 @@ code that produced a number to verify that number lets shared errors through.
 and that every plotted number is re-derived from the artifacts.
 \texttt{audit\_prose.py} (132) re-derives every number written in the text of
 this paper. \texttt{verify\_lemma1.py} (15) checks the expansion of
-Lemma~\ref{lem:expansion} against the exact kernel. Together they found four
-errors in our own revision code before publication, one of which changed a
-reported $n^{\ast}$.
+Lemma~\ref{lem:expansion} against the exact kernel. \texttt{verify\_noise10.py} (40)
+re-derives the ten-run noise check of Sec.~\ref{sec:res-c2}, including the
+paired intervals and the Holm thresholds, from the per-run caches. Together
+they found four errors in our own revision code before publication, one of
+which changed a reported $n^{\ast}$.
