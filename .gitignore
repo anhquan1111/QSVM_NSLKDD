@@ -37,8 +37,18 @@ paper/paper1/v2_revision/*.zip
 paper/paper1/refs/*.pdf
 
 # Tai lieu hanh chinh va ban bao cao cu -- KHONG day len repo cong khai.
+#
+# Ca ba file duoi day da duoc CHUYEN RA ngoai repo, khong con tren dia trong
+# thu muc nay nua:
+#     D:/Documents/Project/NCKH_Document/
+#         DeTai10_hopdong_10TN-2026.pdf
+#         PAPER1_bao_cao_de_tai_2026-05-17.docx
+#         Reviewer_Response_QuangAnh_RF_XGBoost.md
+# Da doi chieu sha256 voi ban trong git truoc khi chuyen: khop.
+#
 # DeTai10.pdf la hop dong de tai, co so CCCD, so tai khoan ngan hang, ma so
-# sinh vien va email ca nhan cua hai thanh vien. Repo nay PUBLIC.
+# sinh vien va email ca nhan cua hai thanh vien. Repo nay PUBLIC. File van
+# con trong LICH SU git -- xem scripts/viet_lai_lich_su.sh de go han.
 # PAPER1_final_report.docx la bao cao 17-05-2026 (13 MB, 42 anh nhung),
 # viet truoc revision: con dung ham muc tieu Pareto J(n) va khung "low-data
 # regime" -- ca hai da bi chinh bai bao rut lai o muc III-H.
