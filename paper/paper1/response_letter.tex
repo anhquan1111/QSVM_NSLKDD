@@ -108,10 +108,10 @@ thing we have to report.
 
 \section*{Five claims from the submitted version are withdrawn}
 
-Re-running every experiment under a corrected protocol --- ten runs instead of
+Re-running every experiment under a corrected protocol (ten runs instead of
 five, symmetric hyper-parameter tuning, a random forest and XGBoost added as
 baselines, and results reported on the full KDDTest$^{+}$ partition rather than
-a 300-sample subset --- does not support five claims made in the submitted
+a 300-sample subset) does not support five claims made in the submitted
 version. We withdraw them rather than qualify them.
 
 \begin{center}
@@ -148,7 +148,7 @@ retains.
 What replaces the withdrawn claims is not a weaker version of the same story. It
 is a different result: an ordering that \emph{reverses} with training-set size,
 a dimension-selection rule that transfers to a second dataset unchanged, and a
-measured mechanism --- Gram-matrix concentration --- that predicts where the
+measured mechanism, Gram-matrix concentration, that predicts where the
 method stops working. We believe this is a more useful contribution than the one
 we submitted, and it exists because the reviewers refused the original.
 
@@ -170,7 +170,7 @@ Script & Result & What it checks \\
 \texttt{audit\_figures.py} & 36/36 &
   Every figure is newer than its inputs, and every plotted number is re-derived
   from the artifacts \\
-\texttt{audit\_prose.py} & 115/115 &
+\texttt{audit\_prose.py} & 122/122 &
   Every number written in the manuscript text \emph{and in this letter} is
   re-derived from the artifacts \\
 \texttt{verify\_lemma1.py} & 15/15 &
@@ -202,7 +202,7 @@ withdrawn. The paper is reframed from ``where is there an advantage'' to
 regime map in which negative and inconclusive verdicts appear on the same
 footing as positive ones: $21$ / $21$ / $68$ over $110$ comparisons.
 \changed
-New Sec.~VI (Regime Map), Fig.~10, and a rewritten abstract and introduction.
+New Sec.~VI (Regime Map), Fig.~9, and a rewritten abstract and introduction.
 The introduction states the withdrawn claims on its first page.
 
 \itemhead{AE-2}{Insufficient literature coverage, including non-existent
@@ -221,7 +221,7 @@ UNSW-NB15 has been added under the identical protocol. This is what allows us to
 separate findings that transfer from findings that do not: the selection rule
 and the entanglement ablation transfer; the sample-complexity reversal does not.
 \changed
-Sec.~V-F, Fig.~11.
+Sec.~V-F, Fig.~7.
 
 \itemhead{AE-4}{Comparison with non-SVM methods as a prerequisite for practical
 advantage claims}
@@ -229,8 +229,19 @@ advantage claims}
 A random forest and XGBoost were added to every experiment, tuned by the same
 procedure as every other model. They change the headline: XGBoost attains the
 highest mean macro-$F_1$ at the main operating point.
+
+Two points of scope are now stated in the manuscript so that the comparison is
+not read as more than it is. First, every classical baseline consumes the same
+four-component representation as the circuit (Sec.~III-B); the paired protocol
+isolates the kernel, not the pipeline. Second, a reference arm outside the
+paired protocol trains XGBoost and the random forest on all $122$ one-hot
+features on the same subsets, seeds and test set (Table~IV). Against
+full-feature XGBoost the quantum kernel reaches parity at $N\geq5000$, not a
+lead, and full-feature XGBoost on the entire training partition scores $0.804$,
+above every four-qubit model in the paper. The practical claim is worded
+accordingly.
 \changed
-All results sections; Figs.~7--12.
+All results sections; Figs.~3--8; Sec.~III-B; Sec.~V-D, fourth qualification, and Table~IV.
 
 \itemhead{AE-5}{Reviewer~4 identified issues in the theory}
 \resp
@@ -248,7 +259,11 @@ The pipeline is re-run under a noise model derived from the calibration data of
 a real superconducting backend (\texttt{FakeManilaV2}) carrying gate errors,
 readout errors and thermal relaxation. We are explicit that this is
 \emph{not} hardware validation: the circuits were not executed on a quantum
-processor, and the manuscript now says so in those words.
+processor, and the manuscript now says so in those words. The noisy re-run
+covers one of the ten runs on the $300$-record test split; the manuscript
+states this, quotes the result to two decimals, and lists the ten-run version
+as the next step rather than implying a noisy confidence interval it does not
+have.
 \changed
 Sec.~V-B and Sec.~VII-A, which separates what we measure from what we do not.
 
@@ -266,8 +281,8 @@ methods for intrusion detection on noisy quantum computers' (Quantum Machine
 Intelligence, 2026). This work should be discussed explicitly''
 \end{revcomment}
 \resp
-The work --- Cirillo, Esposito and Seo, \emph{Quantum Machine Intelligence},
-vol.~8, no.~1, art.~27, 2026 --- is now cited, read in full, and discussed in
+The work (Cirillo, Esposito and Seo, \emph{Quantum Machine Intelligence},
+vol.~8, no.~1, art.~27, 2026) is now cited, read in full, and discussed in
 Sec.~II-B, with a row for it in Table~I. We are glad the reviewer insisted: it
 is the closest study to ours that we are aware of, and reading it changed what
 we say.
@@ -276,7 +291,7 @@ Two of its findings corroborate ours from a different direction, and we now say
 so explicitly. It compares against SVM, XGBoost, random forest and a neural
 network at matched dimensionality and concludes that the classical models retain
 higher peak accuracy while the quantum models remain competitive in
-low-dimensional feature spaces --- the same ordering we now report, with XGBoost
+low-dimensional feature spaces: the same ordering we now report, with XGBoost
 top at our operating point. And it sweeps the qubit count from $2$ to $10$ and
 plots $F_1$ against two-qubit gate count, locating good performance in a
 $20$--$35$ CNOT band with degradation beyond roughly $60$ CNOTs. Our operating
@@ -290,8 +305,8 @@ simulation, where no gate error exists, and trace it to concentration of the
 Gram matrix instead. Hardware noise is therefore not a necessary ingredient; the
 bound is intrinsic to the kernel.
 
-What that study does not vary --- and what, to our knowledge, no study in this
-area varies --- is the training-set size. It is fixed there at a single $15\%$
+What that study does not vary, and what, to our knowledge, no study in this
+area varies, is the training-set size. It is fixed there at a single $15\%$
 class-balanced subsample under a random $80/20$ split rather than the official
 partitions. That is the axis on which our contribution lies.
 \changed
@@ -309,7 +324,7 @@ label, and UNSW-NB15 is far more heavily duplicated ($47.3\%$ of training rows
 are internal repeats; $25.0\%$ of test rows have an exact duplicate in
 training).
 \changed
-Sec.~IV-A, Sec.~V-F, Sec.~VII-D, Fig.~11.
+Sec.~IV-A, Sec.~V-F, Sec.~VII-D, Fig.~7.
 
 \itemhead{R1-3}{Asymmetric hyper-parameter protocol: QSVM fixed at $C=1.0$,
 classical SVMs validation-selected}
@@ -330,7 +345,7 @@ repeated at each training-set size, and \emph{frozen}, in which hyper-parameters
 are held at the values selected once. Reporting both is what lets us show that
 the paper's main new result is not an artefact of re-tuning (see R1-7).
 \changed
-Sec.~IV-B; Table~II reports both arms across all sizes.
+Sec.~IV-B; Table~III reports both arms across all sizes.
 
 \itemhead{R1-4}{Conclusions overstated; cannot claim general quantum advantage}
 \resp
@@ -362,7 +377,7 @@ All experiments; Sec.~VII-C.
 Addressed with a backend-derived noise model; see AE-6. Circuits are transpiled
 onto the backend's coupling map and basis set, giving depth $59$ and $44$
 two-qubit gates at $n=4$, $r=2$. The entanglement conclusion is unchanged under
-noise.
+noise. As stated under AE-6, this check is a single run and is reported as such.
 \changed
 Sec.~V-B, Sec.~VII-A.
 
@@ -394,18 +409,18 @@ Three qualifications are stated in the manuscript and we repeat them here rather
 than let the result be read as more than it is. First, the reversal survives
 freezing the hyper-parameters: all six baseline--arm combinations change sign in
 the same interval, so it is not a re-tuning artefact. Second, it is not uniform
-across baselines --- against SVM-RBF the difference turns positive but no cell
+across baselines: against SVM-RBF the difference turns positive but no cell
 reaches corrected significance, so the quantum kernel never demonstrably beats
 an RBF kernel at any size we tested. Third, it is a property of the natural
-prior: repeating the sweep with rare attacks enriched twelvefold to $10\%$ ---
-the sampling our own submitted protocol used --- leaves $26$ of $30$ comparisons
+prior: repeating the sweep with rare attacks enriched twelvefold to $10\%$,
+the sampling our own submitted protocol used, leaves $26$ of $30$ comparisons
 inconclusive with no crossover in range.
 
 That third point is the reason the submitted version reported the opposite
 conclusion, and we regard identifying it as the most useful thing this revision
 does.
 \changed
-Sec.~V-D, Fig.~9, Table~II.
+Sec.~V-D, Fig.~6, Table~III.
 
 \itemhead{R1-8}{Table~VI ($N=1000$) inconsistent with Table~IV}
 \resp
@@ -427,10 +442,15 @@ refit per $N$ & full KDDTest$^{+}$ & 0.8072 & 0.8242 \\
 \end{center}
 
 The test set accounts for about $-0.051$ macro-$F_1$ and the representation mode
-for about $+0.006$. The revision reports both test sets everywhere and states
-which is which.
+for about $+0.006$. The revision reports both test sets and states which is
+which: Table~II (``Protocol by contribution'') lists, for every figure and
+table, the training pool (rare-enriched, as in the submitted protocol, or the
+natural prior), the test set ($300$-record split or full KDDTest$^+$), $N$ and
+the number of runs, and the captions of Figs.~3--5 repeat it. The same model at
+the same $N$ therefore appears with two different scores in the paper, and the
+reader can see why.
 \changed
-Sec.~IV-B; \texttt{c4\_table\_iv\_vs\_vi.csv} in the repository.
+Sec.~IV-B and Table~II; \texttt{c4\_table\_iv\_vs\_vi.csv} in the repository.
 
 \itemhead{R1-9}{Classical $F_1$ low relative to values commonly reported on
 NSL-KDD}
@@ -454,8 +474,9 @@ Random split \emph{within} KDDTrain$^{+}$ & 0.9978 & 0.9993 \\
 Studies reporting $\approx0.99$ on NSL-KDD are, in the cases we could check,
 splitting randomly within the training partition rather than using the official
 train/test partitions, which places near-duplicate records on both sides. We use
-the official split throughout. This is now stated in the manuscript so that our
-absolute numbers are not read as underperformance.
+the official split throughout. The four numbers above are now in Sec.~IV-A of
+the manuscript, with $0.804$ named as the reference against which every absolute
+score should be read.
 \changed
 Sec.~IV-A; \texttt{c4\_protocol\_vs\_literature.csv} in the repository.
 
@@ -474,7 +495,7 @@ Sec.~IV-D.
 \itemhead{R2-1}{Baselines limited to SVM variants}
 \resp
 Random forest and XGBoost added throughout; see AE-4 and R1-5. The reviewer's
-framing --- that the real competitor in industry is rarely an SVM --- is correct
+framing, that the real competitor in industry is rarely an SVM, is correct
 and is now reflected in the result: at the main operating point XGBoost, not the
 quantum kernel, is the top-ranked model.
 \changed
@@ -483,16 +504,16 @@ All results sections.
 \itemhead{R2-2}{Barren plateaus have a kernel analogue: exponential
 concentration of the kernel matrix}
 \resp
-Named, cited, and --- we hope usefully --- measured. Exponential concentration is
+Named, cited, and, we hope usefully, measured. Exponential concentration is
 now stated as background fact (F3) with the reference the reviewer intends, and
 it is also the mechanism behind the paper's sharpest new boundary. Fitting
 $s(n)\propto n^{-\alpha}$ to the off-diagonal dispersion over $n=4,\dots,10$
 gives $\alpha_{\mathrm{ZZ}}=0.590$ against $\alpha_{\mathrm{Z}}=0.292$ at $K=20$,
-a ratio of $2.02$ --- matching the $\binom{n}{2}$ versus $n$ growth in the number
+a ratio of $2.02$, matching the $\binom{n}{2}$ versus $n$ growth in the number
 of phase terms. Across the same widths the dispersion correlates with
 macro-$F_1$ at $r=+0.77$ for the ZZ kernel and $r=+0.32$ for the Z kernel.
 \changed
-Sec.~III (F3), Sec.~V-G, Fig.~12, Sec.~VII-B.
+Sec.~III (F3), Sec.~V-G, Fig.~8, Sec.~VII-B.
 
 \itemhead{R2-3}{$N_{\text{train}}=1000$ with five seeds is a thin statistical
 base}
@@ -520,8 +541,8 @@ without a matching effect-size/CI treatment.''
 \end{revcomment}
 \resp
 Corrected, and the correction changed the balance of the paper. All $110$ cells
-now carry the same five quantities --- $\Delta$, $95\%$ CI, Holm-corrected $p$,
-$d_z$, and the positive-run fraction --- whether the verdict is favourable to
+now carry the same five quantities ($\Delta$, $95\%$ CI, Holm-corrected $p$,
+$d_z$, and the positive-run fraction) whether the verdict is favourable to
 the quantum kernel or against it. The result is $21$ favourable, $21$ against,
 $68$ inconclusive; the negative regimes, given equal treatment, turn out to be
 as numerous as the positive ones.
@@ -530,7 +551,7 @@ The clearest of them: under feature perturbation, six of six comparisons favour
 the classical model with effect sizes beyond $2.8$. The manuscript presents this
 as the paper's clearest negative result rather than in a closing caveat.
 \changed
-Sec.~V-C, Sec.~VI, Fig.~10; \texttt{regime\_map\_rows.csv}, all $110$ rows
+Sec.~V-C, Sec.~VI, Fig.~9; \texttt{regime\_map\_rows.csv}, all $110$ rows
 independently re-derived by \texttt{audit\_c4.py}.
 
 \itemhead{R2-5}{Reference [15]: article number 116990F should be 116990B}
@@ -544,8 +565,8 @@ Bibliography, entry [15].
 \itemhead{R2-6}{Reference [26] could not be located; looks fabricated or badly
 misattributed}
 \resp
-We searched twice and independently --- by author and title, and by volume and
-page range --- and could not locate the item either. We have removed it, and we
+We searched twice and independently, by author and title and by volume and
+page range, and could not locate the item either. We have removed it, and we
 record the removal in the released bibliography file together with the original
 string, so that the change is auditable rather than silent.
 
@@ -587,8 +608,8 @@ of a known quantity. To our knowledge no study of quantum kernels on tabular
 data sweeps the training-set size, and doing so shows that the answer to
 ``does the quantum kernel win'' is not a fact about the kernel but a function of
 $N$: second-worst of seven models at $N=100$, best at $N=10^{4}$, reversing in a
-narrow interval, in both tuning arms. A benchmark conducted at a single $N$ ---
-as every study we are aware of is, including our own submitted version --- can
+narrow interval, in both tuning arms. A benchmark conducted at a single $N$,
+as every study we are aware of is, including our own submitted version, can
 report either outcome and be internally consistent.
 
 \emph{A selection rule that transfers.} The three-stage rule returns
@@ -598,8 +619,8 @@ presented $n=4$ as a result; it is properly a rule whose output depends on the
 data.
 
 We would add that the question itself is being treated as a legitimate research
-question elsewhere. The study Reviewer~4 pointed us to --- Carducci, ICAD 2026
---- opens by arguing that malware analysts ``do not need another general claim
+question elsewhere. The study Reviewer~4 pointed us to (Carducci, ICAD 2026)
+opens by arguing that malware analysts ``do not need another general claim
 that quantum computing is either broadly superior or broadly impractical'' but
 rather ``need to know which kinds of malware representations justify quantum
 effort'', and answers it by locating a bounded intermediate window. We reached the same shape of answer independently, on a
@@ -611,8 +632,8 @@ think, a result about the technology rather than a shortfall of either paper.
 honestly come to the reviewer's ``theoretical result establishing a regime'',
 and we present it as an empirical regularity rather than a theorem. The
 off-diagonal dispersion of the Gram matrix decays as $n^{-\alpha}$ with
-$\alpha_{\mathrm{ZZ}}/\alpha_{\mathrm{Z}}=2.02$ --- the ratio predicted by
-counting $\binom{n}{2}$ pairwise phase terms against $n$ single-qubit ones ---
+$\alpha_{\mathrm{ZZ}}/\alpha_{\mathrm{Z}}=2.02$, the ratio predicted by
+counting $\binom{n}{2}$ pairwise phase terms against $n$ single-qubit ones,
 and it predicts end-task macro-$F_1$ across widths at $r=+0.77$. It tells us
 where the method stops working, and that boundary is the part of this paper most
 likely to hold beyond these two datasets.
@@ -626,7 +647,7 @@ The claim has been withdrawn, and the specific comparison the reviewer names no
 longer holds in our own numbers: with a tree ensemble included, XGBoost attains
 $0.8503$ against QSVM-ZZ's $0.8469$, with overlapping intervals. We report this
 as an ordering of point estimates, not a separation. The reviewer's underlying
-point --- that a difference of this size does not support an advantage claim ---
+point, that a difference of this size does not support an advantage claim,
 is one the revision now makes itself, quantitatively: with ten runs and Holm
 correction, the smallest difference reaching any verdict in the map is $0.010$
 macro-$F_1$, and differences as large as $0.031$ remain inconclusive.
@@ -638,7 +659,7 @@ proved propositions is inappropriate}
 \resp
 Agreed, and corrected. Propositions~1, 3 and~4 are now background facts
 (F1)--(F3) with citations and no proofs. Proposition~2, which is specific to the
-comparison this paper makes, is retained as Lemma~1 --- and, as
+comparison this paper makes, is retained as Lemma~1, and, as
 Sec.~\ref{sec:selfreported} reports, we found in the course of doing so that its
 stated coefficients were wrong. It is restated correctly with a full proof in
 Appendix~A.
@@ -665,13 +686,13 @@ We added a backend-derived noise model with gate, readout and relaxation errors.
 
 What we did not do is execute on a quantum processor. Rather than leave
 ``NISQ-aware'' ambiguous, the manuscript now defines it: a statement about
-circuit budget --- qubit count, depth and two-qubit gate count chosen under an
-explicit cost model --- and not a claim of hardware validation. Sec.~VII-A states
+circuit budget (qubit count, depth and two-qubit gate count chosen under an
+explicit cost model) and not a claim of hardware validation. Sec.~VII-A states
 which effects are consequently outside our evidence. The execution path for a
 real backend is in the released code and has been verified in dry run; we report
 no hardware numbers and make no claim about them.
 \changed
-Sec.~V-G, Fig.~12, Sec.~VII-A, Assumption~1.
+Sec.~V-G, Fig.~8, Sec.~VII-A, Assumption~1.
 
 \itemhead{R3-5}{Results are already established in prior benchmarking studies
 (arXiv:2403.07059, arXiv:2409.04406)}
@@ -683,7 +704,7 @@ positions this work against them explicitly.
 We would note, respectfully, that neither of those studies introduces a new
 kernel, feature map, training method, hardware implementation, or theoretical
 result either; both are benchmarks. We raise this not to argue that they should
-not have been published --- we think they should --- but because the criterion in
+not have been published (we think they should) but because the criterion in
 R3-1, applied uniformly, would exclude them, which suggests the criterion for a
 benchmark is not novelty of apparatus but whether it changes what the field
 believes.
@@ -701,7 +722,7 @@ therefore \emph{not} an axis we can claim as ours, and we no longer do.
 value: fixed per-task subsamples in the first, $M=240$ in the second, a $15\%$
 class-balanced subsample in the third, the full training partition in the
 fourth. That is the variable that determines the answer here, and it is the one
-axis on which this work is not duplicated. We do not claim breadth otherwise ---
+axis on which this work is not duplicated. We do not claim breadth otherwise;
 Gillani \emph{et al.} evaluate four datasets to our two, at eight qubits to our
 four and six, under a stricter error-rate criterion.
 \changed
@@ -723,19 +744,19 @@ pointer: the parallel is closer than we expected, and it changed how we frame
 our own boundary.
 
 Carducci reports that the measured advantage is confined to an
-\emph{intermediate} representational window --- classical methods remain
-stronger both below and above it --- and that the pattern survives parameter
+\emph{intermediate} representational window (classical methods remain
+stronger both below and above it) and that the pattern survives parameter
 tuning, tested specifically to rule out a favourable-setting artefact. All three
 features recur in our results on a different task: our favourable regime is
 bounded from below by training-set size and from above by circuit width; we
 report both a frozen and a re-tuned arm for exactly the reason that paper
 re-tunes; and the representations where that work finds quantum discovery useful
 are those dominated by local pairwise structure, which is what the
-$\binom{n}{2}$ pairwise phase terms of the \ZZ{} map encode.
+$\binom{n}{2}$ pairwise phase terms of the ZZ map encode.
 
 We must be clear about the evidentiary status. We were unable to obtain the full
 text through our institutional access. The comparison rests on the abstract, the
-opening of the introduction, and the index terms --- from which we can establish
+opening of the introduction, and the index terms, from which we can establish
 that the evaluation is a retrieval setting scored by Recall@$k$ and that kernel
 methods are among the techniques involved, but not the qubit count nor whether
 the training-set size is varied. We say exactly this in Sec.~II-D, present the
@@ -758,7 +779,7 @@ Both observations are correct.
 
 On the theorem: the proof asserted $\tilde F(4)>\tilde F(3)$ while Table~III of
 the same submission reports $\tilde F(4)=0.471 < \tilde F(3)=0.628$. With the
-correct values the conclusion does not follow --- at
+correct values the conclusion does not follow: at
 $\alpha=\beta=\gamma=1/3$ the objective is maximised at $n=2$ $(J=0.551)$ and
 decreases monotonically to $0.059$ at $n=10$, exactly as the reviewer observed
 from the table.
@@ -775,7 +796,7 @@ among those take the smallest $Q(n)$. On NSL-KDD this returns $n^{\ast}=4$; on
 UNSW-NB15, unchanged, $n^{\ast}=6$.
 \changed
 Sec.~III-C (new Definition~1 replacing Definition~4, Algorithm~1, Eq.~(6) and
-Theorem~1), erratum subsection, Fig.~5 replacing the Pareto frontier figure.
+Theorem~1), erratum subsection, Fig.~1 replacing the Pareto frontier figure.
 
 \itemhead{R4-3}{Reproducibility is asserted but no machinery is provided}
 \resp
@@ -825,7 +846,7 @@ SVM-RBF & QSVM-ZZ & QSVM-Z & XGBoost & Random forest & Poly-2 & Linear \\
 
 Two things follow, and we report both. The quantum kernel detects rare attacks
 far better than either tree ensemble, which the macro average conceals and which
-matters operationally. But SVM-RBF is better still, by $0.078$ --- so the honest
+matters operationally. But SVM-RBF is better still, by $0.078$, so the honest
 statement, and the one the manuscript makes, is that an RBF-kernel SVM is the
 strongest rare-attack detector in this study. Signed per-sample decision margins
 are also reported, as the submitted version's Cohen's $d$ claim implied but did
@@ -881,20 +902,20 @@ $\tfrac14$ with $R^2=1.000000$ at $n=3,4,6$, and the corrected expansion's
 residual decays as $\|\cdot\|^{3.9}$, reaching $5\times10^{-11}$ at
 $\|\cdot\|=10^{-3}$; with the submitted coefficients the residual decays only as
 $\|\cdot\|^{2.0}$, so the claimed second-order accuracy is not attained. At
-$r=2$ --- the operating point of this study --- the two-invariant form attains
+$r=2$, the operating point of this study, the two-invariant form attains
 only $R^2=0.60$ to $0.94$ with coefficients that change sign between expansion
 points, while the unrestricted quadratic form still attains $R^2=0.999996$.
 
 The lemma is restated for $r=1$ with the correct coefficients and proved in full
 in Appendix~A, with an explicit remark on why it does not extend. The
-substantive consequence drawn from it --- that SVM-Poly2 is the sharpest
-classical comparator --- is unaffected, since it depends on which monomials
+substantive consequence drawn from it, that SVM-Poly2 is the sharpest
+classical comparator, is unaffected, since it depends on which monomials
 appear and not on their coefficients. The verification is released as
 \texttt{verify\_lemma1.py}.
 
 \textbf{(c) The training subsets used in the submitted version were
 rare-enriched.} The per-run training frames contain $10\%$ rare-attack records
-against a natural rate of $0.83\%$ --- an enrichment of roughly twelvefold that
+against a natural rate of $0.83\%$, an enrichment of roughly twelvefold that
 was not stated in the submitted manuscript. This is the direct cause of the
 withdrawn low-data claim: under enrichment there is no crossover, and under the
 natural prior there is. Both sampling regimes are now reported side by side and
@@ -903,64 +924,75 @@ the enrichment is stated in the protocol.
 % =====================================================================
 \section{Note on the marked-up manuscript}
 
-A marked-up version accompanies this submission. Because essentially every
-paragraph of the manuscript is new text --- the abstract, introduction, related
-work, framework, experimental setup, results, limitations and conclusion have
-all been rewritten, the theory section has had one theorem, one definition, one
-algorithm and one equation removed and a new definition, lemma, remark and
-appendix added, and all figures are regenerated from re-run experiments ---
-marking individual sentences would convey no information. We have instead
-tagged the manuscript at \emph{subsection} granularity. Each subsection heading
-in the marked copy carries one of four tags --- \textsc{new}, \textsc{rewritten},
-\textsc{corrects an error}, \textsc{retained} --- together with one sentence
-stating what changed and the item in this letter that prompted it.
+A marked copy accompanies this submission. New or changed text is set on a
+yellow background: the abstract, the body of every subsection that is new,
+rewritten or corrected with respect to the submitted version, and every
+bibliography entry that was added or corrected. Because essentially every
+paragraph of the manuscript is new text, most of the copy is yellow; to make
+the marking informative, each subsection heading additionally carries one of
+four tags (\textsc{new}, \textsc{rewritten}, \textsc{corrected},
+\textsc{retained}) with one sentence stating what changed and the item in this
+letter that prompted it. Subsections tagged \textsc{retained} are left plain.
 
 The marked copy also lists, on its cover page, the material \emph{removed} from
-the submitted version, which by its nature cannot be tagged anywhere in the
-body: Theorem~1, Definition~4, Algorithm~1, the objective $J(n)$, three tables
-and four figures.
-
-Both files are generated from a single source and differ in one flag, so the
-marked copy and the clean copy cannot drift apart.
-
-Two things did \emph{not} change, and we note them so their absence from the
-above is not read as an oversight: the title, and the author list and their
-affiliations.
+the submitted version, which by its nature cannot be shown in the body:
+Theorem~1, Definition~4, Algorithm~1, the objective $J(n)$, three tables and
+four figures. Both files are generated from a single source and differ in one
+flag, so the marked copy and the clean copy cannot drift apart.
 
 % =====================================================================
-\section{Changes to the bibliography}
+\section{Changes to the bibliography (for the Editor-in-Chief and the Associate Editor)}
 
-TETC requires bibliography changes to be itemised. There are eleven, in four
-groups.
+Per the TETC policy on references, every change to the bibliography with
+respect to the submitted version is listed here with its reason. The submitted
+version had $36$ entries; the revision has $38$. Added and corrected entries
+are set on a yellow background in the reference list of the marked copy. No
+self-citation was added or removed; the manuscript contains none.
 
-\emph{Six entries added}, four because reviewers named them and two because we
-found them ourselves while checking the literature. Cirillo, Esposito and Seo,
-\emph{Quantum Machine Intelligence}, 2026, named at R1-1. Bowles, Ahmed and
-Schuld, arXiv:2403.07059, and Schnabel and Roth, arXiv:2409.04406, both named at
-R3-5. Carducci, ICAD 2026, named at R4-1. Kaissar, Nassif and Bouridane,
-\emph{Future Internet}, 2026, which replaces the withdrawn entry below. And
-Gillani \emph{et al.}, arXiv:2608.18155, a concurrent study covering both of our
-datasets that no reviewer raised and that we cite because omitting it would be a
-material omission.
+\emph{Six entries added.} All six are cited in the body and discussed, not
+merely listed.
+\begin{itemize}[leftmargin=1.3em,itemsep=2pt,topsep=3pt]
+  \item Cirillo, Esposito and Seo, \emph{Quantum Machine Intelligence} 8(1):27,
+    2026. Named by Reviewer~1 (R1-1) as a missing benchmark; now the closest
+    prior study in Table~I and Sec.~II-B.
+  \item Bowles, Ahmed and Schuld, arXiv:2403.07059, 2024, and Schnabel and
+    Roth, arXiv:2409.04406, 2024. Both named by Reviewer~3 (R3-5) as evidence
+    that our results were already established; discussed in Sec.~II-C.
+  \item Carducci, \emph{Proc. IEEE Int. Conf. AI and Data Analytics (ICAD)},
+    2026. Named by Reviewer~4 (R4-1); discussed in Sec.~II-D.
+  \item Gillani \emph{et al.}, arXiv:2608.18155, 2026, a calibration- and
+    noise-aware benchmark of QML for intrusion detection on the same datasets,
+    found by the authors while answering R1-1 and R3-5; without it Table~I
+    would be incomplete.
+  \item Kaissar, Nassif and Bouridane, \emph{Future Internet} 18(5):234, 2026,
+    a survey of quantum methods for intrusion detection. It takes the role the
+    unverifiable former [26] held, and its DOI (10.3390/fi18050234) was checked
+    to resolve to the item.
+\end{itemize}
 
-\emph{One entry removed as unlocatable.} Former reference~[26] could not be
-found by two independent searches; see R2-6. The released bibliography file
-records the removal together with the original string, so the change is
-auditable rather than silent.
+\emph{Four entries removed.}
+\begin{itemize}[leftmargin=1.3em,itemsep=2pt,topsep=3pt]
+  \item Former [26], Rahman, Kayed, Aljahdali and Ali, ``Quantum machine
+    learning for cybersecurity: a comprehensive review,'' attributed to
+    \emph{IEEE Access} 2023. Reviewer~2 (R2-6) could not locate it; neither
+    could we, by author and title or by volume and page range. Removed, and the
+    removal is recorded in the released bibliography file.
+  \item Former [34]--[36], Platt 1999, Naeini \emph{et al.} 2015, Guo
+    \emph{et al.} 2017. These supported the probability-calibration material
+    of the submitted version, which was withdrawn together with the advantage
+    claims it accompanied; the revision does not discuss calibration, and no
+    sentence cites them.
+\end{itemize}
 
-\emph{One entry corrected.} Former reference~[15] carried a wrong DOI; see R2-5.
+\emph{One entry corrected.} [15], Payares and Mart\'inez-Santos, SPIE 11699:
+article number 116990F corrected to 116990B (DOI 10.1117/12.2593297), as
+Reviewer~2 pointed out (R2-5).
 
-\emph{Three entries removed as no longer relevant.} The submitted version's
-contribution C5 was a confidence-calibration and rare-attack study reporting
-Expected Calibration Error and AUC-PR. That contribution is not in this
-revision, and with it go the three references that supported it alone: Platt
-(1999), Naeini \emph{et al.} (2015) and Guo \emph{et al.} (2017), all on
-probability calibration. We record the removal here rather than leave three
-uncited entries standing in the list.
-
-After these changes the bibliography holds $38$ entries, every one of them cited
-at least once in the manuscript text, against the journal's limit of $45$. No
-self-citation was added or removed.
+\emph{Affiliations, acknowledgments, funding.} No co-author has changed
+affiliation since the original submission. The funding statement (University of
+Danang - University of Science and Technology, Project T2026-02-10TN) is
+unchanged. Author biographies are included in the revised manuscript, as the
+decision letter requests.
 
 % =====================================================================
 \section{Summary}
@@ -983,13 +1015,13 @@ The three items we describe as addressed only in part, and what remains
 outstanding in each:
 
 \begin{itemize}[leftmargin=1.3em,itemsep=2pt,topsep=3pt]
-  \item \textbf{R4-1} --- Carducci (2026) is cited and positioned, but we were
+  \item \textbf{R4-1}: Carducci (2026) is cited and positioned, but we were
     unable to obtain the full text through our institutional access, so our
     discussion of it rests on the abstract and the bibliographic record.
-  \item \textbf{R1-5} --- we added a random forest and XGBoost, and deliberately
+  \item \textbf{R1-5}: we added a random forest and XGBoost, and deliberately
     did not add CatBoost, TabNet or FT-Transformer. We took the alternative the
     comment offers and softened the practical claims accordingly.
-  \item \textbf{R3-4} --- we extended the study to eight qubits, added a
+  \item \textbf{R3-4}: we extended the study to eight qubits, added a
     backend-derived noise model, and defined what ``NISQ-aware'' claims. We did
     not execute on a quantum processor, and we make no hardware claim.
 \end{itemize}

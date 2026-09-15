@@ -93,6 +93,12 @@
 %    keep     giu nguyen y cua ban cu
 % =====================================================================
 \newif\ifannot
+% 13/09/2026: TETC doi ban annotated to NEN VANG phan moi/doi. Moi truong revbody boc than
+% moi subsection co nhan new/rewrite/fix; che do sach thi khong lam gi. framed/shaded* qua trang duoc;
+% float khong duoc nam trong no (script check/make_yellow_annotated.py da doi \input float ra ngoai).
+\usepackage{framed}
+\colorlet{shadecolor}{yellow!35}
+\newenvironment{revbody}{\ifannot\csname shaded*\endcsname\fi}{\ifannot\csname endshaded*\endcsname\fi}
 \definecolor{tagnew}{HTML}{0B6E4F}
 \definecolor{tagrew}{HTML}{1F3D6B}
 \definecolor{tagfix}{HTML}{A3341F}
@@ -105,13 +111,13 @@
     \par\nobreak\vspace{2pt}%
   \fi}
 \expandafter\def\csname revtag@new\endcsname{%
-  \colorbox{tagnew}{\textcolor{white}{\bfseries MOI}}}
+  \colorbox{tagnew}{\textcolor{white}{\bfseries NEW}}}
 \expandafter\def\csname revtag@rewrite\endcsname{%
-  \colorbox{tagrew}{\textcolor{white}{\bfseries VIET LAI}}}
+  \colorbox{tagrew}{\textcolor{white}{\bfseries REWRITTEN}}}
 \expandafter\def\csname revtag@fix\endcsname{%
-  \colorbox{tagfix}{\textcolor{white}{\bfseries SUA LOI}}}
+  \colorbox{tagfix}{\textcolor{white}{\bfseries CORRECTED}}}
 \expandafter\def\csname revtag@keep\endcsname{%
-  \colorbox{tagkeep}{\textcolor{white}{\bfseries GIU}}}
+  \colorbox{tagkeep}{\textcolor{white}{\bfseries RETAINED}}}
 
 % Ten cong khai de dung trong bang chu giai cua main_annotated.tex
 \newcommand{\revtagnew}{\csname revtag@new\endcsname}
@@ -120,3 +126,6 @@
 \newcommand{\revtagkeep}{\csname revtag@keep\endcsname}
 
 
+
+% 13/09/2026: so cua nhanh tham chieu (XGBoost/RF du dac trung), sinh boi check/pair_ref_arm.py
+\input{tables/ref_arm_macros}

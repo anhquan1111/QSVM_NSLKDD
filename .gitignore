@@ -35,3 +35,4 @@ paper/paper1/v2_revision/*.zip
 
 # Ban PDF cua tai lieu tham khao: chi de doi chieu, KHONG duoc phat tan lai
 paper/paper1/refs/*.pdf
+paper/paper1/build/

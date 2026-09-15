@@ -11,6 +11,8 @@
 %  het thien chi.
 % =====================================================================
 
+\revnote{rewrite}{Rewritten. The submitted introduction claimed a low-data and prior-shift advantage; both are withdrawn (AE-1, R1-4).}
+\begin{revbody}
 Network intrusion detection is an attractive target for quantum machine
 learning. The data are tabular and moderate-dimensional, the decision is a
 classification, and the operational value of a small accuracy gain is high
@@ -60,7 +62,7 @@ inconclusive. Inside that map there is structure worth reporting:
     SVM-RBF changes sign between $N=2000$ and $N=5000$ in all six
     baseline--tuning-arm combinations, and survives freezing the
     hyper-parameters rather than re-tuning them. Enriching rare attacks
-    twelvefold --- the sampling our own submitted protocol used --- removes the
+    twelvefold (the sampling our own submitted protocol used) removes the
     effect.
   \item \textbf{A selection rule that transfers.} The three-stage rule returns
     $n^{\ast}=4$ on NSL-KDD and, applied without changing a threshold,
@@ -71,8 +73,8 @@ inconclusive. Inside that map there is structure worth reporting:
     returns $n^{\ast}=8$, all $48$ paired comparisons favour the classical
     model and the entanglement ablation reverses sign. The mechanism is visible
     in the Gram matrix, whose off-diagonal dispersion decays about twice as fast
-    for the \ZZ{} map as for its entanglement-free control --- the ratio the
-    $\binom{n}{2}$ versus $n$ phase-term counting predicts --- and correlates
+    for the \ZZ{} map as for its entanglement-free control, the ratio the
+    $\binom{n}{2}$ versus $n$ phase-term counting predicts, and correlates
     with macro-$F_{1}$ at $r=+0.77$.
 \end{itemize}
 
@@ -80,8 +82,11 @@ We also report where the method loses. It degrades faster than either tree
 ensemble under class-prior shift; it is the least robust of all seven models to
 feature perturbation; and although it detects rare attacks far better than the
 tree ensembles, an RBF-kernel SVM detects them better still.
+\end{revbody}
 
 \subsection*{Relation to the submitted version}
+\revnote{new}{New subsection: the five claims of the submitted version that are withdrawn, stated on page 1.}
+\begin{revbody}
 
 This paper is a substantially revised version of an earlier submission, and five
 of that version's claims do not survive the revised protocol. We state them
@@ -94,3 +99,4 @@ it and the objective it maximised have been removed rather than repaired.
 replaced. (v)~With a tree ensemble in the comparison, \QSVM{} is no longer the
 top-ranked model at the main operating point. Sec.~\ref{sec:erratum} gives the
 technical detail, including one error no reviewer raised.
+\end{revbody}

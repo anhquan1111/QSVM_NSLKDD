@@ -15,7 +15,8 @@
 \label{sec:limitations}
 
 \subsection{Hardware noise: what was and was not measured}
-\revnote{rewrite}{Ban da nop chi co sai so lay mau huu han. Nay them mo hinh nhieu dung tu calibration may that (y AE-6, R1-6), va noi ro cai gi KHONG do duoc.}
+\revnote{rewrite}{The submitted version covered finite-shot error only. A backend-derived noise model is added (AE-6, R1-6, R3-4), with a statement of what is not measured.}
+\begin{revbody}
 
 The submitted version reported only finite-shot sampling error and deferred
 coherent noise to a companion study. Reviewers correctly objected that shot
@@ -31,7 +32,11 @@ Circuits are transpiled onto that backend's coupling map and basis gate set,
 giving a depth of $59$ and $44$ two-qubit gates for the $n=4$, $r=2$ map.
 Under this model the entanglement conclusion is unchanged: the alignment gap
 between QSVM-ZZ and QSVM-Z survives, while the macro-$F_1$ difference remains
-within its confidence interval.
+within its confidence interval. This noisy re-run covers one of the ten runs
+and the $300$-record test split (Table~\ref{tab:protocol}); it establishes
+that the noise model does not move the operating point, not a noisy confidence
+interval, which would require the remaining nine runs at the same $512$ shots
+per kernel entry.
 
 \emph{What we do not measure.} The circuits were not executed on a quantum
 processor. Two effects are therefore outside our evidence: drift of calibration
@@ -41,11 +46,13 @@ execution path for a real backend, and the comparison it would produce
 (exact statevector $\rightarrow$ backend-derived noise $\rightarrow$ hardware)
 is specified, but we report no hardware numbers and make no claim about them.
 Readers should read ``NISQ-aware'' as a statement about \emph{circuit budget}
---- qubit count, depth, and two-qubit gate count chosen under an explicit cost
-model, in the sense of \cite{ref8} --- and not as a claim of hardware validation.
+(qubit count, depth, and two-qubit gate count chosen under an explicit cost
+model, in the sense of \cite{ref8}) and not as a claim of hardware validation.
+\end{revbody}
 
 \subsection{Embedding size: now measured, and the news is not good for width}
-\revnote{fix}{Ban da nop de day la ``cau hoi mo''. Nay DA DO, va ket qua bat loi cho viec mo rong mach.}
+\revnote{fix}{The submitted version left this as an ``open question''; it is now measured, and the result is unfavourable to wider circuits.}
+\begin{revbody}
 
 The submitted version listed the effect of moving along the frontier as an open
 question. We have since measured it, and the answer constrains the method more
@@ -74,9 +81,11 @@ Two caveats. The exponent ratio is close to $2$ at $K=20$ but larger at $K=80$
 ($3.32$), so the term-counting argument predicts the ordering but not the full
 rate. And the $F_1$--dispersion relation is measured on seven widths at a single
 training-set size; we present it as an empirical regularity, not a law.
+\end{revbody}
 
 \subsection{Classical-baseline strength}
-\revnote{rewrite}{Da them RF+XGBoost. Noi thang la KHONG them CatBoost/TabNet/FT-Transformer, kem ly do (y R1-5).}
+\revnote{rewrite}{RF and XGBoost added; CatBoost, TabNet and FT-Transformer deliberately not added, with the reason stated (R1-5).}
+\begin{revbody}
 
 The submitted version compared only against SVM variants. We have added a
 random forest and XGBoost under the identical protocol, and they change the
@@ -91,9 +100,11 @@ its own tuning-budget protocol to be compared fairly, which would enlarge the
 study from a controlled quantum-kernel benchmark into a survey of tabular
 architectures. We therefore do not claim coverage of all strong tabular methods,
 and any practical reading of our results should be qualified accordingly.
+\end{revbody}
 
 \subsection{Dataset breadth and protocol}
-\revnote{rewrite}{Da them UNSW-NB15. Them so lieu ve trung lap cua ca hai bo.}
+\revnote{rewrite}{UNSW-NB15 added, with duplication statistics for both corpora.}
+\begin{revbody}
 
 The submitted version rested almost entirely on NSL-KDD. We have added
 UNSW-NB15 under the same protocol, which is what allows us to separate findings
@@ -115,3 +126,4 @@ Finally, the feature budget $K=20$ is inherited from the submitted protocol and
 held fixed so that the revised results remain comparable to it.
 Fig.~\ref{fig:ksweep} shows it is not the accuracy optimum; it is the value at
 which the selection rule returns a four-qubit circuit.
+\end{revbody}
