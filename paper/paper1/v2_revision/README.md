@@ -63,5 +63,5 @@ Các file `.zip` **không** được đẩy lên repo (xem `.gitignore`) — ch�
 - **Không được thêm/bớt tác giả** nếu không có văn bản đồng ý của EiC
 - **Không được thêm/bớt tự trích dẫn**
 
-Xem `docs/DOI_CHIEU_CU_MOI.md` để biết bản này khác bản đã nộp chỗ nào, và
-`docs/REVISION_REPORT.md` để biết toàn cảnh.
+Xem `docs/BAO_CAO_REVISION.md` — mục 11 đối chiếu bản này với bản đã nộp, các mục còn
+lại là toàn cảnh bản revision.
