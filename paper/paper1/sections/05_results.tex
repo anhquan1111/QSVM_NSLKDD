@@ -72,12 +72,28 @@ because it did not include a tree ensemble; with one included, \QSVM{} is second
 and the intervals overlap. We therefore describe this as an ordering of point
 estimates and not as a separation.
 
-Under the backend-derived noise model the conclusion is unchanged.
-\QSVM{} attains $0.8665$ under exact statevector simulation, $0.8598$ with
-finite shots, and $0.8728$ under \texttt{FakeManilaV2} noise, with QSVM-\Zmap{}
-at $0.8498$, $0.8464$ and $0.8528$; the noisy value is not lower than the ideal
-one, which we read as noise being immaterial at this scale rather than as
-noise helping.
+Under the backend-derived noise model the conclusion is unchanged, and we can
+now state it over ten runs rather than one. Repeating the check on all ten
+training runs at $512$ shots per kernel entry, \QSVM{} attains a mean
+macro-$F_1$ of $0.8329$ under exact statevector simulation, $0.8363$ with finite
+shots and $0.8501$ under \texttt{FakeManilaV2} noise, against $0.8309$,
+$0.8323$ and $0.8307$ for QSVM-\Zmap{}. Paired against exact simulation,
+\QSVM{} gains $+0.0172$ $[+0.0021,+0.0324]$ under noise ($p=0.027$, $d_z=0.81$)
+while QSVM-\Zmap{} is flat at $-0.0002$ $[-0.0115,+0.0111]$. We report the
+first as inconclusive rather than as an improvement, for the reason the rest of
+this paper applies: the smallest $p$ this check produces is $0.027$, which
+clears no first Holm threshold for any family we could defend --- from the two
+noise-versus-ideal comparisons ($0.05/2$) to all nine the check entails
+($0.05/9$). Noise at this depth does not measurably degrade macro-$F_1$, and now
+there is an interval behind that statement instead of a single point.
+
+The Gram matrix moves far more than the score does. The relative Frobenius
+distance between the noisy and the exact Gram matrix averages $0.602$ for
+\QSVM{} against $0.165$ for QSVM-\Zmap{}, and alignment falls from $0.194$
+to $0.149$ against $0.070$ to $0.068$: noise disturbs the entangling map's
+geometry several times more than the control's, and neither disturbance reaches
+macro-$F_1$. That is the same disconnect between kernel geometry and end-task
+score reported for the ablation itself above.
 
 \subsection{Distribution shift}
 \label{sec:res-c3}

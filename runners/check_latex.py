@@ -58,6 +58,10 @@ ZZ Zmap QSVM Fmac
             "resp changed itemhead addvspace normalcolor linespread rule textcolor thesection nameref".split())
 
 MAIN_DIR: list[Path] = []
+# Macro chi dung duoc trong che do toan. Nap o main() bang mot luot quet
+# TAT CA cac file: dinh nghia thuong nam o preamble.tex con cho dung lai
+# nam o sections/, nen quet tung file rieng thi khong bao gio thay.
+MATHONLY: set[str] = set()
 FAIL: list[str] = []
 INFO: list[str] = []
 
@@ -117,56 +121,29 @@ def check_file(path: Path) -> tuple[set[str], set[str], set[str], set[str]]:
     lines = strip_comments(raw_text)
     body = "\n".join(lines)
 
-    # 0a) Ky tu DIEU KHIEN con sot trong file.
+    # 0c) Macro CHI DUNG DUOC TRONG CHE DO TOAN ma bi dat ngoai.
     #
-    #     Khi sinh file bang heredoc hoac bang chuoi Python khong raw, mot day
-    #     nhu "\\revnote" co the bi doc thanh dau xuong dong CR roi "evnote";
-    #     "\\annottrue" thanh BEL roi "nnottrue"; "\\begin" thanh BS roi "egin".
-    #     Ca ba deu da xay ra trong repo nay. TeX coi CR la het dong, nen mot
-    #     dong chu thich bi CAT DOI va nua sau duoc IN RA nhu noi dung bai --
-    #     dung cai da in ra trang 1 cua ban compile dau tien.
+    #     \\Fmac duoc dinh nghia la F_1^{\\mathrm{macro}} -- toan bo than
+    #     macro la ky hieu toan. Viet "\\Fmac{}" giua cau van thuong thi
+    #     pdflatex dung han voi "Missing $ inserted". Da xay ra that khi viet
+    #     lai doan noise-check.
     #
-    #     Doc theo BYTE, khong theo van ban: che do universal-newline cua Python
-    #     tu doi CR don le thanh "\n", nen doc kieu van ban thi khong con thay
-    #     ky tu gay loi nua. Day chinh la cho ma bo kiem nay tung mu.
-    ctrl_name = {0: "NUL", 7: "BEL (tu \\a)", 8: "BS (tu \\b)",
-                 11: "VT (tu \\v)", 12: "FF (tu \\f)", 13: "CR (tu \\r)",
-                 27: "ESC"}
-    line_no = 1
-    for off, ch in enumerate(raw_bytes):
-        if ch == 10:
-            line_no += 1
-        elif ch < 32 and ch != 9:
-            ctx = raw_bytes[max(0, off - 24):off + 24].decode("utf-8", "replace")
-            fail(rel, line_no,
-                 f"ky tu dieu khien {ctrl_name.get(ch, hex(ch))} trong file "
-                 f"-- gan nhu chac chan la mot dau \\ bi an mat luc sinh file"
-                 f"  ...{ctx.strip()}...")
-
-    # 0b) Dong bi RO KHOI KHOI CHU THICH.
-    #
-    #     Khi dau \ cua "\\revnote" bien thanh CR, dong
-    #         %  Dung \revnote{loai}{ghi chu} ngay sau moi \subsection.
-    #     bi cat thanh hai, va nua sau khong con dau % dan dau -- no nam KE
-    #     GIUA hai dong chu thich va duoc TeX in ra. CR sau do co the da bi
-    #     chuan hoa thanh "\n" (git, hoac mot lan ghi lai file), luc do phep
-    #     kiem 0a khong con thay gi, nhung cai dong mo coi thi van nam do.
-    #
-    #     Nen bat rieng: dong khong trong, khong bat dau bang % hay \, ma
-    #     dong khong trong LIEN TRUOC va LIEN SAU no deu la chu thich.
-    src = raw_text.split("\n")
-    for i, ln in enumerate(src):
-        t = ln.strip()
-        if not t or t.startswith("%") or t.startswith(BS):
-            continue
-        prev = next((src[j].strip() for j in range(i - 1, -1, -1)
-                     if src[j].strip()), "")
-        nxt = next((src[j].strip() for j in range(i + 1, len(src))
-                    if src[j].strip()), "")
-        if prev.startswith("%") and nxt.startswith("%"):
-            fail(rel, i + 1,
-                 f"dong nay nam giua hai dong chu thich nhung KHONG co dau % "
-                 f"dan dau, nen TeX se IN NO RA: {t[:60]!r}")
+    #     Cach nhan: macro nao co ^ hoac _ hoac \\math... trong than dinh nghia
+    #     thi moi lan dung phai nam trong mot cap $...$.
+    if MATHONLY:
+        for i, ln in enumerate(lines, 1):
+            if re.search(BS + BS + r"newcommand\{" + BS + BS + r"[A-Za-z]+\}", ln):
+                continue                      # chinh dong DINH NGHIA macro
+            # doan chi so LE giua cac dau $ la dang o trong che do toan
+            for j, seg in enumerate(ln.split("$")):
+                if j % 2 == 1:
+                    continue
+                for m in re.findall(BS + BS + r"([A-Za-z]+)", seg):
+                    if m in MATHONLY:
+                        fail(rel, i,
+                             f"\{m} chi dung duoc trong che do toan (than macro "
+                             f"co ky hieu toan) nhung o day nam NGOAI $...$ -- "
+                             f"pdflatex se bao Missing $ inserted")
 
     # 1) dong ket thuc hang bang bi an mat mot dau gach cheo
     for i, ln in enumerate(lines, 1):
@@ -303,6 +280,15 @@ def main() -> int:
     MAIN_DIR.clear()
     MAIN_DIR.append(main_tex.parent)
     files = [main_tex] + inputs_of(main_tex)
+
+    MATHONLY.clear()
+    for f in files:
+        for m, bodydef in re.findall(
+                BS + BS + r"newcommand\{" + BS + BS + r"([A-Za-z]+)\}\{([^}]*)\}",
+                io.open(f, encoding="utf-8").read()):
+            if re.search(r"[\^_]", bodydef) or BS + "math" in bodydef:
+                MATHONLY.add(m)
+
     all_cmds: set[str] = set()
     all_lab: set[str] = set()
     all_ref: set[str] = set()
