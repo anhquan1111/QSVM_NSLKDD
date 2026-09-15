@@ -35,3 +35,19 @@ paper/paper1/v2_revision/*.zip
 
 # Ban PDF cua tai lieu tham khao: chi de doi chieu, KHONG duoc phat tan lai
 paper/paper1/refs/*.pdf
+
+# Tai lieu hanh chinh va ban bao cao cu -- KHONG day len repo cong khai.
+# DeTai10.pdf la hop dong de tai, co so CCCD, so tai khoan ngan hang, ma so
+# sinh vien va email ca nhan cua hai thanh vien. Repo nay PUBLIC.
+# PAPER1_final_report.docx la bao cao 17-05-2026 (13 MB, 42 anh nhung),
+# viet truoc revision: con dung ham muc tieu Pareto J(n) va khung "low-data
+# regime" -- ca hai da bi chinh bai bao rut lai o muc III-H.
+docs/DeTai10.pdf
+docs/PAPER1_final_report.docx
+
+# Ghi chu lam viec theo tung dong gop (C1-C4, UNSW). Da het vai tro: phan
+# "ke hoach viet lai" da thanh bai bao, phan so lieu deu nam trong results/
+# va duoc audit_prose/audit_c4 doi chieu lai tu artifact. Giu tren dia,
+# lich su git van con.
+notebooks/**/note/
+docs/Reviewer_Response_QuangAnh_RF_XGBoost.md
