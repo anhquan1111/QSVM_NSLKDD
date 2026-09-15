@@ -16,7 +16,7 @@ Pipeline chung:
 ### Hai bài báo (xem chi tiết trong `docs/`)
 | | Trọng tâm | Trạng thái | Doc |
 |---|---|---|---|
-| **Paper 1** | Hiệu năng theo regime (khi nào QSVM thắng SVM cổ điển) | **Major revision @ IEEE TETC** (hạn 13-Oct-2026) | [docs/PAPER1_overview.md](docs/PAPER1_overview.md) + [docs/paper1_revision_plan.md](docs/paper1_revision_plan.md) |
+| **Paper 1** | Hiệu năng theo regime (khi nào QSVM thắng SVM cổ điển) | **Major revision @ IEEE TETC** (hạn 13-Oct-2026) | [docs/BAO_CAO_REVISION.md](docs/BAO_CAO_REVISION.md) |
 | **Paper 2** | Độ tin cậy / calibration (vs RF, XGBoost) | **Đã nộp @ IJNM (Wiley, Q2)** | [docs/PAPER2_overview.md](docs/PAPER2_overview.md) |
 
 ## Cấu trúc thư mục (tổ chức theo dataset)

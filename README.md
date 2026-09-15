@@ -15,16 +15,19 @@ NSL-KDD (41 đặc trưng) → One-Hot (122D) → SelectKBest (K=20) → PCA (n*
 
 | Muốn biết | Đọc file này |
 |---|---|
-| Bản revision đã làm gì, còn gì phải làm | **[docs/REVISION_REPORT.md](docs/REVISION_REPORT.md)** ← *bắt đầu ở đây* |
+| Bản revision đã làm gì, còn gì phải làm | **[docs/BAO_CAO_REVISION.md](docs/BAO_CAO_REVISION.md)** ← *bắt đầu ở đây* |
 | Reviewer yêu cầu những gì | [docs/Review.md](docs/Review.md) — nguyên văn thư quyết định |
 | Code bổ sung gồm những file nào | [docs/CODE_BO_SUNG.md](docs/CODE_BO_SUNG.md) |
-| Bản mới khác bản đã nộp chỗ nào | [docs/DOI_CHIEU_CU_MOI.md](docs/DOI_CHIEU_CU_MOI.md) |
+| Bản mới khác bản đã nộp chỗ nào | [docs/BAO_CAO_REVISION.md](docs/BAO_CAO_REVISION.md) — mục 11 |
 | Bản thảo đang viết tới đâu | [paper/paper1/](paper/paper1/) — xem README trong đó |
 | Thư trả lời từng ý reviewer | [paper/paper1/response_letter.tex](paper/paper1/response_letter.tex) |
 | Paper 2 (đã nộp IJNM) | [docs/PAPER2_overview.md](docs/PAPER2_overview.md) |
 
 Bản PDF đã compile để trong `paper/paper1/v2_revision/`; bản đã nộp tháng 5/2026
 để riêng trong `paper/paper1/v1_submitted/`.
+
+Thư mục `docs/` chỉ còn **bốn** file, mỗi file một vai trò, không chồng lấn nhau:
+báo cáo revision · thư reviewer nguyên văn · danh sách code bổ sung · tổng quan Paper 2.
 
 ---
 
@@ -80,7 +83,7 @@ Ba kết quả mới thay vào chỗ đó:
    cổ điển**; độ trải ma trận Gram giảm nhanh gấp đôi cho nhân ZZ (đúng tỉ lệ cấu trúc mạch dự
    đoán) và **dự đoán được** macro-F1 (r = +0.77).
 
-Chi tiết đầy đủ, kèm đối soát 33 ý của reviewer: **[docs/REVISION_REPORT.md](docs/REVISION_REPORT.md)**.
+Chi tiết đầy đủ, kèm đối soát 33 ý của reviewer: **[docs/BAO_CAO_REVISION.md](docs/BAO_CAO_REVISION.md)**.
 
 ---
 
