@@ -155,7 +155,7 @@ we submitted, and it exists because the reviewers refused the original.
 \section*{On verification}
 
 Every number in the manuscript and in this letter is reproducible from the
-released repository. Four audit scripts are provided, and we invite the
+released repository. Five audit scripts are provided, and we invite the
 reviewers to run them:
 
 \begin{center}
@@ -175,6 +175,9 @@ Script & Result & What it checks \\
   re-derived from the artifacts \\
 \texttt{verify\_lemma1.py} & 15/15 &
   The corrected kernel expansion, and the failure of the submitted one \\
+\texttt{verify\_noise10.py} & 40/40 &
+  The ten-run noise check: per-condition means, paired intervals, Wilcoxon
+  $p$-values and the Holm thresholds, from the per-run caches \\
 \bottomrule
 \end{tabular}
 \end{center}
@@ -464,7 +467,7 @@ Sec.~IV-A; \texttt{c4\_protocol\_vs\_literature.csv} in the repository.
 \resp
 The supplementary material is replaced by a public repository containing the
 complete implementation, the frozen protocol files, every intermediate artifact,
-all figure-generation scripts, and the four audit scripts listed above. The link
+all figure-generation scripts, and the five audit scripts listed above. The link
 and the commit hash are given in the Reproducibility paragraph of Sec.~IV-D.
 \changed
 Sec.~IV-D.
