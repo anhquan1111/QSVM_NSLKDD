@@ -67,6 +67,14 @@ Thêm gói: `uv add <pkg>` (tự cập nhật pyproject + lock). Cần `requirem
 - **Markdown cell / giải thích trong `.ipynb`**: **tiếng Việt**.
 - **Mã hóa file I/O:** MỌI thao tác `open()` PHẢI có `encoding='utf-8'` (Windows mặc định cp1252 gây lỗi Unicode với tiếng Việt). Không bao giờ `open(file)` thiếu utf-8.
 
+## Quy tắc git
+- **Không thêm dòng `Co-Authored-By: Claude ...` vào commit message**, và không thêm dòng
+  `Generated with Claude Code` vào mô tả pull request. Repo này **PUBLIC** và gắn với bài
+  báo IEEE TETC; GitHub đọc trailer đó rồi hiện avatar đồng tác giả trên trang commit.
+  Chốt 16-09-2026 sau khi phát hiện 52/161 commit đã mang dòng này.
+- 52 commit cũ vẫn còn dòng đó. Gỡ được bằng `scripts/viet_lai_lich_su.sh`, nhưng lệnh
+  đó viết lại toàn bộ commit hash nên phải cân nhắc — hiện **chưa chạy**.
+
 ## Lưu ý còn tồn (residual)
 - Notebook `c5`/`c6` khi chạy lại ghi JSON kết quả vào `data/nslkdd/processed_data` thay vì `results/nslkdd` (dùng chung `DATA_DIR`) — cần tách `RESULTS_DIR` khi review.
-- File cá nhân (ảnh tác giả, hợp đồng có PII) đã chuyển ra ngoài repo (folder `_PRIVATE_move_out_of_repo/`, đã gitignore). Repo là **PUBLIC**.
+- File cá nhân (ảnh tác giả, hợp đồng có PII) đã chuyển ra `D:/Documents/Project/NCKH_Document/`, ngoài repo. Repo là **PUBLIC**. Hợp đồng `DeTai10.pdf` **vẫn còn trong lịch sử git** — chưa gỡ.
