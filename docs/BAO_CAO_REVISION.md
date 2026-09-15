@@ -9,6 +9,7 @@
 | Mục | Nội dung |
 |---|---|
 | 1–4 | Tóm tắt · 5 khẳng định phải rút · 4 lỗi lý thuyết · 3 kết quả mới |
+| 4b | **Phép kiểm nhiễu chạy lại đủ 10 run** *(mới 16-09)* |
 | 5 | Đối soát 33 item reviewer (AE, R1–R4) |
 | 6–8 | Cách kiểm chứng · hình · bài trùng đề tài |
 | 9–10 | Việc còn lại · đánh giá rủi ro theo từng reviewer |
@@ -117,6 +118,42 @@ nhiễu**, nên không thể quy cho lỗi cổng lượng tử. Nghĩa là **c�
 phần cứng tốt lên** — nó là giới hạn nội tại của nhân.
 
 ---
+
+### 4b. Phép kiểm nhiễu: từ 1 run lên 10 run *(cập nhật 16-09-2026)*
+
+Quang Anh chạy lại phép kiểm nhiễu C2 trên **cả mười** run huấn luyện, thay vì một run
+như bản trước. Kết quả đã đối chiếu độc lập bằng `runners/verify_noise10.py` (40/40).
+
+| Điều kiện | QSVM-ZZ | QSVM-Z |
+|---|---|---|
+| Statevector chính xác | 0,8329 ± 0,0259 | 0,8309 ± 0,0236 |
+| 512 shot | 0,8363 ± 0,0197 | 0,8323 ± 0,0237 |
+| Nhiễu FakeManilaV2 | **0,8501** ± 0,0192 | 0,8307 ± 0,0230 |
+
+**Vì sao phải đổi, không phải chỉ "thêm cho chắc".** Số cũ trong bài (0,8665 / 0,8598 /
+0,8728) là của **riêng run 1** — và run 1 hoá ra là **run có F1 cao nhất trong cả mười**
+(0,8728 so với trung bình 0,8501). Trích một mình nó là trích chỗ lệch. Đây đúng là loại
+lỗi reviewer bắt được nếu họ chạy lại code, mà bài thì mời họ chạy.
+
+**Kết luận định tính không đổi, nhưng giờ có cơ sở.** Nhiễu vẫn không làm giảm F1. Ghép cặp
+với mô phỏng chính xác, QSVM-ZZ **tăng** +0,0172 [+0,0021, +0,0324] dưới nhiễu (p = 0,027,
+d_z = 0,81) còn QSVM-Z đứng yên (−0,0002). Nhưng p nhỏ nhất của phép kiểm này là 0,027,
+**không qua nổi ngưỡng Holm đầu tiên ở bất kỳ family nào bào chữa được** — family hẹp nhất
+là 2 phép so sánh, ngưỡng 0,025; family rộng là 9, ngưỡng 0,0056. Bài đã tự cam kết ở mục
+IV-C rằng *"every verdict reported in this paper is the corrected one"*, nên kết quả này
+phải báo là **inconclusive**, không được kể như một cải thiện. Viết khác đi là tự đặt hai
+chuẩn trong cùng một bài — chỗ reviewer bắt lỗi dễ nhất.
+
+**Một phát hiện phụ, đưa vào bài.** Nhiễu làm méo hình học Gram của ZZ mạnh hơn hẳn: khoảng
+cách Frobenius tương đối 0,602 so với 0,165 của Z, alignment tụt 0,194 → 0,149 so với
+0,070 → 0,068. Méo gấp mấy lần mà **F1 không đổi** — đúng cùng một sự tách rời giữa hình
+học nhân và điểm số cuối mà bài đã ghi nhận ở chính phép ablation entanglement.
+
+**Đã sửa vào đâu:** mục V-B (`05_results.tex`), mục VII-A (`07_limitations.tex` — câu cũ
+nói khoảng tin cậy chứa 0, giờ dưới nhiễu nó **không** chứa 0 nữa nên phải viết lại), và ý
+R1-6 trong thư phản hồi. Bộ kiểm `audit_prose` tăng từ 115 lên **132** phép, phần thêm đều
+tính lại từ `results/nslkdd/c2_revision/c2_noise_validation_10run.csv` (60 hàng).
+
 
 ## 5. Đối soát 33 item reviewer
 
@@ -259,6 +296,7 @@ corroboration*. Nộp sau họ 2 tháng mà lờ đi là reviewer tự tìm ra.
 | 6 | Cover letter + mục riêng gửi EiC/AE về thay đổi bibliography | Quan |
 | 7 | Toàn văn QMI 2026 và Carducci 2026 để điền vài ô `n/r` trong Table I | thư viện trường |
 | 8 | **Tuỳ chọn**: chạy nhân trên QPU IBM thật — script xong, chờ token | Quan |
+| 9 | Bảng IV thầy thêm (XGBoost/RF trên 122 đặc trưng theo từng N) — **chưa có artifact**, phải chạy rồi mới đưa vào | chờ thầy trả lời |
 
 ### Ràng buộc của TETC cần nhớ
 
