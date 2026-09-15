@@ -133,5 +133,5 @@ python runners/verify_lemma1.py   #  15/15   khai triển Lemma 1
 - Tài liệu tham khảo **tối đa 45 mục** — hiện 38
 - **Không được thêm/bớt tác giả**, **không được thêm/bớt tự trích dẫn**
 
-Xem `docs/DOI_CHIEU_CU_MOI.md` để biết bản này khác bản đã nộp chỗ nào, và
-`docs/REVISION_REPORT.md` để biết toàn cảnh.
+Xem `docs/BAO_CAO_REVISION.md` — mục 11 đối chiếu bản này với bản đã nộp, các mục còn
+lại là toàn cảnh bản revision.
