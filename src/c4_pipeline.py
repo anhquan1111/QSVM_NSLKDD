@@ -647,7 +647,7 @@ def compute_statevectors_fast(X_angles: np.ndarray, kernel: str, n_qubits: int,
     cùng lúc bằng numpy, thay vì gọi `Statevector` từng mẫu một.
 
     Đo được: nhanh hơn đường Qiskit **457x (n=6)** đến **763x (n=4)**, và Gram khớp tới
-    4.4e-15 (n=4) / 6.4e-15 (n=6) — tức trùng ở mức chính xác của số thực máy.
+    1.30e-15 (n=4) / 1.33e-15 (n=6) — tức trùng ở mức chính xác của số thực máy.
     `verify_kernel_equivalence` kiểm tra lại điều này ở mỗi lần chạy.
     """
     from scipy.linalg import hadamard
