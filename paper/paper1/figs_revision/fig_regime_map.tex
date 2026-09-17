@@ -9,9 +9,15 @@
   \caption{%
     \textbf{Regime map: 110 controlled comparisons of \QSVM{} against six
     baselines.} Each cell is one paired comparison over ten runs, Holm-corrected
-    within its baseline family. Verdicts are encoded by both colour and glyph so
-    the figure survives greyscale printing. The distribution is the result:
-    $21$ favourable, $21$ classical-favourable, $68$ inconclusive. A single
-    aggregate number would hide exactly the structure this paper is about.}
+    within its baseline family (families of one to three; the $20$ cells
+    against QSVM-\Zmap{} are uncorrected). Verdicts are encoded by both colour
+    and glyph so the figure survives greyscale printing. The distribution is the
+    result: $21$ favourable, $21$ classical-favourable, $68$ inconclusive within
+    families; $17$, $15$ and $78$ under one Benjamini--Hochberg correction over
+    all $110$ cells; and under Holm over all $110$ no cell survives. The seven
+    C4-natural rows ($42$ cells) are the single-protocol block of
+    Sec.~\ref{sec:regimemap}; the C2 and C3 rows are scored on a $300$- or
+    $1000$-record test set. A single aggregate number would hide exactly the
+    structure this paper is about.}
   \label{fig:regime-map}
 \end{figure*}

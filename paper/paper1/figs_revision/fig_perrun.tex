@@ -8,7 +8,9 @@
   \includegraphics[width=\textwidth]{figs_revision/fig7_per_run_f1.pdf}
   \caption{%
     \textbf{With strong tabular baselines the quantum kernel no longer leads.}
-    Macro-$F_1$ over ten independent runs at $N_{\mathrm{train}}=1000$; dots are
+    Macro-$F_1$ over ten independent runs at $N_{\mathrm{train}}=1000$
+    (rare-enriched pool, $300$-record test split, Table~\ref{tab:protocol});
+    dots are
     individual runs, markers are means with $95\%$ confidence intervals. Adding
     a random forest and XGBoost under the identical protocol changes the
     ordering: XGBoost attains $0.8503$ against \QSVM{}'s $0.8469$, with
