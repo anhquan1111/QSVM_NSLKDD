@@ -1,0 +1,138 @@
+% =====================================================================
+%  PREAMBLE dung chung cho ca hai ban:
+%    main_revision.tex   -> ban SACH (nop cho tap chi)
+%    main_annotated.tex  -> ban CO DANH DAU (de thay va AE doi chieu)
+%  Sua o day thi ca hai ban cung doi -- khong co ban nao lech ban nao.
+% =====================================================================
+
+% =====================================================================
+%  TETC-2026-05-0252 -- BAN REVISION
+%
+%  Dung lai tu paper1.pdf vi file .tex goc khong con. Tieu de, danh sach
+%  tac gia va don vi GIU NGUYEN: IEEE cam doi tac gia neu khong co dong y
+%  bang van ban cua EiC, va reviewer trich dan theo so muc cu.
+%
+%  Bien dich:  pdflatex -> pdflatex   (bibliography la thebibliography,
+%              khong can BibTeX)
+%
+%  Cac manh duoc \input o duoi deu co the kiem doc lap:
+%      python runners/audit_c4.py        -> 100/100
+%      python runners/audit_figures.py   ->  36/36
+% =====================================================================
+
+\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{amsthm}
+\usepackage{algorithmic}
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{xcolor}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{array}
+\usepackage{url}
+\usepackage{bm}
+\usepackage[hidelinks]{hyperref}
+
+\graphicspath{{./}}
+
+% =====================================================================
+%  Tham so dat float. Mac dinh cua LaTeX chi cho float chiem <=70% dinh
+%  trang va bat chua >=20% chu, nen hinh rong ca trang gan nhu luon bi day
+%  di cho khac; day du xa thi no roi xuong cuoi bai va xen vao danh muc tai
+%  lieu. Noi rong ra thi hinh dat duoc ngay trang no duoc nhac toi.
+% =====================================================================
+\setcounter{topnumber}{2}
+\setcounter{bottomnumber}{1}
+\setcounter{totalnumber}{3}
+\setcounter{dbltopnumber}{2}
+\renewcommand{\topfraction}{0.92}
+\renewcommand{\bottomfraction}{0.5}
+\renewcommand{\textfraction}{0.07}
+\renewcommand{\floatpagefraction}{0.80}
+\renewcommand{\dbltopfraction}{0.92}
+\renewcommand{\dblfloatpagefraction}{0.80}
+
+% Trang chi co float: mac dinh LaTeX can giua theo chieu doc, nen hai hinh
+% bi keo xa nhau bang mot khoang trang lon. Ep can tren, khoang cach co
+% dinh, phan du don xuong duoi.
+\makeatletter
+\setlength{\@fptop}{0pt}
+\setlength{\@fpsep}{10pt plus 1fil}
+\setlength{\@fpbot}{0pt plus 2fil}
+\setlength{\@dblfptop}{0pt}
+\setlength{\@dblfpsep}{10pt plus 1fil}
+\setlength{\@dblfpbot}{0pt plus 2fil}
+\makeatother
+
+% Moi truong dinh ly. Ban da nop dung Proposition cho ca nhung su that hien
+% nhien; ban nay chi con Lemma (dan xuat rieng cua bai) va Definition.
+\newtheorem{definition}{Definition}
+\newtheorem{lemma}{Lemma}
+\newtheorem{assumption}{Assumption}
+\newtheorem{problem}{Problem}
+\theoremstyle{remark}
+\newtheorem{remark}{Remark}
+
+\newcommand{\ZZ}{\textsc{zz}}
+\newcommand{\Zmap}{\textsc{z}}
+\newcommand{\QSVM}{QSVM-\ZZ}
+\newcommand{\Fmac}{F_1^{\mathrm{macro}}}
+
+% =====================================================================
+%  DANH DAU THAY DOI so voi ban da nop (TETC bat buoc nop ban danh dau).
+%
+%  Mot nguon, hai ban:
+%    main_revision.tex   -> ban SACH, khong hien gi
+%    main_annotated.tex  -> bat co \annottrue, hien nhan o le trai
+%
+%  Dung \revnote{loai}{ghi chu} ngay sau moi \subsection. Cac loai:
+%    new      muc hoan toan moi, ban da nop khong co
+%    rewrite  co trong ban cu nhung viet lai
+%    fix      SUA LOI cua ban cu
+%    keep     giu nguyen y cua ban cu
+% =====================================================================
+% \newif\ifannot -- 13/09: dinh nghia + dat co o main_revision.tex / main_annotated.tex TRUOC \input{preamble}
+% 13/09/2026: TETC doi ban annotated to NEN VANG phan moi/doi. Moi truong revbody boc than
+% moi subsection co nhan new/rewrite/fix; che do sach thi khong lam gi. framed/shaded* qua trang duoc;
+% float khong duoc nam trong no (script check/make_yellow_annotated.py da doi \input float ra ngoai).
+% 13/09 toi: Hao yeu cau to VANG chu (inline highlight), khong dong khung khoi. Ban annotated bien dich
+% bang LUALATEX: lua-ul \highLight to nen tung dong chu, di qua ngat doan, cong thuc, itemize; float da doi ra ngoai.
+% Ban sach van bien dich bang pdflatex (revbody khong lam gi). environ bat than moi truong thanh \BODY.
+\usepackage{environ}
+\ifannot
+  \usepackage{luacolor}\usepackage{lua-ul}
+  \NewEnviron{revbody}{\highLight[yellow!45]{\BODY}}
+\else
+  \newenvironment{revbody}{}{}
+\fi
+\definecolor{tagnew}{HTML}{0B6E4F}
+\definecolor{tagrew}{HTML}{1F3D6B}
+\definecolor{tagfix}{HTML}{A3341F}
+\definecolor{tagkeep}{HTML}{6B6B6B}
+\newcommand{\revnote}[2]{%
+  \ifannot
+    \par\nobreak\vspace{1pt}%
+    {\footnotesize\sffamily
+     \csname revtag@#1\endcsname~\textcolor{tagkeep}{#2}}%
+    \par\nobreak\vspace{2pt}%
+  \fi}
+\expandafter\def\csname revtag@new\endcsname{%
+  \colorbox{tagnew}{\textcolor{white}{\bfseries NEW}}}
+\expandafter\def\csname revtag@rewrite\endcsname{%
+  \colorbox{tagrew}{\textcolor{white}{\bfseries REWRITTEN}}}
+\expandafter\def\csname revtag@fix\endcsname{%
+  \colorbox{tagfix}{\textcolor{white}{\bfseries CORRECTED}}}
+\expandafter\def\csname revtag@keep\endcsname{%
+  \colorbox{tagkeep}{\textcolor{white}{\bfseries RETAINED}}}
+
+% Ten cong khai de dung trong bang chu giai cua main_annotated.tex
+\newcommand{\revtagnew}{\csname revtag@new\endcsname}
+\newcommand{\revtagrewrite}{\csname revtag@rewrite\endcsname}
+\newcommand{\revtagfix}{\csname revtag@fix\endcsname}
+\newcommand{\revtagkeep}{\csname revtag@keep\endcsname}
+
+
+
+% 13/09/2026: so cua nhanh tham chieu (XGBoost/RF du dac trung), sinh boi check/pair_ref_arm.py
+\input{tables/ref_arm_macros}

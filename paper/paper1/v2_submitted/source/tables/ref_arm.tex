@@ -1,0 +1,26 @@
+% Sinh boi runners/make_ref_arm_table.py tu results/nslkdd/c4_revision/ref_arm_fullfeat.csv (10 run). KHONG sua tay.
+\begin{table*}[t]
+\centering
+\caption{Reference arm outside the paired protocol: XGBoost and random forest trained on all $122$
+ one-hot features, on the same nested subsets, seeds and full KDDTest$^+$ as the sweep of
+ Fig.~\ref{fig:learning-curve}, natural prior, tuned per $N$ with the grids of Sec.~\ref{sec:setup}.
+ Mean macro-$F_1$ over 10 runs, and the paired difference \QSVM{} $-$ full-feature model with a
+ $t$-based $95\%$ CI. Not part of any Holm family.}
+\label{tab:ref-arm}
+\footnotesize
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{@{}r rr rr l l@{}}
+\toprule
+ & \QSVM{} & XGB, $4$-d & XGB, $122$-d & RF, $122$-d & $\Delta$ vs XGB $122$-d & $\Delta$ vs RF $122$-d \\
+$N$ & \multicolumn{4}{c}{mean macro-$F_1$} & \multicolumn{2}{c}{mean $[95\%$ CI$]$} \\
+\midrule
+100 & 0.6989 & 0.7802 & 0.7816 & 0.7733 & $-0.0827\ [-0.1329,-0.0325]$ & $-0.0744\ [-0.1261,-0.0227]$ \\
+200 & 0.7283 & 0.7924 & 0.7927 & 0.7824 & $-0.0645\ [-0.1036,-0.0254]$ & $-0.0541\ [-0.0897,-0.0186]$ \\
+500 & 0.7587 & 0.7881 & 0.8067 & 0.7851 & $-0.0479\ [-0.0708,-0.0251]$ & $-0.0264\ [-0.0501,-0.0027]$ \\
+1000 & 0.7717 & 0.8007 & 0.8048 & 0.7861 & $-0.0331\ [-0.0487,-0.0175]$ & $-0.0143\ [-0.0340,+0.0053]$ \\
+2000 & 0.7781 & 0.7910 & 0.7902 & 0.7832 & $-0.0121\ [-0.0371,+0.0129]$ & $-0.0051\ [-0.0293,+0.0192]$ \\
+5000 & 0.7820 & 0.7720 & 0.7806 & 0.7708 & $+0.0014\ [-0.0064,+0.0091]$ & $+0.0112\ [+0.0052,+0.0171]$ \\
+10000 & 0.7855 & 0.7706 & 0.7835 & 0.7668 & $+0.0021\ [-0.0052,+0.0094]$ & $+0.0187\ [+0.0086,+0.0289]$ \\
+\bottomrule
+\end{tabular}
+\end{table*}

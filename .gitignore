@@ -66,3 +66,15 @@ docs/Reviewer_Response_QuangAnh_RF_XGBoost.md
 # docs/BAO_CAO_REVISION.md muc 4b, phan so hoc da vao runners/verify_noise10.py,
 # nen khong theo doi rieng file nay (giong cac ghi chu lam viec khac).
 C2_noise_validation_10run_analysis.md
+
+# Anh tac gia cua ban nop R1. Theo tien le cua paper2: anh ca nhan KHONG
+# de trong repo cong khai. Ban goc o D:/Documents/Project/NCKH_Document/
+# paper1_author_photos/ -- copy lai vao source/authors/ truoc khi compile.
+paper/paper1/v2_submitted/source/authors/
+
+# Goi zip cua ban nop: trung lap voi source/ da giai nen, 4,6 MB.
+paper/paper1/v2_submitted/*.zip
+
+# Ban sao o thu muc goc cua ban nop R1 -- ban that nam trong
+# paper/paper1/v2_submitted/. File dang bi mo nen chua xoa duoc.
+/TETC-2026-05-0252-R1-manuscript-clean.pdf
