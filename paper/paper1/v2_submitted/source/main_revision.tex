@@ -1,0 +1,27 @@
+% =====================================================================
+%  TETC-2026-05-0252 -- BAN SACH
+%
+%  Day la ban NOP CHO TAP CHI: khong co nhan danh dau nao.
+%  Muon ban co danh dau thay doi thi compile main_annotated.tex.
+%
+%  Ca hai ban dung chung preamble.tex va document.tex, nen khong bao gio
+%  lech nhau: sua noi dung o sections/ la ca hai cung doi.
+%
+%  Bien dich: pdflatex -> pdflatex  (bibliography la thebibliography,
+%             khong can BibTeX)
+%
+%  Kiem doc lap:
+%      python runners/audit_c4.py        -> 100/100
+%      python runners/audit_figures.py   ->  36 muc
+%      python runners/audit_prose.py     -> 134/134
+%      python runners/check_latex.py
+% =====================================================================
+\documentclass[journal]{IEEEtran}
+
+\newif\ifannot
+\annotfalse
+\input{preamble}
+
+\begin{document}
+\input{document}
+\end{document}

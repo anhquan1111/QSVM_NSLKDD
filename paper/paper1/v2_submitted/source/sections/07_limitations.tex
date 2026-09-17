@@ -1,0 +1,144 @@
+% =====================================================================
+%  Muc VII viet lai -- TETC-2026-05-0252
+%
+%  Ban da nop hua ba thu la "ongoing work" hoac "deferred": (a) do tac dong
+%  cua be rong mach, (b) so voi baseline khong phai SVM, (c) dataset thu hai.
+%  Ca ba nay bay gio deu co so do, nen muc han che khong con la loi hua ma la
+%  bao cao ket qua kem ranh gioi ro rang.
+%
+%  Cho DUY NHAT van con la loi hua: thuc thi tren QPU that. Phai ghi that ro
+%  da lam gi va CHUA lam gi -- neu de mo ho thi reviewer se doc "NISQ-aware"
+%  thanh mot khang dinh ve phan cung ma bai khong do duoc.
+% =====================================================================
+
+\section{Limitations and Threats to Validity}
+\label{sec:limitations}
+
+\subsection{Hardware noise: what was and was not measured}
+\revnote{rewrite}{The submitted version covered finite-shot error only. A backend-derived noise model is added (AE-6, R1-6, R3-4), with a statement of what is not measured.}
+\begin{revbody}
+
+The submitted version reported only finite-shot sampling error and deferred
+coherent noise to a companion study. Reviewers correctly objected that shot
+noise alone cannot support a NISQ-feasibility claim. We therefore state the
+scope precisely.
+
+\emph{What we measure.} The C2 pipeline is re-run under a noise model derived
+from the published calibration data of a real superconducting backend
+(\texttt{FakeManilaV2}) \cite{ref27} via \texttt{NoiseModel.from\_backend}, which
+carries gate errors, readout errors, and gate-duration-dependent thermal
+relaxation.
+Circuits are transpiled onto that backend's coupling map and basis gate set,
+giving a depth of $59$ and $44$ two-qubit gates for the $n=4$, $r=2$ map.
+Under this model the entanglement conclusion is unchanged: the alignment gap
+between QSVM-ZZ and QSVM-Z survives, while the macro-$F_1$ difference remains
+within its confidence interval. This noisy re-run covers one of the ten runs
+and the $300$-record test split (Table~\ref{tab:protocol}); it establishes
+that the noise model does not move the operating point, not a noisy confidence
+interval, which would require the remaining nine runs at the same $512$ shots
+per kernel entry.
+
+\emph{What we do not measure.} The circuits were not executed on a quantum
+processor. Two effects are therefore outside our evidence: drift of calibration
+parameters between the snapshot and execution time, and idle-time decoherence
+beyond what gate durations already attribute. Our released code contains the
+execution path for a real backend, and the comparison it would produce
+(exact statevector $\rightarrow$ backend-derived noise $\rightarrow$ hardware)
+is specified, but we report no hardware numbers and make no claim about them.
+Readers should read ``NISQ-aware'' as a statement about \emph{circuit budget}
+(qubit count, depth, and two-qubit gate count chosen under an explicit cost
+model, in the sense of \cite{ref8}) and not as a claim of hardware validation.
+\end{revbody}
+
+\subsection{Embedding size: now measured, and the news is not good for width}
+\revnote{fix}{The submitted version left this as an ``open question''; it is now measured, and the result is unfavourable to wider circuits.}
+\begin{revbody}
+
+The submitted version listed the effect of moving along the frontier as an open
+question. We have since measured it, and the answer constrains the method more
+sharply than we expected.
+
+Increasing the feature budget $K$ does buy accuracy for a classical proxy, but
+it is not free: retaining $85\%$ of the variance at $K=80$ requires $n^\ast=8$
+qubits rather than the $n^\ast=4$ that $K=20$ admits, raising the two-qubit gate
+count from $24$ to $112$. Re-running the full sample-complexity sweep at that
+operating point removes the quantum kernel's advantage entirely: across eight
+training-set sizes and six baselines, all $48$ paired comparisons favour the
+classical model, and the entanglement ablation reverses sign, with QSVM-ZZ now
+\emph{below} its entanglement-free control.
+
+The mechanism is measurable rather than conjectural. The dispersion of the
+off-diagonal Gram entries decays with width as $n^{-\alpha}$, and the fitted
+exponent for the ZZ map is close to twice that of the Z map at $K=20$
+($0.59$ vs.\ $0.29$), consistent with the $\binom{n}{2}$ pairwise phase terms of
+the former growing quadratically where the latter's grow linearly. Across
+$n=4$ to $10$ the macro-$F_1$ of the ZZ kernel tracks this dispersion
+($r=+0.77$, 95\% CI $[+0.04,+0.96]$), whereas the Z kernel, which barely
+concentrates, shows no resolved dependence ($r=+0.32$, $[-0.57,+0.87]$). This is
+the concentration phenomenon of \cite{thanasilp2024} appearing directly in our
+setting.
+
+Three caveats. The exponent ratio is $2.02$ at $K=20$, where the kernel does not
+collapse, and $3.32$ at $K=80$, where it does, so the term-counting argument
+predicts the ordering of the two rates and, at the collapse, not their ratio;
+the abstract and Sec.~\ref{sec:intro} state both values. The $F_1$--dispersion
+relation is measured on seven widths at a single training-set size, and the
+contrast between the two kernels' correlations is not resolvable at seven
+points ($z=0.97$, $p=0.33$); we present the relation as an empirical regularity
+of the \ZZ{} map, not a law, and make no claim that it is specific to the
+concentrating map. A test of either would need more widths and more than one
+training-set size.
+\end{revbody}
+
+\subsection{Classical-baseline strength}
+\revnote{rewrite}{RF and XGBoost added; CatBoost, TabNet and FT-Transformer deliberately not added, with the reason stated (R1-5).}
+\begin{revbody}
+
+The submitted version compared only against SVM variants. We have added a
+random forest and XGBoost under the identical protocol, and they change the
+headline: on the main benchmark XGBoost attains the highest mean macro-$F_1$
+($0.8503$) ahead of QSVM-ZZ ($0.8469$), with overlapping intervals. We report
+this as an ordering of point estimates, not a significant separation.
+
+We did not add CatBoost or deep tabular models such as TabNet and
+FT-Transformer. CatBoost would supply a second gradient-boosting representative
+without changing the comparison structure; the deep tabular family would require
+its own tuning-budget protocol to be compared fairly, which would enlarge the
+study from a controlled quantum-kernel benchmark into a survey of tabular
+architectures. We therefore do not claim coverage of all strong tabular methods,
+and any practical reading of our results should be qualified accordingly.
+\end{revbody}
+
+\subsection{Dataset breadth and protocol}
+\revnote{rewrite}{UNSW-NB15 added, with duplication statistics for both corpora.}
+\begin{revbody}
+
+The submitted version rested almost entirely on NSL-KDD. We have added
+UNSW-NB15 under the same protocol, which is what allows us to separate findings
+that transfer from findings that do not: the dimension-selection rule and the
+entanglement ablation transfer, while the sample-complexity crossover and the
+rare-class behaviour do not.
+
+Two properties of the data limit what either dataset can show. NSL-KDD is an
+aging benchmark in which $610$ test rows are identical to a training row in both
+features and label ($617$ match on features alone). UNSW-NB15 is far more heavily
+duplicated: $47.3\%$ of training rows are internal repeats, and $25.0\%$ of test
+rows have an exact duplicate in the training partition, which
+inflates absolute scores. Our claims are paired differences between models
+evaluated on the same rows, which removes the duplication from the level but
+not necessarily from the comparison: a tree ensemble reproduces an exact
+training row by construction, a fidelity-kernel SVM does so only through its
+support vectors and regulariser, and on the quarter of the UNSW-NB15 test set
+that duplicates a training row a paired difference may therefore measure
+memorisation rather than generalisation. We have not re-scored the paired
+differences on the de-duplicated test subsets, because the sweep's per-row
+predictions were not retained, and we list that re-scoring as the one cheap
+check this study owes: until it is done, the UNSW-NB15 verdicts, and to a
+smaller degree the NSL-KDD ones, carry this threat, and the absolute numbers
+are not comparable to studies that de-duplicate.
+
+Finally, the feature budget $K=20$ is inherited from the submitted protocol and
+held fixed so that the revised results remain comparable to it.
+Fig.~\ref{fig:ksweep} shows it is not the accuracy optimum; it is the value at
+which the selection rule returns a four-qubit circuit.
+\end{revbody}
