@@ -5,28 +5,38 @@
 %  ta khong do duoc. Cau cuoi cung phai la mot cau kiem chung duoc.
 % =====================================================================
 
+\revnote{rewrite}{Rewritten: the advantage claim is replaced by the boundary the regime map draws (AE-1, R1-4, R3-2).}
+\begin{revbody}
 We set out to locate, rather than to demonstrate, the value of a NISQ-feasible
 quantum kernel for network intrusion detection. Varying one factor at a time
 over $110$ controlled comparisons, we find $21$ verdicts favouring the quantum
-kernel, $21$ favouring a classical baseline, and $68$ inconclusive --- and a
-structure inside that balance that a single-operating-point benchmark cannot
-see.
+kernel, $21$ favouring a classical baseline, and $68$ inconclusive when each
+is corrected within its baseline family; $17$, $15$ and $78$ under one
+Benjamini--Hochberg correction over the map; and no surviving verdict at all
+under Holm over all $110$ cells. Inside that balance there is a structure that
+a single-operating-point benchmark cannot see, and it is stated below with the
+protocol each part of it comes from.
 
-The structure has three parts. The ordering between \QSVM{} and every strong
-classical baseline reverses between $N=2000$ and $N=5000$ under the natural class
-prior, in both tuning arms, and disappears when rare attacks are enriched. A
+The structure has three parts. The ordering between \QSVM{} and the tree
+ensembles and the linear and polynomial kernels reverses between $N=2000$ and
+$N=5000$ under the natural class prior, in both tuning arms, on a shared
+four-component embedding; it does not demonstrably reverse against SVM-RBF at
+any size tested, it becomes parity rather than a lead against XGBoost on the raw
+$122$ features, and whether rare-attack enrichment removes it is not decided by
+this design, whose enriched arm ends before the reversal begins. A
 lexicographic selection rule that charges for two-qubit gates returns
 $n^{\ast}=4$ on NSL-KDD and $n^{\ast}=6$ on UNSW-NB15 without any change of
 threshold, so the embedding dimension is a property of the dataset rather than a
 constant to be inherited. And the operating window is closed from above: at
 $K=80$, where the rule requires eight qubits, every one of $48$ comparisons
-favours the classical model, with off-diagonal Gram dispersion decaying about
-twice as fast for the \ZZ{} map as for its entanglement-free control and
-tracking macro-$F_1$ at $r=+0.77$.
+favours the classical model, with off-diagonal Gram dispersion decaying faster
+for the \ZZ{} map than for its entanglement-free control, by the factor of two
+that phase-term counting predicts at $K=20$ and by $3.3$ at $K=80$, and tracking
+macro-$F_1$ at $r=+0.77$ over seven widths (95\% CI $[+0.04,+0.96]$).
 
 That last result is the one we would most like others to test. It ties a
-structural property of the circuit --- $\binom{n}{2}$ pairwise phase terms
-against $n$ single-qubit ones --- to a decay exponent we can measure and to an
+structural property of the circuit ($\binom{n}{2}$ pairwise phase terms
+against $n$ single-qubit ones) to a decay exponent we can measure and to an
 end-task metric that follows it down. If it holds on other corpora and other
 maps, then the practical question for quantum kernels on tabular data is not how
 to make them more expressive but how to keep them from concentrating, and the
@@ -48,7 +58,8 @@ specified. Testing the dispersion--accuracy relationship on projected quantum
 kernels, which concentrate differently, would show whether the boundary we
 measured is a property of fidelity kernels specifically or of the approach.
 And since the crossover reproduces on one dataset and not the other, the
-mechanism behind it --- why more data helps this kernel more than it helps a
-tree ensemble, and only under a skewed prior --- remains open. Our full
+mechanism behind it, why more data helps this kernel more than it helps a
+tree ensemble and only under a skewed prior, remains open. Our full
 implementation, protocol files, intermediate artifacts and two independent audit
 scripts are released so that each of these can be started from where we stopped.
+\end{revbody}

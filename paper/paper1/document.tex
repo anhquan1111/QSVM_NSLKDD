@@ -12,14 +12,14 @@
         Quang~Anh~Nguyen,
         and~Quan~Tran~Anh~Vo% <-- GIU NGUYEN, khong them/bot tac gia
 \thanks{Manuscript received [Date]; revised [Date]. This work was supported by
-The University of Danang --- University of Science and Technology under Project
+The University of Danang - University of Science and Technology under Project
 T2026-02-10TN. \emph{(Corresponding author: Quan Tran Anh Vo.)}}
 \thanks{Phuc Hao Do is with The Bonch-Bruevich Saint Petersburg State University
 of Telecommunications, Saint Petersburg 193232, Russia, and also with Danang
 Architecture University, Danang 550000, Vietnam (e-mail: do.hf@sut.ru;
 haodp@dau.edu.vn).}
 \thanks{Minh Tuan Pham, Nguyen Nang Hung Van, Quang Anh Nguyen, and Quan Tran
-Anh Vo are with the University of Science and Technology --- The University of
+Anh Vo are with the University of Science and Technology - The University of
 Danang, Danang 550000, Vietnam (e-mail: pmtuan@dut.udn.vn;
 nguyenvan@dut.udn.vn; anh1303052005@gmail.com; votrananhquan1111@gmail.com).}}
 
@@ -35,10 +35,14 @@ nguyenvan@dut.udn.vn; anh1303052005@gmail.com; votrananhquan1111@gmail.com).}}
 %  khong bang mot con so thang cuoc.
 % =====================================================================
 \begin{abstract}
+\begin{revbody}
 Quantum support vector machines (QSVM) built on the \ZZ{}-feature map are
 routinely reported to help on network intrusion detection (NIDS), yet the
 conditions under which they help are rarely isolated. This paper asks where a
-NISQ-feasible quantum kernel is worth its cost, and answers with a protocol in
+NISQ-feasible quantum kernel is worth its cost, where ``NISQ-aware'' means a
+circuit budget (four qubits, depth two, 44 two-qubit gates) chosen under an
+explicit cost model and checked under a backend-derived noise model in
+simulation, not execution on hardware, and answers with a protocol in
 which one factor is varied at a time: the embedding dimension is fixed by a
 lexicographic rule that charges explicitly for two-qubit gate count; the
 entangling layer is ablated against an otherwise identical control; the test
@@ -46,21 +50,32 @@ distribution is shifted; and the training-set size is swept across two orders of
 magnitude under both the natural class prior and a rare-enriched one. Every
 comparison is paired within run over ten runs, tuned symmetrically for quantum
 and classical models alike, and corrected for multiplicity within baseline
-families. Against six baselines that now include a random forest and XGBoost, we
-find no general advantage: of 110 controlled comparisons, 21 favour the quantum
-kernel, 21 favour a classical baseline, and 68 are inconclusive. What we do find
-is structure. Under the natural class prior the ordering against every strong
-baseline reverses between $N=2000$ and $N=5000$, and the reversal survives
-freezing the hyper-parameters rather than re-tuning them; enriching rare attacks
-twelvefold, as the submitted protocol did, removes it. The selection rule
-transfers to UNSW-NB15 unchanged and returns six qubits rather than four, while
-the sample-complexity reversal does not transfer. Finally, spending a larger
-feature budget forces a wider circuit, and widening destroys the kernel: at
-eight qubits all 48 paired comparisons favour the classical model, with a
-mechanism visible directly in the Gram matrix, whose off-diagonal dispersion
-decays roughly twice as fast for the \ZZ{} map as for its entanglement-free
-control and predicts macro-$F_1$ across widths. We report the result as a regime
-map, including the regimes in which the quantum kernel loses.
+families; under a single Benjamini--Hochberg correction over all cells the
+tally below becomes 17, 15 and 78, and under Holm over all 110 cells no
+verdict survives. Against six baselines that now include a
+random forest and XGBoost, we find no general advantage: of 110 controlled
+comparisons, 21 favour the quantum kernel, 21 favour a classical baseline, and
+68 are inconclusive, and the cells come from two protocols (a rare-enriched
+pool with small test splits, and the natural prior on the full test set) that
+are tallied separately in the paper. What we do find is structure. Under the
+natural class prior the ordering against the two tree ensembles and the linear
+and polynomial kernels reverses between $N=2000$ and $N=5000$ and survives
+freezing the hyper-parameters; against the RBF kernel it does not demonstrably
+reverse at any size tested, and against XGBoost given all 122 features the
+kernel reaches parity, not a lead. Whether rare-attack enrichment, as the
+submitted protocol used, removes the reversal cannot be decided by this design:
+the enriched arm cannot be run past $N=2000$ without runs sharing samples, and
+where the two arms overlap the tree ensembles lead under both priors. The selection rule transfers to
+UNSW-NB15 unchanged and returns six qubits rather than four, while the
+sample-complexity reversal does not transfer. Finally, spending a larger feature
+budget forces a wider circuit, and widening destroys the kernel: at eight qubits
+all 48 paired comparisons favour the classical model, with a mechanism visible
+directly in the Gram matrix, whose off-diagonal dispersion decays faster for the
+\ZZ{} map than for its entanglement-free control, by the factor of two that
+phase-term counting predicts at $K=20$ and by 3.3 at $K=80$, where the collapse
+occurs. We report the result as a regime map, including the regimes in which the
+quantum kernel loses.
+\end{revbody}
 \end{abstract}
 
 \begin{IEEEkeywords}
@@ -116,10 +131,22 @@ concentration, sample complexity, class-prior shift.
 
 % =====================================================================
 \section*{Acknowledgment}
-This work was supported by The University of Danang --- University of Science
+This work was supported by The University of Danang - University of Science
 and Technology, project T2026-02-10TN. The authors thank Danang Architecture
 University for computing resources, and the maintainers of Qiskit and
 scikit-learn.
+\begin{revbody}
+The authors used Anthropic's Claude (Opus~5) as an assistant during the
+preparation of this revision. Its use covered three areas: drafting and editing
+prose throughout the manuscript and the response letter; writing the analysis,
+audit and experiment-orchestration scripts released with the artifact; and
+proposing measurements reported in Secs.~IV and~V, among them the symmetric
+tuning arms, the protocol-by-contribution table, the full-feature reference arm
+(Table~IV) and the audit scripts. All experimental results were produced by
+executing the released code, and every number reported here was checked
+against the run records by the authors, who take full responsibility for the
+content of this paper.
+\end{revbody}
 
 % =====================================================================
 %  Danh muc tai lieu. TUNG co \clearpage o day lam chot chan chong hinh
@@ -129,3 +156,6 @@ scikit-learn.
 % =====================================================================
 % =====================================================================
 \input{bibliography}           % 35 muc; xem ghi chu trong file
+
+% 13/09/2026: tieu su 5 tac gia (TETC yeu cau trong ban revise; ban da nop co)
+\input{sections/10_biographies}

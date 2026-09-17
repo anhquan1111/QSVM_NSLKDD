@@ -7,7 +7,8 @@
 % =====================================================================
 
 \subsection{Data and preprocessing}
-\revnote{rewrite}{Them UNSW-NB15 thanh dataset chinh (y AE-3, R1-2) va so lieu ve trung lap cua ca hai bo.}
+\revnote{rewrite}{UNSW-NB15 added as a primary dataset (AE-3, R1-2), with duplication statistics for both corpora; the official-split versus random-split comparison of R1-9 added.}
+\begin{revbody}
 
 NSL-KDD~\cite{ref4} is used with its official partitions. The training partition
 holds $125{,}973$ records and the test partition $22{,}544$; the class mix is
@@ -17,13 +18,37 @@ encoding of the three categorical fields expands the feature space from $41$ to
 $122$ dimensions. UNSW-NB15~\cite{ref25} is used with its official CSV
 partitions and the same pipeline, expanding to $189$ columns.
 
+Absolute scores on the official split are lower than the $\approx0.99$ often
+reported for NSL-KDD, and the difference is the protocol rather than the
+models. With all $122$ features and the full training partition, XGBoost
+reaches macro-$F_1$ $0.804$ and a random forest $0.777$ on KDDTest$^+$, whereas
+a random split \emph{within} KDDTrain$^+$ gives $0.999$ and $0.998$, because
+near-duplicate records then fall on both sides. Studies reporting
+$\approx0.99$ are, in the cases we could check, using the latter. We use the
+official partitions throughout, and $0.804$ is the reference against which
+every absolute number below should be read.
+
 Two properties of these corpora are relevant to how the numbers should be read
 and are quantified in Sec.~\ref{sec:limitations}: NSL-KDD has $610$ test rows
 identical to a training row in both features and label, and UNSW-NB15 is far
 more heavily duplicated.
+\end{revbody}
 
 \subsection{Protocol}
-\revnote{fix}{Ban da nop: 5 seed, va QSVM co dinh C=1.0 trong khi SVM co dien duoc tune -- Reviewer 1 chi ra o y R1-3 rang cach nay thien vi chinh phuong phap cua ta. Nay: 10 run, tune doi xung, hai nhanh, hai tap test.}
+\revnote{fix}{Submitted version: 5 seeds, QSVM fixed at C=1.0 while the classical SVMs were tuned (R1-3, R4-6). Now: 10 runs, symmetric tuning, two arms, two test sets, and a protocol-by-contribution table (R1-8).}
+\input{tables/protocol_by_contribution}
+\begin{revbody}
+
+
+\emph{Two sampling regimes.} Contributions C1 to C3 and the width sweep of
+Sec.~\ref{sec:res-width} use the training pool of the submitted version, in
+which the rare classes R2L and U2R are enriched to $10\%$ of each subset, and
+the fixed $300$-record test split of that version. The sample-complexity sweep
+(C4) and the rare-attack analysis draw subsets at the natural class prior
+($0.83\%$ rare) and are scored on the complete KDDTest$^+$ partition.
+Table~\ref{tab:protocol} states which regime each figure uses; the two are not
+interchangeable, and the same model at the same $N$ scores differently under
+them (Sec.~\ref{sec:res-c4}).
 
 \emph{Repetitions.} Every reported quantity is computed over ten independent
 runs with fixed seeds $\{100,\dots,109\}$. Subsets are drawn stratified on the
@@ -44,7 +69,7 @@ $C=1.0$ while selecting $C$ for the classical SVMs on a validation fold, and
 described this as avoiding bias. It does the opposite: it grants one family a
 search the other is denied. In this revision every model, quantum and classical,
 is tuned by the same procedure on the same disjoint tuning set of $2{,}000$
-records, and results are reported for two arms --- \emph{tuned per $N$}, in
+records, and results are reported for two arms: \emph{tuned per $N$}, in
 which the search is repeated at each training-set size, and \emph{frozen}, in
 which hyper-parameters are held at the values selected once. Because the
 quantum kernel does not depend on $C$, its grid costs only repeated fits on an
@@ -56,9 +81,12 @@ including feature selection and the projection, is refit at each $N$, so a
 representation never sees more data than the classifier it feeds. The nested
 subsets satisfy $\mathcal{D}_{N_1}\subset\mathcal{D}_{N_2}\subset\cdots$, so
 variation across sizes reflects added data rather than a changed sample.
+\end{revbody}
 
 \subsection{Statistical methodology}
-\revnote{rewrite}{Them hieu chinh Holm trong tung ho baseline (y R2-3, R2-4).}
+\label{sec:stats}
+\revnote{rewrite}{Holm correction within baseline families added (R2-3, R2-4).}
+\begin{revbody}
 
 Every comparison is paired within run: for run $i$ we form
 $\Delta_i = m(\text{\QSVM{}}) - m(\text{baseline})$ on the same subset and the
@@ -69,15 +97,24 @@ what licenses these tests here: it removes the subset-to-subset variance that
 otherwise dominates comparisons between learners on resampled data \cite{ref31}.
 
 Because each contribution tests several baselines, $p$-values are Holm-corrected
-within baseline families --- \emph{entanglement} $\{$QSVM-\Zmap{}$\}$,
+within baseline families, namely \emph{entanglement} $\{$QSVM-\Zmap{}$\}$,
 \emph{classical kernel} $\{$linear, poly2, RBF$\}$, and \emph{strong tabular}
-$\{$random forest, XGBoost$\}$ --- and every verdict in this paper is the
-corrected one. A comparison is called favourable to one side only when the
-corrected $p<0.05$ \emph{and} the confidence interval excludes zero; otherwise
-it is inconclusive, and we report it as such rather than as a win.
+$\{$random forest, XGBoost$\}$, and every verdict in this paper is the
+corrected one. Two consequences of that choice are stated so that the tally is
+read correctly. The entanglement family has one member, so for the $20$ cells
+of the regime map that compare \QSVM{} with QSVM-\Zmap{} the corrected $p$ is
+the raw $p$; and the map's $110$ cells fall into about $56$ families, so under
+a global null the expected number of false verdicts across the map is about
+$2.8$. Sec.~\ref{sec:regimemap} therefore also reports the tally under a single
+Benjamini--Hochberg correction over all $110$ cells. A comparison is called
+favourable to one side only when the corrected $p<0.05$ \emph{and} the
+confidence interval excludes zero; otherwise it is inconclusive, and we report
+it as such rather than as a win.
+\end{revbody}
 
 \subsection{Implementation and reproducibility}
-\revnote{new}{Them link repo, commit hash va bon bo kiem tu dong -- Reviewer 4 chi ra o y R4-3 rang ban cu noi reproducible ma khong dua gi.}
+\revnote{new}{Repository link, commit hash and four audit scripts added; R4-3 noted that the submitted version claimed reproducibility without providing anything.}
+\begin{revbody}
 
 Experiments use NumPy 2.4, SciPy 1.17, scikit-learn 1.8 \cite{ref30},
 XGBoost 3.3, Qiskit 2.3 \cite{ref29} with qiskit-machine-learning 0.9, and
@@ -98,9 +135,8 @@ determinism is controlled through the global Qiskit seed, which we pin.
 \emph{Reproducibility.} The complete implementation, the frozen protocol files,
 every intermediate artifact, all figure-generation scripts, and five audit
 scripts are released at
-\url{https://github.com/anhquan1111/QSVM_NSLKDD}, at commit
-\texttt{19beb18}.\footnote{Commit hash to be updated to the final revision
-commit before publication.}
+\url{https://github.com/haodpsut/nisq-qsvm-nids-benchmark}, release tag \texttt{tetc-r1}, which
+marks the exact revision this manuscript reports.
 
 The audits are not decorative, and running them is the intended way to check
 this paper. \texttt{audit\_c4.py} (100 checks) recomputes every published
@@ -109,10 +145,11 @@ rather than calling the pipeline's own statistics functions, since using the
 code that produced a number to verify that number lets shared errors through.
 \texttt{audit\_figures.py} (36) checks that each figure is newer than its inputs
 and that every plotted number is re-derived from the artifacts.
-\texttt{audit\_prose.py} (132) re-derives every number written in the text of
+\texttt{audit\_prose.py} (134) re-derives every number written in the text of
 this paper. \texttt{verify\_lemma1.py} (15) checks the expansion of
 Lemma~\ref{lem:expansion} against the exact kernel. \texttt{verify\_noise10.py} (40)
 re-derives the ten-run noise check of Sec.~\ref{sec:res-c2}, including the
-paired intervals and the Holm thresholds, from the per-run caches. Together
-they found four errors in our own revision code before publication, one of
-which changed a reported $n^{\ast}$.
+paired intervals and the Holm thresholds, from the per-run caches. Together they found four
+errors in our own revision code before publication, one of which changed a
+reported $n^{\ast}$.
+\end{revbody}
