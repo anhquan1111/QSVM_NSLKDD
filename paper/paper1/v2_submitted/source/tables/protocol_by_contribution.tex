@@ -1,0 +1,36 @@
+% =====================================================================
+%  Bang giao thuc theo tung dong gop. Them 13/09/2026 vi bai dung HAI che do
+%  (pool enriched 10% rare + test 300 cua ban da nop; natural prior + full
+%  KDDTest+) ma khong noi muc nao dung cai nao: cung QSVM-ZZ, N=1000, Sec V-B
+%  ghi 0.8469 con Table II ghi 0.7717. Day dung la cau hoi R1-8.
+%  Nguon: configs/c4_protocol.json (sampling.regimes), c2_revision/c2_config.json
+%  (run_size 1000, test_size 300), c3_revision/c3_config.json (eval_size 1000).
+% =====================================================================
+\begin{table}[t]
+\centering
+\caption{Protocol by contribution. Two training pools (\emph{enriched}: rare
+classes raised to $10\%$ of each subset, the pool of the submitted version;
+\emph{natural}: the $0.83\%$ class prior of KDDTrain$^+$) and two test sets
+(the fixed $300$-record split of the submitted version; the full $22{,}544$-record
+KDDTest$^+$). Every model, quantum and classical, consumes the same
+four-component representation in every row.}
+\label{tab:protocol}
+\scriptsize
+\setlength{\tabcolsep}{2.5pt}
+\begin{tabular}{@{}l l l l r@{}}
+\toprule
+Contribution & Pool & $N$ & Test set & Runs \\
+\midrule
+C1 $K$ sweep (Fig.~\ref{fig:ksweep}a) & KDDTrain$^+$ & all & 5-fold CV & 5 \\
+C1 width, $n^\ast$ (Figs.~\ref{fig:c1-selection}, \ref{fig:ksweep}b) & enriched & 1000 & fixed 300 & 10 \\
+C2 entanglement (Figs.~\ref{fig:ablation}, \ref{fig:perrun}) & enriched & 1000 & fixed 300 & 10 \\
+C2 noise check (Sec.~\ref{sec:res-c2}) & enriched & 1000 & fixed 300 & 1 \\
+C3 shift (Fig.~\ref{fig:priorshift}) & enriched & 1000 & re-mixed 1000 & 10 \\
+C4 sweep (Fig.~\ref{fig:learning-curve}a, c; Table~\ref{tab:crossover-arms}) & natural & $10^2$..$10^4$ & full & 10 \\
+C4 enriched control (Fig.~\ref{fig:learning-curve}b, d) & enriched & $10^2$..$2000$ & full & 10 \\
+Rare attacks (Sec.~\ref{sec:res-rare}) & natural & $10^4$ & full & 10 \\
+Width sweep (Fig.~\ref{fig:width}) & enriched & 1000 & fixed 300 & 10 \\
+Reference arm (Table~\ref{tab:ref-arm}, $122$ features) & natural & $10^2$..$10^4$ & full & 10 \\
+\bottomrule
+\end{tabular}
+\end{table}
