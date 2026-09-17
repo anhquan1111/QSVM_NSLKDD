@@ -13,7 +13,8 @@
 % =====================================================================
 
 \subsection{Quantum kernels}
-\revnote{rewrite}{Ban da nop: Definition 1--2 + Proposition 1--2. Gop lai, Prop 1 ha xuong fact (F1) theo yeu cau R3-3.}
+\revnote{rewrite}{Submitted version had Definitions 1--2 and Propositions 1--2; merged, and Proposition 1 demoted to a cited fact (F1) as R3-3 asks.}
+\begin{revbody}
 
 A quantum kernel embeds $\bm{x}$ into a state $|\phi(\bm{x})\rangle$ prepared by
 a parameterised circuit and reads off the fidelity as a similarity
@@ -28,14 +29,16 @@ bounds \cite{cristianini2002,cortes2012} say that a kernel better aligned with
 the labels admits a tighter generalisation guarantee at equal empirical risk,
 but say nothing about whether a given circuit produces such a kernel. In the
 other direction, fidelity kernels from expressive maps concentrate exponentially
-toward a constant as the qubit count grows \cite{thanasilp2024} --- an effect
+toward a constant as the qubit count grows \cite{thanasilp2024}, an effect
 distinct from, though related to, the barren plateaus of variational training
-\cite{ref10} --- so the same expressivity \cite{ref21} that makes a map interesting
+\cite{ref10}, so the same expressivity \cite{ref21} that makes a map interesting
 makes its Gram matrix uninformative at width. Sec.~\ref{sec:res-width} measures both effects here: the alignment gain
 is large, and the concentration is what eventually destroys it.
+\end{revbody}
 
 \subsection{Quantum machine learning for intrusion detection}
-\revnote{rewrite}{Them survey 2026 va bai Cirillo et al. (QMI 2026) -- bai Reviewer 1 chi dich danh o y R1-1.}
+\revnote{rewrite}{Adds the 2026 survey and Cirillo et al. (QMI 2026), the study Reviewer 1 named in R1-1.}
+\begin{revbody}
 
 Applications of quantum kernels and variational classifiers to network intrusion
 detection have grown quickly \cite{ref13,ref14,ref15}, most using NSL-KDD
@@ -43,8 +46,8 @@ detection have grown quickly \cite{ref13,ref14,ref15}, most using NSL-KDD
 January of that year and reaches two conclusions that bear directly on this
 paper: most published approaches rely on simulated quantum environments and
 legacy datasets, and evaluation practice is inconsistent across studies. The
-recurring pattern is a single operating point --- one qubit count, one
-training-set size, one class prior --- with an accuracy compared against a small
+recurring pattern is a single operating point (one qubit count, one
+training-set size, one class prior) with an accuracy compared against a small
 set of classical baselines.
 
 The most directly comparable study is the benchmark of Cirillo \emph{et al.}
@@ -55,8 +58,8 @@ accuracy and $94.13\%$ $F_1$ on NSL-KDD.
 
 Two of their findings bear on ours. They compare against SVM, XGBoost, random
 forest and a neural network at matched dimensionality and conclude that the
-classical models retain higher peak accuracy --- XGBoost reaching $99.1\%$ on
-ToN\_IoT --- while the quantum models stay competitive in low-dimensional
+classical models retain higher peak accuracy, XGBoost reaching $99.1\%$ on
+ToN\_IoT, while the quantum models stay competitive in low-dimensional
 feature spaces; our own ranking agrees (Sec.~\ref{sec:res-c2}). And they sweep
 the qubit count from $2$ to $10$ against two-qubit gate count, finding
 performance concentrated in a $20$--$35$ CNOT band and degrading beyond about
@@ -73,13 +76,15 @@ the kernel.
 What that study does not vary is the training-set size, fixed at a single $15\%$
 class-balanced subsample ($15{,}114$ training instances for NSL-KDD) drawn under
 a random $80/20$ split rather than the official partitions.
+\end{revbody}
 
 \subsection{Benchmarking studies of quantum models}
-\revnote{new}{Muc moi. Hai bai Reviewer 3 dan lam bang chung ``ket qua da co san'' (y R3-5). Da doc toan van ca hai.}
+\revnote{new}{New subsection. The two benchmarking studies Reviewer 3 cited as prior evidence (R3-5), read in full.}
+\begin{revbody}
 
 Two broad benchmarks are relevant precisely because they are sceptical. Bowles,
 Ahmed and Schuld \cite{bowles2024} evaluate twelve QML models over $160$ datasets
---- predominantly synthetic, so that data properties can be controlled --- in
+(predominantly synthetic, so that data properties can be controlled) in
 noise-free statevector simulation at up to $18$ qubits, against an MLP, an
 RBF-kernel SVM and a CNN, and find that quantum models rarely beat well-tuned
 classical baselines. Schnabel and Roth \cite{schnabel2024} run over $20{,}000$
@@ -98,24 +103,37 @@ benchmark quantum and classical models for intrusion detection across four
 corpora, including both of ours, at eight qubits with a $4/6/8/12$-qubit
 ablation, against five tuned classical baselines including a random forest and
 XGBoost, with Benjamini--Hochberg control over $108$ comparisons on NSL-KDD.
-Their conclusion --- that reported quantum gains are largely attributable to the
+Their conclusion, that reported quantum gains are largely attributable to the
 classical preprocessing front-end once the same front-end is given to classical
-models --- corroborates, from a different direction, the decomposition we report
-in Sec.~\ref{sec:res-c4}. We do not claim breadth over that study: they evaluate
-four datasets to our two, at eight qubits to our four and six, with a stricter
-error-rate criterion. What they hold fixed is the training-set size --- the full
-$125{,}973$-record training partition on NSL-KDD --- and that is where our
-contribution lies.
+models, stands in a relation to Sec.~\ref{sec:res-c4} that is closer to a
+discrepancy than to corroboration, and we report it as such. Our positive
+result is obtained under exactly the matched front-end they describe: every
+classical baseline consumes the same four components as the circuit, and the
+kernel still leads the tree ensembles at $N\geq5000$. Two differences may
+account for it, and the data cannot separate them. Their comparison is made at
+one training-set size, the full $125{,}973$-record partition, where our
+reference arm shows full-feature XGBoost at $0.804$ above any four-qubit model;
+ours sweeps $N$ and finds the lead only between $5000$ and $10^{4}$ records, on
+an embedding of four dimensions. And their front-end is given to classical
+models at eight qubits' worth of features, where Sec.~\ref{sec:res-width}
+shows our kernel has already collapsed. Read together, the two studies agree
+that the front-end carries most of what is reported as quantum advantage, and
+disagree on whether a residual lead exists in a narrow window of training-set
+size and embedding width that their design does not visit. We do not claim
+breadth over that study: they evaluate four datasets to our two, at eight
+qubits to our four and six, with a stricter error-rate criterion.
+\end{revbody}
 
 \subsection{Bounded advantage windows in adjacent domains}
-\revnote{new}{Muc moi. Bai Carducci ICAD 2026 -- Reviewer 4 chi dich danh o y R4-1.}
+\revnote{new}{New subsection. Carducci, ICAD 2026, the study Reviewer 4 named in R4-1.}
+\begin{revbody}
 
 The question this paper asks is being asked elsewhere, and in at least one
 adjacent domain it has been given the same shape. Carducci \cite{carducci2026}
 opens by arguing that malware analysts ``do not need another general claim that
 quantum computing is either broadly superior or broadly impractical'' but rather
 ``need to know which kinds of malware representations justify quantum effort''
---- which is, on a different task, the reframing this revision makes.
+which is, on a different task, the reframing this revision makes.
 
 That study places malware representations on an eleven-rank
 representational-complexity scale and reports that the measured advantage is
@@ -141,23 +159,25 @@ comparison rests on its abstract, introduction and index terms; we could not
 establish its qubit count or whether it varies training-set size. We present the
 parallel as suggestive rather than as evidence, and do not tabulate the study in
 Table~\ref{tab:novelty}, whose cells are read from full texts.
+\end{revbody}
 
 \subsection{Positioning}
-\revnote{rewrite}{Bang I dung lai han: 4 bai/3 cot -> 5 bai/13 dong, moi o doc tu toan van.}
-
+\revnote{rewrite}{Table I rebuilt: from 4 studies and 3 columns to 5 studies and 13 rows, every cell read from the full text (AE-2, R3-5).}
 \input{tables/novelty_matrix}
+\begin{revbody}
+
 
 Table~\ref{tab:novelty} places this work against those four studies on the axes
 that distinguish them; each cell was read from the full text rather than from an
 abstract. The distinguishing axis is not the model, the dataset, the circuit
-width or the noise treatment, on all of which we are comparable or narrower ---
+width or the noise treatment, on all of which we are comparable or narrower;
 two of the four vary the qubit count, and two compare against tree ensembles. It
 is that \emph{none of the four sweeps the training-set size}, which each fixes at
 a single value, and the training-set size is the variable that decides the answer
 here: the ordering between \QSVM{} and every strong classical baseline reverses
 inside the range $N\in[10^{2},10^{4}]$ under the natural class prior. A benchmark
-conducted at a single $N$ --- as all four are, and as our own submitted version
-was --- can therefore report either outcome and be internally consistent.
+conducted at a single $N$, as all four are and as our own submitted version
+was, can therefore report either outcome and be internally consistent.
 
 We take the reviewers' point that benchmarking alone is not a contribution, and
 we note that the two studies most often cited as establishing what is already
@@ -166,7 +186,8 @@ kernel, feature map, algorithm, hardware demonstration or theoretical result.
 What makes a benchmark worth publishing is not its novelty of apparatus but
 whether it changes what the field believes. We report an ordering that reverses
 with sample size, a selection rule whose output transfers across datasets, and a
-measured mechanism --- Gram-matrix concentration --- that predicts where the
+measured mechanism, Gram-matrix concentration, that predicts where the
 method stops working. The last of these is the closest we come to a theoretical
 contribution, and we present it as an empirical regularity rather than as a
 theorem, which is what our evidence supports.
+\end{revbody}
