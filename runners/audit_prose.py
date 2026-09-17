@@ -38,7 +38,8 @@ for key, rel in (("limitations_revision.tex", "sections/07_limitations.tex"),
                  ("theory_revision.tex", "sections/03b_theory.tex"),
                  ("appendix_lemma.tex", "sections/09_appendix.tex"),
                  ("main_revision.tex", "document.tex"),
-                 ("response_letter.tex", "response_letter.tex")):
+                 ("response_letter.tex", "response_letter.tex"),
+                 ("ref_arm.tex", "tables/ref_arm.tex")):
     p = ROOT / "paper/paper1" / rel
     if p.exists():
         TEXT[key] = io.open(p, encoding="utf-8").read()
@@ -597,20 +598,42 @@ def section_letter() -> None:
              "not the qubit count nor whether")):
         check(f"thu noi thang: {what}", says(L, phrase), phrase[:40])
 
-    # Bai hua "Sec IV-D co link repo va commit hash" -- phai co that, va hash
-    # phai la mot commit CO THAT trong repo nay.
-    import subprocess
+    # Bai hua o muc IV-D rang co link kho ma va mot moc phien ban co dinh.
+    #
+    # Ban nop R1 (17-09-2026) doi noi phat hanh: truoc la
+    # github.com/anhquan1111/QSVM_NSLKDD kem commit hash go tay, gio la
+    # github.com/haodpsut/nisq-qsvm-nids-benchmark kem release tag. Tag ben
+    # vung hon hash: no khong doi khi ai do viet lai lich su.
     setup = TEXT.get("04_setup.tex", "")
-    m = re.search(r"commit\s*\n?\\texttt\{([0-9a-f]{7,40})\}", setup)
-    check("bai co ghi link repo", "github.com/anhquan1111/QSVM_NSLKDD" in setup,
-          "thu khang dinh muc IV-D co link -- phai dung")
-    if m:
-        rc = subprocess.run(["git", "cat-file", "-e", m.group(1) + "^{commit}"],
+    m = re.search(r"url\{https://github\.com/([\w.-]+/[\w.-]+)\}", setup)
+    check("muc IV-D co link kho ma", m is not None,
+          m.group(1) if m else "khong tim thay \\url{github.com/...}")
+    tag = re.search(r"release tag \\texttt\{([\w.-]+)\}", setup)
+    old_hash = re.search(r"commit\s*\n?\\texttt\{([0-9a-f]{7,40})\}", setup)
+    check("co moc phien ban co dinh (release tag hoac commit hash)",
+          tag is not None or old_hash is not None,
+          f"tag {tag.group(1)}" if tag else
+          (f"hash {old_hash.group(1)}" if old_hash else "khong co moc nao"))
+    # Neu con ghi hash thi hash do phai tro toi mot commit CO THAT o repo nay.
+    if old_hash and m and m.group(1) == "anhquan1111/QSVM_NSLKDD":
+        import subprocess
+        rc = subprocess.run(["git", "cat-file", "-e", old_hash.group(1) + "^{commit}"],
                             cwd=ROOT, capture_output=True)
-        check(f"commit hash {m.group(1)} co that trong repo", rc.returncode == 0,
+        check(f"commit hash {old_hash.group(1)} co that", rc.returncode == 0,
               "hash go tay khong tro toi commit nao" if rc.returncode else "co")
-    else:
-        check("bai co ghi commit hash", False, "khong tim thay")
+
+    # Bang IV (nhanh doi chung 122 dac trung) -- tinh lai tu artifact
+    ra = pd.read_csv(NSL / "c4_revision/ref_arm_fullfeat.csv")
+    ra = ra[ra.featset == "all122"]
+    check("nhanh doi chung du 10 run moi o",
+          set(ra.groupby(["model", "n_train"]).size().unique()) == {10},
+          str(sorted(ra.groupby(["model", "n_train"]).size().unique())))
+    g = ra.groupby(["model", "n_train"]).f1_macro.mean()
+    tab = TEXT.get("ref_arm.tex", "")
+    miss = [f"{mdl}@{N}" for mdl in ("XGBoost", "RandomForest")
+            for N in (100, 200, 500, 1000)
+            if f"{g.loc[(mdl, N)]:.4f}" not in tab]
+    check("Bang IV: tam o 122 chieu khop artifact", not miss, str(miss))
 
     # So bo audit ghi trong bai phai khop so bo audit that su co
     for name, n in (("audit\\_c4.py} (100", 100), ("audit\\_figures.py} (36", 36),

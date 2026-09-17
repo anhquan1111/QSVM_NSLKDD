@@ -67,10 +67,10 @@ docs/Reviewer_Response_QuangAnh_RF_XGBoost.md
 # nen khong theo doi rieng file nay (giong cac ghi chu lam viec khac).
 C2_noise_validation_10run_analysis.md
 
-# Anh tac gia cua ban nop R1. Theo tien le cua paper2: anh ca nhan KHONG
-# de trong repo cong khai. Ban goc o D:/Documents/Project/NCKH_Document/
-# paper1_author_photos/ -- copy lai vao source/authors/ truoc khi compile.
-paper/paper1/v2_submitted/source/authors/
+# 17-09: DAO lai quyet dinh tren. Nam anh tac gia da CONG KHAI san trong
+# kho ma ma chinh bai bao trich (haodpsut/nisq-qsvm-nids-benchmark, tag
+# tetc-r1, public), va IEEE se in chung kem bai. Giu chung ra ngoai khong
+# bao ve duoc gi ma lam ban thao khong compile duoc. Nay theo doi binh thuong.
 
 # Goi zip cua ban nop: trung lap voi source/ da giai nen, 4,6 MB.
 paper/paper1/v2_submitted/*.zip

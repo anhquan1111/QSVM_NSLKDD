@@ -57,7 +57,7 @@ published number from the raw artifacts and fail loudly on any mismatch:
 ```bash
 python runners/audit_c4.py        # 100/100  every published statistic
 python runners/audit_figures.py   #  36      every number plotted on a figure
-python runners/audit_prose.py     # 132/132  every number written in the manuscript text
+python runners/audit_prose.py     # 134/134  every number written in the manuscript text
 python runners/verify_lemma1.py   #  15/15   the kernel expansion, against the exact kernel
 python runners/verify_noise10.py  #  40/40   the ten-run noise check, incl. Holm thresholds
 python runners/check_latex.py     #          .tex structure, for machines without LaTeX

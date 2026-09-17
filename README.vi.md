@@ -57,7 +57,7 @@ liệu thô, và báo lỗi thẳng nếu lệch:
 ```bash
 python runners/audit_c4.py        # 100/100  mọi thống kê công bố
 python runners/audit_figures.py   #  36      mọi con số vẽ trên hình
-python runners/audit_prose.py     # 132/132  mọi con số viết trong câu văn bài báo
+python runners/audit_prose.py     # 134/134  mọi con số viết trong câu văn bài báo
 python runners/verify_lemma1.py   #  15/15   khai triển nhân, đối chiếu nhân chính xác
 python runners/verify_noise10.py  #  40/40   phép kiểm nhiễu 10 run, kèm ngưỡng Holm
 python runners/check_latex.py     #          cấu trúc .tex, cho máy không cài LaTeX
