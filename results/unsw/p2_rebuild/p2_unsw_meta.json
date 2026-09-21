@@ -1,0 +1,18 @@
+{
+ "n_runs": 10,
+ "n_train": 1000,
+ "n_test": 82332,
+ "n_rare": 1682,
+ "rare_categories": [
+  "Worms",
+  "Shellcode",
+  "Backdoor",
+  "Analysis"
+ ],
+ "widths": [
+  4,
+  6
+ ],
+ "select_k": 35,
+ "cache_used": false
+}
