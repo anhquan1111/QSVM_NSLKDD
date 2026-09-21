@@ -246,6 +246,59 @@ def audit_census(m, st):
           f"loi the cua QSVM nam o calibration ({n_win}/{len(cal2)})")
 
 
+def audit_caltests(m, ct):
+    """Phep kiem bat cap cho ba bo hieu chinh, va claim rut ra tu no.
+
+    Lop D cho mot cau tung SAI: muc dong gop viet "giup kernel luong tu va
+    HAI moi mo hinh con lai". Temperature scaling ha ECE trung binh cua
+    SVM-RBF tu 0,1171 xuong 0,1140 -- tuc la khong hai -- nhung chi thang
+    5/10 run (Holm = 1,00), nen no khong "giup" ma cung khong "hai". Bai gio
+    noi dung ba the, va day la cho khoa no lai.
+    """
+    for model, key in MACRO.items():
+        g = ct[ct.model == model]
+        check(m[f"ctest{key}"] == g.overall.iloc[0], f"ctest{key}")
+        # DAU: macro theo quy uoc "cai thien" (duong = tot len), artifact
+        # theo quy uoc "sau - truoc". Sai dau o day thi ca doan van doc
+        # nguoc y nghia ma van khop tung chu so.
+        check(m[f"ctest{key}Best"] == f"{-g.mean_delta.min():+.4f}",
+              f"ctest{key}Best dao dau dung")
+        check(m[f"ctest{key}Worst"] == f"{-g.mean_delta.max():+.4f}",
+              f"ctest{key}Worst dao dau dung")
+        for cname, tag in (("platt", "Platt"), ("isotonic", "Iso"),
+                           ("temperature", "Temp")):
+            r = g[g.calibrator == cname].iloc[0]
+            check(m[f"ctest{key}{tag}D"] == f"{-r.mean_delta:+.4f}",
+                  f"ctest{key}{tag}D")
+            check(m[f"ctest{key}{tag}N"]
+                  == f"{int(r.n_better)}/{int(r.n_runs)}",
+                  f"ctest{key}{tag}N")
+            # The cua tung bo phai nhat quan voi the chung cua mo hinh.
+            want = ("helps" if (r.holm_p < 0.05 and r.mean_delta < 0)
+                    else "hurts" if r.holm_p < 0.05 else "no effect")
+            check(g.overall.iloc[0] in (want, "no effect"),
+                  f"the chung cua {key} khong mau thuan voi {tag}")
+
+    # Ba claim cua bai, doc thang tu artifact.
+    ov = ct.groupby("model").overall.first()
+    check(ov["QSVM"] == "helps", "QSVM duoc hieu chinh giup")
+    check(all(ov[b] == "hurts" for b in (*TREES, "MLP")),
+          "MLP va ca hai cay deu bi hieu chinh lam hai")
+    check(ov["SVM-RBF"] == "no effect",
+          "SVM-RBF la mot KET QUA RONG, bai khong duoc noi la no bi hai")
+    # Khong mo hinh nao ngoai QSVM duoc giup -- cau "helps the quantum
+    # kernel and no other model" nam o abstract va o ket luan.
+    check(sum(v == "helps" for v in ov) == 1,
+          "dung mot mo hinh duoc hieu chinh giup")
+    # Va cau "in every run": moi bo hieu chinh phai thang du 10/10.
+    q = ct[ct.model == "QSVM"]
+    check((q.n_better == q.n_runs).all(),
+          "ca ba bo hieu chinh giup QSVM o MOI run")
+    h = ct[ct.model.isin([*TREES, "MLP"])]
+    check((h.n_better == 0).all(),
+          "khong bo hieu chinh nao giup MLP hay cay o bat ky run nao")
+
+
 def audit_regime(long, st):
     """Ban do che do: QSVM phai thang ca hai cay o MOI dieu kien."""
     e = st[st.metric == "ece_full"]
@@ -284,6 +337,7 @@ def main() -> int:
     audit_percat(m, pd.read_csv(NSL / "p2_rebuild_percat.csv"),
                  pd.read_csv(NSL / "p2_rebuild_curve.csv"))
     audit_census(m, st)
+    audit_caltests(m, pd.read_csv(NSL / "p2_rebuild_cal_tests.csv"))
     audit_regime(long, st)
 
     # TU KIEM: moi ham audit_* dinh nghia trong file nay PHAI duoc goi o day.
@@ -300,7 +354,7 @@ def main() -> int:
     check(not dead, f"khong co ham audit_* nao la ma chet (chet: {dead})")
 
     figs = ["fig1_identity", "fig2_paired", "fig3_platt", "fig4_refarm",
-            "fig5_reliability"]
+            "fig5_reliability", "fig6_threshold"]
     for rel in [f"figs/{f}.pdf" for f in figs] + ["tables/main_table.tex",
                                                   "tables/side_tables.tex",
                                                   "tables/percat_table.tex",

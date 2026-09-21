@@ -82,6 +82,64 @@ def load_settings() -> pd.DataFrame:
     return pd.concat(frames, ignore_index=True)
 
 
+def cal_tests() -> pd.DataFrame:
+    """Tung bo hieu chinh so voi xac suat goc, bat cap theo run.
+
+    Can co, vi hinh fig3 va muc dong gop deu phat bieu "giup mo hinh nao,
+    hai mo hinh nao". Truoc day cau do dua tren so sanh hai TRUNG BINH --
+    va no sai: temperature scaling ha ECE cua SVM-RBF tu 0,117 xuong 0,114,
+    nhung chi thang o 5/10 run, tuc la khong phan biet duoc voi khong doi.
+    Chi co phep kiem bat cap moi tach duoc "giup" khoi "khong tac dung".
+    """
+    cal = pd.read_csv(NSL / "p2_rebuild_calibrators.csv")
+    piv = cal.pivot_table(index=["model", "run_id"], columns="calibrator",
+                          values="ece_full")
+    methods = ["platt", "isotonic", "temperature"]
+    rows = []
+    for model in piv.index.get_level_values("model").unique():
+        s = piv.loc[model]
+        base = s["none"].to_numpy(float)
+        recs = []
+        for m in methods:
+            d = s[m].to_numpy(float) - base
+            lo, hi = boot_ci(d)
+            recs.append(dict(
+                model=model, calibrator=m, n_runs=len(d),
+                ece_none=float(base.mean()), ece_cal=float(s[m].mean()),
+                mean_delta=float(d.mean()), ci_low=lo, ci_high=hi,
+                n_better=int((d < 0).sum()), dz=dz(d),
+                wilcoxon_p=float(stats.wilcoxon(d).pvalue)))
+        for r, a in zip(recs, holm([r["wilcoxon_p"] for r in recs])):
+            r["holm_p"] = a
+            r["verdict"] = ("no effect" if a >= 0.05
+                            else "helps" if r["mean_delta"] < 0 else "hurts")
+        rows += recs
+    out = pd.DataFrame(rows)
+
+    # Mot the duy nhat cho ca mo hinh: chi goi la "giup" khi MOI bo hieu
+    # chinh deu giup, "hai" khi moi bo deu hai, con lai la khong tac dung.
+    best = []
+    for model, g in out.groupby("model"):
+        v = set(g.verdict)
+        best.append(dict(model=model,
+                         overall=("helps" if v == {"helps"}
+                                  else "hurts" if v == {"hurts"}
+                                  else "no effect"),
+                         best_delta=float(g.mean_delta.min()),
+                         worst_delta=float(g.mean_delta.max())))
+    out = out.merge(pd.DataFrame(best), on="model")
+    csv = NSL / "p2_rebuild_cal_tests.csv"
+    out.to_csv(csv, index=False, encoding="utf-8")
+    print("\n  Hieu chinh hau ky so voi xac suat goc (am = tot len):")
+    for model, g in out.groupby("model"):
+        print(f"    {model:13s} {g.overall.iloc[0]:10s}  " + "  ".join(
+            f"{r.calibrator[:4]} {r.mean_delta:+.4f} "
+            f"({r.n_better}/{r.n_runs}, holm={r.holm_p:.3f})"
+            for r in g.itertuples()))
+    print(f"  -> {csv.relative_to(ROOT).as_posix()}  ({len(out)} dong)")
+    return out
+
+
 def main() -> int:
     df = load_settings()
     rows = []
@@ -134,6 +192,7 @@ def main() -> int:
                   f"[{r['ci_low']:+.4f},{r['ci_high']:+.4f}]  "
                   f"holm={r['holm_p']:.4f} d_z={r['dz']:+.2f}  {r['verdict']}")
     print(f"\n  -> {csv.relative_to(ROOT).as_posix()}  ({len(out)} dong)")
+    cal_tests()
     return 0
 
 
