@@ -69,7 +69,7 @@ python runners/make_paper3_figures.py   # 2 hình
 python runners/make_paper3_tables.py    # bảng + macro số
 python runners/audit_paper3.py          # 47/47
 python runners/check_latex.py paper/paper3_aicon/main.tex
-python runners/make_paper3_zip.py       # gói để tải lên Overleaf
+python runners/make_paper_zip.py paper3   # gói để tải lên Overleaf
 ```
 
 **Máy này không có LaTeX**, nên bài phải compile trên Overleaf:

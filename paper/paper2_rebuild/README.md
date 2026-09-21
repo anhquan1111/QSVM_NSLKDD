@@ -140,6 +140,7 @@ python runners/make_p2_rebuild_figures.py # 4 hình
 python runners/make_p2_rebuild_tables.py  # bảng + 171 macro số
 python runners/audit_p2_rebuild.py        # 121/121
 python runners/check_latex.py paper/paper2_rebuild/main.tex
+python runners/make_paper_zip.py paper2   # gói để tải lên Overleaf
 ```
 
 Máy này không có LaTeX — compile trên Overleaf, **pdfLaTeX**.
