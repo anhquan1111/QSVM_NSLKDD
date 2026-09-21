@@ -1,0 +1,235 @@
+%==============================================================================
+%  Paper 2 -- BAN DUNG LAI (2026-09-21)
+%
+%  Khac ban da nop IJNM ba diem, deu ve DO DAC chu khong ve mo hinh:
+%    1. Tap test: KDDTest+ day du (2 952 mau hiem) thay vi 100 mau (10 hiem).
+%    2. So run: 10 thay vi 5 -- voi 5 cap, Wilcoxon khong bao gio dat p<0.05.
+%    3. Khong dung model cache: moi baseline huan luyen lai tren CUNG mot tap.
+%
+%  Hau qua: luan diem "QSVM dang tin NHAT" khong song sot. Cai song sot --
+%  va gio co y nghia thong ke sau Holm -- la "QSVM hieu chinh tot hon han
+%  hai mo hinh cay".
+%
+%  Khoi tac gia giu nguyen ban da nop.
+%  Compile: pdfLaTeX. Moi con so phai goi qua macro trong tables/.
+%==============================================================================
+\documentclass[journal]{IEEEtran}
+
+\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage[T1]{fontenc}
+\usepackage{newtxtext,newtxmath}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{url}
+\usepackage[hidelinks]{hyperref}
+
+\newcommand{\QSVM}{QSVM}
+\newcommand{\ZZ}{\textsf{ZZ}}
+\newcommand{\ECE}{\mathrm{ECE}}
+\newcommand{\Brier}{\mathrm{Brier}}
+
+\input{tables/numbers_macros}
+
+\begin{document}
+
+\title{Are Quantum-Kernel Intrusion Detectors Trustworthy?
+  A Reliability and Calibration Benchmark of QSVM Against Strong
+  Tabular Learners on NSL-KDD}
+
+\author{Nguyen~Nang~Hung~Van,
+        Quan~Tran~Anh~Vo,
+        Nguyen~Quang~Anh,
+        and~Minh~Tuan~Pham
+\thanks{Manuscript received \today; revised \today. This work was
+  supported by The University of Danang -- University of Science and
+  Technology under Project T2026-02-10TN. \textit{(Corresponding author: Quan Tran Anh Vo.)}}
+\thanks{The authors are with The University of Danang -- University of
+  Science and Technology, Danang, Vietnam (e-mail:
+  votrananhquan1111@gmail.com).}}
+
+\markboth{Manuscript under review,~Vol.~XX, No.~Y, Month~2026}%
+{Nguyen \MakeLowercase{\textit{et al.}}: Reliability and Calibration of Quantum-Kernel Intrusion Detection}
+
+\maketitle
+
+\begin{abstract}
+% TODO(tac gia): got lai con 150-200 tu truoc khi nop.
+Quantum-kernel classifiers are usually evaluated on accuracy alone, yet an
+intrusion detector is deployed on the strength of its probabilities. We
+benchmark a four-qubit \QSVM{} against Random Forest, XGBoost, an MLP and an
+SVM-RBF baseline under one zero-leakage pipeline and one Platt protocol,
+measuring Expected Calibration Error and Brier score on the rare
+User-to-Root and Remote-to-Local classes. Reliability on rare classes is
+easy to mis-measure: on a $\pnTestOld$-record test sample the rare union
+holds only $\pnRareOld$ records, and on that sample the quantum kernel
+appears to be the best-calibrated model of the five. Measured instead on the
+full KDDTest+ split, which holds $\pnRare$ rare records, the ordering
+changes. Over $\pnRuns$ paired runs with Holm-corrected Wilcoxon tests, the
+quantum kernel is significantly better calibrated than both tree ensembles
+($\Delta\ECE_{\text{rare}}=\pdEceRf$, $p_{\text{Holm}}=\pdEceRfHolm$ against
+Random Forest), statistically indistinguishable from the classical RBF
+kernel, and significantly \emph{worse} than it on Brier score. We also find
+that Platt scaling improves calibration for the quantum kernel alone. The
+contribution is a reliability result that survives an adequately powered
+measurement, and a demonstration of how easily a rare-class calibration
+claim does not.
+\end{abstract}
+
+\begin{IEEEkeywords}
+Quantum machine learning, quantum kernel, calibration, reliability,
+intrusion detection, NSL-KDD.
+\end{IEEEkeywords}
+
+%==============================================================================
+\section{Introduction}\label{sec:intro}
+
+% TODO(tac gia): mo bai. Ba y, theo thu tu:
+%  - IDS trien khai dua vao XAC SUAT, khong chi nhan du doan;
+%  - chua ai do calibration cua quantum kernel cho IDS;
+%  - dong gop o day gom ca mot canh bao ve cach do.
+
+\paragraph{Contributions}
+\begin{enumerate}
+  \item A calibration benchmark of a four-qubit quantum kernel against four
+        strong baselines under one pipeline and one recalibration protocol,
+        on $\pnRare$ rare test records over $\pnRuns$ paired runs with
+        Holm-corrected Wilcoxon tests.
+  \item The finding that the quantum kernel is significantly better
+        calibrated than both tree ensembles on the rare classes, and is
+        \emph{not} better than a classical RBF kernel.
+  \item The finding that Platt scaling improves calibration for the quantum
+        kernel alone, and degrades it for both tree ensembles.
+  \item A measurement caution: on a rare union of $\pnRareOld$ records the
+        same protocol ranks the quantum kernel first, which the
+        $\pnRare$-record measurement does not support.
+\end{enumerate}
+
+%==============================================================================
+\section{Experimental Setup}\label{sec:setup}
+
+% TODO(tac gia): pipeline, dataset, sieu tham so. Giu nguyen mo ta cua ban cu,
+% chi doi ba cho da liet ke trong phan dau file.
+
+All models share the zero-leakage front end of the companion study:
+one-hot encoding, \textsc{SelectKBest} to 20 features, PCA to four
+components and a min--max map onto $[0,\pi]$. Every transformer is fitted on
+the training subset alone. Reliability is evaluated over $\pnRuns$
+independent stratified training subsets of $\pnTrain$ records.
+
+Every model, quantum and classical, is trained from scratch on the same
+subset. This matters: the submitted version reused cached quantum models
+whose training subset differed from the one used to fit their Platt
+calibrator, so the quantum and tree branches were not in fact measured on an
+identical footing.
+
+\subsection{Test set}
+We report on the full KDDTest+ split, $\pnTest$ records of which $\pnRare$
+belong to the rare union. The submitted version used a $\pnTestOld$-record
+sample containing $\pnRareOld$ rare records, which is too few to estimate a
+binned calibration error: at five bins it leaves two records per bin. The
+reason for the small sample was the cost of the quantum Gram matrix; with a
+closed-form statevector evaluation the full $\pnTest\times\pnTrain$ kernel
+takes under a second, so the constraint no longer binds.
+
+\subsection{Statistics}
+We report paired Wilcoxon signed-rank tests with bootstrap confidence
+intervals and $d_z$, Holm-corrected within baseline families. Ten runs are
+the minimum for which this is meaningful: with five paired runs the smallest
+attainable two-sided $p$ is $0.0625$, so no comparison can reach
+significance whatever the effect size.
+
+%==============================================================================
+\section{Results}\label{sec:results}
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=\columnwidth]{figs/fig1_test_size.pdf}
+  \caption{Rare-class calibration error under the two test sets. On the
+  $\pnRareOld$-record rare union (a) the quantum kernel ranks first; on the
+  $\pnRare$-record rare union (b) it ranks third. Same models, same runs,
+  same protocol.}
+  \label{fig:testsize}
+\end{figure}
+
+\input{tables/rare_table}
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=\columnwidth]{figs/fig2_paired.pdf}
+  \caption{Paired differences on the full test set, quantum kernel minus
+  baseline, with bootstrap confidence intervals and Holm-corrected $p$.
+  Blue favours the quantum kernel, orange the baseline, grey is
+  inconclusive.}
+  \label{fig:paired}
+\end{figure}
+
+\subsection{Rare-attack reliability}
+On the full test set the quantum kernel attains
+$\ECE_{\text{rare}}=\pQsvmEceRare\pm\pQsvmEceRareSd$. Against the tree
+ensembles the paired difference is $\pdEceRf$
+$[\pdEceRfLo,\pdEceRfHi]$ ($p_{\text{Holm}}=\pdEceRfHolm$,
+$d_z=\pdEceRfDz$) versus Random Forest and $\pdEceXgb$
+$[\pdEceXgbLo,\pdEceXgbHi]$ ($p_{\text{Holm}}=\pdEceXgbHolm$) versus
+XGBoost: both corrected-significant in the quantum kernel's favour.
+
+Against the classical kernel the picture is different. On
+$\ECE_{\text{rare}}$ the difference is $\pdEceRbf$
+$[\pdEceRbfLo,\pdEceRbfHi]$, $p_{\text{Holm}}=\pdEceRbfHolm$ --- the
+interval crosses zero and we report it as inconclusive. On
+$\Brier_{\text{rare}}$ the classical kernel is ahead by $\pdBrierRbf$
+$[\pdBrierRbfLo,\pdBrierRbfHi]$, $p_{\text{Holm}}=\pdBrierRbfHolm$,
+$d_z=\pdBrierRbfDz$: corrected-significant \emph{against} the quantum
+kernel. We report this as prominently as the wins.
+
+\subsection{What the small test sample did}
+Fig.~\ref{fig:testsize} places the two measurements side by side. On the
+$\pnRareOld$-record union the quantum kernel records
+$\ECE_{\text{rare}}=\pQsvmEceRareOld$ against $\pRbfEceRareOld$ for the RBF
+kernel and $\pRfEceRareOld$ for Random Forest, and ranks first of five. The
+ranking is not stable at that sample size; the tree-ensemble comparisons
+are, which is why those are the comparisons we claim.
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=\columnwidth]{figs/fig3_platt.pdf}
+  \caption{Platt scaling improves calibration for the quantum kernel alone
+  and degrades it for both tree ensembles.}
+  \label{fig:platt}
+\end{figure}
+
+\subsection{When Platt scaling helps}
+Platt scaling reduces the quantum kernel's full-set ECE from
+$\pQsvmPlattBefore$ to $\pQsvmPlattAfter$ ($\pQsvmPlattDelta$). It is the
+only model of the five it helps: Random Forest moves by $\pRfPlattDelta$ and
+XGBoost by $\pXgbPlattDelta$, both worse, and even the classical SVM
+degrades slightly ($\pRbfPlattDelta$). A logistic map on a margin is the
+right instrument for a margin-based model and the wrong one for a vote
+fraction.
+
+\subsection{Ranking is not reliability}
+The tree ensembles hold the best AUC-PR ($\pXgbAucPr$ for XGBoost,
+$\pRfAucPr$ for Random Forest) while holding the worst calibration. Ranking
+quality and probability quality are separate axes, and a detector deployed
+on a probability threshold is governed by the second.
+
+%==============================================================================
+\section{Limitations}\label{sec:limits}
+
+% TODO(tac gia): mo rong.
+The rare union remains class-imbalanced and the binned estimator remains
+sensitive to bin count. Results are on NSL-KDD alone. We evaluate Platt
+scaling only; isotonic regression and temperature scaling may suit the tree
+families better, and the Platt calibrator here is fitted on the training
+split, which is in-sample for models that can memorise it.
+
+%==============================================================================
+\section{Conclusion}\label{sec:conclusion}
+
+% TODO(tac gia).
+
+\begin{thebibliography}{1}
+% TODO: giu danh muc cua ban da nop.
+\end{thebibliography}
+
+\end{document}
