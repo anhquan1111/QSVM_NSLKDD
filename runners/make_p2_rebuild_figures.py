@@ -157,11 +157,44 @@ def fig3_platt():
     save(fig, "fig3_platt")
 
 
+def fig4_refarm():
+    """Cho cay du dac trung: xep hang tot len, hieu chinh te di."""
+    ref = pd.read_csv(IN / "p2_rebuild_refarm.csv")
+    reps = ["pca4", "k20", "all122"]
+    dims = {r: int(ref[ref["repr"] == r].n_features.iloc[0]) for r in reps}
+    labels = [f"{dims[r]}-d" for r in reps]
+    x = np.arange(len(reps))
+
+    fig, (ax, bx) = plt.subplots(1, 2, figsize=(7.16, 2.5),
+                                 gridspec_kw=dict(wspace=0.30))
+    for axis, col, title, better in (
+            (ax, "auc_pr", "(a)  Ranking: AUC-PR", "higher is better"),
+            (bx, "ece_rare", r"(b)  Reliability: $\mathrm{ECE}_{\mathrm{rare}}$",
+             "lower is better")):
+        for model in ("RandomForest", "XGBoost"):
+            s = ref[ref.model == model].groupby("repr")[col].mean()
+            e = ref[ref.model == model].groupby("repr")[col].std()
+            st = STYLE[model]
+            axis.errorbar(x, [s[r] for r in reps], yerr=[e[r] for r in reps],
+                          color=st["color"], marker=st["marker"], ms=6.0,
+                          lw=2.0, mec=SURFACE, mew=0.7, capsize=2.5,
+                          label=st["label"], zorder=5)
+        axis.set_xticks(x)
+        axis.set_xticklabels(labels)
+        axis.set_xlabel("Representation given to the trees")
+        axis.set_title(f"{title}\n{better}", loc="left", fontsize=8.5)
+        axis.set_xlim(-0.35, len(reps) - 0.65)
+        tidy(axis)
+    ax.legend(loc="lower right", borderpad=0.2, labelspacing=0.3)
+    save(fig, "fig4_refarm")
+
+
 def main() -> int:
     print("Hinh cho ban dung lai Paper 2:")
     fig1_test_size()
     fig2_paired()
     fig3_platt()
+    fig4_refarm()
     return 0
 
 

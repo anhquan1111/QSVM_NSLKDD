@@ -78,6 +78,24 @@ def audit_macros(m, df, st, platt):
 NUMBER_WHITELIST = {"1", "4", "20", "0", "5", "1000", "0.0625"}
 
 
+def audit_macros_defined(tex, m):
+    """Moi macro \\p... DUNG trong bai phai duoc DINH NGHIA.
+
+    Khong co phep kiem nay thi go sai mot ten macro se lot: audit van xanh
+    vi no chi doi chieu nhung macro da co, con LaTeX thi chet voi
+    'Undefined control sequence'.
+    """
+    # Bat TEN DAY DU cua lenh (ke ca chu p dau), roi tru ra lenh cua chinh
+    # LaTeX. Danh sach nay ngan va on dinh; them muc moi thi phai co ly do.
+    latex_p = {"paragraph", "pm", "pi", "par", "pageref", "protect",
+               "printindex", "pounds", "pagestyle", "pagenumbering"}
+    used = {name[1:] for name in re.findall(BS + BS + r"(p[A-Za-z]+)", tex)
+            if name not in latex_p}
+    missing = sorted(used - set(m))
+    check(not missing, f"moi macro dung trong bai deu duoc dinh nghia "
+                       f"(thieu: {missing})")
+
+
 def audit_prose_numbers(tex):
     body = re.sub(r"(?<!" + BS + BS + r")%.*", "", tex)
     body = body.split(BS + "maketitle", 1)[-1]
@@ -126,6 +144,39 @@ def audit_invariants(df, st, platt):
           f"QSVM xep hang cao hon tren tap test nho ({r_old:.0f} vs {r_new:.0f})")
 
 
+def audit_refarm(m, ref, cal):
+    """Nhanh doi chung va ba bo hieu chinh."""
+    g = ref.groupby(["repr", "model"])
+    for rep, tag in (("pca4", "Pca"), ("k20", "KTwenty"), ("all122", "Full")):
+        for model, key in (("RandomForest", "Rf"), ("XGBoost", "Xgb")):
+            check(m[f"ref{tag}{key}EceRare"] == f"{g.ece_rare.mean()[(rep, model)]:.4f}",
+                  f"ref{tag}{key}EceRare")
+            check(m[f"ref{tag}{key}AucPr"] == f"{g.auc_pr.mean()[(rep, model)]:.4f}",
+                  f"ref{tag}{key}AucPr")
+    c = cal.groupby(["model", "calibrator"]).ece_full.mean()
+    for model, key in MACRO.items():
+        for cname, tag in (("none", "None"), ("platt", "Platt"),
+                           ("isotonic", "Iso"), ("temperature", "Temp")):
+            check(m[f"cal{key}{tag}"] == f"{c[(model, cname)]:.4f}", f"cal{key}{tag}")
+
+    # Luan diem A: cho cay du dac trung thi XEP HANG tot hon ma HIEU CHINH te di.
+    e = g.ece_rare.mean(); a = g.auc_pr.mean()
+    for model in ("RandomForest", "XGBoost"):
+        check(e[("all122", model)] > e[("pca4", model)],
+              f"{model}: 122 dac trung hieu chinh TE hon PCA-4")
+    check(a[("all122", "RandomForest")] > a[("pca4", "RandomForest")],
+          "RandomForest: 122 dac trung xep hang TOT hon PCA-4")
+
+    # Luan diem B: hieu chinh hau ky chi giup kernel luong tu.
+    for model in ("RandomForest", "XGBoost"):
+        for cname in ("platt", "isotonic", "temperature"):
+            check(c[(model, cname)] > c[(model, "none")],
+                  f"{model}: {cname} lam XAU hon khong hieu chinh")
+    for cname in ("platt", "isotonic", "temperature"):
+        check(c[("QSVM", cname)] < c[("QSVM", "none")],
+              f"QSVM: {cname} lam TOT hon khong hieu chinh")
+
+
 def main() -> int:
     df = pd.read_csv(IN / "p2_rebuild_per_run.csv")
     st = pd.read_csv(IN / "p2_rebuild_pairwise.csv")
@@ -134,10 +185,15 @@ def main() -> int:
                         read(PAPER / "tables" / "numbers_macros.tex")))
 
     audit_macros(m, df, st, platt)
-    audit_prose_numbers(read(PAPER / "main.tex"))
+    tex = read(PAPER / "main.tex")
+    audit_macros_defined(tex, m)
+    audit_prose_numbers(tex)
     audit_invariants(df, st, platt)
+    audit_refarm(m, pd.read_csv(IN / "p2_rebuild_refarm.csv"),
+                 pd.read_csv(IN / "p2_rebuild_calibrators.csv"))
     for rel in ("figs/fig1_test_size.pdf", "figs/fig2_paired.pdf",
-                "figs/fig3_platt.pdf", "tables/rare_table.tex", "main.tex"):
+                "figs/fig3_platt.pdf", "figs/fig4_refarm.pdf",
+                "tables/rare_table.tex", "main.tex"):
         check((PAPER / rel).exists(), f"co {rel}")
 
     n_ok = sum(1 for ok, _ in _checks if ok)
