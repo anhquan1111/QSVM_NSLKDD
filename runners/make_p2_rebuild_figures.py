@@ -264,10 +264,56 @@ def fig5_reliability():
     save(fig, "fig5_reliability")
 
 
+def fig6_threshold():
+    """Ha nguong cuu duoc tan cong hiem cho mo hinh margin, khong cuu duoc
+    cho cay. Va phan ra Brier tach hai truc ma bai noi."""
+    th = pd.read_csv(NSL / "p2_rebuild_threshold.csv")
+    br = pd.read_csv(NSL / "p2_rebuild_brier_decomp.csv")
+    g = th.groupby(["model", "threshold"]).mean(numeric_only=True)
+
+    fig, (ax, bx) = plt.subplots(1, 2, figsize=(7.16, 2.8),
+                                 gridspec_kw=dict(wspace=0.30))
+    for m in ORDER:
+        s = g.loc[m].sort_index()
+        st = STYLE[m]
+        ax.plot(s.index, s.recall_U2R, color=st["color"], marker=st["marker"],
+                ms=4.0, lw=1.8, mec=SURFACE, mew=0.6, label=st["label"],
+                zorder=5)
+    ax.axvline(0.5, color=ORANGE, lw=1.3, ls=(0, (4, 2)), zorder=3)
+    ax.text(0.52, 0.04, "default", color=ORANGE, fontsize=6.8, rotation=90,
+            va="bottom", zorder=6)
+    ax.set_xlabel("decision threshold")
+    ax.set_ylabel("U2R recall")
+    ax.set_xlim(0, 1); ax.set_ylim(0, 1)
+    ax.set_title("(a)  Lowering the threshold rescues only\nthe margin models",
+                 loc="left", fontsize=8.5)
+    tidy(ax)
+    ax.legend(loc="upper right", borderpad=0.2, labelspacing=0.28,
+              handletextpad=0.4)
+
+    gb = br.groupby("model")[["reliability", "resolution"]].mean()
+    for m in ORDER:
+        st = STYLE[m]
+        bx.scatter(gb.loc[m, "resolution"], gb.loc[m, "reliability"], s=70,
+                   color=st["color"], marker=st["marker"], edgecolor=SURFACE,
+                   linewidth=0.8, zorder=5)
+        bx.annotate(st["label"], (gb.loc[m, "resolution"],
+                                  gb.loc[m, "reliability"]),
+                    textcoords="offset points", xytext=(0, -11),
+                    ha="center", fontsize=6.8, color=INK_2, zorder=6)
+    bx.set_xlabel("resolution  (higher = discriminates better)")
+    bx.set_ylabel("reliability  (lower = better calibrated)")
+    bx.set_title("(b)  The two axes are separate", loc="left", fontsize=8.5)
+    bx.set_ylim(0.02, 0.115)
+    tidy(bx)
+    save(fig, "fig6_threshold")
+
+
 def main() -> int:
     print("Hinh cho ban dung lai Paper 2:")
     fig1_identity()
     fig5_reliability()
+    fig6_threshold()
     fig2_paired()
     fig3_platt()
     fig4_refarm()

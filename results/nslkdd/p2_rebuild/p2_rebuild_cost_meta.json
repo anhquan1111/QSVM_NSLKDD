@@ -1,0 +1,6 @@
+{
+ "n_runs": 5,
+ "n_train": 1000,
+ "n_test": 22544,
+ "note": "statevector chinh xac, khong phai phan cung that"
+}
