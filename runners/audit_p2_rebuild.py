@@ -96,7 +96,8 @@ def audit_macros(m, long, st, platt, ref, cal, idf):
 # --- B -----------------------------------------------------------------
 def audit_macros_defined(tex, m):
     latex_p = {"paragraph", "pm", "pi", "par", "pageref", "protect",
-               "printindex", "pounds", "pagestyle", "pagenumbering"}
+               "printindex", "pounds", "pagestyle", "pagenumbering",
+               "phi", "psi", "prod", "partial", "perp", "propto", "pmod"}
     used = {name[1:] for name in re.findall(BS + BS + r"(p[A-Za-z]+)", tex)
             if name not in latex_p}
     missing = sorted(used - set(m))
@@ -113,8 +114,10 @@ def audit_prose_numbers(tex):
     body = body.split(BS + "maketitle", 1)[-1]
     body = body.split(BS + "begin{thebibliography}", 1)[0]
     body = re.sub(BS + BS + r"includegraphics(\[[^\]]*\])?\{[^}]*\}", " ", body)
-    body = re.sub(BS + BS + r"(label|ref|eqref|input|url|newcommand)\{[^}]*\}",
-                  " ", body)
+    # `\ding{55}` la ma ky hieu pifont, khong phai so lieu -- bo cung voi cac
+    # lenh khac truoc khi quet so.
+    body = re.sub(BS + BS + r"(label|ref|eqref|input|url|newcommand|cite|ding)"
+                  r"\{[^}]*\}", " ", body)
     bad = [t for t in re.findall(r"(?<![\w.])\d+(?:\.\d+)?(?![\w.])", body)
            if t not in NUMBER_WHITELIST]
     check(not bad, f"khong co so viet tay trong cau van (thay: {sorted(set(bad))})")

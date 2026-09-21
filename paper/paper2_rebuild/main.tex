@@ -23,6 +23,10 @@
 \usepackage{booktabs}
 \usepackage{url}
 \usepackage[hidelinks]{hyperref}
+\usepackage{pifont}
+\usepackage{amsthm}
+\newtheorem{definition}{Definition}
+\newtheorem{proposition}{Proposition}
 
 \newcommand{\QSVM}{QSVM}
 \newcommand{\ZZ}{\textsf{ZZ}}
@@ -86,10 +90,31 @@ intrusion detection, NSL-KDD, UNSW-NB15.
 %==============================================================================
 \section{Introduction}\label{sec:intro}
 
-% TODO(tac gia): mo bai. Ba y, theo thu tu:
-%  - IDS trien khai dua vao XAC SUAT, khong chi nhan du doan;
-%  - chua ai do calibration cua quantum kernel cho IDS;
-%  - dong gop o day gom ca mot dinh chinh ve cach do.
+% TODO(tac gia): doc lai va nới rong neu can. Khung lap luan da day du.
+An intrusion detection system is rarely deployed as a bare classifier. It is
+deployed behind a threshold, feeding a queue that a human or a downstream
+policy has to triage, and the quantity that governs that queue is a
+probability rather than a label. A detector that is right often but confident
+at the wrong moments is harder to operate than one that is slightly less
+accurate and honest about it. Accuracy therefore answers only half of the
+deployment question.
+
+Quantum-kernel classifiers are almost always evaluated on the other half
+alone. Since quantum feature maps were proposed as a route to expressive
+kernels~\cite{havlicek2019,schuld2019hilbert}, and since separations were
+established for carefully constructed learning problems~\cite{liu2021speedup},
+the intrusion-detection literature has measured them by accuracy and $F_1$.
+On tabular data of this kind, gradient-boosted trees and random forests
+usually win that contest, which makes an accuracy-only comparison both
+unfavourable to the quantum kernel and uninformative about deployment.
+
+This paper asks the other half of the question: when one of these models
+reports a probability, how far can that number be trusted? We find first
+that the natural way to pose the question --- restrict the estimate to the
+rare attack classes that matter most --- is unavailable for a structural
+reason, and that the quantity such a restriction produces is not a
+calibration error at all. We then measure calibration where it is
+well-defined, on two corpora and at two circuit widths.
 
 \paragraph{Contributions}
 \begin{enumerate}
@@ -108,6 +133,88 @@ intrusion detection, NSL-KDD, UNSW-NB15.
   \item The finding that post-hoc recalibration helps the quantum kernel and
         degrades every other model, robust to the choice of recalibrator.
 \end{enumerate}
+
+%==============================================================================
+\section{Background and Related Work}\label{sec:related}
+
+\subsection{Quantum Kernel and the \ZZ{}-FeatureMap}
+\begin{definition}[Quantum kernel]
+For a data-dependent unitary $U:\mathbb{R}^n\!\to\!\mathcal{U}(2^n)$ with
+state map $\phi(\mathbf{x})=U(\mathbf{x})|0\rangle^{\otimes n}$, the
+induced quantum kernel is
+$K^{\mathrm{Q}}(\mathbf{x},\mathbf{x}')=
+|\langle 0|U^{\dagger}(\mathbf{x}')U(\mathbf{x})|0\rangle|^2$.
+\end{definition}
+We use the depth-$r$ \ZZ{}-FeatureMap with full entanglement,
+$U^{(r)}_{\ZZ}(\mathbf{x})$, whose entangling layer encodes pairwise
+feature products as quantum phases. The four-qubit, $r{=}2$
+configuration is fixed by the companion study's hardware-aware Pareto
+analysis~\cite{companion} and is reused here without modification, so the
+present paper isolates classifier reliability rather than embedding
+choice.
+
+\subsection{Confidence Calibration}
+\begin{definition}[Calibration]
+A probabilistic classifier producing $\hat{p}(\mathbf{x})\in[0,1]$ is
+\emph{perfectly calibrated} if
+$\Pr\!\big(y{=}1\mid\hat{p}(\mathbf{x}){=}q\big)=q$ for all $q$.
+\end{definition}
+Expected Calibration Error (ECE) and the Brier score are the standard
+scalar summaries of the gap from perfect
+calibration~\cite{naeini2015ece,brier1950}, and a reliability diagram is
+the graphical counterpart. Tree ensembles are often over-confident on the
+minority class~\cite{guo2017calibration}, motivating post-hoc
+recalibration such as Platt scaling~\cite{platt1999svm}, a logistic map
+from decision scores to probabilities. Calibration is rarely reported in
+quantum-IDS studies, and never compared against strong tabular learners.
+
+\begin{proposition}[Platt scaling preserves ranking]
+\label{prop:platt}
+Platt scaling applies a strictly increasing logistic transform
+$\sigma(As+B)$, $A{>}0$, to a score $s$. Because the transform is
+monotone, the induced ordering of samples is unchanged; hence
+threshold-free ranking metrics (AUC-ROC, AUC-PR) are invariant to Platt
+scaling, while binning-based calibration metrics (ECE) and the Brier
+score are not.
+\end{proposition}
+Proposition~\ref{prop:platt} is the methodological reason our comparison
+can apply one uniform Platt protocol to every model without distorting
+the ranking comparison: any AUC difference reflects the raw model
+ordering, while ECE/Brier differences reflect calibration.
+
+\subsection{Strong Tabular Baselines}
+Random Forests~\cite{breiman2001rf} and gradient-boosted trees
+(XGBoost~\cite{chen2016xgboost}) are the strongest non-deep models on
+tabular data and the comparators a reviewer expects for any practical IDS
+claim; we adopt both alongside SVM-RBF~\cite{cortes1995svm}.
+
+\subsection{Position Against Prior Work}
+Table~\ref{tab:coverage} contrasts representative QSVM-IDS works against
+the three gaps. None reports calibration, compares against strong tabular
+learners, or separates ranking from trust. The present paper is, to our
+knowledge, the first calibration-centric reliability study of a quantum
+kernel for IDS.
+
+\begin{table}[t]
+\centering
+\caption{Coverage of the three gaps by representative QSVM-IDS works
+  (G1: strong tabular baselines; G2: calibration; G3: ranking vs.\ trust).
+  A check denotes the axis is explicitly studied.}
+\label{tab:coverage}
+\small
+\begin{tabular}{lccc}
+\toprule
+Work & G1 & G2 & G3\\\midrule
+Payares \emph{et al.}~\cite{payares2021dos}        & \ding{55} & \ding{55} & \ding{55}\\
+Suryotrisongko \emph{et al.}~\cite{suryotrisongko2022dga} & \ding{55} & \ding{55} & \ding{55}\\
+Kalinin \emph{et al.}~\cite{kalinin2023qids}       & \ding{55} & \ding{55} & \ding{55}\\
+Companion (Paper~1)~\cite{companion}               & \ding{55} & partial   & \ding{55}\\
+\textbf{This work}                                 & \checkmark & \checkmark & \checkmark\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+% ============================================================
 
 %==============================================================================
 \section{Why the rare-attack subset cannot answer the question}
@@ -169,7 +276,7 @@ training subset differed from the one used to fit their calibrator, so the
 quantum and tree branches were not in fact on an identical footing.
 
 \subsection{Corpora and test splits}
-NSL-KDD is evaluated on the full KDDTest+ split, $\pnTest$ records of which
+NSL-KDD~\cite{tavallaee2009nslkdd} is evaluated on the full KDDTest+ split, $\pnTest$ records of which
 $\pnRare$ belong to the rare union; UNSW-NB15 on its full test split,
 $\punswTest$ records of which $\punswRare$ are rare. The submitted version
 used a $\pnTestOld$-record sample of KDDTest+ holding $\pnRareOld$ rare
@@ -278,6 +385,27 @@ $\pcalQsvmTemp$ against $\pcalQsvmNone$ uncalibrated), while on both tree
 ensembles all three are worse than leaving the native probability alone
 (Random Forest $\pcalRfNone$ uncalibrated against $\pcalRfIso$ isotonic).
 
+\subsection{Training-set size}
+Reliability is not uniform in the amount of training data. Sweeping
+$N\in\{\pldNmin,\ldots,\pldNmax\}$ and refitting every model on each subset,
+the best-calibrated model at the smallest size is \pldWinnerMin{}
+($\pldQsvmMin$ against $\pldMlpMin$ for the MLP and $\pldRfMin$ for Random
+Forest). The quantum kernel's relative standing falls as $N$ grows: at
+$N=\pldNmax$ it is $\pldQsvmMax$ against $\pldMlpMax$ for the MLP. The
+advantage such as it is belongs to the low-data regime, which is also the
+regime in which a four-qubit kernel is cheapest to run.
+
+\subsection{Class-prior shift}
+We rebuild three operating conditions from the full test split rather than
+from a fixed sample: a balanced mix ($\ppsBalN$ records), an attack-heavy
+mix ($\ppsAttN$), and a DoS-only mix ($\ppsDosN$). The best-calibrated model
+is \ppsBalWinner{} on the balanced mix ($\ppsBalMlp$ against $\ppsBalQsvm$
+for the quantum kernel), \ppsAttWinner{} on the attack-heavy mix, and
+\ppsDosWinner{} on the DoS-only mix ($\ppsDosQsvm$). The quantum kernel is
+ahead of both tree ensembles under all three conditions
+($\ppsBalRf$, $\ppsAttRf$, $\ppsDosRf$ for Random Forest), which is the same
+ordering as Table~\ref{tab:main} and not a separate effect.
+
 \subsection{Ranking is not reliability}
 The tree ensembles hold the best ranking and the worst calibration, on both
 corpora. Ranking quality and probability quality are separate axes, and a
@@ -298,10 +426,118 @@ captures.
 %==============================================================================
 \section{Conclusion}\label{sec:conclusion}
 
-% TODO(tac gia).
+% TODO(tac gia): doc lai truoc khi nop.
+We set out to ask whether a quantum-kernel intrusion detector can be trusted
+at the level of its probabilities, and found first that the question has to
+be posed carefully. Restricting a binned calibration estimate to the rare
+attack classes yields a quantity that is identically one minus mean
+confidence, because every record in that subset carries the same label; it
+measures confidence on known attacks and cannot detect over-confidence at
+all. Reported as a calibration error it would overstate what has been
+measured.
 
-\begin{thebibliography}{1}
-% TODO: giu danh muc cua ban da nop.
+Measured where both classes are present, the result is narrow but it holds
+everywhere we looked. Across two corpora and two circuit widths, over
+$\pnRuns$ paired runs with Holm-corrected tests, the quantum kernel is
+better calibrated than both tree ensembles in all eight comparisons, and the
+margin is several times larger on UNSW-NB15 than on NSL-KDD. It is not
+better calibrated than a small multilayer perceptron anywhere, and against a
+classical RBF kernel the outcome depends on the corpus. Giving the trees the
+full one-hot representation improves their ranking without improving their
+calibration, so the comparison is made on terms that favour them. Post-hoc
+recalibration helps the quantum kernel and no other model, whether the
+recalibrator is Platt, isotonic or temperature scaling.
+
+The practical reading is modest. A four-qubit kernel is not the most
+reliable model available for this task, but among the families an
+intrusion-detection practitioner would actually reach for first --- the tree
+ensembles --- it is the better-calibrated choice, and it is the one that
+post-hoc recalibration can still improve. Whether this survives shot and
+device noise is the obvious next question, and it is the one our simulation
+cannot answer.
+
+\begin{thebibliography}{20}
+
+\bibitem{tavallaee2009nslkdd}
+M.~Tavallaee, E.~Bagheri, W.~Lu, and A.~A. Ghorbani,
+``A detailed analysis of the KDD CUP 99 data set,'' in
+\emph{Proc. IEEE Symp. Comput. Intell. Security Defense Appl. (CISDA)},
+Ottawa, Canada, 2009, pp.~1--6.
+
+\bibitem{companion}
+M.~T. Pham, P.~H. Do, N.~N.~H. Van, Q.~A. Nguyen, and Q.~T.~A. Vo,
+``NISQ-aware quantum kernel SVM for network intrusion detection: a
+  regime-specific benchmark on NSL-KDD,'' \emph{companion manuscript},
+  2026.
+
+\bibitem{havlicek2019}
+V.~Havl\'i\v{c}ek \emph{et al.},
+``Supervised learning with quantum-enhanced feature spaces,''
+\emph{Nature}, vol.~567, pp.~209--212, 2019.
+
+\bibitem{schuld2019hilbert}
+M.~Schuld and N.~Killoran,
+``Quantum machine learning in feature Hilbert spaces,''
+\emph{Phys. Rev. Lett.}, vol.~122, no.~4, p.~040504, 2019.
+
+\bibitem{liu2021speedup}
+Y.~Liu, S.~Arunachalam, and K.~Temme,
+``A rigorous and robust quantum speed-up in supervised machine
+  learning,'' \emph{Nature Physics}, vol.~17, pp.~1013--1017, 2021.
+
+\bibitem{guo2017calibration}
+C.~Guo, G.~Pleiss, Y.~Sun, and K.~Q. Weinberger,
+``On calibration of modern neural networks,'' in
+\emph{Proc. Int. Conf. Mach. Learn. (ICML)}, 2017, pp.~1321--1330.
+
+\bibitem{naeini2015ece}
+M.~P. Naeini, G.~Cooper, and M.~Hauskrecht,
+``Obtaining well calibrated probabilities using Bayesian binning,''
+in \emph{Proc. AAAI Conf. Artif. Intell.}, 2015, pp.~2901--2907.
+
+\bibitem{brier1950}
+G.~W. Brier,
+``Verification of forecasts expressed in terms of probability,''
+\emph{Monthly Weather Review}, vol.~78, no.~1, pp.~1--3, 1950.
+
+\bibitem{platt1999svm}
+J.~C. Platt,
+``Probabilistic outputs for support vector machines and comparisons
+  to regularized likelihood methods,'' in
+\emph{Advances in Large Margin Classifiers}, 1999, pp.~61--74.
+
+\bibitem{cortes1995svm}
+C.~Cortes and V.~Vapnik, ``Support-vector networks,''
+\emph{Mach. Learn.}, vol.~20, no.~3, pp.~273--297, 1995.
+
+\bibitem{breiman2001rf}
+L.~Breiman, ``Random forests,'' \emph{Mach. Learn.}, vol.~45, no.~1,
+pp.~5--32, 2001.
+
+\bibitem{chen2016xgboost}
+T.~Chen and C.~Guestrin,
+``XGBoost: A scalable tree boosting system,'' in
+\emph{Proc. 22nd ACM SIGKDD Int. Conf. Knowl. Discov. Data Min.},
+2016, pp.~785--794.
+
+\bibitem{payares2021dos}
+E.~D. Payares and J.~C. Mart\'inez-Santos,
+``Quantum machine learning for intrusion detection of distributed
+  denial of service attacks: a comparative overview,'' in
+\emph{Proc. SPIE Quantum Comput. Commun. Simul.}, vol.~11699, 2021,
+p.~116990F.
+
+\bibitem{suryotrisongko2022dga}
+H.~Suryotrisongko and Y.~Musashi,
+``Evaluating hybrid quantum-classical deep learning for cybersecurity
+  botnet DGA detection,'' \emph{Procedia Comput. Sci.}, vol.~197,
+pp.~223--229, 2022.
+
+\bibitem{kalinin2023qids}
+M.~O. Kalinin and V.~M. Krundyshev,
+``Security intrusion detection using quantum machine learning
+  techniques,'' \emph{J. Comput. Virol. Hacking Tech.}, vol.~19,
+no.~1, pp.~125--136, 2023.
 \end{thebibliography}
 
 \end{document}

@@ -290,7 +290,13 @@ def check_file(path: Path) -> tuple[set[str], set[str], set[str], set[str]]:
     for m in re.findall(BS + BS + r"cite\{([^}]*)\}", body):
         cites |= {k.strip() for k in m.split(",") if k.strip()}
     bibs = set(re.findall(BS + BS + r"bibitem\{([^}]*)\}", body))
-    return cmds | defs, labels | bibs, refs, cites - bibs
+    # Tra ve `cites` NGUYEN VEN. Truoc day tra ve `cites - bibs`, va cai do
+    # chi dung khi danh muc nam o mot file RIENG: luc do bibs rong o file than
+    # bai nen phep tru khong lam gi. Voi tai lieu MOT FILE (danh muc va trich
+    # dan cung cho) no xoa sach dung nhung trich dan hop le, va phep kiem
+    # "muc khong duoc trich" bao nham ca 15/15. Phep tru dung cho nen nam o
+    # main(), noi da co `all_cite - all_bib`.
+    return cmds | defs, labels | bibs, refs, cites
 
 
 def main() -> int:
