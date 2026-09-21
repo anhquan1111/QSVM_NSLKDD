@@ -1,0 +1,6 @@
+{
+ "max_abs_dev": 2.220446049250313e-16,
+ "tolerance": 1e-12,
+ "n_rows": 50,
+ "min_acc_bin_std_full": 0.348775265870732
+}

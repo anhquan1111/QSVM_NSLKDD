@@ -3,8 +3,8 @@
 Bản nộp IJNM bị **desk reject** 05-09-2026, không một dòng phản biện. Thư mục này là bản
 dựng lại, nhắm **Security and Privacy** (Wiley, IF 2.9, hybrid OA).
 
-> **Trạng thái:** số liệu, hình, bảng, bộ kiểm xong — **151/151**.
-> Còn lại là viết prose ở các chỗ `% TODO` trong [main.tex](main.tex) và danh mục tham khảo.
+> **Trạng thái:** số liệu, hình, bảng, bộ kiểm xong — **121/121** + **152/152** (đẳng thức).
+> Còn lại là viết prose ở các chỗ `% TODO` và danh mục tham khảo.
 
 Khối tác giả giữ nguyên bản đã nộp.
 
@@ -48,25 +48,46 @@ tập chúng được huấn luyện. Bài khẳng định mọi baseline đư�
 
 ---
 
-## Kết luận đổi thế nào
+## Phát hiện lớn nhất: `ECE_rare` không đo calibration
 
-| | Bản đã nộp (10 mẫu hiếm) | Bản dựng lại (2 952 mẫu hiếm) |
-|---|---|---|
-| QSVM `ECE_rare` | 0,4503 — **hạng 1/4** | 0,5414 — **hạng 3/5** |
-| So với cây | thắng | **vẫn thắng, và có ý nghĩa sau Holm** |
-| So với SVM-RBF | thắng | **bất phân thắng bại** |
-| So với SVM-RBF (Brier) | — | **thua, có ý nghĩa** |
+Tập tấn công hiếm được lấy **theo nhóm tấn công**, nên mọi bản ghi trong đó đều là tấn công —
+nhãn nhị phân đều bằng 1, trên **cả hai** dataset. Khi đó `acc(bin) = 1` ở mọi bin theo định
+nghĩa, và
 
-**Không sống sót:** *"QSVM đáng tin nhất"*, *"tốt nhất ở chế độ low-data"*, *"tốt nhất ở
+```
+ECE = Σ_B (|B|/n)·|acc(B) − conf(B)| = Σ_B (|B|/n)·(1 − conf(B)) = 1 − p̄
+```
+
+Vế phải **không phụ thuộc cách chia bin**. Đó là phép đo *độ tự tin trên tấn công đã biết* —
+gần với recall — chứ không phải calibration. Không mô hình nào có thể bị phạt vì quá tự tin.
+
+`runners/verify_rare_identity.py` kiểm trên mọi model, mọi run, cả hai dataset: **lệch lớn
+nhất 2,2e-16**, và kiểm luôn vế đối lập (trên toàn tập test acc từng bin biến thiên, độ tán
+≥ 0,349, nên ECE ở đó đo calibration thật). **152/152.**
+
+Vì vậy chỉ số chính đổi sang **ECE trên toàn tập test**.
+
+---
+
+## Kết luận
+
+**ECE toàn tập test, trung bình 10 run:**
+
+| Model | NSL-KDD (4qb) | UNSW (4qb) | UNSW (6qb) |
+|---|---|---|---|
+| MLP | **0,1172** | **0,1198** | **0,1226** |
+| SVM-RBF | 0,1272 | 0,1518 | 0,1474 |
+| **QSVM-ZZ** | 0,1421 | 0,1449 | 0,1531 |
+| XGBoost | 0,1758 | 0,2117 | 0,2201 |
+| Random forest | 0,1836 | 0,2308 | 0,2225 |
+
+**Sống sót, nhất quán, có ý nghĩa thống kê:** QSVM hiệu chỉnh tốt hơn **cả hai mô hình cây** ở
+**mọi thiết lập** — **8/8 so sánh** đều qua Holm. Hiệu ứng trên UNSW rất lớn (d_z tới −7,6).
+
+**Không được claim:** QSVM **không** tốt hơn MLP ở bất kỳ đâu. So với SVM-RBF thì tuỳ dataset.
+
+**Không sống sót từ bản cũ:** *"QSVM đáng tin nhất"*, *"tốt nhất ở low-data"*, *"tốt nhất ở
 điểm cân bằng"*.
-
-**Sống sót, và giờ có ý nghĩa thống kê:**
-
-- QSVM hiệu chỉnh **tốt hơn hẳn cả hai mô hình cây** — d_z = −1,46 (RF) và −0,78 (XGB),
-  p sau Holm 0,0117 và 0,0273
-- **Platt chỉ giúp duy nhất kernel lượng tử** (−0,0547 ECE); làm xấu cả hai mô hình cây,
-  và xấu nhẹ cả SVM-RBF. Sắc hơn bản cũ, vốn nói Platt hợp mọi mô hình margin
-- Xếp hạng ≠ độ tin cậy: cây có AUC-PR tốt nhất mà calibration tệ nhất
 
 ---
 
@@ -74,20 +95,20 @@ tập chúng được huấn luyện. Bài khẳng định mọi baseline đư�
 
 ### "Các anh làm què cây rồi mới so"
 
-Tiêu đề có chữ *Strong Tabular Learners* mà cây lại chạy trên đúng PCA 4 chiều như QSVM. Đã
-chạy lại RF và XGBoost trên **K=20** và trên **đủ 122 đặc trưng** one-hot — **giữ nguyên siêu
-tham số**, chỉ đổi biểu diễn (tune lại thì nhánh 122 chiều được lợi thế nhánh PCA-4 không có,
-và phép so sánh không còn cô lập được ảnh hưởng của riêng biểu diễn).
+Chạy lại RF/XGBoost trên **K=20** và **đủ 122 đặc trưng**, **giữ nguyên siêu tham số** (tune
+lại thì nhánh 122 chiều được lợi thế nhánh PCA-4 không có).
 
-| Biểu diễn | RF AUC-PR | RF ECE_rare | XGB ECE_rare |
+| Biểu diễn | RF AUC-PR | RF ECE | XGB ECE |
 |---|---|---|---|
-| PCA-4 | 0,9481 | **0,6561** | **0,6210** |
-| K=20 | 0,9581 | 0,6726 | 0,6141 |
-| **122 đặc trưng** | **0,9648** | 0,7765 | 0,7943 |
+| PCA-4 | 0,9481 | 0,1836 | 0,1758 |
+| **122 đặc trưng** | **0,9648** | 0,1858 | 0,1818 |
 
-Nhiều đặc trưng **không** làm cây đáng tin hơn — nó làm cây **kém tin hơn**, trong khi xếp
-hạng thì tốt lên. Đúng cái tách rời mà bài này nói. Nghĩa là bảng chính **không** phải sản
-phẩm của một biểu diễn chật chội: đó đã là thiết lập hiệu chỉnh **có lợi nhất** cho cây.
+Xếp hạng tốt lên rõ; hiệu chỉnh **xấu đi nhẹ** và không chỗ nào tiến gần QSVM. Điểm cần nói
+không phải là biểu diễn giàu hơn làm hại cây nhiều — mà là nó **không giúp** gì cho hiệu chỉnh
+của cây. Nghĩa là bảng chính đã là thiết lập **có lợi nhất** cho cây.
+
+> Lưu ý: trên chỉ số `ECE_rare` cũ thì hiệu ứng này lớn hơn nhiều (0,656 → 0,777). Nhưng chỉ
+> số đó đã bị loại, nên con số mạnh kia **không** được mang sang.
 
 ### "Sao chỉ thử mỗi Platt?"
 
@@ -112,10 +133,12 @@ và gần như không cho ai khác.**
 python runners/run_p2_rebuild.py          # 10 run, 2 tập test   (~30 giây)
 python runners/run_p2_rebuild_extra.py    # low-data, prior shift, Platt  (~2 phút)
 python runners/run_p2_rebuild_refarm.py   # nhánh đối chứng + 3 bộ hiệu chỉnh (~40 giây)
+python runners/run_p2_rebuild_unsw.py     # UNSW, cả 4 và 6 qubit     (~3 phút)
+python runners/verify_rare_identity.py    # 152/152  đẳng thức suy biến
 python runners/analyze_p2_rebuild.py      # Wilcoxon + bootstrap CI + Holm
 python runners/make_p2_rebuild_figures.py # 4 hình
-python runners/make_p2_rebuild_tables.py  # bảng + 147 macro số
-python runners/audit_p2_rebuild.py        # 151/151
+python runners/make_p2_rebuild_tables.py  # bảng + 171 macro số
+python runners/audit_p2_rebuild.py        # 121/121
 python runners/check_latex.py paper/paper2_rebuild/main.tex
 ```
 
@@ -129,12 +152,11 @@ Prose **không được viết số trực tiếp**; mọi con số đi qua macr
 `audit_p2_rebuild.py` kiểm ba lớp, trong đó lớp thứ ba quan trọng nhất — nó khoá đúng những
 luận điểm bài **được phép** và **không được phép** claim:
 
-- QSVM thắng cả hai mô hình cây sau Holm → **phải đúng**
-- QSVM vs SVM-RBF là inconclusive → **phải đúng**, bài không được claim thắng
-- Platt chỉ giúp QSVM → **phải đúng**
-- QSVM xếp hạng cao hơn trên tập test nhỏ → **phải đúng**, đó là luận điểm cảnh báo
-- Cho cây đủ 122 đặc trưng thì xếp hạng tốt lên mà hiệu chỉnh tệ đi → **phải đúng**
-- Cả ba bộ hiệu chỉnh làm xấu mô hình cây và làm tốt QSVM → **phải đúng**
+- QSVM thắng cả hai mô hình cây sau Holm, ở **cả ba** thiết lập → phải đúng
+- Bài **không** được claim thắng MLP → phải đúng
+- `ECE_rare == 1 − p̄` (lệch < 1e-12) và ECE toàn tập **không** suy biến → phải đúng
+- Cho cây đủ 122 đặc trưng thì xếp hạng tốt lên mà hiệu chỉnh không tốt lên → phải đúng
+- Cả ba bộ hiệu chỉnh làm xấu cây và làm tốt QSVM → phải đúng
 
 Và một phép kiểm nữa: **mọi macro dùng trong bài phải được định nghĩa**. Thiếu nó thì gõ sai
 một tên macro sẽ lọt — audit vẫn xanh còn LaTeX thì chết. Tôi đã cố tình tiêm lỗi để xác nhận
@@ -151,6 +173,5 @@ một nẻo.
 |---|---|
 | 1 | Viết prose — các chỗ `% TODO` |
 | 2 | Danh mục tham khảo (giữ của bản đã nộp) |
-| 3 | Bàn với thầy: đổi luận điểm chủ đạo là thay đổi lớn |
-| 4 | Calibration trên UNSW-NB15 — đóng giới hạn "một dataset" bài tự khai |
-| 5 | Nhiễu → calibration: bài tự viết *"left to a hardware study"* |
+| 3 | Gửi thầy duyệt — đổi trục chủ đạo là thay đổi lớn |
+| 4 | Nhiễu → calibration: bài tự viết *"left to a hardware study"* |
