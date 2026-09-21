@@ -147,6 +147,78 @@ NUMBER_WHITELIST = {
 }
 
 
+def audit_selection(m: dict[str, str]) -> None:
+    """Khoa muc "What would have caught it" -- phep do moi.
+
+    Muc nay LAT LAI mot cau ban truoc viet suong ("neither would have
+    selected the degenerate constant here"). Cau do dung cho kernel luong tu
+    va RBF, SAI cho kernel tuyen tinh. Neu artifact duoc sinh lai va so lieu
+    doi chieu, cac phep kiem duoi day phai do cho bai truoc khi nguoi doc do.
+    """
+    cur = pd.read_csv(ROOT / "results/unsw/paper3/p3_c_curve.csv")
+    obj = pd.read_csv(ROOT / "results/unsw/paper3/p3_objective.csv")
+    rep = load("results/unsw/paper3/p3_reproduction.json")
+
+    # CONG KIEM CHUNG. Duong ong sinh ra so moi phai tra ve dung nhung so
+    # DA IN. Khong dat thi moi so o muc nay deu vo gia tri.
+    check(bool(rep["reproduced"]), "duong ong tai lap duoc so da cong bo")
+    check(rep["cv_max_abs_dev"] == 0.0, "CV tai lap khit tuyet doi")
+    check(max(rep["test_tuned_max_abs_dev"],
+              rep["test_neutral_max_abs_dev"]) < 1e-12, "test tai lap khit")
+    check(m["reproCv"] == f"{rep['cv_max_abs_dev']:g}", "reproCv")
+
+    g = (cur.groupby(["kernel", "C"])
+            .agg(f1=("f1", "mean"), f1m=("f1_macro", "mean"),
+                 deg=("degenerate", "sum")).reset_index())
+    nrun = int(cur.run.nunique())
+    check(m["curveRuns"] == str(nrun), "curveRuns")
+    check(m["curveNc"] == str(cur.C.nunique()), "curveNc")
+    # Luoi day phai CHUA tron ven luoi goc, neu khong thi hai phep do khong
+    # so sanh duoc voi nhau.
+    dense = set(cur.C.round(10))
+    check(all(round(c, 10) in dense for c in (0.01, 0.1, 1.0, 10.0, 100.0)),
+          "luoi day chua tron ven luoi goc 5 diem")
+
+    q = g[g.kernel == "quantum"].sort_values("C")
+    esc = float(q[q.deg == 0].C.min())
+    check(m["curveEscapeC"] == f"{esc:g}", "curveEscapeC")
+    # Claim: kernel luong tu thoat trong khoang (0,1 ; 1) -- dung cho ma luoi
+    # goc buoc qua. Ca muc dua vao day.
+    check(0.1 < esc < 1.0,
+          f"quantum thoat giua 0,1 va 1 (thuc te {esc:g})")
+
+    lo = q[q.C == q.C.min()].iloc[0]
+    hi = q[q.C == esc].iloc[0]
+    check(m["curveFoneRise"] == f"{hi.f1 - lo.f1:+.4f}", "curveFoneRise")
+    check(m["curveMacroRise"] == f"{hi.f1m - lo.f1m:+.4f}", "curveMacroRise")
+    ratio = (hi.f1m - lo.f1m) / (hi.f1 - lo.f1)
+    check(m["curveRiseRatio"] == f"{ratio:.0f}", "curveRiseRatio")
+    # Claim trung tam cua Hinh 3(a): macro F1 nhay manh hon HAN.
+    check(ratio > 3.0, f"macro F1 nhay manh hon binary F1 ({ratio:.1f}x)")
+
+    for k, tag in (("quantum", "Q"), ("linear", "Lin"), ("rbf", "Rbf")):
+        for o, otag in (("f1_binary", "Bin"), ("f1_macro", "Mac"),
+                        ("balanced_accuracy", "Bal")):
+            r = obj[(obj.kernel == k) & (obj.objective == o)].iloc[0]
+            check(m[f"obj{tag}{otag}C"] == f"{r.selected_C:.3g}",
+                  f"obj{tag}{otag}C")
+            check(m[f"obj{tag}{otag}Deg"]
+                  == f"{int(r.n_degenerate)}/{int(r.n_runs)}",
+                  f"obj{tag}{otag}Deg")
+
+    # HAI CLAIM cua muc, doc thang tu bang.
+    qq = obj[obj.kernel == "quantum"]
+    check((qq.n_degenerate == 0).all(),
+          "tren luoi day, MOI ham muc tieu deu chon C khong suy bien cho "
+          "kernel luong tu")
+    ll = obj[obj.kernel == "linear"]
+    check((ll.n_degenerate > 0).all(),
+          "va o kernel tuyen tinh thi KHONG ham nao tranh duoc -- day la cho "
+          "cau 'class-averaged objective la du' bi bac bo")
+    check(ll.selected_C.nunique() == 1,
+          "ba ham muc tieu tra ve cung mot C cho kernel tuyen tinh")
+
+
 def audit_macros_defined(tex: str, m: dict) -> None:
     r"""Moi macro \p... DUNG trong bai phai duoc DINH NGHIA.
 
@@ -213,10 +285,10 @@ def audit_invariants() -> None:
 
 # --------------------------------------------------------------------------
 def audit_assets() -> None:
-    figs = ["fig1_tuning_trap", "fig2_k_sweep"]
+    figs = ["fig1_tuning_trap", "fig2_k_sweep", "fig3_objective"]
     for rel in [f"figs/{f}.pdf" for f in figs] + [
-            "tables/degeneracy_census.tex", "tables/numbers_macros.tex",
-            "main.tex"]:
+            "tables/degeneracy_census.tex", "tables/objective_table.tex",
+            "tables/numbers_macros.tex", "main.tex"]:
         check((PAPER / rel).exists(), f"co {rel}")
     # Hinh sinh ra ma khong duoc chen vao bai thi coi nhu khong ton tai.
     body = read(PAPER / "main.tex")
@@ -233,6 +305,7 @@ def audit_assets() -> None:
 def main() -> int:
     macros = parse_macros(read(PAPER / "tables" / "numbers_macros.tex"))
     audit_macros(macros)
+    audit_selection(macros)
     tex = read(PAPER / "main.tex")
     audit_macros_defined(tex, macros)
     audit_prose_numbers(tex)

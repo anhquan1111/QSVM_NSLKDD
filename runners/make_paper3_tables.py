@@ -42,6 +42,13 @@ PRETTY = {
     "RandomForest": "Random forest", "XGBoost": "XGBoost",
 }
 
+# Ten giao thuc nhu muc 2 cua bai dat, khong phai ten arm trong code.
+PRETTY_PROTO = {
+    "legacy-tuned": "tuned",
+    "legacy-neutral": "tuned data, neutral $C$",
+    "revision-tuned_once": "revision",
+}
+
 
 def load(rel: str) -> dict:
     with io.open(ROOT / rel, encoding="utf-8") as f:
@@ -134,15 +141,26 @@ def to_latex(df: pd.DataFrame) -> str:
         r"\emph{every} run, so no value of $C$ on the grid scored above the",
         r"degenerate floor and $\arg\max$ selection locked the collapse in.}",
         r"\label{tab:degeneracy}",
-        r"\begin{tabular}{llrrr}",
+        r"\begin{tabular}{l@{\hskip 1.2em}l@{\hskip 1.2em}rrr}",
         r"\toprule",
-        r"Protocol & Model & $C$ & Degenerate & Runs \\",
+        r"Protocol & Model & Selected $C$ & Degenerate & Runs \\",
         r"\midrule",
     ]
     prev = None
     for _, r in df.iterrows():
         proto = r["protocol"]
-        shown = "" if proto == prev else proto.replace("_", r"\_")
+        # Ten arm noi bo (`legacy-tuned`, `revision-tuned_once`) khong xuat
+        # hien o dau khac trong bai: muc 2 chi dat ten "tuned" va "revision".
+        # De nguyen thi bang va van ban goi hai ten khac nhau cho mot thu,
+        # va "legacy-neutral" thi khong duoc dinh nghia o dau ca.
+        if proto != prev and proto in PRETTY_PROTO:
+            shown = PRETTY_PROTO[proto]
+        elif proto != prev:
+            shown = proto.replace("_", r"\_")
+        else:
+            shown = ""
+        if prev is not None and proto != prev:
+            lines.append(r"\addlinespace[2pt]")
         prev = proto
         c = "--" if pd.isna(r["selected_C"]) else f"{r['selected_C']:g}"
         lines.append(
@@ -153,7 +171,7 @@ def to_latex(df: pd.DataFrame) -> str:
     return "\n".join(lines)
 
 
-def write_macros(df: pd.DataFrame, totals: dict) -> str:
+def write_macros(df: pd.DataFrame, totals: dict, extra: dict) -> str:
     """Moi con so bai trich dan deu phai di qua day.
 
     Cung khuon voi `paper/paper1/tables/ref_arm_macros.tex`: prose khong bao
@@ -222,10 +240,114 @@ def write_macros(df: pd.DataFrame, totals: dict) -> str:
         "revRuns": str(int(pd.read_csv(ROOT / "results/unsw/c4_revision"
                        / "c4_per_run_unsw_natural_refit_per_N.csv").run_id.nunique())),
     }
+    m.update(extra)
     lines = ["% Sinh boi runners/make_paper3_tables.py -- dung sua tay.",
              "% Prose KHONG duoc viet so truc tiep; dung macro o day."]
     lines += [f"\\newcommand{{\\p{k}}}{{{v}}}" for k, v in m.items()]
     return "\n".join(lines) + "\n"
+
+
+OBJ_PRETTY = {
+    "f1_binary": r"binary $F_1$",
+    "f1_macro": r"macro $F_1$",
+    "balanced_accuracy": "balanced accuracy",
+}
+
+
+def objective_table() -> tuple[str, pd.DataFrame]:
+    """Bang 2 -- ham muc tieu nao tranh duoc cu sup, DO chu khong doan.
+
+    Bai truoc day khang dinh bang lap luan rang macro F1 va balanced accuracy
+    "neither would have selected the degenerate constant here". Day la ket
+    qua do that, va no chi dung MOT PHAN: dung cho kernel luong tu va RBF,
+    SAI cho kernel tuyen tinh, noi ca ba ham muc tieu deu chon cung mot C va
+    C do van sup tren mot run. Bang phai cho thay ca cho no sai.
+    """
+    o = pd.read_csv(CSV_OUT / "p3_objective.csv")
+    order = ["quantum", "rbf", "poly", "linear"]
+    o["_k"] = o.kernel.map({k: i for i, k in enumerate(order)})
+    o["_o"] = o.objective.map({k: i for i, k in enumerate(OBJ_PRETTY)})
+    o = o.sort_values(["_k", "_o"])
+
+    lines = [
+        "% Sinh boi runners/make_paper3_tables.py -- dung sua tay.",
+        r"\begin{table}[t]",
+        r"\centering",
+        r"\caption{What selection returns on a denser grid, under three",
+        r"objectives. The grid is the same for every row; only the quantity",
+        r"$\arg\max$ maximises changes. \emph{Degenerate} counts the runs on",
+        r"which the selected model assigns every test record to the attack",
+        r"class. Two things follow. A class-averaged objective is not",
+        r"sufficient: for the linear kernel all three objectives return the",
+        r"same $C$ and that $C$ is still degenerate on one run. And the",
+        r"original grid, not only the objective, was part of the failure:",
+        r"on this grid even binary $F_1$ finds a non-degenerate maximum for",
+        r"the quantum kernel.}",
+        r"\label{tab:objective}",
+        r"\begin{tabular}{l@{\hskip 1.0em}l@{\hskip 1.0em}rrrr}",
+        r"\toprule",
+        r"Kernel & Selection objective & Returns $C$ & CV score"
+        r" & Degen. & Macro $\Fone$ \\",
+        r"\midrule",
+    ]
+    prev = None
+    for _, r in o.iterrows():
+        if prev is not None and r.kernel != prev:
+            lines.append(r"\addlinespace[2pt]")
+        shown = PRETTY.get(r.kernel, r.kernel) if r.kernel != prev else ""
+        prev = r.kernel
+        lines.append(
+            f"{shown} & {OBJ_PRETTY[r.objective]} & {r.selected_C:.3g} & "
+            f"{r.cv_mean:.4f} & {int(r.n_degenerate)}/{int(r.n_runs)} & "
+            f"{r.test_f1_macro:.4f} " + r"\\")
+    lines += [r"\bottomrule", r"\end{tabular}", r"\end{table}", ""]
+    return "\n".join(lines), o
+
+
+def objective_macros(o: pd.DataFrame) -> dict:
+    """Macro cho muc moi. Moi con so bai viet phai di qua day."""
+    cur = pd.read_csv(CSV_OUT / "p3_c_curve.csv")
+    rep = json.load(io.open(CSV_OUT / "p3_reproduction.json", encoding="utf-8"))
+    g = (cur.groupby(["kernel", "C"])
+            .agg(f1=("f1", "mean"), f1m=("f1_macro", "mean"),
+                 deg=("degenerate", "sum"))
+            .reset_index())
+    q = g[g.kernel == "quantum"].sort_values("C")
+    nrun = int(cur.run.nunique())
+
+    # Bien chuyen: C nho nhat ma khong con run nao sup.
+    esc = q[q.deg == 0].C.min()
+    lo, hi = q[q.C == q.C.min()].iloc[0], q[q.C == esc].iloc[0]
+
+    def row(k, obj):
+        return o[(o.kernel == k) & (o.objective == obj)].iloc[0]
+
+    m = {
+        "curveNc": str(len(rep["c_grid"])),
+        "curveCmin": f"{min(rep['c_grid']):g}",
+        "curveCmax": f"{max(rep['c_grid']):g}",
+        "curveRuns": str(nrun),
+        # Do "mu" cua F1 nhi phan: di tu day suy bien den diem thoat, F1
+        # nhi phan nhuc nhich bao nhieu, macro F1 bao nhieu.
+        "curveEscapeC": f"{esc:g}",
+        "curveFoneLo": f"{lo.f1:.4f}",
+        "curveFoneHi": f"{hi.f1:.4f}",
+        "curveFoneRise": f"{hi.f1 - lo.f1:+.4f}",
+        "curveMacroLo": f"{lo.f1m:.4f}",
+        "curveMacroHi": f"{hi.f1m:.4f}",
+        "curveMacroRise": f"{hi.f1m - lo.f1m:+.4f}",
+        "curveRiseRatio": f"{(hi.f1m - lo.f1m) / (hi.f1 - lo.f1):.0f}",
+        # Cong kiem chung tai lap.
+        "reproCv": f"{rep['cv_max_abs_dev']:g}",
+        "reproTest": f"{max(rep['test_tuned_max_abs_dev'], rep['test_neutral_max_abs_dev']):.1e}",
+    }
+    for k, tag in (("quantum", "Q"), ("linear", "Lin"), ("rbf", "Rbf")):
+        for obj, otag in (("f1_binary", "Bin"), ("f1_macro", "Mac"),
+                          ("balanced_accuracy", "Bal")):
+            r = row(k, obj)
+            m[f"obj{tag}{otag}C"] = f"{r.selected_C:.3g}"
+            m[f"obj{tag}{otag}Deg"] = f"{int(r.n_degenerate)}/{int(r.n_runs)}"
+    return m
 
 
 def main() -> int:
@@ -242,9 +364,14 @@ def main() -> int:
     with io.open(CSV_OUT / "degeneracy_totals.json", "w", encoding="utf-8") as f:
         json.dump(totals, f, indent=1)
 
+    obj_tex, obj_df = objective_table()
+    obj_path = TEX_OUT / "objective_table.tex"
+    with io.open(obj_path, "w", encoding="utf-8") as f:
+        f.write(obj_tex)
+
     mac_path = TEX_OUT / "numbers_macros.tex"
     with io.open(mac_path, "w", encoding="utf-8") as f:
-        f.write(write_macros(df, totals))
+        f.write(write_macros(df, totals, objective_macros(obj_df)))
 
     print(df.to_string(index=False))
     print()
@@ -262,6 +389,7 @@ def main() -> int:
     print(f"  Suy bien o nhanh co dien  : {len(c_deg)} cau hinh")
     print(f"  -> {csv_path.relative_to(ROOT).as_posix()}")
     print(f"  -> {tex_path.relative_to(ROOT).as_posix()}")
+    print(f"  -> {obj_path.relative_to(ROOT).as_posix()}")
     print(f"  -> {mac_path.relative_to(ROOT).as_posix()}")
     return 0
 

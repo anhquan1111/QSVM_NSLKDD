@@ -35,6 +35,13 @@ ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / "paper" / "paper3_aicon" / "figs"
 OUT.mkdir(parents=True, exist_ok=True)
 
+# Be rong vung chu cua llncs la 12,2 cm = 4,80 inch -- KHONG phai 7,16 inch
+# cua mot cot doi IEEE. Ve o kho khac roi nho \includegraphics thu/phong ve
+# day la cach chac chan lam sai co chu: hinh 1 tung ve 6,57 inch nen chu 8 pt
+# in ra con 5,8 pt, con hinh 2 ve 3,46 inch nen bi PHONG len thanh 11 pt. Hai
+# hinh trong cung mot bai nhin nhu hai co chu khac nhau. Ve dung kho thi thoi.
+TEXTW = 4.80
+
 # --------------------------------------------------------------------------
 # Token -- dong bo voi make_paper1_figures.py
 # --------------------------------------------------------------------------
@@ -132,16 +139,24 @@ def fig1_tuning_trap():
         for k in KERNEL_ORDER
     ), "Gia dinh 'moi kernel cham san tai C=0.01' khong con dung"
 
+    # Hai panel XEP DOC. Canh nhau o kho 4,80 inch thi moi panel chi con
+    # 2,3 inch: hai tieu de cham nhau, nhan "constant all-attack classifier"
+    # de len duong cong luong tu, va nhan gia tri o panel (b) de len legend.
+    # Xep doc thi ca hai duoc tron be rong.
     fig, (ax, bx) = plt.subplots(
-        1, 2, figsize=(7.16, 3.05), gridspec_kw=dict(width_ratios=[1.38, 1.0], wspace=0.34)
+        2, 1, figsize=(TEXTW, 4.40),
+        gridspec_kw=dict(height_ratios=[1.28, 1.0], hspace=0.52)
     )
 
     # -- (a) diem CV theo C, voi nguong san --------------------------------
     ax.axhline(floor, color=ORANGE, lw=1.3, ls=(0, (4, 2)), zorder=2)
     # Dat nhan o goc phai tren duong san: vung C in [10,100] phia tren san
     # khong co duong nao di qua.
+    # Dai y in [0,857; 0,872] o phia phai (C > 3) khong co duong nao di qua:
+    # bon kernel co dien dang o 0,881 va 0,873, con quantum o 0,850. Dat sat
+    # ngay tren duong san thi no de len chinh duong quantum.
     ax.text(
-        115, floor + 0.0022,
+        115, floor + 0.0105,
         f"constant all-attack classifier, $F_1={floor:.4f}$",
         color=ORANGE, fontsize=6.8, va="bottom", ha="right", zorder=7,
     )
@@ -167,10 +182,13 @@ def fig1_tuning_trap():
     ax.set_xlabel("SVM regularisation $C$  (log scale)")
     ax.set_ylabel("5-fold CV $F_1$")
     ax.set_title("(a)  Selection cannot escape the floor", loc="left")
-    ax.set_ylim(0.740, 0.903)
+    ax.set_ylim(0.740, 0.906)
     tidy(ax)
-    ax.legend(loc="lower left", ncol=2, handlelength=2.3, columnspacing=1.0,
-              borderpad=0.2, labelspacing=0.3, bbox_to_anchor=(-0.01, -0.02))
+    # Goc duoi-phai: duong luong tu cam xuong 0,749 tai C=100 nen goc
+    # duoi-TRAI van bi no di qua; ben phai duoi 0,80 thi trong.
+    ax.legend(loc="lower left", ncol=2, handlelength=2.0, columnspacing=0.9,
+              borderpad=0.2, labelspacing=0.3, fontsize=6.8,
+              bbox_to_anchor=(-0.012, -0.025))
 
     # -- (b) hau qua tren tap test -----------------------------------------
     # TN khong nam trong summary; lay tu khoi so sanh da luu san.
@@ -207,13 +225,16 @@ def fig1_tuning_trap():
     bx.set_yticks(y)
     bx.set_yticklabels(labels)
     bx.invert_yaxis()
-    bx.set_xlim(0, 1.46)
+    bx.set_xlim(0, 1.85)
     bx.set_xticks([0, 0.25, 0.5, 0.75, 1.0])
     bx.set_xlabel("Test-set value")
     bx.set_title("(b)  What the selected $C$ costs", loc="left")
     tidy(bx, axis="x")
-    bx.legend(loc="lower left", ncol=2, borderpad=0.2, labelspacing=0.3,
-              columnspacing=1.0, bbox_to_anchor=(-0.01, -0.02))
+    # Goc duoi-TRAI la cho nhan gia tri cua hang Specificity nam ("0.000
+    # (0.0/36)"), nen legend de len no. Hang do ngan nhat, phan phai trong.
+    bx.legend(loc="lower right", ncol=2, borderpad=0.2, labelspacing=0.3,
+              columnspacing=1.0, fontsize=7.2,
+              bbox_to_anchor=(1.01, -0.02))
 
     save(fig, "fig1_tuning_trap")
 
@@ -232,7 +253,7 @@ def fig2_k_sweep():
     # Nguong suy bien: F1 cua bo phan loai hang, da luu trong tung run.
     floor = rows[0]["per_run"][0]["quantum"]["f1_predict_all_attack"]
 
-    fig, ax = plt.subplots(figsize=(3.48, 2.6))
+    fig, ax = plt.subplots(figsize=(TEXTW, 2.30))
 
     ax.axhline(floor, color=ORANGE, lw=1.3, ls=(0, (4, 2)), zorder=2)
     ax.text(10.4, floor - 0.0016, "degenerate $F_1$", color=ORANGE,
@@ -247,7 +268,9 @@ def fig2_k_sweep():
     if len(plateau) > 1:
         ax.axvspan(ks[plateau[0]], ks[-1], color=SHADE, zorder=1)
         ax.text(
-            (ks[plateau[0]] * ks[-1]) ** 0.5, 0.7805,
+            # Nhac len khoi duong san (0,7805): dong "K >= 80" dang nam dung
+            # tren net dut mau cam.
+            (ks[plateau[0]] * ks[-1]) ** 0.5, 0.7818,
             f"identical to 16 s.f.\n$K \\geq {ks[plateau[0]]}$",
             fontsize=6.8, color=INK_MUTED, ha="center", va="bottom", zorder=5,
         )
@@ -265,10 +288,92 @@ def fig2_k_sweep():
     save(fig, "fig2_k_sweep")
 
 
+# --------------------------------------------------------------------------
+# Hinh 3 -- luoi C day tren tap test: ham muc tieu nao nhin thay cu sup
+# --------------------------------------------------------------------------
+def fig3_objective_blindness():
+    """Vi sao F1 nhi phan khong bat duoc cu sup, con macro F1 thi bat duoc.
+
+    Bai dang khang dinh dieu nay bang lap luan ("binary F1 ignores true
+    negatives entirely"). Day la cho DO no: tren cung mot day mo hinh, di tu
+    C nho len C lon, hai duong nay ke cho thay F1 nhi phan gan nhu khong
+    nhuc nhich trong khi mo hinh chuyen tu doan-tat-ca-tan-cong sang lam
+    viec that.
+
+    Nguon: results/unsw/paper3/p3_c_curve.csv, sinh boi
+    runners/run_paper3_selection.py (Gram luong tu doc tu cache, khong tinh
+    lai mach nao).
+    """
+    import pandas as pd
+
+    cur = pd.read_csv(ROOT / "results/unsw/paper3/p3_c_curve.csv")
+    g = (cur.groupby(["kernel", "C"])
+            .agg(f1=("f1", "mean"), f1m=("f1_macro", "mean"),
+                 deg=("degenerate", "sum"))
+            .reset_index())
+    nrun = cur.run.nunique()
+
+    fig, (ax, bx) = plt.subplots(
+        1, 2, figsize=(TEXTW, 2.45),
+        gridspec_kw=dict(width_ratios=[1.0, 1.0], wspace=0.40))
+
+    # -- (a) hai ham muc tieu tren cung mot day mo hinh luong tu ----------
+    q = g[g.kernel == "quantum"].sort_values("C")
+    # Vung moi run deu sup. Lay tu du lieu, khong viet tay.
+    degC = q[q.deg == nrun].C
+    edge = float(degC.max()) if len(degC) else None
+    if edge is not None:
+        nxt = float(q[q.C > edge].C.min())
+        ax.axvspan(float(q.C.min()), (edge * nxt) ** 0.5, color=SHADE,
+                   zorder=1)
+        # Giua dai to bong, tu 0,42 den 0,76, khong co duong nao di qua:
+        # binary F1 nam o 0,776 con macro F1 o 0,388. Dat nhan vao do thi no
+        # khong cham legend o goc tren lan hai duong cong.
+        ax.text((float(q.C.min()) * edge) ** 0.5, 0.59,
+                f"all {nrun} runs\ndegenerate", color=INK_MUTED, fontsize=6.6,
+                ha="center", va="center", zorder=6)
+
+    ax.plot(q.C, q.f1, color=ORANGE, ls="-", lw=2.0, marker="o", ms=3.6,
+            mew=0.5, mec=SURFACE, zorder=6, label="binary $F_1$ (used)")
+    ax.plot(q.C, q.f1m, color=BLUE, ls=(0, (4, 1.6)), lw=1.8, marker="s",
+            ms=3.6, mew=0.5, mec=SURFACE, zorder=5,
+            label="macro $F_1$")
+    ax.set_xscale("log")
+    ax.set_ylim(0.32, 1.0)
+    ax.set_xlabel("SVM regularisation $C$  (log scale)")
+    ax.set_ylabel("test-set score, quantum kernel")
+    ax.set_title("(a)  Blind to the collapse", loc="left", fontsize=8)
+    tidy(ax)
+    # Goc tren-phai: o do binary F1 dat 0,82 va macro 0,70, nen vung tren
+    # 0,86 khong co duong nao. Goc duoi-phai thi de len chinh duong macro.
+    ax.legend(loc="upper right", borderpad=0.2, labelspacing=0.25,
+              handletextpad=0.4, fontsize=6.8)
+
+    # -- (b) bao nhieu run sup, theo C, cho ca bon kernel -----------------
+    for key in KERNEL_ORDER:
+        s = KERNEL_STYLE[key]
+        r = g[g.kernel == key].sort_values("C")
+        bx.step(r.C, r.deg, where="post", color=s["color"], ls=s["ls"],
+                lw=s["lw"], zorder=s["z"], label=s["label"])
+    bx.set_xscale("log")
+    bx.set_ylim(-0.35, nrun + 0.55)
+    bx.set_yticks(range(nrun + 1))
+    bx.set_xlabel("SVM regularisation $C$  (log scale)")
+    bx.set_ylabel(f"degenerate runs (of {nrun})")
+    bx.set_title("(b)  Where each kernel escapes", loc="left", fontsize=8)
+    tidy(bx)
+    # Voi C > 1 moi kernel deu ve 0, nen ca goc tren-phai la vung trong.
+    bx.legend(loc="upper right", borderpad=0.25, labelspacing=0.3,
+              handletextpad=0.5, handlelength=2.2, fontsize=6.4)
+
+    save(fig, "fig3_objective")
+
+
 def main() -> int:
     print("Sinh hinh cho paper 3 (AICON 2026):")
     fig1_tuning_trap()
     fig2_k_sweep()
+    fig3_objective_blindness()
     print(f"\n  Tat ca nam trong {OUT.relative_to(ROOT).as_posix()}")
     return 0
 

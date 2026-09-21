@@ -10,16 +10,18 @@ What is specific to the quantum kernel is that it collapsed on
 \emph{every} run, so no value of $C$ on the grid scored above the
 degenerate floor and $\arg\max$ selection locked the collapse in.}
 \label{tab:degeneracy}
-\begin{tabular}{llrrr}
+\begin{tabular}{l@{\hskip 1.2em}l@{\hskip 1.2em}rrr}
 \toprule
-Protocol & Model & $C$ & Degenerate & Runs \\
+Protocol & Model & Selected $C$ & Degenerate & Runs \\
 \midrule
-legacy-tuned & Quantum (ZZ) & 0.01 & 5 & 5 \\
+tuned & Quantum (ZZ) & 0.01 & 5 & 5 \\
  & SVM-linear & 0.1 & 1 & 5 \\
  & SVM-poly2 & 0.1 & 1 & 5 \\
  & SVM-RBF & 1 & 0 & 5 \\
-legacy-neutral & Quantum (ZZ) & 1 & 0 & 35 \\
-revision-tuned\_once & SVM-RBF & -- & 9 & 10 \\
+\addlinespace[2pt]
+tuned data, neutral $C$ & Quantum (ZZ) & 1 & 0 & 35 \\
+\addlinespace[2pt]
+revision & SVM-RBF & -- & 9 & 10 \\
 \bottomrule
 \end{tabular}
 \end{table}
