@@ -119,33 +119,36 @@ def strip_comments(text: str) -> str:
     return re.sub(r"(?<!" + BS + BS + r")%.*", "", text)
 
 
-def inputs_recursive(path: Path, seen: set[Path]) -> list[Path]:
+def inputs_recursive(path: Path, seen: set[Path],
+                     base: Path | None = None) -> list[Path]:
+    base = base or PAPER
     out: list[Path] = []
     text = io.open(path, encoding="utf-8").read()
     # LaTeX phan giai \input theo thu muc TAI LIEU CHINH, khong theo thu muc
     # cua file chua lenh -- nen \input{figs_revision/x} viet trong sections/
     # van tro toi paper/paper1/figs_revision/x.
     for t in re.findall(BS + BS + r"input\{([^}]*)\}", text):
-        for cand in (PAPER / t, PAPER / (t + ".tex"),
+        for cand in (base / t, base / (t + ".tex"),
                      path.parent / t, path.parent / (t + ".tex")):
             if cand.exists():
                 if cand not in seen:
                     seen.add(cand)
                     out.append(cand)
-                    out += inputs_recursive(cand, seen)
+                    out += inputs_recursive(cand, seen, base)
                 break
         else:
             print(f"  CANH BAO: khong tim thay \\input{{{t}}}")
     return out
 
 
-def graphics_of(files: list[Path]) -> list[Path]:
+def graphics_of(files: list[Path], base: Path | None = None) -> list[Path]:
+    base = base or PAPER
     out: list[Path] = []
     for f in files:
         text = io.open(f, encoding="utf-8").read()
         for g in re.findall(BS + BS + r"includegraphics(?:\[[^\]]*\])?\{([^}]*)\}",
                             text):
-            p = PAPER / g
+            p = base / g
             if not p.exists() and not p.suffix:
                 p = p.with_suffix(".pdf")
             if p.exists():
@@ -156,11 +159,13 @@ def graphics_of(files: list[Path]) -> list[Path]:
     return out
 
 
-def write_zip(zip_path: Path, files: list[Path], head: str, tail: str = "") -> None:
+def write_zip(zip_path: Path, files: list[Path], head: str, tail: str = "",
+              base: Path | None = None) -> None:
+    base = base or PAPER
     listing = []
     with zipfile.ZipFile(zip_path, "w", zipfile.ZIP_DEFLATED) as z:
         for f in files:
-            arc = f.relative_to(PAPER).as_posix()
+            arc = f.relative_to(base).as_posix()
             # Dong nhat ve LF: checkout tren Windows co the cho CRLF con
             # Overleaf chay Linux.
             if f.suffix == ".tex":
