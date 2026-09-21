@@ -192,7 +192,7 @@ def check_file(path: Path) -> tuple[set[str], set[str], set[str], set[str]]:
                 for m in re.findall(BS + BS + r"([A-Za-z]+)", seg):
                     if m in MATHONLY:
                         fail(rel, i,
-                             f"\{m} chi dung duoc trong che do toan (than macro "
+                             f"\\{m} chi dung duoc trong che do toan (than macro "
                              f"co ky hieu toan) nhung o day nam NGOAI $...$ -- "
                              f"pdflatex se bao Missing $ inserted")
 
