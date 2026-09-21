@@ -108,7 +108,13 @@ def audit_macros_defined(tex, m):
 
 
 # --- C -----------------------------------------------------------------
-NUMBER_WHITELIST = {"0", "1", "2", "4", "5", "0.0625"}
+NUMBER_WHITELIST = {
+    "0", "1", "2", "4", "5",
+    "0.0625",   # p nho nhat Wilcoxon dat duoc voi 5 cap -- hang so toan hoc
+    "0.05",     # muc y nghia alpha
+    "0.01", "0.99",  # nguong DINH NGHIA "bao hoa" -- tham so cua phep do,
+                     # khong phai ket qua do duoc
+}
 
 
 def audit_prose_numbers(tex):

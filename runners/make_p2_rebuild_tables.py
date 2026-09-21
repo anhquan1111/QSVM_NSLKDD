@@ -174,6 +174,52 @@ def macros(long, st, platt, ref, cal, identity) -> str:
         m[f"curve{key}Under"] = str(int((s.acc > s.conf).sum()))
     m["curveNbins"] = str(int(cv.bin.nunique()))
 
+    # Phan ra Brier, quet nguong, hieu chinh theo nhom.
+    br = pd.read_csv(NSL / "p2_rebuild_brier_decomp.csv")
+    gb = br.groupby("model")[["reliability", "resolution", "uncertainty"]].mean()
+    for model, key in MACRO.items():
+        m[f"br{key}Rel"] = num(gb.loc[model, "reliability"])
+        m[f"br{key}Res"] = num(gb.loc[model, "resolution"])
+    m["brUnc"] = num(gb.uncertainty.iloc[0])
+    m["brBestRel"] = PRETTY[gb.reliability.idxmin()]
+    m["brBestRes"] = PRETTY[gb.resolution.idxmax()]
+
+    th = pd.read_csv(NSL / "p2_rebuild_threshold.csv")
+    gt = th.groupby(["model", "threshold"]).mean(numeric_only=True)
+    for model, key in MACRO.items():
+        s = gt.loc[model]
+        t_best = float(s.f1_macro.idxmax())
+        m[f"th{key}Star"] = f"{t_best:.2f}"
+        m[f"th{key}RecallStar"] = f"{s.loc[t_best, 'recall_U2R']:.3f}"
+        m[f"th{key}RecallHalf"] = f"{s.loc[0.50, 'recall_U2R']:.3f}"
+        m[f"th{key}Fpr"] = f"{s.loc[t_best, 'fpr']:.3f}"
+        m[f"th{key}RecallBest"] = f"{s.recall_U2R.max():.3f}"
+
+    cc = pd.read_csv(NSL / "p2_rebuild_cal_percat.csv")
+    gcp = cc[cc.category.isin(["R2L", "U2R"])] \
+        .groupby(["calibrator", "model"]).mean_prob.mean()
+    for cname, tag in (("platt", "Platt"), ("isotonic", "Iso"),
+                       ("temperature", "Temp")):
+        for model, key in MACRO.items():
+            m[f"calrare{key}{tag}"] = num(gcp[(cname, model)])
+
+    # Bao hoa va do trung cua diem so -- co che giai thich ba ket qua kia.
+    sa = pd.read_csv(NSL / "p2_rebuild_saturation.csv")
+    gs = sa.groupby("model")[["sat_raw", "sat_cal", "distinct_frac"]].mean()
+    for model, key in MACRO.items():
+        m[f"sat{key}Raw"] = f"{gs.loc[model, 'sat_raw'] * 100:.1f}"
+        m[f"sat{key}Cal"] = f"{gs.loc[model, 'sat_cal'] * 100:.1f}"
+        m[f"sat{key}Distinct"] = f"{gs.loc[model, 'distinct_frac'] * 100:.1f}"
+
+    # Chi phi tinh toan.
+    co = pd.read_csv(NSL / "p2_rebuild_cost.csv")
+    gco = co.groupby("model")[["fit_s", "predict_s"]].mean()
+    for model, key in MACRO.items():
+        m[f"cost{key}Fit"] = f"{gco.loc[model, 'fit_s']:.3f}"
+        m[f"cost{key}Pred"] = f"{gco.loc[model, 'predict_s']:.3f}"
+    m["costFastestFit"] = PRETTY[gco.fit_s.idxmin()]
+    m["costNtest"] = thousands(co.n_test.iloc[0])
+
     head = ["% Sinh boi runners/make_p2_rebuild_tables.py -- dung sua tay.",
             "% Prose KHONG duoc viet so truc tiep; dung macro o day."]
     return "\n".join(head + [f"\\newcommand{{\\p{k}}}{{{v}}}"
@@ -346,6 +392,57 @@ def regime_table(long: pd.DataFrame, st: pd.DataFrame) -> str:
     return "\n".join(out)
 
 
+def depth_tables() -> str:
+    """Phan ra Brier va quet nguong."""
+    br = pd.read_csv(NSL / "p2_rebuild_brier_decomp.csv")
+    th = pd.read_csv(NSL / "p2_rebuild_threshold.csv")
+    gb = br.groupby("model")[["reliability", "resolution", "uncertainty",
+                              "brier"]].mean()
+    out = ["% Sinh boi runners/make_p2_rebuild_tables.py -- dung sua tay.",
+           r"\begin{table}[t]", r"\centering",
+           r"\caption{Murphy decomposition of the Brier score on KDDTest+, "
+           r"$\Brier=\mathrm{REL}-\mathrm{RES}+\mathrm{UNC}$, mean over "
+           r"$\pnRuns$ runs. Lower REL is better calibrated, higher RES "
+           r"discriminates better, UNC depends only on the data. The tree "
+           r"ensembles hold the best resolution and the worst reliability.}",
+           r"\label{tab:murphy}",
+           r"\begin{tabular}{lcccc}", r"\toprule",
+           r"Model & REL $\downarrow$ & RES $\uparrow$ & UNC & $\Brier$ \\",
+           r"\midrule"]
+    b_rel, b_res = gb.reliability.idxmin(), gb.resolution.idxmax()
+    for mdl in ORDER:
+        rel = num(gb.loc[mdl, "reliability"])
+        res = num(gb.loc[mdl, "resolution"])
+        out.append(f"{PRETTY[mdl]} & "
+                   + (r"\textbf{" + rel + "}" if b_rel == mdl else rel) + " & "
+                   + (r"\textbf{" + res + "}" if b_res == mdl else res)
+                   + f" & {num(gb.loc[mdl, 'uncertainty'])}"
+                   + f" & {num(gb.loc[mdl, 'brier'])} " + r"\\")
+    out += [r"\bottomrule", r"\end{tabular}", r"\end{table}", ""]
+
+    gt = th.groupby(["model", "threshold"]).mean(numeric_only=True)
+    out += [r"\begin{table}[t]", r"\centering",
+            r"\caption{Operating point. $\tau^{\ast}$ maximises macro $F_1$; "
+            r"U2R recall is given at the default threshold and at "
+            r"$\tau^{\ast}$, with the false-positive rate on Normal traffic "
+            r"that $\tau^{\ast}$ costs. Lowering the threshold recovers the "
+            r"rare class for the margin-based models and not for the tree "
+            r"ensembles.}",
+            r"\label{tab:threshold}",
+            r"\begin{tabular}{lccccc}", r"\toprule",
+            r"Model & $\tau^{\ast}$ & $F_1^{\ast}$ & U2R @ $0.5$ "
+            r"& U2R @ $\tau^{\ast}$ & FPR @ $\tau^{\ast}$ \\", r"\midrule"]
+    for mdl in ORDER:
+        s = gt.loc[mdl]
+        t = float(s.f1_macro.idxmax())
+        out.append(f"{PRETTY[mdl]} & {t:.2f} & {s.f1_macro.max():.4f} & "
+                   f"{s.loc[0.50, 'recall_U2R']:.3f} & "
+                   f"{s.loc[t, 'recall_U2R']:.3f} & "
+                   f"{s.loc[t, 'fpr']:.3f} " + r"\\")
+    out += [r"\bottomrule", r"\end{tabular}", r"\end{table}", ""]
+    return "\n".join(out)
+
+
 def main() -> int:
     long = load_long()
     st = pd.read_csv(NSL / "p2_rebuild_pairwise.csv")
@@ -357,6 +454,7 @@ def main() -> int:
                        ("side_tables.tex", side_tables(long)),
                        ("percat_table.tex", percat_table()),
                        ("regime_table.tex", regime_table(long, st)),
+                       ("depth_tables.tex", depth_tables()),
                        ("numbers_macros.tex",
                         macros(long, st, platt, ref, cal, identity_max_dev()))):
         p = OUT / name
