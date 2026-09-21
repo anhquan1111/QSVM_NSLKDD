@@ -1,0 +1,39 @@
+{
+ "nsl": {
+  "n_train": 125973,
+  "n_test": 22544,
+  "attack_rate_train": 0.4654,
+  "attack_rate_test": 0.5692,
+  "n_categories": 5,
+  "test_counts": {
+   "Normal": 9711,
+   "DoS": 7460,
+   "R2L": 2885,
+   "Probe": 2421,
+   "U2R": 67
+  },
+  "source_train": "data/nslkdd/processed_data/NSL_KDD_Train_Cleaned.csv",
+  "source_test": "data/nslkdd/processed_data/NSL_KDD_Test_Cleaned.csv"
+ },
+ "unsw": {
+  "n_train": 175341,
+  "n_test": 82332,
+  "attack_rate_train": 0.6806,
+  "attack_rate_test": 0.5506,
+  "n_categories": 10,
+  "test_counts": {
+   "Normal": 37000,
+   "Generic": 18871,
+   "Exploits": 11132,
+   "Fuzzers": 6062,
+   "DoS": 4089,
+   "Reconnaissance": 3496,
+   "Analysis": 677,
+   "Backdoor": 583,
+   "Shellcode": 378,
+   "Worms": 44
+  },
+  "source_train": "data/unsw/processed_data/UNSW_Train_Cleaned.parquet",
+  "source_test": "data/unsw/processed_data/UNSW_Test_Cleaned.parquet"
+ }
+}
