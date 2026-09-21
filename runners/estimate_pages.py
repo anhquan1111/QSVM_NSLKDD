@@ -29,6 +29,7 @@ CALIBRATION = [
     (2698, 5, 4, 6.0),    # commit e61c4cc, nguoi dung bao "6 trang"
     (3302, 7, 5, 7.2),    # commit 5e9a990, "7 trang qua duoc 1 xiu"
     (5191, 9, 6, 9.0),    # 2026-09-21, co ca 4 tieu su, "van con 9 trang"
+    (6503, 9, 6, 12.0),   # 2026-09-21 ban cuoi, do that tren Overleaf
 ]
 
 # CANH BAO. Mo hinh tuyen tinh khop tu HAI diem dau du doan diem thu ba la

@@ -141,7 +141,11 @@ def to_latex(df: pd.DataFrame) -> str:
         r"\emph{every} run, so no value of $C$ on the grid scored above the",
         r"degenerate floor and $\arg\max$ selection locked the collapse in.}",
         r"\label{tab:degeneracy}",
-        r"\begin{tabular}{l@{\hskip 1.2em}l@{\hskip 1.2em}rrr}",
+        # Ba cot so can phai, ma tieu de lai rong hon so ben duoi, nen khong
+        # chen khoang thi tieu de dinh vao nhau: "Selected C Degenerate Runs"
+        # doc ra nhu mot cum.
+        r"\begin{tabular}{l@{\hskip 1.2em}l@{\hskip 1.4em}r@{\hskip 1.4em}"
+        r"r@{\hskip 1.2em}r}",
         r"\toprule",
         r"Protocol & Model & Selected $C$ & Degenerate & Runs \\",
         r"\midrule",
@@ -284,7 +288,8 @@ def objective_table() -> tuple[str, pd.DataFrame]:
         r"on this grid even binary $F_1$ finds a non-degenerate maximum for",
         r"the quantum kernel.}",
         r"\label{tab:objective}",
-        r"\begin{tabular}{l@{\hskip 1.0em}l@{\hskip 1.0em}rrrr}",
+        r"\begin{tabular}{l@{\hskip 1.0em}l@{\hskip 1.4em}r@{\hskip 1.4em}"
+        r"r@{\hskip 1.4em}r@{\hskip 1.4em}r}",
         r"\toprule",
         r"Kernel & Selection objective & Returns $C$ & CV score"
         r" & Degen. & Macro $\Fone$ \\",

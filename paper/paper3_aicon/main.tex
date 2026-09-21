@@ -26,6 +26,31 @@
 \newif\ifanonymous
 \anonymoustrue
 
+% =====================================================================
+%  Tham so dat float. KHONG co doan nay thi ban build dau tien day CA BA
+%  hinh xuong cuoi bai, ra SAU danh muc tai lieu: Hinh 1 duoc ban ve o
+%  trang 4 nhung in o trang 10. Mac dinh cua LaTeX chi cho float chiem
+%  <=70% dinh trang va bat chua >=20% chu; Hinh 1 cao 58% cong chu thich
+%  la vua qua nguong, bi hoan lai, va Hinh 2-3 phai xep hang sau no (float
+%  cung loai luon ra theo dung thu tu khai bao) nen ca day do xuong cuoi.
+%  Cung khuon voi paper/paper2_rebuild/preamble.tex.
+% =====================================================================
+\setcounter{topnumber}{2}
+\setcounter{bottomnumber}{1}
+\setcounter{totalnumber}{3}
+\renewcommand{\topfraction}{0.92}
+\renewcommand{\bottomfraction}{0.55}
+\renewcommand{\textfraction}{0.07}
+\renewcommand{\floatpagefraction}{0.78}
+
+% Trang chi co float: mac dinh LaTeX can giua theo chieu doc nen hai hinh
+% bi keo xa nhau. Ep can tren.
+\makeatletter
+\setlength{\@fptop}{0pt}
+\setlength{\@fpsep}{10pt plus 1fil}
+\setlength{\@fpbot}{0pt plus 2fil}
+\makeatother
+
 \input{tables/numbers_macros}
 
 \newcommand{\QSVM}{QSVM}
@@ -277,7 +302,10 @@ evaluated where the escape happens.
 
 \begin{figure}[t]
   \centering
-  \includegraphics[width=0.5\textwidth]{figs/fig2_k_sweep.pdf}
+  % Hinh nay gio duoc VE o dung 4,80 inch (= \textwidth cua llncs). De
+  % 0.5\textwidth thi no bi thu con mot nua va chu 8 pt in ra con 4 pt --
+  % dung cai loi da sua o paper 2, chi la nguoc dau.
+  \includegraphics[width=\textwidth]{figs/fig2_k_sweep.pdf}
   \caption{With $C$ held at a neutral $1.0$, the quantum kernel is
   non-degenerate on \pkSweepDeg{} of \pkSweepRuns{} runs across seven feature
   budgets, and $\Fone$ plateaus at $\pkPlateauFone$ for $K \ge
