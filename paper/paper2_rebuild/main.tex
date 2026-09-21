@@ -77,7 +77,10 @@ margin-based models and not for the tree ensembles. One property of the
 score distributions accounts for both: a forest emits a distinct
 probability for $\psatRfDistinct\%$ of test records against
 $\psatQsvmDistinct\%$ for the quantum kernel, and a monotone recalibrator
-cannot separate records that already share a score.
+cannot separate records that already share a score. Of $\pcenTotal$
+Holm-corrected comparisons, $\pcenQsvm$ favour the quantum kernel,
+$\pcenBase$ favour a classical baseline and $\pcenIncon$ are inconclusive:
+the advantage is confined to calibration, and it is absent from ranking.
 \end{abstract}
 
 \begin{IEEEkeywords}
@@ -136,6 +139,44 @@ well-defined, on two corpora and at two circuit widths.
         explains why no decision threshold recovers the rare classes for
         them.
 \end{enumerate}
+
+\subsection*{Relation to the submitted version}
+This paper is a substantially revised version of an earlier submission, and
+five of that version's claims do not survive the revised protocol. We state
+them here rather than in a footnote.
+
+(i) \emph{The headline rare-attack result is withdrawn.} That version
+reported $\ECE_{\text{rare}}=\psubQsvmEceRare$ for the quantum kernel
+against $\psubRbfEceRare$ for the RBF kernel and concluded it was the most
+trustworthy model on the rare classes. The estimate was computed on
+$\psubNRareTest$ rare test records, and
+Section~\ref{sec:identity} shows that on a subset of one class the quantity
+is not a calibration error at all. Both the measurement and its
+interpretation are replaced.
+
+(ii) \emph{The low-data claim is narrowed.} That version placed the quantum
+kernel first from $N\geq200$ onward. Measured where calibration is
+well-defined it leads at $N=\pldNmin$ only, and the MLP leads at every
+larger budget (Table~\ref{tab:lowdata}).
+
+(iii) \emph{The balanced-operating-point claim is withdrawn.} The
+best-calibrated model under a balanced prior is \ppsBalWinner{}, not the
+quantum kernel (Table~\ref{tab:priorshift}).
+
+(iv) \emph{The recalibration claim is corrected in both directions.} That
+version concluded Platt scaling suits margin-based quantum \emph{and} SVM
+models. It helps the quantum kernel alone; the classical SVM degrades
+slightly ($\pRbfPlattDelta$). The finding is narrower than claimed and, once
+isotonic and temperature scaling are added, more robust.
+
+(v) \emph{The identical-footing claim was false.} That version reused cached
+quantum models whose training subset differed from the subset used to fit
+their calibrator, while the tree baselines were fitted and calibrated on the
+same data. Every model here is trained from scratch on one subset.
+
+None of the five was raised by a reviewer; the submission was declined
+without review. They were found by re-running the protocol at a scale the
+original design could not reach.
 
 \paragraph{Reproducibility}
 Every number in this paper is emitted by a script into an artifact file and
@@ -479,6 +520,22 @@ significance whatever the effect size.
   inconclusive.}
   \label{fig:paired}
 \end{figure}
+
+\subsection{The census}
+Before the individual comparisons, the tally. Across every setting, metric
+and baseline, the protocol produces $\pcenTotal$ Holm-corrected
+comparisons: $\pcenQsvm$ favour the quantum kernel, $\pcenBase$ favour a
+classical baseline, and $\pcenIncon$ are inconclusive. There is no general
+advantage here, and a paper that reported only its wins could have drawn a
+very different picture from the same runs.
+
+The structure inside the tally is the result. Split the comparisons by what
+they measure and they separate almost cleanly. On the calibration metrics
+the quantum kernel takes $\pcenCalQsvm$ of $\pcenCalTotal$; on the ranking
+metrics it takes $\pcenRankQsvm$ of $\pcenRankTotal$. It does not rank
+better than any baseline anywhere, and it calibrates better than half of
+them everywhere. That is the shape of the claim this paper makes, and the
+reason a single scalar comparison would have hidden it.
 
 \subsection{Calibration against the tree ensembles}
 The quantum kernel is better calibrated than both tree ensembles in every

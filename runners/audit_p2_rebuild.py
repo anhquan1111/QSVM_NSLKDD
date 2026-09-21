@@ -222,6 +222,30 @@ def audit_percat(m, pc, cv):
               f"{model} duoi-tu-tin ({n_under}/{nb} bin tren duong cheo)")
 
 
+def audit_census(m, st):
+    """Kiem dem toan bo so sanh, va hai claim manh rut ra tu no."""
+    cen = st[st.setting != "NSL-KDD/sample100"]
+    vc = cen.verdict.value_counts()
+    check(m["cenTotal"] == str(len(cen)), "cenTotal")
+    check(m["cenQsvm"] == str(int(vc.get("QSVM-favorable", 0))), "cenQsvm")
+    check(m["cenBase"] == str(int(vc.get("baseline-favorable", 0))), "cenBase")
+    check(m["cenIncon"] == str(int(vc.get("inconclusive", 0))), "cenIncon")
+
+    # Bai khang dinh: QSVM KHONG THANG mot so sanh xep hang nao. Day la mot
+    # ket qua am ma bai tu nguyen bao cao, nen phai khoa lai.
+    rank = cen[cen.metric.isin(["auc_pr", "f1"])]
+    check((rank.verdict == "QSVM-favorable").sum() == 0,
+          f"QSVM khong thang so sanh xep hang nao "
+          f"(thuc te: {(rank.verdict == 'QSVM-favorable').sum()})")
+
+    # Va: loi the cua no nam o calibration. Neu ti le nay tut ve gan 0 thi
+    # cau chuyen cua bai sai.
+    cal2 = cen[cen.metric.isin(["ece_full", "brier_full"])]
+    n_win = int((cal2.verdict == "QSVM-favorable").sum())
+    check(n_win >= len(cal2) // 3,
+          f"loi the cua QSVM nam o calibration ({n_win}/{len(cal2)})")
+
+
 def audit_regime(long, st):
     """Ban do che do: QSVM phai thang ca hai cay o MOI dieu kien."""
     e = st[st.metric == "ece_full"]
