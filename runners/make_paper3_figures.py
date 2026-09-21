@@ -143,9 +143,11 @@ def fig1_tuning_trap():
     # 2,3 inch: hai tieu de cham nhau, nhan "constant all-attack classifier"
     # de len duong cong luong tu, va nhan gia tri o panel (b) de len legend.
     # Xep doc thi ca hai duoc tron be rong.
+    # 4,40 inch = 58% chieu cao vung chu; cong chu thich 8 dong la vua qua
+    # nguong dat float, va ca day hinh bi don xuong cuoi bai. 3,95 thi lot.
     fig, (ax, bx) = plt.subplots(
-        2, 1, figsize=(TEXTW, 4.40),
-        gridspec_kw=dict(height_ratios=[1.28, 1.0], hspace=0.52)
+        2, 1, figsize=(TEXTW, 3.95),
+        gridspec_kw=dict(height_ratios=[1.30, 1.0], hspace=0.55)
     )
 
     # -- (a) diem CV theo C, voi nguong san --------------------------------
