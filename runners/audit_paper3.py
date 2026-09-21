@@ -295,6 +295,17 @@ def audit_assets() -> None:
     for f in figs:
         check(f"figs/{f}.pdf" in body, f"bai co chen {f}")
 
+    # Dong gop thu 4 cua bai la "phat hanh bo kiem". Neu link mirror van con
+    # la placeholder thi phan bien bam vao ra 404, va dong gop do thanh loi
+    # noi suong. Day la loai loi khong ai doc lai ma thay.
+    # Chi soi RIENG link mirror. `Paper ID \#XXXX` o khoi tac gia la
+    # placeholder HOP LE -- Confy+ chua cap so -- nen mot phep kiem quet
+    # "XXXX" tren ca bai se bao do vi mot ly do khong phai loi.
+    check("4open.science/r/XXXX" not in body,
+          "link mirror khong con la placeholder")
+    check("anonymous.4open.science/r/" in body,
+          "muc Reproducibility co link mirror an danh")
+
     census = pd.read_csv(ROOT / "results/unsw/paper3/degeneracy_census.csv")
     tex = read(PAPER / "tables" / "degeneracy_census.tex")
     n_rows = tex.count(r"\\") - 1  # tru dong tieu de
