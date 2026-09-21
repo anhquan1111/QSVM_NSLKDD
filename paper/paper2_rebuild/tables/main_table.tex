@@ -3,16 +3,16 @@
 \centering
 \caption{Calibration error on the full test split of each dataset, mean$\pm$std over $\pnRuns$ runs. Lower is better; best per column in bold. The quantum kernel is better calibrated than both tree ensembles in every setting, and is not better than the MLP.}
 \label{tab:main}
-\begin{tabular}{lccc}
+\begin{tabular}{lcccc}
 \toprule
- & NSL-KDD & UNSW-NB15 & UNSW-NB15 \\
-Model & ($\plegacyQubits$ qubits) & ($\plegacyQubits$ qubits) & ($\punswQubits$ qubits) \\
+ & NSL-KDD & NSL-KDD & UNSW-NB15 & UNSW-NB15 \\
+Model & KDDTest+ & KDDTest-21 & ($\plegacyQubits$ qubits) & ($\punswQubits$ qubits) \\
 \midrule
-QSVM-\ZZ{} & 0.1421$\pm$0.0114 & 0.1449$\pm$0.0093 & 0.1531$\pm$0.0149 \\
-SVM-RBF & 0.1272$\pm$0.0154 & 0.1518$\pm$0.0189 & 0.1474$\pm$0.0171 \\
-MLP & \textbf{0.1172$\pm$0.0114} & \textbf{0.1198$\pm$0.0073} & \textbf{0.1226$\pm$0.0096} \\
-XGBoost & 0.1758$\pm$0.0277 & 0.2117$\pm$0.0071 & 0.2201$\pm$0.0121 \\
-Random forest & 0.1836$\pm$0.0303 & 0.2308$\pm$0.0083 & 0.2225$\pm$0.0085 \\
+QSVM-\ZZ{} & 0.1421$\pm$0.0114 & 0.2935$\pm$0.0267 & 0.1449$\pm$0.0093 & 0.1531$\pm$0.0149 \\
+SVM-RBF & 0.1272$\pm$0.0154 & 0.2872$\pm$0.0249 & 0.1518$\pm$0.0189 & 0.1474$\pm$0.0171 \\
+MLP & \textbf{0.1172$\pm$0.0114} & \textbf{0.2503$\pm$0.0187} & \textbf{0.1198$\pm$0.0073} & \textbf{0.1226$\pm$0.0096} \\
+XGBoost & 0.1758$\pm$0.0277 & 0.3351$\pm$0.0471 & 0.2117$\pm$0.0071 & 0.2201$\pm$0.0121 \\
+Random forest & 0.1836$\pm$0.0303 & 0.3487$\pm$0.0473 & 0.2308$\pm$0.0083 & 0.2225$\pm$0.0085 \\
 \bottomrule
 \end{tabular}
 \end{table*}

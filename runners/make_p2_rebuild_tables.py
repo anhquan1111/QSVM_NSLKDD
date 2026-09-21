@@ -32,7 +32,8 @@ PRETTY = {"QSVM": r"QSVM-\ZZ{}", "SVM-RBF": "SVM-RBF", "MLP": "MLP",
           "XGBoost": "XGBoost", "RandomForest": "Random forest"}
 MACRO = {"QSVM": "Qsvm", "SVM-RBF": "Rbf", "MLP": "Mlp",
          "XGBoost": "Xgb", "RandomForest": "Rf"}
-SETTINGS = {"NSL-KDD/full": "Nsl", "UNSW/4qb": "UnswFour", "UNSW/6qb": "UnswSix"}
+SETTINGS = {"NSL-KDD/full": "Nsl", "NSL-KDD/test21": "Drift",
+            "UNSW/4qb": "UnswFour", "UNSW/6qb": "UnswSix"}
 
 
 def num(x, d=4):
@@ -53,12 +54,12 @@ def main_table(long: pd.DataFrame) -> str:
         r"in bold. The quantum kernel is better calibrated than both tree "
         r"ensembles in every setting, and is not better than the MLP.}",
         r"\label{tab:main}",
-        r"\begin{tabular}{lccc}", r"\toprule",
-        r" & NSL-KDD & UNSW-NB15 & UNSW-NB15 \\",
-        r"Model & ($\plegacyQubits$ qubits) & ($\plegacyQubits$ qubits) "
+        r"\begin{tabular}{lcccc}", r"\toprule",
+        r" & NSL-KDD & NSL-KDD & UNSW-NB15 & UNSW-NB15 \\",
+        r"Model & KDDTest+ & KDDTest-21 & ($\plegacyQubits$ qubits) "
         r"& ($\punswQubits$ qubits) \\", r"\midrule",
     ]
-    cols = ["NSL-KDD/full", "UNSW/4qb", "UNSW/6qb"]
+    cols = ["NSL-KDD/full", "NSL-KDD/test21", "UNSW/4qb", "UNSW/6qb"]
     best = {c: long[long.setting == c].groupby("model").ece_full.mean().idxmin()
             for c in cols}
     for m in ORDER:
@@ -160,7 +161,8 @@ def macros(long, st, platt, ref, cal, identity) -> str:
 def load_long() -> pd.DataFrame:
     n = pd.read_csv(NSL / "p2_rebuild_per_run.csv")
     n["setting"] = "NSL-KDD/" + n.test_set.map(
-        {"full_kddtest_plus": "full", "sample100_cu": "sample100"})
+        {"full_kddtest_plus": "full", "kddtest21": "test21",
+         "sample100_cu": "sample100"})
     u = pd.read_csv(UNSW / "p2_unsw_per_run.csv")
     u["setting"] = "UNSW/" + u.n_qubits.astype(str) + "qb"
     return pd.concat([n, u], ignore_index=True)
@@ -175,6 +177,75 @@ def identity_max_dev() -> float:
     return float(pd.read_csv(p).abs_dev.max()) if p.exists() else float("nan")
 
 
+def side_tables(long: pd.DataFrame) -> str:
+    """Ba bang phu: low-data, prior shift, va ba bo hieu chinh.
+
+    Truoc day ba phan nay chi nam trong cau van. Bang doc nhanh hon, va no
+    la thu reviewer tim dau tien."""
+    ld = pd.read_csv(NSL / "p2_rebuild_lowdata.csv")
+    ps = pd.read_csv(NSL / "p2_rebuild_priorshift.csv")
+    cal = pd.read_csv(NSL / "p2_rebuild_calibrators.csv")
+    out = ["% Sinh boi runners/make_p2_rebuild_tables.py -- dung sua tay."]
+
+    ns = sorted(ld.n_train.unique())
+    g = ld.groupby(["n_train", "model"]).ece_full.mean()
+    out += [r"\begin{table}[t]", r"\centering",
+            r"\caption{Calibration error against training-set size on "
+            r"KDDTest+, mean over $\pnRuns$ runs. Best per column in bold. "
+            r"The quantum kernel leads at the smallest size only.}",
+            r"\label{tab:lowdata}",
+            r"\begin{tabular}{l" + "c" * len(ns) + "}", r"\toprule",
+            "Model & " + " & ".join(f"$N={int(n)}$" for n in ns) + r" \\",
+            r"\midrule"]
+    best = {n: ld[ld.n_train == n].groupby("model").ece_full.mean().idxmin()
+            for n in ns}
+    for mdl in ORDER:
+        cells = [(r"\textbf{" + num(g[(n, mdl)]) + "}") if best[n] == mdl
+                 else num(g[(n, mdl)]) for n in ns]
+        out.append(f"{PRETTY[mdl]} & " + " & ".join(cells) + r" \\")
+    out += [r"\bottomrule", r"\end{tabular}", r"\end{table}", ""]
+
+    mixes = ["Balanced_50/50", "AttackHeavy_30/70", "DoS_only"]
+    gp = ps.groupby(["mix", "model"]).ece_full.mean()
+    bp = {mx: ps[ps["mix"] == mx].groupby("model").ece_full.mean().idxmin()
+          for mx in mixes}
+    out += [r"\begin{table}[t]", r"\centering",
+            r"\caption{Calibration error under class-prior shift, mean over "
+            r"$\pnRuns$ runs. Each condition is rebuilt from the full test "
+            r"split. Best per column in bold.}",
+            r"\label{tab:priorshift}",
+            r"\begin{tabular}{lccc}", r"\toprule",
+            r"Model & Balanced & Attack-heavy & DoS-only \\", r"\midrule"]
+    for mdl in ORDER:
+        cells = [(r"\textbf{" + num(gp[(mx, mdl)]) + "}") if bp[mx] == mdl
+                 else num(gp[(mx, mdl)]) for mx in mixes]
+        out.append(f"{PRETTY[mdl]} & " + " & ".join(cells) + r" \\")
+    out += [r"\bottomrule", r"\end{tabular}", r"\end{table}", ""]
+
+    gc = cal.groupby(["model", "calibrator"]).ece_full.mean()
+    cals = [("none", "none"), ("platt", "Platt"),
+            ("isotonic", "isotonic"), ("temperature", "temperature")]
+    out += [r"\begin{table}[t]", r"\centering",
+            r"\caption{Calibration error before and after post-hoc "
+            r"recalibration on KDDTest+, mean over $\pnRuns$ runs. A cell is "
+            r"bold when recalibration improves on leaving the native "
+            r"probability alone; only the quantum kernel has any.}",
+            r"\label{tab:recal}",
+            r"\begin{tabular}{lcccc}", r"\toprule",
+            r"Model & " + " & ".join(lab for _, lab in cals) + r" \\",
+            r"\midrule"]
+    for mdl in ORDER:
+        base = gc[(mdl, "none")]
+        cells = []
+        for key, _ in cals:
+            v = num(gc[(mdl, key)])
+            cells.append(r"\textbf{" + v + "}" if key != "none"
+                         and gc[(mdl, key)] < base else v)
+        out.append(f"{PRETTY[mdl]} & " + " & ".join(cells) + r" \\")
+    out += [r"\bottomrule", r"\end{tabular}", r"\end{table}", ""]
+    return "\n".join(out)
+
+
 def main() -> int:
     long = load_long()
     st = pd.read_csv(NSL / "p2_rebuild_pairwise.csv")
@@ -183,6 +254,7 @@ def main() -> int:
     cal = pd.read_csv(NSL / "p2_rebuild_calibrators.csv")
 
     for name, text in (("main_table.tex", main_table(long)),
+                       ("side_tables.tex", side_tables(long)),
                        ("numbers_macros.tex",
                         macros(long, st, platt, ref, cal, identity_max_dev()))):
         p = OUT / name

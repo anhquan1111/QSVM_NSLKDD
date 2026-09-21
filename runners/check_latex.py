@@ -121,6 +121,34 @@ def check_file(path: Path) -> tuple[set[str], set[str], set[str], set[str]]:
     lines = strip_comments(raw_text)
     body = "\n".join(lines)
 
+    # 0a) KY TU DIEU KHIEN o muc BYTE.
+    #
+    #     Viet .tex bang heredoc cua shell thi `\a` bi bien thanh BEL, `\t`
+    #     thanh TAB, `\r` thanh CR, `\b` thanh BS. Hau qua: `\arg\max` thanh
+    #     "<BEL>rg\max" va in ra "rg max"; `\textsc{...}` thanh "<TAB>extsc{...}"
+    #     va in ra "extsc..."; `\ref{x}` thanh "<CR>ef{x}".
+    #
+    #     PHAI doc o muc BYTE. Python mo file o che do van ban se am tham doi
+    #     CR don thanh "\n", nen moi phep kiem tren chuoi deu mu voi loi nay.
+    #     Da xay ra HAI lan: mot lan lam hong trang 1 cua paper 1, mot lan lam
+    #     paper 3 in ra "rg max", "extscSelectKBest" va "eftab:degeneracy".
+    ctrl_name = {0: "NUL", 7: "BEL (tu " + BS + "a)", 8: "BS (tu " + BS + "b)",
+                 9: "TAB (tu " + BS + "t)", 11: "VT (tu " + BS + "v)",
+                 12: "FF (tu " + BS + "f)", 13: "CR (tu " + BS + "r)",
+                 27: "ESC"}
+    ln_no = 1
+    for i, ch in enumerate(raw_bytes):
+        if ch == 10:
+            ln_no += 1
+            continue
+        if ch not in ctrl_name:
+            continue
+        if ch == 13 and i + 1 < len(raw_bytes) and raw_bytes[i + 1] == 10:
+            continue                       # CRLF binh thuong tren Windows
+        fail(rel, ln_no,
+             f"ky tu dieu khien {ctrl_name[ch]} trong nguon -- gan nhu chac "
+             f"chan la mot lenh LaTeX bi heredoc an mat dau gach cheo")
+
     # 0c) Macro CHI DUNG DUOC TRONG CHE DO TOAN ma bi dat ngoai.
     #
     #     \\Fmac duoc dinh nghia la F_1^{\\mathrm{macro}} -- toan bo than

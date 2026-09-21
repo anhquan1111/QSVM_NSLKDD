@@ -33,7 +33,8 @@ BS = chr(92)
 
 MACRO = {"QSVM": "Qsvm", "SVM-RBF": "Rbf", "MLP": "Mlp",
          "XGBoost": "Xgb", "RandomForest": "Rf"}
-SETTINGS = {"NSL-KDD/full": "Nsl", "UNSW/4qb": "UnswFour", "UNSW/6qb": "UnswSix"}
+SETTINGS = {"NSL-KDD/full": "Nsl", "NSL-KDD/test21": "Drift",
+            "UNSW/4qb": "UnswFour", "UNSW/6qb": "UnswSix"}
 TREES = ("RandomForest", "XGBoost")
 
 _checks: list[tuple[bool, str]] = []
@@ -51,7 +52,8 @@ def read(p):
 def load_long():
     n = pd.read_csv(NSL / "p2_rebuild_per_run.csv")
     n["setting"] = "NSL-KDD/" + n.test_set.map(
-        {"full_kddtest_plus": "full", "sample100_cu": "sample100"})
+        {"full_kddtest_plus": "full", "kddtest21": "test21",
+         "sample100_cu": "sample100"})
     u = pd.read_csv(UNSW / "p2_unsw_per_run.csv")
     u["setting"] = "UNSW/" + u.n_qubits.astype(str) + "qb"
     return pd.concat([n, u], ignore_index=True)
@@ -118,6 +120,10 @@ def audit_prose_numbers(tex):
     # lenh khac truoc khi quet so.
     body = re.sub(BS + BS + r"(label|ref|eqref|input|url|newcommand|cite|ding)"
                   r"\{[^}]*\}", " ", body)
+    # Ten rieng co chu so (KDDTest-21, UNSW-NB15, ...) khong phai so lieu.
+    # Bo chung truoc khi quet, thay vi noi long danh sach so duoc phep.
+    for name in ("KDDTest-21", "UNSW-NB15", "NSL-KDD", "KDDTest+"):
+        body = body.replace(name, " ")
     bad = [t for t in re.findall(r"(?<![\w.])\d+(?:\.\d+)?(?![\w.])", body)
            if t not in NUMBER_WHITELIST]
     check(not bad, f"khong co so viet tay trong cau van (thay: {sorted(set(bad))})")

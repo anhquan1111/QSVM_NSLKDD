@@ -40,6 +40,7 @@ Quantum-Kernel Intrusion Detection}
 \ifanonymous
   \author{Anonymous Submission}
   \authorrunning{Anonymous}
+  \titlerunning{A Tuning Trap in Quantum-Kernel IDS}
   \institute{Paper ID \#XXXX}
 \else
   \author{TODO}
@@ -71,8 +72,13 @@ Intrusion detection \and Reproducibility}
 \section{Introduction}\label{sec:intro}
 
 % TODO(tac gia thu nhat): doc lai, nới rong neu con cho.
-Asking what quantum-inspired methods actually deliver presumes that the
-measurement itself is sound. This paper is about a case where it was not,
+Quantum-kernel methods reached network intrusion detection quickly after
+quantum feature maps were proposed as a route to expressive
+kernels~\cite{havlicek2019,schuld2019hilbert} and separations were
+established for constructed learning problems~\cite{liu2021speedup}; the
+applied literature now reports them on standard IDS
+corpora~\cite{payares2021dos,kalinin2023qids}. Asking what such methods
+actually deliver presumes that the measurement itself is sound. This paper is about a case where it was not,
 and where the failure was invisible in every number the protocol reported.
 
 Evaluating a kernel classifier on intrusion-detection data means choosing a
@@ -81,11 +87,11 @@ cross-validated score. On class-imbalanced data that procedure has a trap.
 The constant classifier that calls everything an attack attains a
 respectable binary $\Fone$, and that value acts as a floor beneath the whole
 grid. A model whose genuine scores never rise above the floor will have the
-degenerate setting returned to it by $rg\max$, and will then be carried
+degenerate setting returned to it by $\arg\max$, and will then be carried
 through the rest of the study as though it were a working model.
 
 This happened to a four-qubit quantum-kernel detector in our own earlier
-work on UNSW-NB15. The selected model predicted a single class for every
+work~\cite{companion} on UNSW-NB15~\cite{moustafa2015unsw}. The selected model predicted a single class for every
 test record. It went on to produce a robustness result --- $\Fone$ invariant
 under input perturbation --- that was an artefact of the prediction being
 constant, and that result was not obviously wrong on inspection. It was
@@ -117,11 +123,11 @@ it.
 \section{Setup}\label{sec:setup}
 
 Both protocols use the same front end on UNSW-NB15: one-hot encoding,
-	extsc{SelectKBest}, PCA, and a min--max map onto $[0,\pi]$, every
+\textsc{SelectKBest}, PCA, and a min--max map onto $[0,\pi]$, every
 transformer fitted on the training subset alone. The quantum kernel is the
 \ZZ{}-FeatureMap with full entanglement, evaluated as an exact statevector
 fidelity. Classical kernels are linear, degree-two polynomial, and RBF, all
-fitted by the same 	exttt{SVC} solver so that the only difference between
+fitted by the same soft-margin solver~\cite{cortes1995svm} so that the only difference between
 arms is the kernel and the regularisation constant.
 
 The evidence below comes from two protocols that must not be conflated.
@@ -202,13 +208,15 @@ fixed.
 
 \input{tables/degeneracy_census}
 
-Table~ef{tab:degeneracy} counts, for each protocol and model, the runs on
+Table~\ref{tab:degeneracy} counts, for each protocol and model, the runs on
 which the fitted classifier assigned every test record to the attack class.
 Three points follow from it.
 
 First, collapse is not a quantum phenomenon. Under the tuned protocol it
 occurs for three of the four kernels, the linear and polynomial kernels
-included. Under the revision protocol, a scan of \prevRowsScanned{} rows
+included. Under the revision protocol, whose model set also includes a random
+forest~\cite{breiman2001rf} and gradient-boosted
+trees~\cite{chen2016xgboost}, a scan of \prevRowsScanned{} rows
 across \prevModels{} models finds \prevDegRows{} degenerate rows, all
 belonging to \prevDegModel{}, and none belonging to the quantum kernel
 (whose lowest macro recall anywhere in that scan is
@@ -217,7 +225,7 @@ belonging to \prevDegModel{}, and none belonging to the quantum kernel
 Second, what is specific to the quantum kernel is not that it collapsed but
 that it collapsed on \emph{every} run. That is what made the collapse
 survive selection: with no grid point scoring above the degenerate floor,
-$rg\max$ had no non-degenerate maximum available to it.
+$\arg\max$ had no non-degenerate maximum available to it.
 
 Third, holding the constant at a neutral value removes the effect entirely
 --- \pkSweepDeg{} degenerate runs out of \pkSweepRuns{} across seven
@@ -259,7 +267,9 @@ quantum kernel.
 Two things would have caught it. Selecting on a class-averaged objective
 rather than binary $\Fone$ removes the floor. Reporting the confusion matrix
 alongside the score, rather than the score alone, makes a constant predictor
-impossible to miss. Neither is expensive, and we release the checks that
+impossible to miss --- the same reflex that surfaced systematic
+over-confidence in deep classifiers~\cite{guo2017calibration}, and that a
+recalibration step~\cite{platt1999svm} presumes has already been done. Neither is expensive, and we release the checks that
 implement them.
 
 %==============================================================================
@@ -271,8 +281,86 @@ implement them.
   TODO: dia chi that + release tag.
 \fi
 
-\begin{thebibliography}{8}
-% TODO
+\begin{thebibliography}{15}
+
+\bibitem{companion}
+M.~T. Pham, P.~H. Do, N.~N.~H. Van, Q.~A. Nguyen, and Q.~T.~A. Vo,
+``NISQ-aware quantum kernel SVM for network intrusion detection: a
+  regime-specific benchmark on NSL-KDD,'' \emph{companion manuscript},
+  2026.
+
+\bibitem{havlicek2019}
+V.~Havl\'i\v{c}ek \emph{et al.},
+``Supervised learning with quantum-enhanced feature spaces,''
+\emph{Nature}, vol.~567, pp.~209--212, 2019.
+
+\bibitem{schuld2019hilbert}
+M.~Schuld and N.~Killoran,
+``Quantum machine learning in feature Hilbert spaces,''
+\emph{Phys. Rev. Lett.}, vol.~122, no.~4, p.~040504, 2019.
+
+\bibitem{liu2021speedup}
+Y.~Liu, S.~Arunachalam, and K.~Temme,
+``A rigorous and robust quantum speed-up in supervised machine
+  learning,'' \emph{Nature Physics}, vol.~17, pp.~1013--1017, 2021.
+
+\bibitem{platt1999svm}
+J.~C. Platt,
+``Probabilistic outputs for support vector machines and comparisons
+  to regularized likelihood methods,'' in
+\emph{Advances in Large Margin Classifiers}, 1999, pp.~61--74.
+
+\bibitem{cortes1995svm}
+C.~Cortes and V.~Vapnik, ``Support-vector networks,''
+\emph{Mach. Learn.}, vol.~20, no.~3, pp.~273--297, 1995.
+
+\bibitem{guo2017calibration}
+C.~Guo, G.~Pleiss, Y.~Sun, and K.~Q. Weinberger,
+``On calibration of modern neural networks,'' in
+\emph{Proc. Int. Conf. Mach. Learn. (ICML)}, 2017, pp.~1321--1330.
+
+\bibitem{chen2016xgboost}
+T.~Chen and C.~Guestrin,
+``XGBoost: A scalable tree boosting system,'' in
+\emph{Proc. 22nd ACM SIGKDD Int. Conf. Knowl. Discov. Data Min.},
+2016, pp.~785--794.
+
+\bibitem{breiman2001rf}
+L.~Breiman, ``Random forests,'' \emph{Mach. Learn.}, vol.~45, no.~1,
+pp.~5--32, 2001.
+
+\bibitem{payares2021dos}
+E.~D. Payares and J.~C. Mart\'inez-Santos,
+``Quantum machine learning for intrusion detection of distributed
+  denial of service attacks: a comparative overview,'' in
+\emph{Proc. SPIE Quantum Comput. Commun. Simul.}, vol.~11699, 2021,
+p.~116990F.
+
+\bibitem{kalinin2023qids}
+M.~O. Kalinin and V.~M. Krundyshev,
+``Security intrusion detection using quantum machine learning
+  techniques,'' \emph{J. Comput. Virol. Hacking Tech.}, vol.~19,
+no.~1, pp.~125--136, 2023.
+
+\bibitem{moustafa2015unsw}
+N. Moustafa and J. Slay, "UNSW-NB15: a comprehensive data set for network intrusion detection systems," in Military Communications and Information Systems Conference (MilCIS), 2015, pp. 1--6.
+
+% --------------------------------------------------------------
+% [26] DA GO BO. Nguyen van trong ban da nop:
+%   T. Rahman, M. Kayed, A. O. Aljahdali, and M. Ali, "Quantum machine learning for cybersecurity: a comprehensive review," IEEE Access, vol. 11, pp. 97 5
+% Ly do: khong xac minh duoc su ton tai. Tim doc lap hai lan (theo
+% tac gia + tieu de, va theo volume + trang) deu khong ra ket qua.
+% R2 bao cao dieu tuong tu.
+%
+% DA THAY BANG: muc `kaissar2026` o cuoi danh muc. Bai do dung vai tro ma
+% [26] dam nhan (survey ve huong tiep can luong tu cho an ninh mang), va
+% da xac minh doc lap hai lan: DOI 10.3390/fi18050234 phan giai dung bai,
+% trang MDPI ghi Future Internet 18(5), so bai 234, 2026; tac gia
+% Antanios Kaissar, Ali Bou Nassif, Ahmed Bouridane (Univ. of Sharjah).
+% Them mot cai loi: no la survey 2026, nen dong thoi do vao y AE-2 ve
+% thieu tai lieu 2025-2026.
+% --------------------------------------------------------------
+
 \end{thebibliography}
 
 \end{document}

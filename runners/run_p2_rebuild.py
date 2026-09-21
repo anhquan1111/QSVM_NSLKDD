@@ -59,9 +59,13 @@ C_QSVM = 1.0
 C_RBF = 10.0
 N_QUBITS = 4
 ZZ_REPS = 2
+CHUNK = 8000   # so dong test moi khoi khi tinh Gram
 
 TEST_SETS = {
     "full_kddtest_plus": "NSL_KDD_Test_Cleaned.csv",
+    # KDDTest-21: tap con kho cua KDDTest+, giu lai cac ban ghi ma cac bo phan
+    # loai co dien deu sai. Day la phep do troi theo thoi gian (A2) cua ban cu.
+    "kddtest21": "NSL_KDD_Test21_Cleaned.csv",
     "sample100_cu": "NSL_KDD_Test_Sample100.csv",  # giu de doi chieu voi ban cu
 }
 
@@ -87,14 +91,23 @@ class ClosedFormQSVM:
         self.svc.fit(c4.gram_from_statevectors(self.psi_train_), y)
         return self
 
-    def _gram(self, X):
-        return c4.gram_from_statevectors(self._psi(X), self.psi_train_)
+    def _chunked(self, X, fn):
+        """Ap `fn` theo tung khoi test.
+
+        Gram day du 22 544 x 1 000 la 172 MB; giu ba tap test cung luc thi
+        may het bo nho that. Chia khoi giu no duoi ~60 MB va khong doi ket
+        qua mot chu so nao.
+        """
+        psi = self._psi(X)
+        out = [fn(c4.gram_from_statevectors(psi[i:i + CHUNK], self.psi_train_))
+               for i in range(0, len(psi), CHUNK)]
+        return np.concatenate(out)
 
     def predict(self, X):
-        return self.svc.predict(self._gram(X))
+        return self._chunked(X, self.svc.predict)
 
     def decision_function(self, X):
-        return self.svc.decision_function(self._gram(X))
+        return self._chunked(X, self.svc.decision_function)
 
 
 def build_models(X_train, y_train):
