@@ -161,6 +161,28 @@ suggests it suffered the failure reported here. The point is narrower and it
 concerns the reader: from what is printed, the failure would not be
 distinguishable from a working model.
 
+\paragraph{Metrics that conceal a degenerate classifier.}
+That binary $\Fone$ flatters a classifier on imbalanced data is known.
+Chicco and Jurman~\cite{chicco2020mcc} show that $\Fone$ and accuracy return
+inflated scores on imbalanced problems precisely because neither reads all
+four cells of the confusion matrix, and argue for a coefficient that does.
+Christen \emph{et al.}~\cite{christen2023fmeasure} gather the criticism of
+the F-measure and its alternatives in one place. In computer security the
+point is catalogued directly: Arp \emph{et al.}~\cite{arp2022mlsec} name
+\emph{inappropriate performance measures} and the \emph{base rate fallacy}
+among ten recurring pitfalls --- the first being measures that ignore
+constraints such as imbalanced data, the second being imbalance ignored when
+results are interpreted.
+
+What this paper adds is where the measure sits. That literature treats the
+choice as a \emph{reporting} problem: the wrong number is printed about a
+model that exists independently of it. Here the same measure is the
+\emph{selection} objective, so it does not misdescribe a model --- it
+chooses one, and every number computed downstream describes a classifier
+that predicts a single class. A reporting error can be repaired afterwards
+by recomputing a metric on stored predictions. This one cannot, because the
+artefact is the model.
+
 \paragraph{Evaluation blind spots that outlived a literature.}
 The nearest precedent is not an intrusion-detection result at all. Guo
 \emph{et al.}~\cite{guo2017calibration} showed that modern classifiers are
@@ -543,6 +565,22 @@ M.~O. Kalinin and V.~M. Krundyshev,
 ``Security intrusion detection using quantum machine learning
   techniques,'' \emph{J. Comput. Virol. Hacking Tech.}, vol.~19,
 no.~1, pp.~125--136, 2023.
+
+\bibitem{chicco2020mcc}
+D. Chicco and G. Jurman, ``The advantages of the Matthews correlation
+  coefficient (MCC) over F1 score and accuracy in binary classification
+  evaluation,'' \emph{BMC Genomics}, vol.~21, no.~1, art.~6, 2020.
+
+\bibitem{christen2023fmeasure}
+P. Christen, D.~J. Hand, and N. Kirielle, ``A review of the F-measure: its
+  history, properties, criticism, and alternatives,'' \emph{ACM Comput.
+  Surv.}, vol.~56, no.~3, art.~73, 2023.
+
+\bibitem{arp2022mlsec}
+D. Arp, E. Quiring, F. Pendlebury, A. Warnecke, F. Pierazzi, C. Wressnegger,
+  L. Cavallaro, and K. Rieck, ``Dos and don'ts of machine learning in
+  computer security,'' in \emph{Proc. 31st USENIX Security Symp.}, 2022,
+  pp.~3971--3988.
 
 \bibitem{moustafa2015unsw}
 N. Moustafa and J. Slay,
