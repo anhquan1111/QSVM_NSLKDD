@@ -62,8 +62,13 @@ data can return a model that classifies every record into one class. We
 document a case in which this happened to a four-qubit quantum-kernel
 intrusion detector on UNSW-NB15, produced an apparent robustness result, and
 was refuted only when the regularisation constant was held fixed. We show the
-mechanism, show that it is not specific to the quantum kernel, and release the
-checks that detect it.
+mechanism and show, by census, that it is not specific to the quantum kernel.
+We then measure what would have prevented it: on a denser grid the collapse
+does not survive selection under any of three objectives, but for one
+classical kernel every objective still returns a degenerate constant, so a
+class-averaged objective is a mitigation rather than a guarantee. The one
+check that identifies every case is the count of true negatives, and we
+release the checks that implement it.
 \keywords{Quantum kernel \and Model selection \and Evaluation protocol \and
 Intrusion detection \and Reproducibility}
 \end{abstract}
@@ -90,8 +95,17 @@ grid. A model whose genuine scores never rise above the floor will have the
 degenerate setting returned to it by $\arg\max$, and will then be carried
 through the rest of the study as though it were a working model.
 
+% An danh: "our own earlier work" cong voi muc tai lieu mang du nam ten that
+% la khai danh tinh hoan toan. Confy+ bat PDF an danh, nen duoi \anonymoustrue
+% cau nay phai o ngoi thu ba; ban camera-ready lay lai cach noi manh hon.
+\ifanonymous
+This happened to a four-qubit quantum-kernel detector in an earlier
+study~\cite{companion} on UNSW-NB15~\cite{moustafa2015unsw}.
+\else
 This happened to a four-qubit quantum-kernel detector in our own earlier
-work~\cite{companion} on UNSW-NB15~\cite{moustafa2015unsw}. The selected model predicted a single class for every
+work~\cite{companion} on UNSW-NB15~\cite{moustafa2015unsw}.
+\fi
+The selected model predicted a single class for every
 test record. It went on to produce a robustness result --- $\Fone$ invariant
 under input perturbation --- that was an artefact of the prediction being
 constant, and that result was not obviously wrong on inspection. It was
@@ -116,8 +130,56 @@ it.
   \item A census showing the collapse is a property of the
         regularisation--objective interaction rather than of the quantum
         kernel (Table~\ref{tab:degeneracy}).
+  \item A measurement, not a conjecture, of what would have prevented it:
+        a denser grid removes the collapse for the quantum kernel under
+        every objective tested, while a class-averaged objective leaves it
+        in place for a classical kernel (Table~\ref{tab:objective}). The
+        two standard remedies are therefore partial, and the quantity that
+        separates every case is the count of true negatives.
   \item The audit checks that detect it, released with the paper.
 \end{enumerate}
+
+%==============================================================================
+\section{Related work}\label{sec:related}
+
+Three lines of work meet here, and the gap this paper reports sits between
+them rather than inside any one of them.
+
+\paragraph{Quantum kernels applied to intrusion detection.}
+Quantum feature maps were proposed as a route to kernels that are hard to
+evaluate classically~\cite{havlicek2019,schuld2019hilbert}, and a separation
+was later established for a constructed learning
+problem~\cite{liu2021speedup}. The applied literature carried the idea to
+standard IDS corpora quickly: Payares and
+Mart\'{\i}nez-Santos~\cite{payares2021dos} compare quantum and classical
+models on denial-of-service detection, and Kalinin and
+Krundyshev~\cite{kalinin2023qids} survey quantum techniques for intrusion
+detection. Both report aggregate scores --- accuracy, precision, recall,
+$\Fone$ --- and neither reports a confusion matrix or any statement that the
+compared classifiers predict more than one class. Nothing in either paper
+suggests it suffered the failure reported here. The point is narrower and it
+concerns the reader: from what is printed, the failure would not be
+distinguishable from a working model.
+
+\paragraph{Evaluation blind spots that outlived a literature.}
+The nearest precedent is not an intrusion-detection result at all. Guo
+\emph{et al.}~\cite{guo2017calibration} showed that modern classifiers are
+systematically over-confident, and that the effect grows with capacity --- a
+defect invisible in accuracy, which was the quantity the field reported, and
+obvious the moment a second quantity was plotted. The post-hoc corrections
+that followed~\cite{platt1999svm} presume that diagnosis has been made. The
+present case has the same shape at smaller scale: one reported number, and
+one unreported number that decides whether the first means anything.
+
+\paragraph{The constant $C$ and the degenerate solution.}
+The soft-margin formulation~\cite{cortes1995svm} trades margin width against
+hinge loss. As $C$ falls the margin term dominates, and on a class-imbalanced
+sample the minimiser approaches the constant classifier that predicts the
+majority class --- which on an attack-heavy split is the attack class. That
+much is standard and is not a defect of the solver. What this paper adds is
+that a selection objective can \emph{prefer} that solution over every
+non-degenerate alternative on the grid, and that whether it does turns on a
+choice of averaging usually made without comment.
 
 %==============================================================================
 \section{Setup}\label{sec:setup}
@@ -168,15 +230,25 @@ the degenerate point. The quantum kernel never climbs above it: its best
 non-degenerate grid score is $\pqBestNonDeg$. Selection therefore had no
 non-degenerate maximum to find, and returned the collapse.
 
-The trap is specific to the objective. Binary $\Fone$ on the positive class
-ignores true negatives entirely, so a classifier that never predicts the
+Two features of that account deserve to be stated as what they are:
+properties of the objective and of the grid, neither of which is a property
+of the kernel.
+
+The objective ignores the evidence. Binary $\Fone$ on the positive class
+does not read true negatives at all, so a classifier that never predicts the
 negative class loses nothing by it and is rewarded in proportion to the
-positive rate. Macro-averaged $\Fone$ and balanced accuracy both average
-over classes and therefore assign the constant classifier a score near
-$0.5$, well below any working model; neither would have selected the
-degenerate constant here. The choice of averaging in a single line of the
-tuning code decided whether the study that followed measured a model or an
-artefact.
+positive rate. Macro-averaged $\Fone$ and balanced accuracy average over
+classes and score the constant classifier near $0.5$. Whether that
+difference is enough to prevent the collapse is a measurable question rather
+than a rhetorical one, and Section~\ref{sec:catch} measures it. The answer
+is only partly the expected one.
+
+The grid is complicit. The claim above that the quantum kernel never climbs
+above the floor holds for the grid that was searched, whose five points are
+spaced a decade apart. Section~\ref{sec:catch} shows that the interval in
+which this kernel does climb above the floor lies between two of those
+points, so the collapse survived selection partly because nothing was
+evaluated where the escape happens.
 
 %==============================================================================
 \section{The kernel is not at fault}\label{sec:kernel}
@@ -232,6 +304,120 @@ Third, holding the constant at a neutral value removes the effect entirely
 feature budgets --- which is the evidence that the kernel was never the
 problem.
 
+One point about provenance. The revision rows of
+Table~\ref{tab:degeneracy} are recomputed from the runs the companion
+study~\cite{companion} reports, but they count a quantity that study does
+not report: it states macro recall per run and never identifies a run as
+degenerate. The census is therefore a new measurement over existing runs,
+not a restatement of a published one, and we say so rather than leave it to
+be discovered.
+
+%==============================================================================
+\section{What would have caught it}\label{sec:catch}
+
+Section~\ref{sec:trap} named two things that separate the run that collapsed
+from one that would not have: the averaging in the selection objective, and
+the grid over which it was maximised. Both were assertions. This section
+measures them.
+
+The measurement reuses the stored Gram matrices of the tuned protocol, so no
+quantum circuit is evaluated again and the models compared are the same
+models. We refit on the cached kernels at \pcurveNc{} values of $C$ spaced
+logarithmically from \pcurveCmin{} to \pcurveCmax{} --- the original five
+points are a subset --- on all \pcurveRuns{} runs, and we repeat the
+cross-validated selection under three objectives. Before writing any new
+number, the same code path reproduces three published ones: the
+cross-validated $\Fone$ at the original five grid points agrees to
+\preproCv{}, and the test-set means at the tuned and at the neutral $C$
+agree to \preproTest{}. A pipeline that could not return the numbers already
+in print would not be entitled to produce new ones.
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=\textwidth]{figs/fig3_objective.pdf}
+  \caption{(a) The quantum kernel across the collapse boundary, on the test
+  set, averaged over \pcurveRuns{} runs. Inside the shaded band every run
+  assigns all test records to the attack class. Binary $\Fone$ --- the
+  quantity selection maximised --- moves by \pcurveFoneRise{} across the
+  band edge; macro $\Fone$ moves by \pcurveMacroRise. (b) Degenerate runs
+  against $C$ for all four kernels. The quantum kernel escapes between
+  $0.1$ and $1$, where the original grid had no point.}
+  \label{fig:objective}
+\end{figure}
+
+\paragraph{One objective is nearly blind.}
+Fig.~\ref{fig:objective}(a) follows the quantum kernel from the degenerate
+floor to the smallest $C$ at which no run collapses, $C = \pcurveEscapeC$.
+Across that transition the classifier stops predicting a single class ---
+the largest qualitative change it can undergo. Binary $\Fone$ records it as
+\pcurveFoneRise{} (\pcurveFoneLo{} to \pcurveFoneHi). Macro $\Fone$ records
+it as \pcurveMacroRise{} (\pcurveMacroLo{} to \pcurveMacroHi), about
+\pcurveRiseRatio{} times larger for the same event. That ratio is the
+quantitative content of the remark that binary $\Fone$ ignores true
+negatives. It does not miss the collapse entirely; it under-reports it by
+close to an order of magnitude, which is the more dangerous failure, because
+a number that moves a little looks like a number that is working.
+
+\paragraph{The grid mattered as much as the objective.}
+\input{tables/objective_table}
+Table~\ref{tab:objective} gives what $\arg\max$ returns on the denser grid.
+For the quantum kernel \emph{every} objective now returns a non-degenerate
+constant, including the binary $\Fone$ that failed originally: it returns
+$C = \pobjQBinC$ with \pobjQBinDeg{} runs degenerate.
+Fig.~\ref{fig:objective}(b) shows why. This kernel escapes between $0.1$ and
+$1$, and the original grid stepped straight across that interval. The
+collapse was therefore not the objective's doing alone; adding points where
+the escape happens would have avoided it with the objective untouched.
+
+\paragraph{A class-averaged objective is not a guarantee.}
+The obvious remedy fails on one of the four kernels here. For the linear
+kernel all three objectives return the same constant, $C = \pobjLinBinC$,
+and it is degenerate on \pobjLinMacDeg{} runs. Class-averaged objectives do
+lower the score of a constant classifier, but that is not the same as making
+a degenerate solution unreachable: they change which model scores highest,
+not whether the highest-scoring model predicts two classes. On the RBF
+kernel the remedy does work --- binary $\Fone$ returns a constant degenerate
+on \pobjRbfBinDeg{} runs, while both class-averaged objectives return
+$C = \pobjRbfMacC{}$ with \pobjRbfMacDeg. The remedy is real and partial. A
+study that adopted it and reported nothing further could still publish a
+constant classifier.
+
+What separates the rows that collapsed from the rows that did not is not the
+objective. It is a single number that no aggregate score in
+Table~\ref{tab:objective} displays: the count of true negatives.
+
+%==============================================================================
+\section{The checks}\label{sec:checks}
+
+The fourth contribution is a set of checks, and they are worth describing
+because they are small. Three of them run over this paper itself.
+
+The first recomputes every number in the text from the stored artifacts.
+Numbers reach the prose only through generated macros, and a separate scan
+fails the build if a literal decimal appears in a sentence. This is what
+makes the paper auditable rather than merely careful: a reader who doubts a
+number can find the file it was computed from.
+
+The second asserts the invariants the argument rests on, so that the
+argument fails loudly if an artifact is regenerated and the conclusion no
+longer follows from it. Two of them: on the original grid the quantum
+kernel's best non-degenerate cross-validated score must lie \emph{below} the
+degenerate floor, and each classical kernel's best score must lie above it.
+If either reversed, Section~\ref{sec:trap} would be wrong, and the check
+says so before a reader has to.
+
+The third scans for degeneracy without filtering first. The census of
+Table~\ref{tab:degeneracy} is computed over all \prevModels{} models and
+\prevRowsScanned{} rows of the revision protocol, not over the models we
+expected to find it in. That is what makes its negative result --- no
+quantum-kernel row is degenerate there --- worth reporting at all.
+
+None of this is specific to quantum kernels or to intrusion detection, and
+the operational content is two lines in a reporting routine: record the
+confusion matrix beside the score, and assert that each fitted model
+predicts more than one class before any downstream result is computed. The
+case in this paper would have been caught at the moment it was created.
+
 %==============================================================================
 \section{Limitations}\label{sec:limits}
 
@@ -245,11 +431,16 @@ the presence or absence of collapse.
 
 The case is drawn from one corpus and one model family, and the degenerate
 protocol used a small training and test split, so the census counts runs
-rather than estimating a rate. We examine one selection objective and one
-regularisation grid; a wider grid might have cleared the floor for the
-quantum kernel without changing the mechanism. We do not claim the trap is
-common in the literature, only that it is easy to fall into and invisible in
-the reported numbers when it happens.
+rather than estimating a rate.
+
+Section~\ref{sec:catch} carries its own limit. It measures what a denser
+grid and two other objectives would have returned \emph{here} --- same
+corpus, same \pcurveRuns{} runs, same $N = \plegacyN$ split, same cached
+kernels. It therefore says what those choices would have done in this case,
+and not what they do in general; the linear-kernel row is enough to show
+that the general statement would have been false. We do not claim the trap
+is common in the literature, only that it is easy to fall into and invisible
+in the reported numbers when it happens.
 
 %==============================================================================
 \section{Conclusion}\label{sec:conclusion}
@@ -264,13 +455,19 @@ genuine scores never cleared --- and showed by census that the collapse
 belongs to the regularisation--objective interaction rather than to the
 quantum kernel.
 
-Two things would have caught it. Selecting on a class-averaged objective
-rather than binary $\Fone$ removes the floor. Reporting the confusion matrix
-alongside the score, rather than the score alone, makes a constant predictor
-impossible to miss --- the same reflex that surfaced systematic
-over-confidence in deep classifiers~\cite{guo2017calibration}, and that a
-recalibration step~\cite{platt1999svm} presumes has already been done. Neither is expensive, and we release the checks that
-implement them.
+We then measured what would have prevented it, rather than asserting it. On
+a denser grid the collapse does not survive selection for the quantum kernel
+under any of three objectives, including the binary $\Fone$ that failed
+originally --- so the grid was as much at fault as the objective. But for
+the linear kernel all three objectives still return a degenerate constant,
+which makes a class-averaged objective a mitigation and not a guarantee.
+
+One check identified every degenerate case in this paper, and it is the
+cheapest of them: report the confusion matrix beside the score. A constant
+predictor is then impossible to miss --- the same reflex that surfaced
+systematic over-confidence in deep classifiers~\cite{guo2017calibration},
+and that a recalibration step~\cite{platt1999svm} presumes has already been
+taken. We release the checks that implement it.
 
 %==============================================================================
 \subsubsection*{Reproducibility.}
@@ -284,10 +481,15 @@ implement them.
 \begin{thebibliography}{15}
 
 \bibitem{companion}
+\ifanonymous
+Author names and title omitted for double-blind review. Companion
+  manuscript, under review, 2026.
+\else
 M.~T. Pham, P.~H. Do, N.~N.~H. Van, Q.~A. Nguyen, and Q.~T.~A. Vo,
 ``NISQ-aware quantum kernel SVM for network intrusion detection: a
   regime-specific benchmark on NSL-KDD,'' \emph{companion manuscript},
   2026.
+\fi
 
 \bibitem{havlicek2019}
 V.~Havl\'i\v{c}ek \emph{et al.},
@@ -343,7 +545,10 @@ M.~O. Kalinin and V.~M. Krundyshev,
 no.~1, pp.~125--136, 2023.
 
 \bibitem{moustafa2015unsw}
-N. Moustafa and J. Slay, "UNSW-NB15: a comprehensive data set for network intrusion detection systems," in Military Communications and Information Systems Conference (MilCIS), 2015, pp. 1--6.
+N. Moustafa and J. Slay,
+``UNSW-NB15: a comprehensive data set for network intrusion detection
+  systems,'' in \emph{Proc. Mil. Commun. Inf. Syst. Conf. (MilCIS)},
+  2015, pp.~1--6.
 
 % --------------------------------------------------------------
 % [26] DA GO BO. Nguyen van trong ban da nop:

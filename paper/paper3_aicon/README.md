@@ -3,8 +3,9 @@
 Special Session: *Quantum-Inspired AI for Autonomous SAGINs and Non-Terrestrial Networks*
 · Phú Quốc, 20–22/11/2026 · Springer LNICST · **short paper 6–11 trang**
 
-> **Trạng thái:** khung bài + toàn bộ số liệu, hình, bảng đã dựng xong và kiểm 47/47.
-> Phần còn lại là **viết prose** — các chỗ `% TODO` trong [main.tex](main.tex).
+> **Trạng thái (21-09-2026):** prose đã viết đủ, 3 hình + 2 bảng, kiểm **88/88**.
+> Ước ~9,5–10,5 trang (giới hạn LNICST là 11) — **phải compile trên Overleaf để biết
+> số thật**. Nếu cần ngắn lại: bỏ §Related work (−0,9 trang) hoặc gọn §The checks (−0,5).
 
 ---
 
@@ -65,12 +66,30 @@ lập** ở giao thức 10-run/6-qubit. Mục Limitations đã viết sẵn đo�
 ## Dựng lại
 
 ```bash
-python runners/make_paper3_figures.py   # 2 hình
-python runners/make_paper3_tables.py    # bảng + macro số
-python runners/audit_paper3.py          # 47/47
+python runners/run_paper3_selection.py  # phép đo mới (~13 s, có cổng tái lập)
+python runners/make_paper3_figures.py   # 3 hình
+python runners/make_paper3_tables.py    # 2 bảng + macro số
+python runners/audit_paper3.py          # 88/88
 python runners/check_latex.py paper/paper3_aicon/main.tex
 python runners/make_paper_zip.py paper3   # gói để tải lên Overleaf
 ```
+
+### Phép đo mục 7 — "What would have caught it"
+
+`run_paper3_selection.py` đọc Gram lượng tử **đã cache** ở
+`models/unsw/qsvm_cache/multirun/` nên **không tính lại mạch nào** cho đường cong C;
+chỉ các fold CV của phép đo hàm mục tiêu mới phải tính (4 qubit, ~13 s tất cả).
+
+Nó có **cổng tái lập**: trước khi ghi bất kỳ số mới nào, script phải tái lập được ba kết
+quả đã công bố — điểm CV ở 5 giá trị C gốc (lệch **0,0**), và metric tập test ở C đã tune
+và ở C=1,0 (lệch **2,2e-16**). Không đạt thì script dừng, không sinh số.
+
+Hai kết quả, và kết quả thứ hai **bác bỏ** một câu bản trước viết suông:
+
+| | |
+|---|---|
+| Lưới dày (21 điểm) | QSVM thoát suy biến ở C∈(0,1; 1) — đúng chỗ lưới gốc **bước qua**. Nên lưới cũng có lỗi chứ không chỉ hàm mục tiêu. |
+| Ba hàm mục tiêu | macro F₁ / balanced accuracy **không đủ**: ở kernel tuyến tính cả ba hàm đều trả về cùng một C, và C đó vẫn suy biến 1/5 run. |
 
 **Máy này không có LaTeX**, nên bài phải compile trên Overleaf:
 **New Project → Upload Project** với `dist/AICON2026_paper3.zip`, rồi Recompile.
@@ -97,14 +116,13 @@ nếu không thì cả câu chuyện sụp).
 
 | | Việc |
 |---|---|
-| 1 | Viết prose — các chỗ `% TODO` trong `main.tex` |
-| 2 | Tài liệu tham khảo (`thebibliography` đang rỗng) |
-| 3 | Tải `llncs.cls` nếu build ở máy (Overleaf có sẵn) |
-| 4 | **Mirror ẩn danh** `anonymous.4open.science` — Confy+ bắt buộc PDF ẩn danh, mà repo mang tên thật |
+| 1 | **Compile trên Overleaf** rồi đếm số trang thật (ước 9,5–10,5; cap là 11) |
+| 2 | Đọc lại prose — hai chỗ `% TODO(tac gia thu nhat)` còn lại ở abstract và §Introduction |
+| 3 | **Mirror ẩn danh** `anonymous.4open.science` — thay `XXXX` ở §Reproducibility. Đóng góp thứ 4 của bài là "phát hành bộ kiểm", nên link chết là **hỏng một đóng góp** |
+| 4 | Điền `Paper ID #XXXX` khi Confy+ cấp số |
 | 5 | **Khai xung đột lợi ích**: ba chair của session đều là đồng tác giả Paper 1 |
-| 6 | Giữ `\anonymoustrue` cho tới khi bài được nhận |
+| 6 | Giữ `\anonymoustrue` cho tới khi bài được nhận. Cờ này giờ điều khiển **ba** chỗ: khối tác giả, câu "our own earlier work" ở §Introduction, và mục `\bibitem{companion}` |
+| 7 | Tài liệu tham khảo mỏng ở §Related work — thread "model selection trên dữ liệu lệch lớp" hiện **không có trích dẫn nào**. Cần 3–5 nguồn thật; tôi không tự thêm vì không kiểm chứng được từ máy này |
 
-**Một món đáng cân nhắc thêm:** hiện chỉ có **hai** điểm test (C=0.01 và C=1.0) cộng năm điểm
-CV. Một đường cong C dày trên tập test chỉ cần `SVC.fit` trên Gram **đã cache** ở
-`models/unsw/qsvm_cache/multirun/` — **vài giây, không tính lại kernel nào**. Nó biến hai điểm
-thành một đường, tức biến giai thoại thành phép đo.
+**Thư mục tham chiếu chéo:** §Related work và §The checks là hai mục viết thêm 21-09;
+§What would have caught it dựa hoàn toàn vào `results/unsw/paper3/p3_*.csv`.
