@@ -202,11 +202,13 @@ $K^{\mathrm{Q}}(\mathbf{x},\mathbf{x}')=
 \end{definition}
 We use the depth-$r$ \ZZ{}-FeatureMap with full entanglement,
 $U^{(r)}_{\ZZ}(\mathbf{x})$, whose entangling layer encodes pairwise
-feature products as quantum phases. The four-qubit, $r{=}2$
-configuration is fixed by the companion study's hardware-aware Pareto
-analysis~\cite{companion} and is reused here without modification, so the
-present paper isolates classifier reliability rather than embedding
-choice.
+feature products as quantum phases. The embedding width is not tuned here:
+it is taken from the companion study's three-stage selection
+rule~\cite{companion}, which screens candidate widths on retained variance,
+then on kernel--target alignment, then on two-qubit gate cost, and returns
+$\plegacyQubits$ qubits at $r{=}2$ on NSL-KDD and $\punswQubits$ on
+UNSW-NB15. Reusing it without modification is what lets the present paper
+isolate classifier reliability from embedding choice.
 
 \subsection{Confidence Calibration}
 \begin{definition}[Calibration]
@@ -904,10 +906,14 @@ both with attack types in the test split that are absent from training ---
 which is why every model is under-confident in
 Fig.~\ref{fig:reliability}(a). Whether the ordering holds on live traffic is
 not established here. The quantum kernel is evaluated by exact statevector
-simulation, so shot noise and device noise are absent; the companion study
-finds finite-shot estimation tracks the statevector kernel closely on
-accuracy, but whether it perturbs \emph{calibration} is open and is the
-obvious next experiment.
+simulation, so shot noise and device noise are absent. The companion study
+reports that finite-shot estimation leaves macro $F_1$ close to the
+statevector value, but reports it from a single run and does not claim more;
+whether shot or device noise perturbs \emph{calibration} is untouched by
+that check and by ours. It is the obvious next experiment, and on the
+mechanism of Section~\ref{sec:mechanism} it is not a neutral one: noise
+would blur the decision scores, which is the direction that helps a
+recalibrator rather than hinders it.
 
 \subsection{Statistical conclusion validity}
 Ten paired runs is the minimum at which a two-sided Wilcoxon test can reach
