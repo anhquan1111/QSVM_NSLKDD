@@ -198,14 +198,49 @@ are, which is why those are the comparisons we claim.
   \label{fig:platt}
 \end{figure}
 
-\subsection{When Platt scaling helps}
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=\columnwidth]{figs/fig4_refarm.pdf}
+  \caption{Giving the tree ensembles a richer representation, with every
+  hyper-parameter held fixed. Ranking improves; rare-class calibration gets
+  worse. The two axes move in opposite directions.}
+  \label{fig:refarm}
+\end{figure}
+
+\subsection{Are the tree baselines handicapped?}
+The trees share the quantum kernel's four-component representation, which
+invites the objection that they are compared in a form that suits them
+badly. We therefore repeat them on the $\prefKTwentyDims$ selected features
+and on the full $\prefFullDims$ one-hot encoding, holding every
+hyper-parameter fixed so that only the representation changes.
+
+More features do not make the trees more trustworthy; they make them less
+so. Random Forest's rare-class calibration error rises from
+$\prefPcaRfEceRare$ on four components to $\prefFullRfEceRare$ on the full
+encoding, and XGBoost's from $\prefPcaXgbEceRare$ to $\prefFullXgbEceRare$.
+Ranking moves the other way: Random Forest's AUC-PR improves from
+$\prefPcaRfAucPr$ to $\prefFullRfAucPr$ over the same change. The full
+representation buys the trees a better ordering and a worse probability,
+which is the separation this paper is about. The comparison in
+Table~\ref{tab:rare} is therefore not an artefact of a cramped
+representation: it is the trees' most favourable calibration setting.
+
+\subsection{When post-hoc recalibration helps}
 Platt scaling reduces the quantum kernel's full-set ECE from
 $\pQsvmPlattBefore$ to $\pQsvmPlattAfter$ ($\pQsvmPlattDelta$). It is the
 only model of the five it helps: Random Forest moves by $\pRfPlattDelta$ and
 XGBoost by $\pXgbPlattDelta$, both worse, and even the classical SVM
-degrades slightly ($\pRbfPlattDelta$). A logistic map on a margin is the
-right instrument for a margin-based model and the wrong one for a vote
-fraction.
+degrades slightly ($\pRbfPlattDelta$).
+
+The result is not an artefact of choosing a logistic map. Repeating the
+comparison with isotonic regression and with temperature scaling gives the
+same picture: on the quantum kernel all three recalibrators help and land
+within a narrow band ($\pcalQsvmPlatt$, $\pcalQsvmIso$, $\pcalQsvmTemp$
+against $\pcalQsvmNone$ uncalibrated), while on both tree ensembles all
+three make calibration worse than leaving the native probability alone
+(Random Forest $\pcalRfNone$ uncalibrated against $\pcalRfIso$ isotonic).
+Post-hoc recalibration on this task is an instrument for the margin-based
+quantum kernel and for essentially nothing else.
 
 \subsection{Ranking is not reliability}
 The tree ensembles hold the best AUC-PR ($\pXgbAucPr$ for XGBoost,

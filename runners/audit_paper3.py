@@ -144,6 +144,22 @@ NUMBER_WHITELIST = {
 }
 
 
+def audit_macros_defined(tex: str, m: dict) -> None:
+    r"""Moi macro \p... DUNG trong bai phai duoc DINH NGHIA.
+
+    Khong co phep kiem nay thi go sai mot ten macro se lot: audit van xanh vi
+    no chi doi chieu nhung macro da co, con LaTeX thi chet voi 'Undefined
+    control sequence'.
+    """
+    latex_p = {"paragraph", "pm", "pi", "par", "pageref", "protect",
+               "printindex", "pounds", "pagestyle", "pagenumbering"}
+    used = {name[1:] for name in re.findall(BS + BS + r"(p[A-Za-z]+)", tex)
+            if name not in latex_p}
+    missing = sorted(used - set(m))
+    check(not missing, f"moi macro dung trong bai deu duoc dinh nghia "
+                       f"(thieu: {missing})")
+
+
 def audit_prose_numbers(tex: str) -> None:
     body = strip_comments(tex)
     # Bo phan preamble va thu muc tai lieu tham khao.
@@ -209,7 +225,9 @@ def audit_assets() -> None:
 def main() -> int:
     macros = parse_macros(read(PAPER / "tables" / "numbers_macros.tex"))
     audit_macros(macros)
-    audit_prose_numbers(read(PAPER / "main.tex"))
+    tex = read(PAPER / "main.tex")
+    audit_macros_defined(tex, macros)
+    audit_prose_numbers(tex)
     audit_invariants()
     audit_assets()
 

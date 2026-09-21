@@ -98,13 +98,37 @@ def macros(df: pd.DataFrame, st: pd.DataFrame, platt: pd.DataFrame) -> str:
                              for k, v in m.items()]) + "\n"
 
 
+def refarm_macros(ref: pd.DataFrame, cal: pd.DataFrame) -> dict:
+    """Nhanh doi chung theo bieu dien, va ba bo hieu chinh."""
+    m = {}
+    g = ref.groupby(["repr", "model"])
+    for rep, tag in (("pca4", "Pca"), ("k20", "KTwenty"), ("all122", "Full")):
+        for model, key in (("RandomForest", "Rf"), ("XGBoost", "Xgb")):
+            m[f"ref{tag}{key}EceRare"] = f"{g.ece_rare.mean()[(rep, model)]:.4f}"
+            m[f"ref{tag}{key}AucPr"] = f"{g.auc_pr.mean()[(rep, model)]:.4f}"
+            m[f"ref{tag}{key}Fone"] = f"{g.f1.mean()[(rep, model)]:.4f}"
+        m[f"ref{tag}Dims"] = str(int(ref[ref["repr"] == rep].n_features.iloc[0]))
+    c = cal.groupby(["model", "calibrator"]).ece_full.mean()
+    for model, key in MACRO.items():
+        for cname, tag in (("none", "None"), ("platt", "Platt"),
+                           ("isotonic", "Iso"), ("temperature", "Temp")):
+            m[f"cal{key}{tag}"] = f"{c[(model, cname)]:.4f}"
+    return m
+
+
 def main() -> int:
     df = pd.read_csv(IN / "p2_rebuild_per_run.csv")
     st = pd.read_csv(IN / "p2_rebuild_pairwise.csv")
     platt = pd.read_csv(IN / "p2_rebuild_platt.csv")
 
+    ref = pd.read_csv(IN / "p2_rebuild_refarm.csv")
+    cal = pd.read_csv(IN / "p2_rebuild_calibrators.csv")
+    extra = refarm_macros(ref, cal)
+    tail = [f"\\newcommand{{\\p{k}}}{{{v}}}" for k, v in extra.items()]
+    body = macros(df, st, platt) + "\n".join(tail) + "\n"
+
     for name, text in (("rare_table.tex", main_table(df)),
-                       ("numbers_macros.tex", macros(df, st, platt))):
+                       ("numbers_macros.tex", body)):
         p = OUT / name
         with io.open(p, "w", encoding="utf-8") as f:
             f.write(text)

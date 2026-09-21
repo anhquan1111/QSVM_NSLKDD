@@ -1,0 +1,14 @@
+{
+ "n_runs": 10,
+ "representations": {
+  "pca4": 4,
+  "k20": 20,
+  "all122": 122
+ },
+ "hyperparameters_held_fixed": true,
+ "calibrators": [
+  "platt",
+  "isotonic",
+  "temperature"
+ ]
+}
