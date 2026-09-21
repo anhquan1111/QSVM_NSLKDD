@@ -220,6 +220,18 @@ def macros(long, st, platt, ref, cal, identity) -> str:
     m["costFastestFit"] = PRETTY[gco.fit_s.idxmin()]
     m["costNtest"] = thousands(co.n_test.iloc[0])
 
+    # Mo ta hai corpus. Bai bao cao ket qua tren ca hai ma chua bao gio ta
+    # chung.
+    import json as _json
+    co2 = _json.load(io.open(NSL / "p2_rebuild_corpora.json", encoding="utf-8"))
+    for key, tag in (("nsl", "Nsl"), ("unsw", "Unsw")):
+        d = co2[key]
+        m[f"corp{tag}Train"] = thousands(d["n_train"])
+        m[f"corp{tag}Test"] = thousands(d["n_test"])
+        m[f"corp{tag}AttackTrain"] = f"{d['attack_rate_train'] * 100:.1f}"
+        m[f"corp{tag}AttackTest"] = f"{d['attack_rate_test'] * 100:.1f}"
+        m[f"corp{tag}Cats"] = str(d["n_categories"])
+
     head = ["% Sinh boi runners/make_p2_rebuild_tables.py -- dung sua tay.",
             "% Prose KHONG duoc viet so truc tiep; dung macro o day."]
     return "\n".join(head + [f"\\newcommand{{\\p{k}}}{{{v}}}"

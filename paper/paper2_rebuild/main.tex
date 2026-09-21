@@ -21,6 +21,14 @@
 
 \begin{document}
 
+% IEEEtran bat flushbottom o che do hai cot: no GIAN khoang trong theo chieu
+% doc de hai cot bang nhau. Voi trang cuoi -- danh muc tham khao va cac khoi
+% tieu su co anh -- ket qua la cac khoi bi day xa nhau, giua la khoang trang
+% lon. Ban da nop IJNM cung tat no o day. Phai \let truoc vi IEEEtran goi lai
+% \flushbottom o moi trang.
+\let\flushbottom\raggedbottom
+\raggedbottom
+
 \title{Are Quantum-Kernel Intrusion Detectors Trustworthy?
   A Reliability and Calibration Benchmark of QSVM Against Strong
   Tabular Learners on NSL-KDD and UNSW-NB15}
@@ -329,6 +337,34 @@ Proposition~\ref{prop:platt} this leaves AUC-PR and AUC-ROC untouched, which
 is what allows one protocol to be applied uniformly without distorting the
 ranking comparison.
 
+\begin{algorithm}[t]
+\caption{Uniform probability and reliability protocol}
+\label{alg:protocol}
+\begin{algorithmic}[1]
+\STATE \textbf{input} train split $(X_{\mathrm{tr}},y_{\mathrm{tr}})$, test
+       split $(X_{\mathrm{te}},y_{\mathrm{te}})$, model $M$, bins $B$
+\STATE fit $M$ on $(X_{\mathrm{tr}},y_{\mathrm{tr}})$
+\STATE $s_{\mathrm{tr}} \leftarrow \mathrm{score}(M,X_{\mathrm{tr}})$,\;
+       $s_{\mathrm{te}} \leftarrow \mathrm{score}(M,X_{\mathrm{te}})$
+       \COMMENT{decision function, or log-odds for probabilistic models}
+\STATE fit recalibrator $g$ on $(s_{\mathrm{tr}},y_{\mathrm{tr}})$
+       \COMMENT{no test label is seen}
+\STATE $\hat p \leftarrow g(s_{\mathrm{te}})$
+\STATE partition $\hat p$ into $B$ equal-frequency bins
+\STATE \textbf{return} $\ECE$, $\Brier$, AUC-PR from
+       Eq.~(\ref{eq:metrics})
+\end{algorithmic}
+\end{algorithm}
+
+Algorithm~\ref{alg:protocol} states the procedure applied identically to
+every model. Two properties matter. The recalibrator sees only training
+scores and training labels, so no test information reaches the probability;
+and reducing each model to a one-dimensional score before recalibration is
+what makes a single protocol applicable to a kernel machine, a tree ensemble
+and a neural network at once. Where the literature usually compares
+calibration numbers produced by whatever each library happens to emit, every
+number here comes from the same seven lines.
+
 \subsection{The five questions}
 We ask the same question under five conditions, and the conditions are
 chosen because they correspond to things that change in deployment rather
@@ -367,8 +403,29 @@ same subset; the submitted version reused cached quantum models whose
 training subset differed from the one used to fit their calibrator, so the
 quantum and tree branches were not in fact on an identical footing.
 
-\subsection{Corpora and test splits}
-NSL-KDD~\cite{tavallaee2009nslkdd} is evaluated on the full KDDTest+ split, $\pnTest$ records of which
+\subsection{Corpora}
+NSL-KDD~\cite{tavallaee2009nslkdd} is the de-duplicated revision of KDD'99
+and remains the reference corpus for this line of work. Its training split
+holds $\pcorpNslTrain$ records at $\pcorpNslAttackTrain\%$ attack, its test
+split $\pcorpNslTest$ at $\pcorpNslAttackTest\%$, and attacks are grouped
+into $\pcorpNslCats$ categories of which User-to-Root and Remote-to-Local
+are the rare and security-critical ones. The test split deliberately
+contains attack types absent from training, which is what makes it a test of
+generalisation rather than of memorisation --- and, as
+Fig.~\ref{fig:reliability}(a) shows, what makes every model on it
+under-confident.
+
+UNSW-NB15~\cite{moustafa2015unsw} was built to address the age of KDD'99: it
+is synthesised from modern traffic with a contemporary attack mix. Its
+training split holds $\pcorpUnswTrain$ records at
+$\pcorpUnswAttackTrain\%$ attack and its test split $\pcorpUnswTest$ at
+$\pcorpUnswAttackTest\%$, over $\pcorpUnswCats$ attack categories. The rare
+union here is Worms, Shellcode, Backdoor and Analysis. The two corpora
+differ in era, in attack taxonomy and in the direction of their prior shift
+between splits, which is what makes agreement across them informative.
+
+\subsection{Test splits}
+NSL-KDD is evaluated on the full KDDTest+ split, $\pnTest$ records of which
 $\pnRare$ belong to the rare union; UNSW-NB15 on its full test split,
 $\punswTest$ records of which $\punswRare$ are rare. The submitted version
 used a $\pnTestOld$-record sample of KDDTest+ holding $\pnRareOld$ rare
@@ -699,6 +756,32 @@ classical margin machines on this evidence is not calibration quality but
 the resolution it achieves at that quality --- $\pbrQsvmRes$ against
 $\pbrRbfRes$ for the RBF kernel, at four qubits.
 
+\subsection{Where the account is incomplete}
+Saturation explains the contrast between the kernel machines and the tree
+ensembles. It does not explain the model that actually wins. The MLP
+saturates $\psatMlpRaw\%$ of its raw outputs --- much closer to the trees
+than to the kernels --- and emits distinct values for $\psatMlpDistinct\%$
+of records, again intermediate. On the saturation account it should
+calibrate somewhere between the two families. It does not: it has the
+lowest reliability term of the five, $\pbrMlpRel$, against $\pbrQsvmRel$ for
+the quantum kernel and $\pbrRfRel$ for Random Forest.
+
+So saturation is necessary for the failure mode and not sufficient for the
+success. A plausible reading is that what matters is not saturation alone
+but whether the saturated mass is placed correctly: a network trained by
+cross-entropy is optimising a proper scoring rule directly and can be
+confident \emph{and} right, whereas a forest's vote fraction saturates as a
+by-product of leaf purity and carries no such guarantee. We cannot settle
+that from the evidence here --- it would need an ablation over training
+objectives, which is a different experiment --- and we flag it rather than
+present the mechanism as more complete than it is.
+
+That the strongest baseline in this study is a small multilayer perceptron
+rather than a tree ensemble is itself worth stating plainly, because the
+quantum-IDS literature rarely includes one. On the deployment question this
+paper asks, the model to beat is not the one the accuracy benchmarks
+suggest.
+
 %==============================================================================
 \section{Reliability Regime Map}\label{sec:regime}
 
@@ -909,6 +992,12 @@ M.~O. Kalinin and V.~M. Krundyshev,
 ``Security intrusion detection using quantum machine learning
   techniques,'' \emph{J. Comput. Virol. Hacking Tech.}, vol.~19,
 no.~1, pp.~125--136, 2023.
+\bibitem{moustafa2015unsw}
+N.~Moustafa and J.~Slay,
+``UNSW-NB15: a comprehensive data set for network intrusion detection
+  systems,'' in \emph{Military Communications and Information Systems
+  Conference (MilCIS)}, 2015, pp.~1--6.
+
 \end{thebibliography}
 
 \input{biographies}

@@ -128,7 +128,8 @@ def audit_prose_numbers(tex):
                   r"\{[^}]*\}", " ", body)
     # Ten rieng co chu so (KDDTest-21, UNSW-NB15, ...) khong phai so lieu.
     # Bo chung truoc khi quet, thay vi noi long danh sach so duoc phep.
-    for name in ("KDDTest-21", "UNSW-NB15", "NSL-KDD", "KDDTest+"):
+    for name in ("KDDTest-21", "UNSW-NB15", "NSL-KDD", "KDDTest+",
+                 "KDD'99", "MilCIS"):
         body = body.replace(name, " ")
     bad = [t for t in re.findall(r"(?<![\w.])\d+(?:\.\d+)?(?![\w.])", body)
            if t not in NUMBER_WHITELIST]

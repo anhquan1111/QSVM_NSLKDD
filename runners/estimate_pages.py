@@ -28,7 +28,19 @@ ROOT = Path(__file__).resolve().parents[1]
 CALIBRATION = [
     (2698, 5, 4, 6.0),    # commit e61c4cc, nguoi dung bao "6 trang"
     (3302, 7, 5, 7.2),    # commit 5e9a990, "7 trang qua duoc 1 xiu"
+    (5191, 9, 6, 9.0),    # 2026-09-21, co ca 4 tieu su, "van con 9 trang"
 ]
+
+# CANH BAO. Mo hinh tuyen tinh khop tu HAI diem dau du doan diem thu ba la
+# 10,8 trang, con thuc te la 9,0 -- lech 1,8. Ly do: float khong chiem cho
+# tuyen tinh. Khi bai dai ra, bang va hinh don vao chung trang va chia nhau
+# khoang trong, nen chi phi bien cua moi float GIAM dan. Mot mo hinh cong
+# don khong bat duoc dieu do.
+#
+# Vi vay script khong con bao mot con so tuyet doi nhu the no chac chan. No
+# bao DO DOC CUC BO giua hai lan do that gan nhat -- dai luong duy nhat o
+# day thuc su dung duoc, vi cau hoi luon la "them bao nhieu chu thi len mot
+# trang" chu khong phai "bai nay day bao nhieu trang".
 
 # Mo hinh tuyen tinh: trang = OVERHEAD + tu/WORDS_PER_PAGE
 #                             + bang*TABLE_PAGE + hinh*FIGURE_PAGE
@@ -102,24 +114,27 @@ def main() -> int:
     if not path.is_absolute():
         path = ROOT / path
 
-    print(f"  Mo hinh khop tu {len(CALIBRATION)} lan do that:")
-    print(f"    overhead {OVERHEAD:.2f} trang, {WORDS_PER_PAGE:.0f} tu/trang, "
-          f"bang {TABLE_PAGE}, hinh {FIGURE_PAGE}")
+    print("  Cac lan do THAT:")
     for w, t, f, real in CALIBRATION:
-        est = pages(w, t, f)
-        print(f"    {w:5d} tu, {t} bang, {f} hinh -> uoc {est:4.1f}  "
-              f"that {real:4.1f}  lech {est - real:+.1f}")
+        print(f"    {w:5d} tu, {t:2d} bang, {f} hinh  ->  {real:4.1f} trang")
+
+    (w1, _, _, p1), (w2, _, _, p2) = CALIBRATION[-2:]
+    slope = (w2 - w1) / (p2 - p1)          # tu tren mot trang, cuc bo
+    print(f"\n  Do doc cuc bo (hai lan do gan nhat): {slope:.0f} tu / trang")
 
     w, t, f, b = count(path)
-    est = pages(w, t, f, b)
     print(f"\n  {path.name}: {w} tu prose, {t} bang, {f} hinh, {b} tieu su")
-    print(f"  -> uoc luong {est:.1f} trang  (khoang {est - 0.6:.1f}-{est + 0.6:.1f})")
-    need = max(0.0, 10.0 - est)
-    if need <= 0:
-        print("  Da qua 10 trang.")
-    else:
-        print(f"\n  De dat 10 trang con thieu {need:.1f} trang = "
-              f"{int(need * WORDS_PER_PAGE)} tu prose.")
+    delta_w = w - w2
+    est = p2 + delta_w / slope
+    print(f"  So voi lan do cuoi ({w2} tu -> {p2:.1f} trang): "
+          f"{delta_w:+d} tu")
+    print(f"  -> uoc {est:.1f} trang. Day la NOI SUY tu do doc cuc bo, "
+          f"khong phai mot mo hinh tuyet doi;")
+    print(f"     lan truoc mo hinh tuyet doi lech 1,8 trang nen dung tin no.")
+    for target in (10.0, 11.0):
+        need = (target - est) * slope
+        if need > 0:
+            print(f"     de dat {target:.0f} trang: them ~{int(need)} tu")
     return 0
 
 
