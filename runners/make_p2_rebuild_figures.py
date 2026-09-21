@@ -83,8 +83,12 @@ def load_long():
 def fig1_identity():
     """Tren tap con mot lop, ECE chinh la 1 - trung binh(p). Va ve doi lap."""
     idf = pd.read_csv(NSL / "p2_rebuild_identity.csv")
-    fig, (ax, bx) = plt.subplots(1, 2, figsize=(7.16, 2.75),
-                                 gridspec_kw=dict(wspace=0.32))
+    # MOT COT, hai panel xep DOC. Ve o kho 7,16 inch roi chen vao mot cot
+    # thi hinh bi thu con 49% va chu 8 pt in ra 4 pt; ve o kho hai cot cho
+    # mot hinh chi co hai panel thi lai chiem cho qua dang. Xep doc o kho
+    # 3,48 inch giu duoc ca hai: chu dung kho that, hinh dung mot cot.
+    fig, (ax, bx) = plt.subplots(2, 1, figsize=(3.48, 4.35),
+                                 gridspec_kw=dict(hspace=0.62))
 
     lim = [idf.ece_rare.min() - 0.03, idf.ece_rare.max() + 0.03]
     ax.plot(lim, lim, color=INK_MUTED, lw=1.0, ls=(0, (4, 2)), zorder=2)
@@ -97,13 +101,13 @@ def fig1_identity():
     ax.set_xlim(lim); ax.set_ylim(lim)
     ax.set_xlabel(r"$1-\bar{p}$  on the rare subset")
     ax.set_ylabel(r"measured $\mathrm{ECE}$")
-    ax.set_title("(a)  On a single-class subset they are\nthe same number",
-                 loc="left", fontsize=8.5)
+    ax.set_title("(a)  On a single-class subset they are the same number",
+                 loc="left", fontsize=8)
     ax.text(0.04, 0.93, f"max deviation {idf.abs_dev.max():.1e}",
             transform=ax.transAxes, fontsize=7, color=INK_MUTED, va="top")
     tidy(ax)
-    ax.legend(loc="lower right", borderpad=0.2, labelspacing=0.28,
-              handletextpad=0.4)
+    ax.legend(loc="lower right", borderpad=0.2, labelspacing=0.2,
+              handletextpad=0.35, fontsize=6.6)
 
     # (b) do tan cua acc tung bin tren TOAN tap test. Tren tap hiem no bang 0
     # theo dinh nghia nen khong ve thanh -- ve thanh khong se cho ra nhung
@@ -118,15 +122,15 @@ def fig1_identity():
     bx.axvline(0, color=ORANGE, lw=1.6, zorder=6)
     # Dat chu thich o DUOI cung, duoi thanh cuoi -- truoc day no nam giua
     # vung co thanh nen de len nhan truc x.
-    bx.text(max(stds) * 0.66, -0.62,
+    bx.text(max(stds) * 0.63, -0.72,
             "on the rare subset this is exactly 0\nfor every model, by construction",
-            fontsize=6.8, color=ORANGE, va="center", ha="center", zorder=7)
+            fontsize=6.4, color=ORANGE, va="center", ha="center", zorder=7)
     bx.set_yticks(y); bx.set_yticklabels([STYLE[m]["label"] for m in ORDER])
-    bx.set_ylim(len(ORDER) - 0.4, -1.15)      # chua cho dong chu thich
-    bx.set_xlim(0, max(stds) * 1.30)
+    bx.set_ylim(len(ORDER) - 0.4, -1.30)      # chua cho dong chu thich
+    bx.set_xlim(0, max(stds) * 1.32)
     bx.set_xlabel("std. of per-bin accuracy, full test split")
-    bx.set_title("(b)  Calibration is only measurable\nwhere accuracy varies",
-                 loc="left", fontsize=8.5)
+    bx.set_title("(b)  Calibration is only measurable where accuracy varies",
+                 loc="left", fontsize=8)
     tidy(bx, axis="x")
     save(fig, "fig1_identity")
 
@@ -135,7 +139,9 @@ def fig2_paired():
     st = pd.read_csv(NSL / "p2_rebuild_pairwise.csv")
     st = st[st.metric == "ece_full"]
     order = ["SVM-RBF", "MLP", "XGBoost", "RandomForest"]
-    fig, axes = plt.subplots(1, 3, figsize=(7.16, 2.4), sharex=True,
+    # Giu hai cot: ba dieu kien phai doc duoc canh nhau tren cung mot truc.
+    # Nhung ha chieu cao -- bon hang khoang cach thua ra rat nhieu cho trong.
+    fig, axes = plt.subplots(1, 3, figsize=(7.16, 1.95), sharex=True,
                              gridspec_kw=dict(wspace=0.10))
     for ax, (key, title) in zip(axes, SETTINGS):
         s = st[st.setting == key].set_index("baseline").loc[order].reset_index()
@@ -204,8 +210,9 @@ def fig4_refarm():
     dims = {r: int(ref[ref["repr"] == r].n_features.iloc[0]) for r in reps}
     labels = [f"{dims[r]}-d" for r in reps]
     x = np.arange(len(reps))
-    fig, (ax, bx) = plt.subplots(1, 2, figsize=(7.16, 2.5),
-                                 gridspec_kw=dict(wspace=0.30))
+    # Hai panel, moi panel dung ba diem. Khong co gi can ca be rong trang.
+    fig, (ax, bx) = plt.subplots(2, 1, figsize=(3.48, 3.45), sharex=True,
+                                 gridspec_kw=dict(hspace=0.38))
     for axis, col, title, better in (
             (ax, "auc_pr", "(a)  Ranking: AUC-PR", "higher is better"),
             (bx, "ece_full", r"(b)  Calibration: $\mathrm{ECE}$",
@@ -219,13 +226,14 @@ def fig4_refarm():
                           lw=2.0, mec=SURFACE, mew=0.7, capsize=2.5,
                           label=st["label"], zorder=5)
         axis.set_xticks(x); axis.set_xticklabels(labels)
-        axis.set_xlabel("Representation given to the trees")
-        axis.set_title(f"{title}\n{better}", loc="left", fontsize=8.5)
+        axis.set_title(f"{title}, {better}", loc="left", fontsize=8)
         axis.set_xlim(-0.35, len(reps) - 0.65)
         tidy(axis)
+    bx.set_xlabel("Representation given to the trees")
     # AUC-PR tang dan sang phai, nen goc duoi-PHAI la cho XGBoost dung o
     # all122. Goc tren-trai moi la vung trong.
-    ax.legend(loc="upper left", borderpad=0.2, labelspacing=0.3)
+    ax.legend(loc="upper left", borderpad=0.2, labelspacing=0.25,
+              handletextpad=0.4, fontsize=7)
     save(fig, "fig4_refarm")
 
 
@@ -237,9 +245,11 @@ def fig5_reliability():
     cv = pd.read_csv(NSL / "p2_rebuild_curve.csv")
     g = cv.groupby(["model", "bin"])[["conf", "acc"]].mean()
 
-    fig, (ax, bx) = plt.subplots(1, 2, figsize=(7.16, 2.9),
+    # Giu hai cot: panel (b) co 25 cot (5 nhom x 5 mo hinh), ep vao 3,48
+    # inch thi moi cot chi con ~2 mm.
+    fig, (ax, bx) = plt.subplots(1, 2, figsize=(7.16, 2.45),
                                  gridspec_kw=dict(width_ratios=[1, 1.15],
-                                                  wspace=0.28))
+                                                  wspace=0.26))
     # Duong cheo duoc chu thich TRONG legend. Mot dong chu xoay doc theo no
     # thi khong co cho dat: tam giac duoi-phai la cho duy nhat con trong va
     # legend da chiem.
@@ -293,8 +303,8 @@ def fig6_threshold():
     br = pd.read_csv(NSL / "p2_rebuild_brier_decomp.csv")
     g = th.groupby(["model", "threshold"]).mean(numeric_only=True)
 
-    fig, (ax, bx) = plt.subplots(1, 2, figsize=(7.16, 2.8),
-                                 gridspec_kw=dict(wspace=0.30))
+    fig, (ax, bx) = plt.subplots(2, 1, figsize=(3.48, 4.45),
+                                 gridspec_kw=dict(hspace=0.55))
     for m in ORDER:
         s = g.loc[m].sort_index()
         st = STYLE[m]
@@ -307,11 +317,11 @@ def fig6_threshold():
     ax.set_xlabel("decision threshold")
     ax.set_ylabel("U2R recall")
     ax.set_xlim(0, 1); ax.set_ylim(0, 1)
-    ax.set_title("(a)  Lowering the threshold rescues only\nthe margin models",
-                 loc="left", fontsize=8.5)
+    ax.set_title("(a)  Lowering the threshold rescues only the margin models",
+                 loc="left", fontsize=8)
     tidy(ax)
-    ax.legend(loc="upper right", borderpad=0.2, labelspacing=0.28,
-              handletextpad=0.4)
+    ax.legend(loc="upper right", borderpad=0.2, labelspacing=0.2,
+              handletextpad=0.35, fontsize=6.6)
 
     gb = br.groupby("model")[["reliability", "resolution"]].mean()
     # Random forest (.1548, .0948) nam ngay tren XGBoost (.1524, .0848): dat
@@ -329,8 +339,8 @@ def fig6_threshold():
                     textcoords="offset points", xytext=(dx, dy),
                     ha=ha, fontsize=6.8, color=INK_2, zorder=6)
     bx.set_xlabel("resolution  (higher = discriminates better)")
-    bx.set_ylabel("reliability  (lower = better calibrated)")
-    bx.set_title("(b)  The two axes are separate", loc="left", fontsize=8.5)
+    bx.set_ylabel("reliability  (lower = better)")
+    bx.set_title("(b)  The two axes are separate", loc="left", fontsize=8)
     # Bien trai/phai phai du rong: nhan duoc CAN GIUA diem nen no tran ra
     # ngoai neu de matplotlib tu chon gioi han.
     bx.set_xlim(0.127, 0.162)

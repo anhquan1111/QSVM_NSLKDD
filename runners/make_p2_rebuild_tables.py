@@ -373,7 +373,9 @@ def side_tables(long: pd.DataFrame) -> str:
     ov = ct.groupby("model").overall.first()
     nb = ct.groupby("model").n_better.min()
     nr = ct.groupby("model").n_runs.first()
-    out += [r"\begin{table}[t]", r"\centering",
+    # Cung ly do voi tab:percat: sau khi them cot ket luan phep kiem thi
+    # sau cot khong con vua mot cot chu cua IEEEtran.
+    out += [r"\begin{table*}[t]", r"\centering",
             r"\caption{Calibration error before and after post-hoc "
             r"recalibration on KDDTest+, mean over $\pnRuns$ runs. A cell is "
             r"bold when its mean improves on leaving the native probability "
@@ -400,7 +402,7 @@ def side_tables(long: pd.DataFrame) -> str:
         tail = f"{ov[mdl]}, {rng}"
         out.append(f"{PRETTY[mdl]} & " + " & ".join(cells)
                    + f" & {tail}" + r" \\")
-    out += [r"\bottomrule", r"\end{tabular}", r"\end{table}", ""]
+    out += [r"\bottomrule", r"\end{tabular}", r"\end{table*}", ""]
     return "\n".join(out)
 
 
@@ -414,8 +416,12 @@ def percat_table() -> str:
     g = pc.groupby(["category", "model"]).mean_prob.mean()
     n = pc.groupby("category").n.first()
     best = {c: (g[c].idxmin() if c == "Normal" else g[c].idxmax()) for c in cats}
+    # `table*`: bay cot voi nam ten mo hinh rong khoang 367 pt, con mot cot
+    # cua IEEEtran chi co 251 pt. O ban truoc bang nay TRAN ra ngoai -- khi
+    # no roi vao cot phai thi phan thua di vao le nen khong ai thay, khi no
+    # roi vao cot trai thi no in de len chinh doan van ben canh.
     out = ["% Sinh boi runners/make_p2_rebuild_tables.py -- dung sua tay.",
-           r"\begin{table}[t]", r"\centering",
+           r"\begin{table*}[t]", r"\centering",
            r"\caption{Mean predicted attack probability by category on "
            r"KDDTest+, over $\pnRuns$ runs. Normal is the negative class, so "
            r"lower is better there and higher is better elsewhere. Every "
@@ -429,7 +435,7 @@ def percat_table() -> str:
         cells = [(r"\textbf{" + num(g[(c, m)]) + "}") if best[c] == m
                  else num(g[(c, m)]) for m in ORDER]
         out.append(f"{c} & {thousands(n[c])} & " + " & ".join(cells) + r" \\")
-    out += [r"\bottomrule", r"\end{tabular}", r"\end{table}", ""]
+    out += [r"\bottomrule", r"\end{tabular}", r"\end{table*}", ""]
     return "\n".join(out)
 
 

@@ -13,7 +13,11 @@
 \usepackage{amsthm}
 \usepackage[T1]{fontenc}
 \usepackage{newtxtext,newtxmath}
+% `algorithmic` chi cho cac lenh BEN TRONG; `algorithm` moi la cai float bao
+% ngoai. Thieu no thi \begin{algorithm}[t] in ra chu "[t]" tran lan, caption
+% khong duoc danh so, va \ref{alg:...} tro ve so MUC ("Algorithm IV-B").
 \usepackage{algorithmic}
+\usepackage{algorithm}
 \usepackage{graphicx}
 \usepackage{textcomp}
 \usepackage{xcolor}

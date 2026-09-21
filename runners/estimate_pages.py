@@ -119,35 +119,56 @@ def _pdf_size_in(p: Path) -> tuple[float, float] | None:
     return (x1 - x0) / 72.0, (y1 - y0) / 72.0
 
 
-def wide_figures(path: Path) -> tuple[float, list[str]]:
-    """Cho ma cac hinh HAI COT chiem THEM so voi khi chung o mot cot.
+# Cho ma SAU hinh chiem tai lan do that gan nhat (9,0 trang), tinh bang
+# chinh cong thuc `figure_space` duoi day tren kho ve luc do -- moi hinh khi
+# ay deu la `figure` mot cot:
+#   fig1 7,16x2,75  fig2 7,16x2,40  fig3 3,48x2,80
+#   fig4 7,16x2,50  fig5 7,16x2,90  fig6 7,16x2,80
+# => 1,337 + 1,166 + 2,800 + 1,215 + 1,409 + 1,361 = 9,29 inch-cot.
+# So nay la mot phan cua diem hieu chuan: sua kho hinh thi DUNG sua no.
+CALIB_FIG_COLIN = 9.29
 
-    Lan do that gan nhat (9,0 trang) co MOI hinh o mot cot. Sau do nam hinh
-    duoc doi sang `figure*`. Phep noi suy theo so tu khong the thay thay
-    doi do, nen phai cong rieng -- va cong tu kho THAT cua tung file .pdf
-    chu khong tu mot he so uoc.
+# Diem KIEM CHUNG cho rieng so hang hinh. Ban "Paper2_rebuild__8_.pdf"
+# (2026-09-21) co dung 6467 tu nhu ban hien tai nhung NAM hinh hai cot:
+#   fig1 2x2,75  fig2 2x2,40  fig3 3,00  fig4 2x2,50  fig5 2x2,90
+#   fig6 2x2,80  => 29,70 inch-cot, tuc +1,10 trang so voi hieu chuan.
+# Mo hinh khi ay bao 11,3 trang; do that ra 12,0. Tuc la no THIEU 0,7
+# trang khi float lon: float khong don sat nhau ma de lai khoang hong o
+# cuoi cot. Con so in ra duoi day vi the la CAN DUOI.
+VALIDATION = (6467, 29.70, 12.0)
+
+
+def figure_space(path: Path) -> tuple[float, list[str], list[str]]:
+    """Cho ma toan bo hinh chiem, do bang "inch-cot".
+
+    Phep noi suy theo so tu khong thay duoc hai thay doi vua roi: mot so
+    hinh doi sang `figure*`, va nhung hinh con lai duoc VE LAI o kho mot
+    cot nen cao gap ba lan truoc. Ca hai deu an vao so trang.
 
     Mot hinh ve o kho W x H:
-      - o mot cot: bi thu ve be rong cot, cao H*(colw/textw) inch-cot;
-      - o hai cot: cao H inch tren CA HAI cot, tuc 2H inch-cot.
+      - `figure`:  bi thu ve be rong cot, cao H*(3,48/W) inch-cot;
+      - `figure*`: cao H inch tren CA HAI cot, tuc 2H inch-cot.
+    Ham tra ve CHENH LECH so voi CALIB_FIG_COLIN, quy ra trang.
     """
     s = io.open(path, encoding="utf-8").read()
     s = re.sub(r"(?<!\\)%.*", "", s)
-    extra, names = 0.0, []
+    total, wide, narrow = 0.0, [], []
     for star, block in re.findall(
             r"\\begin\{figure(\*?)\}(.*?)\\end\{figure\*?\}", s, re.S):
         g = re.search(r"\\includegraphics\[[^]]*\]\{([^}]*)\}", block)
-        if not g or not star:
+        if not g:
             continue
         size = _pdf_size_in(path.parent / g.group(1))
         if size is None:
             continue
         w_in, h_in = size
-        # Ti le co-lai khi hinh bi ep ve mot cot, lay tu chinh kho hinh.
-        ratio = 3.48 / w_in if w_in else 0.486
-        extra += 2.0 * h_in - h_in * ratio
-        names.append(Path(g.group(1)).stem)
-    return extra / (2.0 * TEXT_HEIGHT_IN), names
+        if star:
+            total += 2.0 * h_in
+            wide.append(Path(g.group(1)).stem)
+        else:
+            total += h_in * (3.48 / w_in if w_in else 1.0)
+            narrow.append(Path(g.group(1)).stem)
+    return (total - CALIB_FIG_COLIN) / (2.0 * TEXT_HEIGHT_IN), wide, narrow
 
 
 def pages(words: int, n_tab: int, n_fig: int, n_bio: int = 0) -> float:
@@ -183,18 +204,22 @@ def main() -> int:
     print(f"     khong phai mot mo hinh tuyet doi; lan truoc mo hinh tuyet "
           f"doi lech 1,8 trang.")
 
-    wide, names = wide_figures(path)
-    if names:
-        print(f"\n  Hinh hai cot (lan do that gan nhat KHONG co hinh nao "
-              f"nhu vay): {len(names)}")
-        print(f"    {', '.join(names)}")
-        print(f"  Cho ma chung chiem them, tinh tu kho that cua tung file "
-              f".pdf: +{wide:.1f} trang")
-        est += wide
-        print(f"  -> uoc {est:.1f} trang tat ca. Con so nay CHUA tung duoc "
-              f"hieu chuan voi mot lan do that")
-        print(f"     nao co hinh hai cot, nen sai so cua no lon hon phan "
-              f"noi suy theo so tu.")
+    d_fig, wide, narrow = figure_space(path)
+    if abs(d_fig) > 0.05:
+        print(f"\n  Hinh: {len(wide)} hai cot ({', '.join(wide) or '-'}), "
+              f"{len(narrow)} mot cot")
+        print(f"  Cho ma hinh chiem, so voi lan do that gan nhat "
+              f"(tinh tu kho that cua tung .pdf): {d_fig:+.1f} trang")
+        est += d_fig
+        vw, vcol, vreal = VALIDATION
+        vpred = (p2 + (vw - w2) / slope
+                 + (vcol - CALIB_FIG_COLIN) / (2.0 * TEXT_HEIGHT_IN))
+        print(f"  -> uoc {est:.1f} trang. Tren diem kiem chung "
+              f"({vw} tu, {vcol:.1f} inch-cot hinh) mo hinh nay bao "
+              f"{vpred:.1f}")
+        print(f"     con do that la {vreal:.1f}, tuc THIEU "
+              f"{vreal - vpred:.1f} trang. Nen doc {est:.1f} nhu CAN DUOI; "
+              f"khoang thuc te ~{est:.1f}-{est + (vreal - vpred):.1f}.")
     for target in (10.0, 11.0):
         need = (target - est) * slope
         if need > 0:
