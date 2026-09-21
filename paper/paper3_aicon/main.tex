@@ -1,0 +1,212 @@
+%==============================================================================
+%  EAI AICON 2026 -- Special Session: Quantum-Inspired AI for Autonomous
+%  SAGINs and Non-Terrestrial Networks
+%
+%  Short paper, 6-11 pages, Springer LNICST format.
+%  Submission is ANONYMISED (EAI Confy+) -- giu \anonymoustrue cho toi khi
+%  bai duoc nhan.
+%
+%  Compile: pdfLaTeX. `llncs.cls` co san tren Overleaf; neu build o may thi
+%  tai tu Springer (LNCS/LNICST dung chung class).
+%
+%  Moi CON SO trong bai phai goi qua macro trong tables/numbers_macros.tex.
+%  Dung viet so truc tiep vao cau van -- `runners/audit_paper3.py` se bao loi.
+%==============================================================================
+\documentclass[runningheads]{llncs}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage[hidelinks]{hyperref}
+
+% Cong tac an danh. TRUE khi nop qua Confy+, FALSE khi ban duoc nhan.
+\newif\ifanonymous
+\anonymoustrue
+
+\input{tables/numbers_macros}
+
+\newcommand{\QSVM}{QSVM}
+\newcommand{\ZZ}{\textsf{ZZ}}
+\newcommand{\Fone}{F_1}
+
+\begin{document}
+
+\title{When Model Selection Manufactures a Finding: A Tuning Trap in
+Quantum-Kernel Intrusion Detection}
+
+\ifanonymous
+  \author{Anonymous Submission}
+  \authorrunning{Anonymous}
+  \institute{Paper ID \#XXXX}
+\else
+  \author{TODO}
+  \authorrunning{TODO}
+  \institute{TODO}
+\fi
+
+\maketitle
+
+\begin{abstract}
+% TODO(tac gia thu nhat): viet lai cho gon, 150-200 tu. Khung lap luan:
+% (1) danh gia mo hinh luong tu tren du lieu lech lop co mot cai bay;
+% (2) day la mot ca that, phat hien va bac bo bang chinh du lieu cua nhom;
+% (3) co che: F1 nhi phan tren fold lech lop co mot NGUONG SAN suy bien;
+% (4) cai bay khong dac thu cho kernel luong tu -- bang kiem dem cho thay the;
+% (5) cong cu de bat, phat hanh kem.
+Selecting a hyper-parameter by cross-validated $\Fone$ on class-imbalanced
+data can return a model that classifies every record into one class. We
+document a case in which this happened to a four-qubit quantum-kernel
+intrusion detector on UNSW-NB15, produced an apparent robustness result, and
+was refuted only when the regularisation constant was held fixed. We show the
+mechanism, show that it is not specific to the quantum kernel, and release the
+checks that detect it.
+\keywords{Quantum kernel \and Model selection \and Evaluation protocol \and
+Intrusion detection \and Reproducibility}
+\end{abstract}
+
+%==============================================================================
+\section{Introduction}\label{sec:intro}
+
+% TODO(tac gia thu nhat): 3/4 trang.
+% Y chinh, theo thu tu:
+%  - Session hoi cac phuong phap lay cam hung luong tu thuc su mang lai gi
+%    "khi duoc do dac tu te". Bai nay tra loi phan "do dac tu te".
+%  - Dong gop khong phai mot mo hinh tot hon, ma mot canh bao ve quy trinh.
+%  - Neu ro day la bai companion cua [cite paper 1], va bai nay KHONG lap lai
+%    ket qua nao cua no.
+
+\paragraph{Contributions.}
+\begin{enumerate}
+  \item A documented case in which $\arg\max$ selection over a
+        cross-validated $\Fone$ grid returned a degenerate classifier, and the
+        degenerate classifier then produced an apparent robustness result.
+  \item The mechanism: on imbalanced folds the constant all-attack classifier
+        attains $\Fone = \pdegFloor$, a floor that no grid point for the
+        quantum kernel exceeded.
+  \item A census showing the collapse is a property of the
+        regularisation--objective interaction rather than of the quantum
+        kernel (Table~\ref{tab:degeneracy}).
+  \item The audit checks that detect it, released with the paper.
+\end{enumerate}
+
+%==============================================================================
+\section{Setup}\label{sec:setup}
+
+% TODO: pipeline, dataset, giao thuc. Phai neu RO hai the he du lieu ngay tu
+% day, khong de doc gia tu suy.
+
+The evidence below comes from two protocols that must not be conflated.
+The \emph{tuned} protocol uses \plegacyQubits{} qubits, $N_{\text{train}} =
+N_{\text{test}} = \plegacyN$ and \plegacySeeds{} seeds, with $C$ chosen by
+$\arg\max$ over a \pcvFolds-fold cross-validated $\Fone$ on the grid
+$\{\pcGrid\}$. The \emph{revision} protocol uses \prevQubits{} qubits,
+training sizes up to $\prevMaxN$ and \prevRuns{} runs. Every claim below states which
+protocol it belongs to.
+
+%==============================================================================
+\section{The trap}\label{sec:trap}
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=\textwidth]{figs/fig1_tuning_trap.pdf}
+  \caption{(a) Cross-validated $\Fone$ against $C$ for four kernels. The dashed
+  line is the $\Fone$ of the constant all-attack classifier, $\pdegFloor$. All
+  four kernels sit exactly on it at $C = \pselectedC$; the linear and
+  polynomial kernels rise above it at $C = 0.1$ and the RBF kernel at $C = 1$,
+  but the quantum kernel never does --- its best non-degenerate score is
+  $\pqBestNonDeg$, \emph{below} the floor. Circles mark the value $\arg\max$
+  returns. (b) What that selection costs on the test set.}
+  \label{fig:trap}
+\end{figure}
+
+On the tuned protocol the grid search returned $C = \pselectedC$ for the
+quantum kernel. The selected model has recall $\pdegRecall$ with standard
+deviation $\pdegRecallStd$ across all \plegacySeeds{} runs, precision
+$\pdegPrecision$ equal to the attack ratio of the test split, and
+$\mathrm{TN} = \pdegTN$: it calls every test record an attack.
+
+The mechanism is Fig.~\ref{fig:trap}(a). A constant all-attack classifier
+attains $\Fone = \pdegFloorFull$ on these folds. That value is a floor, and
+every kernel reaches it at $C = \pselectedC$. The linear and polynomial
+kernels climb above the floor once $C \ge 0.1$, so $\arg\max$ moves away from
+the degenerate point. The quantum kernel never climbs above it: its best
+non-degenerate grid score is $\pqBestNonDeg$. Selection therefore had no
+non-degenerate maximum to find, and returned the collapse.
+
+% TODO: mot doan ve vi sao F1 nhi phan lam viec nay, va vi sao macro-F1 hay
+% balanced accuracy thi khong.
+
+%==============================================================================
+\section{The kernel is not at fault}\label{sec:kernel}
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=0.5\textwidth]{figs/fig2_k_sweep.pdf}
+  \caption{With $C$ held at a neutral $1.0$, the quantum kernel is
+  non-degenerate on \pkSweepDeg{} of \pkSweepRuns{} runs across seven feature
+  budgets, and $\Fone$ plateaus at $\pkPlateauFone$ for $K \ge
+  \pkPlateauFrom$.}
+  \label{fig:ksweep}
+\end{figure}
+
+Refitting the same cached Gram matrices with $C = 1.0$ raises recall to
+$\pneuRecall$, precision to $\pneuPrecision$ and $\mathrm{TN}$ to $\pneuTN$,
+and $\Fone$ from $\pdegFone$ to $\pneuFone$. Kernel--target alignment is
+$\pktaSharedFull$ under \emph{both} settings --- identical to every stored
+digit. The Gram matrix did not change; only \texttt{SVC.fit} did.
+
+The apparent robustness result that the degenerate model produced is visible
+in the same artifacts: the spread of $\Fone$ across perturbation strengths was
+$\pperturbRangeOld$ under the selected $C$ --- literally invariant, because
+the prediction was constant --- against $\pperturbRangeNew$ once $C$ was held
+fixed.
+
+%==============================================================================
+\section{A degeneracy census}\label{sec:census}
+
+\input{tables/degeneracy_census}
+
+% TODO: doc bang. Diem phai noi ro:
+%  - suy bien XAY RA o ca kernel co dien (linear, poly o giao thuc tuned;
+%    RBF o giao thuc revision);
+%  - cai RIENG cua kernel luong tu la no suy bien o MOI run, nen argmax bi
+%    khoa vao do;
+%  - o giao thuc revision, quet \prevRowsScanned{} dong qua \prevModels{}
+%    model chi thay \prevDegRows{} dong suy bien, tat ca thuoc \prevDegModel{};
+%    khong dong QSVM nao (min macro recall \prevQsvmMinRecall).
+
+%==============================================================================
+\section{Limitations}\label{sec:limits}
+
+The degeneracy evidence is a \plegacyQubits-qubit, $N = \plegacyN$,
+\plegacySeeds-seed result. It has \emph{not} been reproduced under the
+\prevQubits-qubit, ten-run revision protocol, whose symmetric tuning procedure
+was adopted partly in response to this finding. The census in
+Table~\ref{tab:degeneracy} therefore compares two protocols that differ in
+more than one respect, and we draw no conclusion from that comparison beyond
+the presence or absence of collapse.
+
+% TODO: them cac han che khac -- co nho, mot dataset, chi mot ho ham muc tieu.
+
+%==============================================================================
+\section{Conclusion}\label{sec:conclusion}
+
+% TODO.
+
+%==============================================================================
+\subsubsection*{Reproducibility.}
+\ifanonymous
+  All artifacts, figure scripts and audit checks are available at an anonymous
+  mirror: \url{https://anonymous.4open.science/r/XXXX}.
+\else
+  TODO: dia chi that + release tag.
+\fi
+
+\begin{thebibliography}{8}
+% TODO
+\end{thebibliography}
+
+\end{document}

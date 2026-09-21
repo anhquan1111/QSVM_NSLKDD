@@ -1,0 +1,7 @@
+protocol,n_qubits,n_train,n_runs,model,selected_C,n_degenerate,recall,recall_std,precision
+legacy-tuned,4,100,5,quantum,0.01,5,1.0,0.0,0.634
+legacy-tuned,4,100,5,linear,0.1,1,0.9531,0.1048,0.7206
+legacy-tuned,4,100,5,poly,0.1,1,0.9594,0.0908,0.7061
+legacy-tuned,4,100,5,rbf,1.0,0,0.9087,0.1251,0.7361
+legacy-neutral,4,100,35,quantum,1.0,0,,,
+revision-tuned_once,6,100,10,SVM_RBF,,9,0.5041,,
