@@ -184,6 +184,57 @@ def audit_invariants(long, st, platt, ref, cal, idf):
           f"Platt chi giup QSVM (thuc te: {sorted(d[d > 0].index)})")
 
 
+def audit_percat(m, pc, cv):
+    """Cac luan diem moi: do tu tin theo nhom, va duoi-tu-tin."""
+    g = pc.groupby(["category", "model"]).mean_prob.mean()
+    for cat, tag in (("Normal", "Normal"), ("DoS", "Dos"), ("Probe", "Probe"),
+                     ("R2L", "RtoL"), ("U2R", "UtoR")):
+        for model, key in MACRO.items():
+            check(m[f"cat{tag}{key}"] == f"{g[(cat, model)]:.4f}",
+                  f"cat{tag}{key}")
+
+    # Bai claim: QSVM tu tin nhat tren U2R. Neu doi chieu thi phai bao.
+    check(g["U2R"].idxmax() == "QSVM",
+          f"QSVM tu tin nhat tren U2R (thuc te: {g['U2R'].idxmax()})")
+    # Bai claim: QSVM YEU NHAT tren Probe -- mot ket qua am, phai giu.
+    check(g["Probe"].idxmin() == "QSVM",
+          f"QSVM yeu nhat tren Probe (thuc te: {g['Probe'].idxmin()})")
+    # Bai claim: MOI mo hinh deu duoi nguong 0.5 tren ca hai nhom hiem.
+    below = [(c, mo) for c in ("R2L", "U2R") for mo in MACRO
+             if g[(c, mo)] >= 0.5]
+    check(not below, f"moi mo hinh duoi nguong 0.5 tren R2L va U2R "
+                     f"(vuot: {below})")
+
+    # Bai claim: MOI mo hinh deu DUOI-tu-tin, tuc acc > conf o da so bin.
+    gc = cv.groupby(["model", "bin"])[["conf", "acc"]].mean()
+    nb = cv.bin.nunique()
+    for model in MACRO:
+        s = gc.loc[model]
+        n_under = int((s.acc > s.conf).sum())
+        check(n_under > nb / 2,
+              f"{model} duoi-tu-tin ({n_under}/{nb} bin tren duong cheo)")
+
+
+def audit_regime(long, st):
+    """Ban do che do: QSVM phai thang ca hai cay o MOI dieu kien."""
+    e = st[st.metric == "ece_full"]
+    for setting in SETTINGS:
+        s = e[e.setting == setting].set_index("baseline")
+        for b in TREES:
+            check(s.loc[b, "verdict"] == "QSVM-favorable",
+                  f"ban do: {setting} vs {b}")
+    ld = pd.read_csv(NSL / "p2_rebuild_lowdata.csv")
+    for n, sub in ld.groupby("n_train"):
+        g = sub.groupby("model").ece_full.mean()
+        for b in TREES:
+            check(g["QSVM"] < g[b], f"ban do: N={int(n)} vs {b}")
+    ps = pd.read_csv(NSL / "p2_rebuild_priorshift.csv")
+    for mix, sub in ps.groupby("mix"):
+        g = sub.groupby("model").ece_full.mean()
+        for b in TREES:
+            check(g["QSVM"] < g[b], f"ban do: {mix} vs {b}")
+
+
 def main() -> int:
     long = load_long()
     st = pd.read_csv(NSL / "p2_rebuild_pairwise.csv")
@@ -199,8 +250,12 @@ def main() -> int:
     audit_macros_defined(tex, m)
     audit_prose_numbers(read(PAPER / "main.tex"))
     audit_invariants(long, st, platt, ref, cal, idf)
-    figs = ["fig1_identity", "fig2_paired", "fig3_platt", "fig4_refarm"]
+    figs = ["fig1_identity", "fig2_paired", "fig3_platt", "fig4_refarm",
+            "fig5_reliability"]
     for rel in [f"figs/{f}.pdf" for f in figs] + ["tables/main_table.tex",
+                                                  "tables/side_tables.tex",
+                                                  "tables/percat_table.tex",
+                                                  "tables/regime_table.tex",
                                                   "main.tex"]:
         check((PAPER / rel).exists(), f"co {rel}")
     # Hinh sinh ra ma khong duoc chen vao bai thi coi nhu khong ton tai --

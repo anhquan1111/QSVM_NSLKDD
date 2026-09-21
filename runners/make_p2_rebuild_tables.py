@@ -152,6 +152,28 @@ def macros(long, st, platt, ref, cal, identity) -> str:
                                      .groupby("model").ece_full.mean().idxmin()]
         m[f"ps{tag}N"] = thousands(ps[ps["mix"] == mix].n_test.iloc[0])
 
+    # Do tu tin theo nhom tan cong, va duong tin cay.
+    pc = pd.read_csv(NSL / "p2_rebuild_percat.csv")
+    gc2 = pc.groupby(["category", "model"]).mean_prob.mean()
+    for cat, tag in (("Normal", "Normal"), ("DoS", "Dos"), ("Probe", "Probe"),
+                     ("R2L", "RtoL"), ("U2R", "UtoR")):
+        for model, key in MACRO.items():
+            m[f"cat{tag}{key}"] = num(gc2[(cat, model)])
+        m[f"cat{tag}N"] = thousands(pc[pc.category == cat].n.iloc[0])
+        best = gc2[cat].idxmin() if cat == "Normal" else gc2[cat].idxmax()
+        m[f"cat{tag}Winner"] = PRETTY[best]
+    # Nguong quyet dinh: moi mo hinh deu duoi nguong tren ca hai nhom hiem?
+    below = all(gc2[(c, mo)] < 0.5 for c in ("R2L", "U2R") for mo in ORDER)
+    m["catRareAllBelow"] = "true" if below else "false"
+
+    cv = pd.read_csv(NSL / "p2_rebuild_curve.csv")
+    gcv = cv.groupby(["model", "bin"])[["conf", "acc"]].mean()
+    # Duoi-tu-tin = duong nam TREN duong cheo o phan lon cac bin.
+    for model, key in MACRO.items():
+        s = gcv.loc[model]
+        m[f"curve{key}Under"] = str(int((s.acc > s.conf).sum()))
+    m["curveNbins"] = str(int(cv.bin.nunique()))
+
     head = ["% Sinh boi runners/make_p2_rebuild_tables.py -- dung sua tay.",
             "% Prose KHONG duoc viet so truc tiep; dung macro o day."]
     return "\n".join(head + [f"\\newcommand{{\\p{k}}}{{{v}}}"
@@ -246,6 +268,84 @@ def side_tables(long: pd.DataFrame) -> str:
     return "\n".join(out)
 
 
+def percat_table() -> str:
+    """Do tu tin trung binh theo nhom tan cong.
+
+    Tren mot tap con mot lop thi ECE = 1 - p_tb, nen day la dung dai luong
+    do, goi dung ten. Normal la lop 0 (thap moi tot), con lai la lop 1."""
+    pc = pd.read_csv(NSL / "p2_rebuild_percat.csv")
+    cats = ["Normal", "DoS", "Probe", "R2L", "U2R"]
+    g = pc.groupby(["category", "model"]).mean_prob.mean()
+    n = pc.groupby("category").n.first()
+    best = {c: (g[c].idxmin() if c == "Normal" else g[c].idxmax()) for c in cats}
+    out = ["% Sinh boi runners/make_p2_rebuild_tables.py -- dung sua tay.",
+           r"\begin{table}[t]", r"\centering",
+           r"\caption{Mean predicted attack probability by category on "
+           r"KDDTest+, over $\pnRuns$ runs. Normal is the negative class, so "
+           r"lower is better there and higher is better elsewhere. Every "
+           r"model falls below the $0.5$ decision threshold on both rare "
+           r"categories.}",
+           r"\label{tab:percat}",
+           r"\begin{tabular}{lrccccc}", r"\toprule",
+           r"Category & $n$ & " + " & ".join(PRETTY[m] for m in ORDER) + r" \\",
+           r"\midrule"]
+    for c in cats:
+        cells = [(r"\textbf{" + num(g[(c, m)]) + "}") if best[c] == m
+                 else num(g[(c, m)]) for m in ORDER]
+        out.append(f"{c} & {thousands(n[c])} & " + " & ".join(cells) + r" \\")
+    out += [r"\bottomrule", r"\end{tabular}", r"\end{table}", ""]
+    return "\n".join(out)
+
+
+def regime_table(long: pd.DataFrame, st: pd.DataFrame) -> str:
+    """Ban do che do: tong hop moi dieu kien thanh mot bang khuyen nghi.
+
+    Cot "vs trees" doc tu verdict da hieu chinh Holm, khong viet tay."""
+    ld = pd.read_csv(NSL / "p2_rebuild_lowdata.csv")
+    ps = pd.read_csv(NSL / "p2_rebuild_priorshift.csv")
+    e = st[st.metric == "ece_full"]
+
+    rows = []
+    for key, label in (("NSL-KDD/full", "NSL-KDD, operating mix"),
+                       ("NSL-KDD/test21", "NSL-KDD, temporal drift"),
+                       ("UNSW/4qb", r"UNSW-NB15, $\plegacyQubits$ qubits"),
+                       ("UNSW/6qb", r"UNSW-NB15, $\punswQubits$ qubits")):
+        sub = long[long.setting == key]
+        s = e[e.setting == key].set_index("baseline")
+        beats = all(s.loc[b, "verdict"] == "QSVM-favorable"
+                    for b in ("RandomForest", "XGBoost"))
+        rows.append((label, PRETTY[sub.groupby("model").ece_full.mean().idxmin()],
+                     r"\checkmark" if beats else "--"))
+
+    ns = sorted(ld.n_train.unique())
+    for n in ns:
+        sub = ld[ld.n_train == n].groupby("model").ece_full.mean()
+        rows.append((f"Label scarcity, $N={int(n)}$", PRETTY[sub.idxmin()],
+                     r"\checkmark" if (sub["QSVM"] < sub["RandomForest"]
+                                       and sub["QSVM"] < sub["XGBoost"]) else "--"))
+    for mix, lab in (("Balanced_50/50", "Balanced prior"),
+                     ("AttackHeavy_30/70", "Attack-heavy prior"),
+                     ("DoS_only", "DoS-only prior")):
+        sub = ps[ps["mix"] == mix].groupby("model").ece_full.mean()
+        rows.append((lab, PRETTY[sub.idxmin()],
+                     r"\checkmark" if (sub["QSVM"] < sub["RandomForest"]
+                                       and sub["QSVM"] < sub["XGBoost"]) else "--"))
+
+    out = ["% Sinh boi runners/make_p2_rebuild_tables.py -- dung sua tay.",
+           r"\begin{table}[t]", r"\centering",
+           r"\caption{Reliability regime map. For each condition, the "
+           r"best-calibrated model and whether the quantum kernel is better "
+           r"calibrated than both tree ensembles. It leads outright only "
+           r"under the smallest training budget, and beats both tree "
+           r"ensembles everywhere.}",
+           r"\label{tab:regime}",
+           r"\begin{tabular}{llc}", r"\toprule",
+           r"Condition & Best calibrated & Beats both trees \\", r"\midrule"]
+    out += [f"{a} & {b} & {c} " + r"\\" for a, b, c in rows]
+    out += [r"\bottomrule", r"\end{tabular}", r"\end{table}", ""]
+    return "\n".join(out)
+
+
 def main() -> int:
     long = load_long()
     st = pd.read_csv(NSL / "p2_rebuild_pairwise.csv")
@@ -255,6 +355,8 @@ def main() -> int:
 
     for name, text in (("main_table.tex", main_table(long)),
                        ("side_tables.tex", side_tables(long)),
+                       ("percat_table.tex", percat_table()),
+                       ("regime_table.tex", regime_table(long, st)),
                        ("numbers_macros.tex",
                         macros(long, st, platt, ref, cal, identity_max_dev()))):
         p = OUT / name

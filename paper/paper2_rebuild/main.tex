@@ -377,6 +377,59 @@ $\plegacyQubits$ qubits $\pdUnswFourRf$ and $\pdUnswFourXgb$. Eight of eight
 comparisons are corrected-significant in the quantum kernel's favour, and
 the effect is far larger on UNSW-NB15 than on NSL-KDD.
 
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=\columnwidth]{figs/fig5_reliability.pdf}
+  \caption{(a) Reliability diagram on KDDTest+. Every model lies above the
+  diagonal over most of the range: all five are under-confident rather than
+  over-confident on this corpus. (b) Mean predicted attack probability by
+  category. Both rare categories sit below the decision threshold for every
+  model.}
+  \label{fig:reliability}
+\end{figure}
+
+\subsection{What the calibration curves look like}
+Fig.~\ref{fig:reliability}(a) plots the curve that Eq.~\eqref{eq:metrics}
+summarises. The shape is the same for all five models and it is not the one
+the calibration literature leads us to expect. Tree ensembles are usually
+reported as over-confident~\cite{guo2017calibration}; here every model is
+\emph{under}-confident, lying above the diagonal in $\pcurveQsvmUnder$ of
+$\pcurveNbins$ bins for the quantum kernel and similarly for the rest. The
+observed attack fraction exceeds the predicted probability across most of
+the range.
+
+The reason is the corpus rather than the models. KDDTest+ contains attack
+types absent from the training split, so records that a model scores low on
+familiarity grounds are nonetheless attacks. A detector tuned on this
+benchmark will under-alert if its probabilities are taken at face value,
+and that applies to the quantum kernel as much as to the baselines.
+
+\input{tables/percat_table}
+
+\subsection{Which attacks the probabilities can be trusted on}
+Section~\ref{sec:identity} showed that a calibration estimate restricted to
+one attack category is exactly one minus the mean confidence on it. That
+quantity is still worth reporting --- under its own name, and per category
+rather than pooled. Table~\ref{tab:percat} and
+Fig.~\ref{fig:reliability}(b) give it.
+
+The ordering differs sharply by category. On Probe the quantum kernel is the
+weakest of the five ($\pcatProbeQsvm$ against $\pcatProbeXgb$ for XGBoost),
+and on Normal it is neither the most nor the least conservative. On the two
+rare categories the ordering reverses: the quantum kernel assigns the
+highest mean attack probability to \catUtoRName{} ($\pcatUtoRQsvm$ against
+$\pcatUtoRRf$ for Random Forest), and on R2L it is second behind the RBF
+kernel. This is the defensible form of the rare-attack claim: not that the
+quantum kernel is better calibrated there --- that statement is not
+measurable --- but that it is the least reluctant of the five to call a
+rare attack an attack.
+
+One observation applies to every model and matters more than the ordering.
+The mean probability on both rare categories falls below the decision
+threshold for all five: at a default cut-off, none of these detectors would
+raise an alert on a typical R2L or U2R record. The families differ in how
+far below they sit, not in whether they clear it.
+
 \subsection{Where the quantum kernel does not lead}
 The MLP is better calibrated than the quantum kernel in every setting
 ($\pdNslMlp$ on NSL-KDD, $p_{\text{Holm}}=\pdNslMlpHolm$; $\pdUnswSixMlp$ on
@@ -480,6 +533,38 @@ ensembles in ten of ten corrected comparisons.
 The tree ensembles hold the best ranking and the worst calibration, on both
 corpora. Ranking quality and probability quality are separate axes, and a
 detector deployed on a probability threshold is governed by the second.
+
+%==============================================================================
+\section{Reliability Regime Map}\label{sec:regime}
+
+\input{tables/regime_table}
+
+Table~\ref{tab:regime} collects every condition in one place: which model is
+best calibrated, and whether the quantum kernel is better calibrated than
+both tree ensembles. Read down the last column, the answer is uniform ---
+the quantum kernel beats both tree ensembles in every condition tested,
+across two corpora, two circuit widths, a drift split, four training
+budgets and three deployment priors. Read down the middle column, the
+answer is almost as uniform in the other direction: the MLP is the
+best-calibrated model nearly everywhere.
+
+The two conditions where the quantum kernel leads outright are the smallest
+training budget and the DoS-only prior. Both are narrow, and we do not
+claim they generalise beyond what is in the table. But they are not
+arbitrary: the low-data regime is where a four-qubit kernel is cheapest to
+evaluate, and it is the regime in which the classical baselines have least
+to work with.
+
+\paragraph{A decision rule}
+For a practitioner the map reduces to three statements. If the deployment
+mix and training budget resemble the benchmark, a small neural network is
+the better-calibrated choice and a quantum kernel buys nothing. If the
+candidate set is restricted to kernel machines and tree ensembles --- which
+is the usual comparison in this literature --- the quantum kernel is the
+better-calibrated choice, consistently and by a margin that survives
+correction. And in either case the probabilities on the rare categories
+should not be used at a default threshold without the recalibration of
+Section~\ref{sec:results}.
 
 %==============================================================================
 \section{Limitations}\label{sec:limits}

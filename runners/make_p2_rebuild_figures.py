@@ -215,9 +215,59 @@ def fig4_refarm():
     save(fig, "fig4_refarm")
 
 
+def fig5_reliability():
+    """Duong tin cay -- hinh tieu chuan cua mot bai calibration.
+
+    Bai dinh nghia ECE o cong thuc (1); day la duong cong ma ECE do khoang
+    cach toi duong cheo."""
+    cv = pd.read_csv(NSL / "p2_rebuild_curve.csv")
+    g = cv.groupby(["model", "bin"])[["conf", "acc"]].mean()
+
+    fig, (ax, bx) = plt.subplots(1, 2, figsize=(7.16, 2.9),
+                                 gridspec_kw=dict(width_ratios=[1, 1.15],
+                                                  wspace=0.28))
+    ax.plot([0, 1], [0, 1], color=INK_MUTED, lw=1.0, ls=(0, (4, 2)), zorder=2)
+    ax.text(0.53, 0.44, "perfect calibration", color=INK_MUTED, fontsize=6.8,
+            rotation=38, ha="left", va="top", zorder=3)
+    for m in ORDER:
+        s = g.loc[m]
+        st = STYLE[m]
+        ax.plot(s.conf, s.acc, color=st["color"], marker=st["marker"], ms=4.5,
+                lw=1.6, mec=SURFACE, mew=0.6, label=st["label"], zorder=5)
+    ax.set_xlim(0, 1); ax.set_ylim(0, 1)
+    ax.set_xlabel("mean predicted probability in bin")
+    ax.set_ylabel("observed attack fraction")
+    ax.set_title("(a)  Reliability diagram, KDDTest+", loc="left", fontsize=8.5)
+    tidy(ax)
+    ax.legend(loc="upper left", borderpad=0.2, labelspacing=0.28,
+              handletextpad=0.4)
+
+    # (b) do tu tin trung binh theo nhom tan cong
+    pc = pd.read_csv(NSL / "p2_rebuild_percat.csv")
+    cats = ["Normal", "DoS", "Probe", "R2L", "U2R"]
+    gp = pc.groupby(["category", "model"]).mean_prob.mean()
+    x = np.arange(len(cats)); w = 0.16
+    for j, m in enumerate(ORDER):
+        bx.bar(x + (j - 2) * w, [gp[(c, m)] for c in cats], width=w,
+               color=STYLE[m]["color"], alpha=0.9, label=STYLE[m]["label"],
+               zorder=4)
+    bx.axhline(0.5, color=ORANGE, lw=1.3, ls=(0, (4, 2)), zorder=5)
+    bx.text(len(cats) - 0.45, 0.52, "decision threshold", color=ORANGE,
+            fontsize=6.8, ha="right", va="bottom", zorder=6)
+    bx.set_xticks(x); bx.set_xticklabels(cats)
+    bx.set_ylim(0, 1.0)
+    bx.set_ylabel(r"mean $\hat{p}(\mathrm{attack})$")
+    bx.set_title("(b)  Confidence by attack category", loc="left", fontsize=8.5)
+    tidy(bx)
+    bx.legend(loc="upper left", ncol=2, borderpad=0.2, labelspacing=0.25,
+              columnspacing=0.8, handletextpad=0.4, fontsize=6.8)
+    save(fig, "fig5_reliability")
+
+
 def main() -> int:
     print("Hinh cho ban dung lai Paper 2:")
     fig1_identity()
+    fig5_reliability()
     fig2_paired()
     fig3_platt()
     fig4_refarm()
