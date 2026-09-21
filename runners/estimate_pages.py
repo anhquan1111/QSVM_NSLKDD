@@ -38,6 +38,10 @@ CALIBRATION = [
 # OVERHEAD gom khoi tieu de, abstract, keywords va danh muc tham khao.
 TABLE_PAGE = 0.17
 FIGURE_PAGE = 0.22
+# Mot khoi IEEEbiography: anh 1in x 1.25in cong khoang 90 tu tieu su, chiem
+# khoang mot phan tu cot. Khong nam trong hai diem hieu chuan (luc do bai
+# chua co tieu su), nen day la uoc, va se duoc chinh khi co so trang that.
+BIO_PAGE = 0.25
 
 
 def _fit():
@@ -51,7 +55,7 @@ def _fit():
 OVERHEAD, WORDS_PER_PAGE = _fit()
 
 
-def count(path: Path) -> tuple[int, int, int]:
+def count(path: Path) -> tuple[int, int, int, int]:
     s = io.open(path, encoding="utf-8").read()
     s = re.sub(r"(?<!\\)%.*", "", s)
     body = s.split("\\maketitle", 1)[-1]
@@ -72,12 +76,22 @@ def count(path: Path) -> tuple[int, int, int]:
     prose = re.sub(r"\\[a-zA-Z]+\*?", " ", prose)
     prose = re.sub(r"[{}$\\&~^_]", " ", prose)
     words = len(re.findall(r"[A-Za-z][A-Za-z'\-]+", prose))
-    return words, n_tab, n_fig
+
+    n_bio = 0
+    whole = io.open(path, encoding="utf-8").read()
+    for m in re.findall(r"\\input\{([^}]*)\}", whole):
+        q = path.parent / m
+        q = q if q.suffix else q.with_suffix(".tex")
+        if q.exists():
+            n_bio += len(re.findall(r"\\begin\{IEEEbiography",
+                                    io.open(q, encoding="utf-8").read()))
+    return words, n_tab, n_fig, n_bio
 
 
-def pages(words: int, n_tab: int, n_fig: int) -> float:
+def pages(words: int, n_tab: int, n_fig: int, n_bio: int = 0) -> float:
     return (OVERHEAD + words / WORDS_PER_PAGE
-            + n_tab * TABLE_PAGE + n_fig * FIGURE_PAGE)
+            + n_tab * TABLE_PAGE + n_fig * FIGURE_PAGE
+            + n_bio * BIO_PAGE)
 
 
 def main() -> int:
@@ -96,13 +110,16 @@ def main() -> int:
         print(f"    {w:5d} tu, {t} bang, {f} hinh -> uoc {est:4.1f}  "
               f"that {real:4.1f}  lech {est - real:+.1f}")
 
-    w, t, f = count(path)
-    est = pages(w, t, f)
-    print(f"\n  {path.name}: {w} tu prose, {t} bang, {f} hinh")
+    w, t, f, b = count(path)
+    est = pages(w, t, f, b)
+    print(f"\n  {path.name}: {w} tu prose, {t} bang, {f} hinh, {b} tieu su")
     print(f"  -> uoc luong {est:.1f} trang  (khoang {est - 0.6:.1f}-{est + 0.6:.1f})")
-    print(f"\n  De dat 10 trang can them khoang "
-          f"{max(0, int((10.0 - est) * WORDS_PER_PAGE)):d} tu prose,")
-    print("  hoac it hon neu them bang/hinh.")
+    need = max(0.0, 10.0 - est)
+    if need <= 0:
+        print("  Da qua 10 trang.")
+    else:
+        print(f"\n  De dat 10 trang con thieu {need:.1f} trang = "
+              f"{int(need * WORDS_PER_PAGE)} tu prose.")
     return 0
 
 
