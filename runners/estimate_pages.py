@@ -100,6 +100,56 @@ def count(path: Path) -> tuple[int, int, int, int]:
     return words, n_tab, n_fig, n_bio
 
 
+# Chieu cao vung chu cua IEEEtran journal, letterpaper. Hai cot nen mot
+# trang chua 2 x TEXT_HEIGHT_IN "inch-cot".
+TEXT_HEIGHT_IN = 9.25
+
+
+def _pdf_size_in(p: Path) -> tuple[float, float] | None:
+    """Kho that cua mot hinh, doc tu MediaBox. Khong doan ti le."""
+    try:
+        raw = p.read_bytes()
+    except OSError:
+        return None
+    m = re.search(rb"/MediaBox\s*\[\s*([\d.+-]+)\s+([\d.+-]+)\s+"
+                  rb"([\d.+-]+)\s+([\d.+-]+)", raw)
+    if not m:
+        return None
+    x0, y0, x1, y1 = (float(v) for v in m.groups())
+    return (x1 - x0) / 72.0, (y1 - y0) / 72.0
+
+
+def wide_figures(path: Path) -> tuple[float, list[str]]:
+    """Cho ma cac hinh HAI COT chiem THEM so voi khi chung o mot cot.
+
+    Lan do that gan nhat (9,0 trang) co MOI hinh o mot cot. Sau do nam hinh
+    duoc doi sang `figure*`. Phep noi suy theo so tu khong the thay thay
+    doi do, nen phai cong rieng -- va cong tu kho THAT cua tung file .pdf
+    chu khong tu mot he so uoc.
+
+    Mot hinh ve o kho W x H:
+      - o mot cot: bi thu ve be rong cot, cao H*(colw/textw) inch-cot;
+      - o hai cot: cao H inch tren CA HAI cot, tuc 2H inch-cot.
+    """
+    s = io.open(path, encoding="utf-8").read()
+    s = re.sub(r"(?<!\\)%.*", "", s)
+    extra, names = 0.0, []
+    for star, block in re.findall(
+            r"\\begin\{figure(\*?)\}(.*?)\\end\{figure\*?\}", s, re.S):
+        g = re.search(r"\\includegraphics\[[^]]*\]\{([^}]*)\}", block)
+        if not g or not star:
+            continue
+        size = _pdf_size_in(path.parent / g.group(1))
+        if size is None:
+            continue
+        w_in, h_in = size
+        # Ti le co-lai khi hinh bi ep ve mot cot, lay tu chinh kho hinh.
+        ratio = 3.48 / w_in if w_in else 0.486
+        extra += 2.0 * h_in - h_in * ratio
+        names.append(Path(g.group(1)).stem)
+    return extra / (2.0 * TEXT_HEIGHT_IN), names
+
+
 def pages(words: int, n_tab: int, n_fig: int, n_bio: int = 0) -> float:
     return (OVERHEAD + words / WORDS_PER_PAGE
             + n_tab * TABLE_PAGE + n_fig * FIGURE_PAGE
@@ -128,13 +178,30 @@ def main() -> int:
     est = p2 + delta_w / slope
     print(f"  So voi lan do cuoi ({w2} tu -> {p2:.1f} trang): "
           f"{delta_w:+d} tu")
-    print(f"  -> uoc {est:.1f} trang. Day la NOI SUY tu do doc cuc bo, "
-          f"khong phai mot mo hinh tuyet doi;")
-    print(f"     lan truoc mo hinh tuyet doi lech 1,8 trang nen dung tin no.")
+    print(f"  -> uoc {est:.1f} trang tu rieng so tu. Day la NOI SUY tu do "
+          f"doc cuc bo,")
+    print(f"     khong phai mot mo hinh tuyet doi; lan truoc mo hinh tuyet "
+          f"doi lech 1,8 trang.")
+
+    wide, names = wide_figures(path)
+    if names:
+        print(f"\n  Hinh hai cot (lan do that gan nhat KHONG co hinh nao "
+              f"nhu vay): {len(names)}")
+        print(f"    {', '.join(names)}")
+        print(f"  Cho ma chung chiem them, tinh tu kho that cua tung file "
+              f".pdf: +{wide:.1f} trang")
+        est += wide
+        print(f"  -> uoc {est:.1f} trang tat ca. Con so nay CHUA tung duoc "
+              f"hieu chuan voi mot lan do that")
+        print(f"     nao co hinh hai cot, nen sai so cua no lon hon phan "
+              f"noi suy theo so tu.")
     for target in (10.0, 11.0):
         need = (target - est) * slope
         if need > 0:
             print(f"     de dat {target:.0f} trang: them ~{int(need)} tu")
+        else:
+            print(f"     da qua {target:.0f} trang khoang "
+                  f"{int(-need)} tu")
     return 0
 
 

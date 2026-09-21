@@ -116,11 +116,14 @@ def fig1_identity():
         bx.text(v + 0.008, i, f"{v:.3f}", va="center", fontsize=7,
                 color=INK_2, zorder=6)
     bx.axvline(0, color=ORANGE, lw=1.6, zorder=6)
-    bx.text(0.008, len(ORDER) - 0.42,
-            "rare subset: exactly 0 for every model,\nby construction",
-            fontsize=6.8, color=ORANGE, va="center", ha="left", zorder=7)
+    # Dat chu thich o DUOI cung, duoi thanh cuoi -- truoc day no nam giua
+    # vung co thanh nen de len nhan truc x.
+    bx.text(max(stds) * 0.66, -0.62,
+            "on the rare subset this is exactly 0\nfor every model, by construction",
+            fontsize=6.8, color=ORANGE, va="center", ha="center", zorder=7)
     bx.set_yticks(y); bx.set_yticklabels([STYLE[m]["label"] for m in ORDER])
-    bx.invert_yaxis(); bx.set_xlim(0, max(stds) * 1.30)
+    bx.set_ylim(len(ORDER) - 0.4, -1.15)      # chua cho dong chu thich
+    bx.set_xlim(0, max(stds) * 1.30)
     bx.set_xlabel("std. of per-bin accuracy, full test split")
     bx.set_title("(b)  Calibration is only measurable\nwhere accuracy varies",
                  loc="left", fontsize=8.5)
@@ -163,26 +166,35 @@ def fig3_platt():
     g = df.groupby(["model", "calibrator"]).ece_full.mean()
     cals = [("none", "none", NEUTRAL), ("platt", "Platt", BLUE),
             ("isotonic", "isotonic", VIOLET), ("temperature", "temperature", AQUA)]
-    fig, ax = plt.subplots(figsize=(3.48, 2.8))
+    fig, ax = plt.subplots(figsize=(3.48, 3.0))
     y = np.arange(len(ORDER)); h = 0.20
     for j, (key, lab, col) in enumerate(cals):
         ax.barh(y + (j - 1.5) * h, [g[(m, key)] for m in ORDER], height=h,
                 color=col, alpha=0.9, label=lab, zorder=4)
+    # Nhan lay tu phep kiem bat cap, khong phai tu viec so hai trung binh.
+    # SVM-RBF co trung binh tot len mot chut duoi temperature scaling nhung
+    # chi thang 5/10 run (holm = 1,00) -- goi do la "giup" la noi qua.
+    ct = pd.read_csv(NSL / "p2_rebuild_cal_tests.csv")
+    verdict = ct.groupby("model").overall.first()
+    TAG = {"helps": ("helped, 10/10 runs", BLUE),
+           "no effect": ("no effect", INK_MUTED),
+           "hurts": ("worse, 0/10 runs", ORANGE)}
     for i, m in enumerate(ORDER):
-        best = min(g[(m, k)] for k, _, _ in cals)
         worst = max(g[(m, k)] for k, _, _ in cals)
-        helped = g[(m, "none")] > best
-        ax.text(worst + 0.006, i, "helped" if helped else "no gain",
-                va="center", fontsize=6.6,
-                color=BLUE if helped else ORANGE, zorder=6)
+        lab, col = TAG[verdict[m]]
+        ax.text(worst + 0.006, i, lab, va="center", fontsize=6.6,
+                color=col, zorder=6)
     ax.set_yticks(y); ax.set_yticklabels([STYLE[m]["label"] for m in ORDER])
-    ax.invert_yaxis(); ax.set_xlim(0, 0.265)
+    ax.invert_yaxis(); ax.set_xlim(0, 0.30)
     ax.set_xlabel(r"$\mathrm{ECE}$ on the full test split")
-    ax.set_title("Recalibration helps the quantum\nkernel and nothing else",
-                 loc="left")
+    ax.set_title("Recalibration helps only the\nquantum kernel", loc="left")
     tidy(ax, axis="x")
-    ax.legend(loc="lower right", borderpad=0.2, labelspacing=0.25, ncol=2,
-              columnspacing=0.8)
+    # Hang duoi cung la Random forest, thanh cua no dai nhat va con keo theo
+    # nhan "no gain" -- goc duoi-phai KHONG trong. Dua legend han ra ngoai,
+    # mot hang duoi nhan truc x.
+    ax.legend(loc="upper center", bbox_to_anchor=(0.5, -0.20), ncol=4,
+              borderpad=0.2, columnspacing=1.0, handletextpad=0.4,
+              handlelength=1.2, fontsize=7)
     save(fig, "fig3_platt")
 
 
@@ -211,7 +223,9 @@ def fig4_refarm():
         axis.set_title(f"{title}\n{better}", loc="left", fontsize=8.5)
         axis.set_xlim(-0.35, len(reps) - 0.65)
         tidy(axis)
-    ax.legend(loc="lower right", borderpad=0.2, labelspacing=0.3)
+    # AUC-PR tang dan sang phai, nen goc duoi-PHAI la cho XGBoost dung o
+    # all122. Goc tren-trai moi la vung trong.
+    ax.legend(loc="upper left", borderpad=0.2, labelspacing=0.3)
     save(fig, "fig4_refarm")
 
 
@@ -226,9 +240,11 @@ def fig5_reliability():
     fig, (ax, bx) = plt.subplots(1, 2, figsize=(7.16, 2.9),
                                  gridspec_kw=dict(width_ratios=[1, 1.15],
                                                   wspace=0.28))
-    ax.plot([0, 1], [0, 1], color=INK_MUTED, lw=1.0, ls=(0, (4, 2)), zorder=2)
-    ax.text(0.53, 0.44, "perfect calibration", color=INK_MUTED, fontsize=6.8,
-            rotation=38, ha="left", va="top", zorder=3)
+    # Duong cheo duoc chu thich TRONG legend. Mot dong chu xoay doc theo no
+    # thi khong co cho dat: tam giac duoi-phai la cho duy nhat con trong va
+    # legend da chiem.
+    ax.plot([0, 1], [0, 1], color=INK_MUTED, lw=1.0, ls=(0, (4, 2)), zorder=2,
+            label="perfect calibration")
     for m in ORDER:
         s = g.loc[m]
         st = STYLE[m]
@@ -239,7 +255,9 @@ def fig5_reliability():
     ax.set_ylabel("observed attack fraction")
     ax.set_title("(a)  Reliability diagram, KDDTest+", loc="left", fontsize=8.5)
     tidy(ax)
-    ax.legend(loc="upper left", borderpad=0.2, labelspacing=0.28,
+    # Duong cong deu NAM TREN duong cheo, nen goc duoi-phai la vung trong
+    # duy nhat. Truoc day legend o goc tren-trai de len chinh cac duong.
+    ax.legend(loc="lower right", borderpad=0.25, labelspacing=0.3,
               handletextpad=0.4)
 
     # (b) do tu tin trung binh theo nhom tan cong
@@ -255,12 +273,16 @@ def fig5_reliability():
     bx.text(len(cats) - 0.45, 0.52, "decision threshold", color=ORANGE,
             fontsize=6.8, ha="right", va="bottom", zorder=6)
     bx.set_xticks(x); bx.set_xticklabels(cats)
-    bx.set_ylim(0, 1.0)
+    bx.set_ylim(0, 1.18)                      # chua cho hang legend o tren
+    bx.set_yticks([0, 0.2, 0.4, 0.6, 0.8, 1.0])
     bx.set_ylabel(r"mean $\hat{p}(\mathrm{attack})$")
     bx.set_title("(b)  Confidence by attack category", loc="left", fontsize=8.5)
     tidy(bx)
-    bx.legend(loc="upper left", ncol=2, borderpad=0.2, labelspacing=0.25,
-              columnspacing=0.8, handletextpad=0.4, fontsize=6.8)
+    # Khong con cho trong nao ben trong: cot cao toi 0,92. Dat legend THANH
+    # MOT HANG phia tren vung ve.
+    bx.legend(loc="upper center", bbox_to_anchor=(0.5, 1.02), ncol=5,
+              borderpad=0.2, columnspacing=0.7, handletextpad=0.35,
+              handlelength=1.2, fontsize=6.6)
     save(fig, "fig5_reliability")
 
 
@@ -292,19 +314,27 @@ def fig6_threshold():
               handletextpad=0.4)
 
     gb = br.groupby("model")[["reliability", "resolution"]].mean()
+    # Random forest (.1548, .0948) nam ngay tren XGBoost (.1524, .0848): dat
+    # nhan cua no o DUOI thi dong chu de len dung diem XGBoost. Dao len tren.
+    # SVM-RBF thi lech trai de khoi cham MLP.
+    PLACE = {"RandomForest": (0, 8, "center"), "SVM-RBF": (-6, -11, "right")}
     for m in ORDER:
         st = STYLE[m]
+        dx, dy, ha = PLACE.get(m, (0, -11, "center"))
         bx.scatter(gb.loc[m, "resolution"], gb.loc[m, "reliability"], s=70,
                    color=st["color"], marker=st["marker"], edgecolor=SURFACE,
                    linewidth=0.8, zorder=5)
         bx.annotate(st["label"], (gb.loc[m, "resolution"],
                                   gb.loc[m, "reliability"]),
-                    textcoords="offset points", xytext=(0, -11),
-                    ha="center", fontsize=6.8, color=INK_2, zorder=6)
+                    textcoords="offset points", xytext=(dx, dy),
+                    ha=ha, fontsize=6.8, color=INK_2, zorder=6)
     bx.set_xlabel("resolution  (higher = discriminates better)")
     bx.set_ylabel("reliability  (lower = better calibrated)")
     bx.set_title("(b)  The two axes are separate", loc="left", fontsize=8.5)
-    bx.set_ylim(0.02, 0.115)
+    # Bien trai/phai phai du rong: nhan duoc CAN GIUA diem nen no tran ra
+    # ngoai neu de matplotlib tu chon gioi han.
+    bx.set_xlim(0.127, 0.162)
+    bx.set_ylim(0.022, 0.108)
     tidy(bx)
     save(fig, "fig6_threshold")
 
