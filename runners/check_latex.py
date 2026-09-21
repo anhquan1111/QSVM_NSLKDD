@@ -130,10 +130,33 @@ def check_file(path: Path) -> tuple[set[str], set[str], set[str], set[str]]:
     #
     #     Cach nhan: macro nao co ^ hoac _ hoac \\math... trong than dinh nghia
     #     thi moi lan dung phai nam trong mot cap $...$.
+    # Moi truong toan dang hien: ben trong chung MOI THU deu la che do toan,
+    # khong can $...$. Bo sot chung thi bao nham moi macro toan viet trong
+    # equation/align -- da xay ra that voi \ECE trong paper 2.
+    MATH_ENV = ("equation", "align", "gather", "multline", "eqnarray",
+                "displaymath", "array", "split", "cases")
+    in_math_env = [False] * (len(lines) + 1)
+    depth = 0
+    for i, ln in enumerate(lines, 1):
+        opened = re.findall(BS + BS + r"begin\{([A-Za-z]+)\*?\}", ln)
+        closed = re.findall(BS + BS + r"end\{([A-Za-z]+)\*?\}", ln)
+        was = depth
+        depth += sum(1 for e in opened if e.rstrip("*") in MATH_ENV)
+        depth -= sum(1 for e in closed if e.rstrip("*") in MATH_ENV)
+        in_math_env[i] = was > 0 or depth > 0
+    # \[ ... \] cung la che do toan hien.
+    depth = 0
+    for i, ln in enumerate(lines, 1):
+        was = depth
+        depth += ln.count(BS + "[") - ln.count(BS + "]")
+        in_math_env[i] = in_math_env[i] or was > 0 or depth > 0
+
     if MATHONLY:
         for i, ln in enumerate(lines, 1):
             if re.search(BS + BS + r"newcommand\{" + BS + BS + r"[A-Za-z]+\}", ln):
                 continue                      # chinh dong DINH NGHIA macro
+            if in_math_env[i]:
+                continue                      # ca dong nam trong moi truong toan
             # doan chi so LE giua cac dau $ la dang o trong che do toan
             for j, seg in enumerate(ln.split("$")):
                 if j % 2 == 1:
