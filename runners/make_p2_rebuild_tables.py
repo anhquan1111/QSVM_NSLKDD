@@ -232,6 +232,33 @@ def macros(long, st, platt, ref, cal, identity) -> str:
         m[f"corp{tag}AttackTest"] = f"{d['attack_rate_test'] * 100:.1f}"
         m[f"corp{tag}Cats"] = str(d["n_categories"])
 
+    # Con so ma BAN DA NOP bao cao. Lay tu chinh artifact cua no
+    # (results/nslkdd/p2_verify_calibration.json) chu khong go tay, de muc
+    # "Relation to the submitted version" cung chiu cung mot ky luat.
+    old_art = _json.load(io.open(
+        ROOT / "results/nslkdd/p2_verify_calibration.json", encoding="utf-8"))
+    for model, key in MACRO.items():
+        if model in old_art["summary"]:
+            m[f"sub{key}EceRare"] = num(
+                old_art["summary"][model]["ece_rare"]["mean"])
+    m["subNRareTest"] = str(int(old_art["n_test_rare"]))
+    m["subNRuns"] = str(len({r["run_id"] for r in old_art["per_run"]}))
+
+    # Kiem dem toan bo so sanh, theo kieu paper 1 khai "110 controlled
+    # comparisons: 21 / 21 / 68". Bo tap test cu ra khoi kiem dem.
+    cen = st[st.setting != "NSL-KDD/sample100"]
+    vc = cen.verdict.value_counts()
+    m["cenTotal"] = str(int(len(cen)))
+    m["cenQsvm"] = str(int(vc.get("QSVM-favorable", 0)))
+    m["cenBase"] = str(int(vc.get("baseline-favorable", 0)))
+    m["cenIncon"] = str(int(vc.get("inconclusive", 0)))
+    rank = cen[cen.metric.isin(["auc_pr", "f1"])]
+    m["cenRankQsvm"] = str(int((rank.verdict == "QSVM-favorable").sum()))
+    m["cenRankTotal"] = str(int(len(rank)))
+    cal2 = cen[cen.metric.isin(["ece_full", "brier_full"])]
+    m["cenCalQsvm"] = str(int((cal2.verdict == "QSVM-favorable").sum()))
+    m["cenCalTotal"] = str(int(len(cal2)))
+
     head = ["% Sinh boi runners/make_p2_rebuild_tables.py -- dung sua tay.",
             "% Prose KHONG duoc viet so truc tiep; dung macro o day."]
     return "\n".join(head + [f"\\newcommand{{\\p{k}}}{{{v}}}"
