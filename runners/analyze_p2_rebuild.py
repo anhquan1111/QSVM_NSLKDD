@@ -71,7 +71,8 @@ def load_settings() -> pd.DataFrame:
     frames = []
     n = pd.read_csv(NSL / "p2_rebuild_per_run.csv")
     n["setting"] = "NSL-KDD/" + n.test_set.map(
-        {"full_kddtest_plus": "full", "sample100_cu": "sample100"})
+        {"full_kddtest_plus": "full", "kddtest21": "test21",
+         "sample100_cu": "sample100"})
     frames.append(n)
     p = UNSW / "p2_unsw_per_run.csv"
     if p.exists():

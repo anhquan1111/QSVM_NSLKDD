@@ -262,6 +262,58 @@ full test split of each corpus, and we report the rare-subset quantity under
 its own name where it is informative.
 
 %==============================================================================
+\section{Reliability Evaluation Framework}\label{sec:method}
+
+\subsection{What we measure}
+For a test set $\{(\mathbf{x}_i,y_i)\}_{i=1}^{n}$ and calibrated
+probabilities $\hat p_i$, partitioned into $B$ equal-frequency bins,
+\begin{equation}
+\ECE = \sum_{b}\frac{|B_b|}{n}\bigl|\mathrm{acc}(B_b)-\mathrm{conf}(B_b)\bigr|,
+\qquad
+\Brier = \frac{1}{n}\sum_{i=1}^{n}(\hat p_i-y_i)^2 ,
+\label{eq:metrics}
+\end{equation}
+with $\mathrm{acc}$ and $\mathrm{conf}$ the empirical accuracy and mean
+confidence in a bin. Equal-frequency rather than equal-width binning keeps
+every bin populated on a skewed score distribution. We report
+AUC-PR alongside, because ranking quality and probability quality are
+separate axes and a model can lead on one while trailing on the other.
+
+\subsection{One recalibration protocol for every model}
+Each model is reduced to a one-dimensional score before recalibration: the
+decision function for the kernel machines, the log-odds of the
+positive-class probability for the tree ensembles and the MLP. A single
+logistic map is then fitted on the \emph{training} scores and applied to the
+test scores, so no test label enters the calibrator. By
+Proposition~\ref{prop:platt} this leaves AUC-PR and AUC-ROC untouched, which
+is what allows one protocol to be applied uniformly without distorting the
+ranking comparison.
+
+\subsection{The five questions}
+We ask the same question under five conditions, and the conditions are
+chosen because they correspond to things that change in deployment rather
+than to things that are convenient to vary.
+
+\begin{enumerate}
+  \item \textbf{Operating calibration.} Calibration on the full test split
+        of each corpus (Table~\ref{tab:main}).
+  \item \textbf{Representation.} Whether the tree ensembles are
+        disadvantaged by sharing the quantum kernel's low-dimensional input
+        (Fig.~\ref{fig:refarm}).
+  \item \textbf{Label scarcity.} Calibration against training-set size
+        (Table~\ref{tab:lowdata}).
+  \item \textbf{Class-prior shift.} Calibration when the deployment mix
+        differs from the benchmark mix (Table~\ref{tab:priorshift}).
+  \item \textbf{Temporal drift.} Calibration on the harder KDDTest-21
+        split, whose records the original benchmark's classical learners
+        all misclassified.
+\end{enumerate}
+
+Each is reported with paired tests and effect sizes rather than with point
+estimates, and we report the conditions in which the quantum kernel does not
+lead as prominently as those in which it does.
+
+%==============================================================================
 \section{Experimental Setup}\label{sec:setup}
 
 % TODO(tac gia): pipeline chi tiet, sieu tham so. Giu mo ta cua ban cu.
@@ -385,26 +437,44 @@ $\pcalQsvmTemp$ against $\pcalQsvmNone$ uncalibrated), while on both tree
 ensembles all three are worse than leaving the native probability alone
 (Random Forest $\pcalRfNone$ uncalibrated against $\pcalRfIso$ isotonic).
 
+\input{tables/side_tables}
+
 \subsection{Training-set size}
-Reliability is not uniform in the amount of training data. Sweeping
-$N\in\{\pldNmin,\ldots,\pldNmax\}$ and refitting every model on each subset,
-the best-calibrated model at the smallest size is \pldWinnerMin{}
-($\pldQsvmMin$ against $\pldMlpMin$ for the MLP and $\pldRfMin$ for Random
-Forest). The quantum kernel's relative standing falls as $N$ grows: at
-$N=\pldNmax$ it is $\pldQsvmMax$ against $\pldMlpMax$ for the MLP. The
-advantage such as it is belongs to the low-data regime, which is also the
-regime in which a four-qubit kernel is cheapest to run.
+Reliability is not uniform in the amount of training data.
+Table~\ref{tab:lowdata} sweeps $N\in\{\pldNmin,\ldots,\pldNmax\}$, refitting
+every model on each subset. The best-calibrated model at the smallest size
+is \pldWinnerMin{} ($\pldQsvmMin$ against $\pldMlpMin$ for the MLP and
+$\pldRfMin$ for Random Forest) --- the one condition in this study where the
+quantum kernel leads the field outright. Its relative standing falls as $N$
+grows: at $N=\pldNmax$ it is $\pldQsvmMax$ against $\pldMlpMax$ for the MLP.
+The advantage, such as it is, belongs to the low-data regime, which is also
+the regime in which a four-qubit kernel is cheapest to run.
 
 \subsection{Class-prior shift}
-We rebuild three operating conditions from the full test split rather than
-from a fixed sample: a balanced mix ($\ppsBalN$ records), an attack-heavy
-mix ($\ppsAttN$), and a DoS-only mix ($\ppsDosN$). The best-calibrated model
-is \ppsBalWinner{} on the balanced mix ($\ppsBalMlp$ against $\ppsBalQsvm$
-for the quantum kernel), \ppsAttWinner{} on the attack-heavy mix, and
-\ppsDosWinner{} on the DoS-only mix ($\ppsDosQsvm$). The quantum kernel is
-ahead of both tree ensembles under all three conditions
-($\ppsBalRf$, $\ppsAttRf$, $\ppsDosRf$ for Random Forest), which is the same
-ordering as Table~\ref{tab:main} and not a separate effect.
+A benchmark's class mix is not the deployment mix, and a calibrator fitted
+under one can fail under the other. We rebuild three operating conditions
+from the full test split rather than from a fixed sample
+(Table~\ref{tab:priorshift}): a balanced mix ($\ppsBalN$ records), an
+attack-heavy mix ($\ppsAttN$), and a DoS-only mix ($\ppsDosN$). The
+best-calibrated model is \ppsBalWinner{} on the balanced mix ($\ppsBalMlp$
+against $\ppsBalQsvm$ for the quantum kernel), \ppsAttWinner{} on the
+attack-heavy mix, and \ppsDosWinner{} on the DoS-only mix ($\ppsDosQsvm$).
+The quantum kernel is ahead of both tree ensembles under all three
+conditions ($\ppsBalRf$, $\ppsAttRf$, $\ppsDosRf$ for Random Forest), which
+is the same ordering as Table~\ref{tab:main} and not a separate effect.
+
+\subsection{Temporal drift}
+KDDTest-21 retains the records of KDDTest+ that the original benchmark's
+classical learners all misclassified, and is the standard stand-in for
+drift on this corpus. The ordering is unchanged there: the quantum kernel is
+better calibrated than Random Forest by $\pdDriftRf$
+$[\pdDriftRfLo,\pdDriftRfHi]$ ($p_{\text{Holm}}=\pdDriftRfHolm$,
+$d_z=\pdDriftRfDz$) and than XGBoost by $\pdDriftXgb$
+($p_{\text{Holm}}=\pdDriftXgbHolm$), behind the MLP by $\pdDriftMlp$
+($p_{\text{Holm}}=\pdDriftMlpHolm$), and inconclusive against the RBF kernel
+($p_{\text{Holm}}=\pdDriftRbfHolm$). Counting KDDTest-21 alongside the four
+settings of Table~\ref{tab:main}, the quantum kernel beats both tree
+ensembles in ten of ten corrected comparisons.
 
 \subsection{Ranking is not reliability}
 The tree ensembles hold the best ranking and the worst calibration, on both

@@ -1,0 +1,51 @@
+% Sinh boi runners/make_p2_rebuild_tables.py -- dung sua tay.
+\begin{table}[t]
+\centering
+\caption{Calibration error against training-set size on KDDTest+, mean over $\pnRuns$ runs. Best per column in bold. The quantum kernel leads at the smallest size only.}
+\label{tab:lowdata}
+\begin{tabular}{lcccc}
+\toprule
+Model & $N=99$ & $N=200$ & $N=500$ & $N=1000$ \\
+\midrule
+QSVM-\ZZ{} & \textbf{0.1549} & 0.1402 & 0.1357 & 0.1421 \\
+SVM-RBF & 0.1677 & 0.1361 & 0.1353 & 0.1272 \\
+MLP & 0.1578 & \textbf{0.1299} & \textbf{0.1176} & \textbf{0.1172} \\
+XGBoost & 0.1696 & 0.1625 & 0.1627 & 0.1758 \\
+Random forest & 0.1752 & 0.1745 & 0.1765 & 0.1836 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[t]
+\centering
+\caption{Calibration error under class-prior shift, mean over $\pnRuns$ runs. Each condition is rebuilt from the full test split. Best per column in bold.}
+\label{tab:priorshift}
+\begin{tabular}{lccc}
+\toprule
+Model & Balanced & Attack-heavy & DoS-only \\
+\midrule
+QSVM-\ZZ{} & 0.1250 & 0.1898 & \textbf{0.0746} \\
+SVM-RBF & 0.1089 & 0.1718 & 0.0943 \\
+MLP & \textbf{0.1016} & \textbf{0.1563} & 0.0933 \\
+XGBoost & 0.1514 & 0.2031 & 0.1049 \\
+Random forest & 0.1599 & 0.2136 & 0.1111 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[t]
+\centering
+\caption{Calibration error before and after post-hoc recalibration on KDDTest+, mean over $\pnRuns$ runs. A cell is bold when recalibration improves on leaving the native probability alone; only the quantum kernel has any.}
+\label{tab:recal}
+\begin{tabular}{lcccc}
+\toprule
+Model & none & Platt & isotonic & temperature \\
+\midrule
+QSVM-\ZZ{} & 0.1969 & \textbf{0.1421} & \textbf{0.1398} & \textbf{0.1399} \\
+SVM-RBF & 0.1171 & 0.1272 & 0.1254 & \textbf{0.1140} \\
+MLP & 0.1084 & 0.1172 & 0.1356 & 0.1144 \\
+XGBoost & 0.1392 & 0.1758 & 0.1802 & 0.1712 \\
+Random forest & 0.1305 & 0.1836 & 0.1787 & 0.1795 \\
+\bottomrule
+\end{tabular}
+\end{table}
