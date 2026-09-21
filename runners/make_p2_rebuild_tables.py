@@ -128,6 +128,29 @@ def macros(long, st, platt, ref, cal, identity) -> str:
                            ("isotonic", "Iso"), ("temperature", "Temp")):
             m[f"cal{key}{tag}"] = num(c[(model, cname)])
 
+    # Low-data (A1) va prior shift (C3): hai phan da tinh o
+    # run_p2_rebuild_extra.py. Do tren ECE toan tap test nhu moi cho khac.
+    ld = pd.read_csv(NSL / "p2_rebuild_lowdata.csv")
+    ns = sorted(ld.n_train.unique())
+    m["ldNmin"] = str(int(min(ns)))
+    m["ldNmax"] = str(int(max(ns)))
+    gl = ld.groupby(["n_train", "model"]).ece_full.mean()
+    for model, key in MACRO.items():
+        m[f"ld{key}Min"] = num(gl[(min(ns), model)])
+        m[f"ld{key}Max"] = num(gl[(max(ns), model)])
+    m["ldWinnerMin"] = PRETTY[ld[ld.n_train == min(ns)]
+                              .groupby("model").ece_full.mean().idxmin()]
+
+    ps = pd.read_csv(NSL / "p2_rebuild_priorshift.csv")
+    gp = ps.groupby(["mix", "model"]).ece_full.mean()
+    for mix, tag in (("Balanced_50/50", "Bal"), ("AttackHeavy_30/70", "Att"),
+                     ("DoS_only", "Dos")):
+        for model, key in MACRO.items():
+            m[f"ps{tag}{key}"] = num(gp[(mix, model)])
+        m[f"ps{tag}Winner"] = PRETTY[ps[ps["mix"] == mix]
+                                     .groupby("model").ece_full.mean().idxmin()]
+        m[f"ps{tag}N"] = thousands(ps[ps["mix"] == mix].n_test.iloc[0])
+
     head = ["% Sinh boi runners/make_p2_rebuild_tables.py -- dung sua tay.",
             "% Prose KHONG duoc viet so truc tiep; dung macro o day."]
     return "\n".join(head + [f"\\newcommand{{\\p{k}}}{{{v}}}"

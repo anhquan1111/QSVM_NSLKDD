@@ -141,6 +141,9 @@ NUMBER_WHITELIST = {
     "1.0",
     "4",      # so chu so lam tron trong caption
     "8",      # doi so cua thebibliography
+    "0",      # can duoi cua khoang goc [0, pi]
+    "0.5",    # macro-F1 cua bo phan loai hang: hang so toan hoc, khong phai
+              # so lieu do duoc -- neu doi thanh so do thi phai thanh macro
 }
 
 

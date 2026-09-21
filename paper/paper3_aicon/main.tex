@@ -70,13 +70,34 @@ Intrusion detection \and Reproducibility}
 %==============================================================================
 \section{Introduction}\label{sec:intro}
 
-% TODO(tac gia thu nhat): 3/4 trang.
-% Y chinh, theo thu tu:
-%  - Session hoi cac phuong phap lay cam hung luong tu thuc su mang lai gi
-%    "khi duoc do dac tu te". Bai nay tra loi phan "do dac tu te".
-%  - Dong gop khong phai mot mo hinh tot hon, ma mot canh bao ve quy trinh.
-%  - Neu ro day la bai companion cua [cite paper 1], va bai nay KHONG lap lai
-%    ket qua nao cua no.
+% TODO(tac gia thu nhat): doc lai, nới rong neu con cho.
+Asking what quantum-inspired methods actually deliver presumes that the
+measurement itself is sound. This paper is about a case where it was not,
+and where the failure was invisible in every number the protocol reported.
+
+Evaluating a kernel classifier on intrusion-detection data means choosing a
+regularisation constant, and the standard way to choose it is to maximise a
+cross-validated score. On class-imbalanced data that procedure has a trap.
+The constant classifier that calls everything an attack attains a
+respectable binary $\Fone$, and that value acts as a floor beneath the whole
+grid. A model whose genuine scores never rise above the floor will have the
+degenerate setting returned to it by $rg\max$, and will then be carried
+through the rest of the study as though it were a working model.
+
+This happened to a four-qubit quantum-kernel detector in our own earlier
+work on UNSW-NB15. The selected model predicted a single class for every
+test record. It went on to produce a robustness result --- $\Fone$ invariant
+under input perturbation --- that was an artefact of the prediction being
+constant, and that result was not obviously wrong on inspection. It was
+caught only when the regularisation constant was fixed at a neutral value
+and the experiment re-run.
+
+We report the case, the mechanism behind it, and a census showing that the
+collapse is a property of the interaction between the regularisation
+constant and the selection objective rather than of the quantum kernel. The
+contribution is not a better model; it is a caution about a procedure that
+most papers in this area run without reporting, and the checks that detect
+it.
 
 \paragraph{Contributions.}
 \begin{enumerate}
@@ -95,8 +116,13 @@ Intrusion detection \and Reproducibility}
 %==============================================================================
 \section{Setup}\label{sec:setup}
 
-% TODO: pipeline, dataset, giao thuc. Phai neu RO hai the he du lieu ngay tu
-% day, khong de doc gia tu suy.
+Both protocols use the same front end on UNSW-NB15: one-hot encoding,
+	extsc{SelectKBest}, PCA, and a min--max map onto $[0,\pi]$, every
+transformer fitted on the training subset alone. The quantum kernel is the
+\ZZ{}-FeatureMap with full entanglement, evaluated as an exact statevector
+fidelity. Classical kernels are linear, degree-two polynomial, and RBF, all
+fitted by the same 	exttt{SVC} solver so that the only difference between
+arms is the kernel and the regularisation constant.
 
 The evidence below comes from two protocols that must not be conflated.
 The \emph{tuned} protocol uses \plegacyQubits{} qubits, $N_{\text{train}} =
@@ -136,8 +162,15 @@ the degenerate point. The quantum kernel never climbs above it: its best
 non-degenerate grid score is $\pqBestNonDeg$. Selection therefore had no
 non-degenerate maximum to find, and returned the collapse.
 
-% TODO: mot doan ve vi sao F1 nhi phan lam viec nay, va vi sao macro-F1 hay
-% balanced accuracy thi khong.
+The trap is specific to the objective. Binary $\Fone$ on the positive class
+ignores true negatives entirely, so a classifier that never predicts the
+negative class loses nothing by it and is rewarded in proportion to the
+positive rate. Macro-averaged $\Fone$ and balanced accuracy both average
+over classes and therefore assign the constant classifier a score near
+$0.5$, well below any working model; neither would have selected the
+degenerate constant here. The choice of averaging in a single line of the
+tuning code decided whether the study that followed measured a model or an
+artefact.
 
 %==============================================================================
 \section{The kernel is not at fault}\label{sec:kernel}
@@ -169,14 +202,27 @@ fixed.
 
 \input{tables/degeneracy_census}
 
-% TODO: doc bang. Diem phai noi ro:
-%  - suy bien XAY RA o ca kernel co dien (linear, poly o giao thuc tuned;
-%    RBF o giao thuc revision);
-%  - cai RIENG cua kernel luong tu la no suy bien o MOI run, nen argmax bi
-%    khoa vao do;
-%  - o giao thuc revision, quet \prevRowsScanned{} dong qua \prevModels{}
-%    model chi thay \prevDegRows{} dong suy bien, tat ca thuoc \prevDegModel{};
-%    khong dong QSVM nao (min macro recall \prevQsvmMinRecall).
+Table~ef{tab:degeneracy} counts, for each protocol and model, the runs on
+which the fitted classifier assigned every test record to the attack class.
+Three points follow from it.
+
+First, collapse is not a quantum phenomenon. Under the tuned protocol it
+occurs for three of the four kernels, the linear and polynomial kernels
+included. Under the revision protocol, a scan of \prevRowsScanned{} rows
+across \prevModels{} models finds \prevDegRows{} degenerate rows, all
+belonging to \prevDegModel{}, and none belonging to the quantum kernel
+(whose lowest macro recall anywhere in that scan is
+\prevQsvmMinRecall).
+
+Second, what is specific to the quantum kernel is not that it collapsed but
+that it collapsed on \emph{every} run. That is what made the collapse
+survive selection: with no grid point scoring above the degenerate floor,
+$rg\max$ had no non-degenerate maximum available to it.
+
+Third, holding the constant at a neutral value removes the effect entirely
+--- \pkSweepDeg{} degenerate runs out of \pkSweepRuns{} across seven
+feature budgets --- which is the evidence that the kernel was never the
+problem.
 
 %==============================================================================
 \section{Limitations}\label{sec:limits}
@@ -189,12 +235,32 @@ Table~\ref{tab:degeneracy} therefore compares two protocols that differ in
 more than one respect, and we draw no conclusion from that comparison beyond
 the presence or absence of collapse.
 
-% TODO: them cac han che khac -- co nho, mot dataset, chi mot ho ham muc tieu.
+The case is drawn from one corpus and one model family, and the degenerate
+protocol used a small training and test split, so the census counts runs
+rather than estimating a rate. We examine one selection objective and one
+regularisation grid; a wider grid might have cleared the floor for the
+quantum kernel without changing the mechanism. We do not claim the trap is
+common in the literature, only that it is easy to fall into and invisible in
+the reported numbers when it happens.
 
 %==============================================================================
 \section{Conclusion}\label{sec:conclusion}
 
-% TODO.
+% TODO(tac gia thu nhat): doc lai truoc khi nop.
+Selecting a regularisation constant by maximising a cross-validated binary
+$\Fone$ can return a classifier that predicts one class for every input, and
+the resulting model will pass through an evaluation pipeline producing
+numbers that look like findings. We documented one such case, identified the
+mechanism --- a degenerate floor in the selection objective that the model's
+genuine scores never cleared --- and showed by census that the collapse
+belongs to the regularisation--objective interaction rather than to the
+quantum kernel.
+
+Two things would have caught it. Selecting on a class-averaged objective
+rather than binary $\Fone$ removes the floor. Reporting the confusion matrix
+alongside the score, rather than the score alone, makes a constant predictor
+impossible to miss. Neither is expensive, and we release the checks that
+implement them.
 
 %==============================================================================
 \subsubsection*{Reproducibility.}
