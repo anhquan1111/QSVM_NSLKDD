@@ -135,8 +135,19 @@ measure of confidence on known attacks, close in spirit to recall; it is not
 a calibration error, and no model can be penalised by it for being
 over-confident.
 
-We verify Eq.~\eqref{eq:identity} numerically for every model and every run:
-the largest absolute deviation is $\pidentityMaxDev$. We also verify the
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=\columnwidth]{figs/fig1_identity.pdf}
+  \caption{(a) Measured calibration error on the rare subset against
+  $1-\bar p$, for every model and run on both corpora: they are the same
+  number. (b) Calibration is only measurable where per-bin accuracy varies,
+  which on the rare subset it cannot.}
+  \label{fig:identity}
+\end{figure}
+
+We verify Eq.~\eqref{eq:identity} numerically for every model and every run
+(Fig.~\ref{fig:identity}(a)): the largest absolute deviation is
+$\pidentityMaxDev$. We also verify the
 converse, that the estimate on the full test split is not degenerate: there
 both classes are present, per-bin accuracy varies, and the identity fails by
 a wide margin. All calibration numbers below are therefore measured on the

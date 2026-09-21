@@ -210,10 +210,15 @@ def audit_invariants() -> None:
 
 # --------------------------------------------------------------------------
 def audit_assets() -> None:
-    for rel in ("figs/fig1_tuning_trap.pdf", "figs/fig2_k_sweep.pdf",
-                "tables/degeneracy_census.tex", "tables/numbers_macros.tex",
-                "main.tex"):
+    figs = ["fig1_tuning_trap", "fig2_k_sweep"]
+    for rel in [f"figs/{f}.pdf" for f in figs] + [
+            "tables/degeneracy_census.tex", "tables/numbers_macros.tex",
+            "main.tex"]:
         check((PAPER / rel).exists(), f"co {rel}")
+    # Hinh sinh ra ma khong duoc chen vao bai thi coi nhu khong ton tai.
+    body = read(PAPER / "main.tex")
+    for f in figs:
+        check(f"figs/{f}.pdf" in body, f"bai co chen {f}")
 
     census = pd.read_csv(ROOT / "results/unsw/paper3/degeneracy_census.csv")
     tex = read(PAPER / "tables" / "degeneracy_census.tex")

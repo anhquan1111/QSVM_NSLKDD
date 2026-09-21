@@ -190,10 +190,15 @@ def main() -> int:
     audit_macros_defined(tex, m)
     audit_prose_numbers(read(PAPER / "main.tex"))
     audit_invariants(long, st, platt, ref, cal, idf)
-    for rel in ("figs/fig1_identity.pdf", "figs/fig2_paired.pdf",
-                "figs/fig3_platt.pdf", "figs/fig4_refarm.pdf",
-                "tables/main_table.tex", "main.tex"):
+    figs = ["fig1_identity", "fig2_paired", "fig3_platt", "fig4_refarm"]
+    for rel in [f"figs/{f}.pdf" for f in figs] + ["tables/main_table.tex",
+                                                  "main.tex"]:
         check((PAPER / rel).exists(), f"co {rel}")
+    # Hinh sinh ra ma khong duoc chen vao bai thi coi nhu khong ton tai --
+    # da xay ra that voi fig1_identity, hinh cua chinh luan diem trung tam.
+    body = read(PAPER / "main.tex")
+    for f in figs:
+        check(f"figs/{f}.pdf" in body, f"bai co chen {f}")
 
     n_ok = sum(1 for ok, _ in _checks if ok)
     for ok, label in _checks:
