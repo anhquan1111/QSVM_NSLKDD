@@ -37,7 +37,7 @@
         Quan~Tran~Anh~Vo,
         Nguyen~Quang~Anh,
         and~Minh~Tuan~Pham
-\thanks{Manuscript received \today; revised \today. This work was
+\thanks{Manuscript received \today. This work was
   supported by The University of Danang -- University of Science and
   Technology under Project T2026-02-10TN. \textit{(Corresponding author: Quan Tran Anh Vo.)}}
 \thanks{The authors are with The University of Danang -- University of
@@ -50,38 +50,28 @@
 \maketitle
 
 \begin{abstract}
-% TODO(tac gia): got lai con 150-200 tu truoc khi nop.
 An intrusion detector is deployed on the strength of its probabilities, yet
 quantum-kernel classifiers are almost always evaluated on accuracy alone. We
 benchmark a \QSVM{} against Random Forest, XGBoost, an MLP and an SVM-RBF
 baseline under one zero-leakage pipeline and one recalibration protocol, on
-NSL-KDD and UNSW-NB15. We first show that the natural way to pose the
-question is unavailable: the rare-attack union consists entirely of attack
-records, so on that subset every bin has accuracy one by construction and the
-expected calibration error collapses to one minus the mean predicted
-probability --- an identity we verify to
-$\pidentityMaxDev$. It measures confidence on known attacks, not
-calibration. Measured where both classes are present, the picture is
-consistent across both corpora and both circuit widths: over $\pnRuns$
-paired runs with Holm-corrected Wilcoxon tests the quantum kernel is better
-calibrated than both tree ensembles in every setting
-($\Delta\ECE=\pdNslRf$, $p_{\text{Holm}}=\pdNslRfHolm$ on NSL-KDD;
-$\pdUnswSixRf$, $p_{\text{Holm}}=\pdUnswSixRfHolm$ on UNSW-NB15), while an
-MLP is better calibrated than the quantum kernel everywhere. Giving the
-trees the full one-hot representation improves their ranking and worsens
-their calibration, so the comparison is made in the trees' most favourable
-calibration setting. Post-hoc recalibration --- Platt, isotonic or
-temperature --- helps the quantum kernel and no other model, hurting the
-MLP and both tree ensembles in every paired run, and lowering
-the decision threshold recovers the rare attack classes for the
-margin-based models and not for the tree ensembles. One property of the
-score distributions accounts for both: a forest emits a distinct
-probability for $\psatRfDistinct\%$ of test records against
-$\psatQsvmDistinct\%$ for the quantum kernel, and a monotone recalibrator
-cannot separate records that already share a score. Of $\pcenTotal$
-Holm-corrected comparisons, $\pcenQsvm$ favour the quantum kernel,
-$\pcenBase$ favour a classical baseline and $\pcenIncon$ are inconclusive:
-the advantage is confined to calibration, and it is absent from ranking.
+NSL-KDD and UNSW-NB15. The natural way to pose the question is unavailable:
+the rare-attack union consists entirely of attack records, so binned
+calibration error collapses there to one minus mean confidence --- an
+identity we verify to $\pidentityMaxDev$. Measured where both classes are
+present, over $\pnRuns$ paired runs with Holm-corrected Wilcoxon tests, the
+quantum kernel is better calibrated than both tree ensembles in every
+setting ($\Delta\ECE=\pdNslRf$, $p_{\text{Holm}}=\pdNslRfHolm$ on NSL-KDD;
+$\pdUnswSixRf$, $p_{\text{Holm}}=\pdUnswSixRfHolm$ on UNSW-NB15) and at
+their own most favourable representation, while an MLP is better calibrated
+everywhere. Post-hoc recalibration helps the quantum kernel and no other
+model, and lowering the decision threshold recovers the rare classes for
+the margin-based models alone. One measured property explains both: a
+forest emits a distinct probability for $\psatRfDistinct\%$ of test records
+against $\psatQsvmDistinct\%$ for the quantum kernel, and a monotone
+recalibrator cannot separate tied scores. Of $\pcenTotal$ Holm-corrected
+comparisons $\pcenQsvm$ favour the quantum kernel and $\pcenBase$ favour a
+classical baseline: the advantage is confined to calibration, and it is
+absent from ranking.
 \end{abstract}
 
 \begin{IEEEkeywords}
@@ -536,13 +526,28 @@ classical baseline, and $\pcenIncon$ are inconclusive. There is no general
 advantage here, and a paper that reported only its wins could have drawn a
 very different picture from the same runs.
 
-The structure inside the tally is the result. Split the comparisons by what
-they measure and they separate almost cleanly. On the calibration metrics
-the quantum kernel takes $\pcenCalQsvm$ of $\pcenCalTotal$; on the ranking
-metrics it takes $\pcenRankQsvm$ of $\pcenRankTotal$. It does not rank
-better than any baseline anywhere, and it calibrates better than half of
-them everywhere. That is the shape of the claim this paper makes, and the
-reason a single scalar comparison would have hidden it.
+The tally covers three families of metric and nothing else. On calibration
+measured where both classes are present --- ECE and the Brier score on the
+full test split --- the quantum kernel takes $\pcenCalQsvm$ of
+$\pcenCalTotal$. On ranking --- AUC-PR and $F_1$ --- it takes
+$\pcenRankQsvm$ of $\pcenRankTotal$. On the Brier score restricted to the
+rare union it takes $\pcenRareQsvm$ of $\pcenRareTotal$. The three families
+sum to $\pcenTotal$, so no comparison is counted twice and none is left out
+of the report.
+
+One quantity is deliberately absent. ECE on the rare union is excluded from
+the tally, because Section~\ref{sec:identity} shows it equals
+$1-\bar{p}$ identically there and is not a calibration error; counting it
+among calibration wins would contradict that section. It would have added
+$\pcenDropped$ comparisons. It is still reported, under its own name and
+per category, in Section~\ref{sec:results}. The Brier score on the same
+subset is kept, because a proper scoring rule does not degenerate when the
+subset carries one label.
+
+The structure inside the tally is the result. The quantum kernel does not
+rank better than any baseline anywhere, and it calibrates better than half
+of them everywhere. That is the shape of the claim this paper makes, and
+the reason a single scalar comparison would have hidden it.
 
 \subsection{Calibration against the tree ensembles}
 The quantum kernel is better calibrated than both tree ensembles in every

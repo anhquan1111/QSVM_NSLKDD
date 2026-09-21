@@ -280,18 +280,36 @@ def macros(long, st, platt, ref, cal, identity) -> str:
 
     # Kiem dem toan bo so sanh, theo kieu paper 1 khai "110 controlled
     # comparisons: 21 / 21 / 68". Bo tap test cu ra khoi kiem dem.
-    cen = st[st.setting != "NSL-KDD/sample100"]
+    #
+    # VA bo ca `ece_rare`. Muc III chung minh ECE tren tap hiem bang dung
+    # 1 - p_bar, va ket luan "it is not a calibration error". Dem no vao
+    # bang tong roi goi ca bang la "so sanh hieu chinh" thi bai tu mau
+    # thuan voi chinh muc III -- va 16 so sanh do dong gop 6 trong so
+    # thang cua QSVM. Dai luong nay van duoc bao, nhung o muc VI-D duoi
+    # ten rieng cua no. `brier_rare` thi O LAI: Brier tren tap mot lop
+    # van la mot quy tac cham diem hop le, khong suy bien.
+    cen = st[(st.setting != "NSL-KDD/sample100")
+             & (st.metric != "ece_rare")]
     vc = cen.verdict.value_counts()
     m["cenTotal"] = str(int(len(cen)))
     m["cenQsvm"] = str(int(vc.get("QSVM-favorable", 0)))
     m["cenBase"] = str(int(vc.get("baseline-favorable", 0)))
     m["cenIncon"] = str(int(vc.get("inconclusive", 0)))
+    # Ba ho phai phu KIN cen: neu them mot metric moi ma quen khai o day
+    # thi audit_census se bat, vi tong ba ho khong con bang cenTotal.
     rank = cen[cen.metric.isin(["auc_pr", "f1"])]
     m["cenRankQsvm"] = str(int((rank.verdict == "QSVM-favorable").sum()))
     m["cenRankTotal"] = str(int(len(rank)))
     cal2 = cen[cen.metric.isin(["ece_full", "brier_full"])]
     m["cenCalQsvm"] = str(int((cal2.verdict == "QSVM-favorable").sum()))
     m["cenCalTotal"] = str(int(len(cal2)))
+    rare = cen[cen.metric == "brier_rare"]
+    m["cenRareQsvm"] = str(int((rare.verdict == "QSVM-favorable").sum()))
+    m["cenRareTotal"] = str(int(len(rare)))
+    # So sanh ECE-hiem bi loai, khai ra de nguoi doc biet no ton tai.
+    m["cenDropped"] = str(int(
+        len(st[(st.setting != "NSL-KDD/sample100")
+               & (st.metric == "ece_rare")])))
 
     head = ["% Sinh boi runners/make_p2_rebuild_tables.py -- dung sua tay.",
             "% Prose KHONG duoc viet so truc tiep; dung macro o day."]

@@ -312,7 +312,9 @@ def fig6_threshold():
                 ms=4.0, lw=1.8, mec=SURFACE, mew=0.6, label=st["label"],
                 zorder=5)
     ax.axvline(0.5, color=ORANGE, lw=1.3, ls=(0, (4, 2)), zorder=3)
-    ax.text(0.52, 0.04, "default", color=ORANGE, fontsize=6.8, rotation=90,
+    # Dat o y=0,58: duoi do la vung nam duong cong chay qua (o x=0,52 cao
+    # nhat la QSVM ~0,42), tren do va ben phai la legend. Cho nay trong.
+    ax.text(0.52, 0.58, "default", color=ORANGE, fontsize=6.8, rotation=90,
             va="bottom", zorder=6)
     ax.set_xlabel("decision threshold")
     ax.set_ylabel("U2R recall")
