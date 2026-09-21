@@ -33,7 +33,7 @@ Random forest & 0.1599 & 0.2136 & 0.1111 \\
 \end{tabular}
 \end{table}
 
-\begin{table}[t]
+\begin{table*}[t]
 \centering
 \caption{Calibration error before and after post-hoc recalibration on KDDTest+, mean over $\pnRuns$ runs. A cell is bold when its mean improves on leaving the native probability alone. The last column is the paired Wilcoxon verdict, Holm-corrected over the three recalibrators: it is what the text claims, because a mean can move without the per-run comparison supporting it.}
 \label{tab:recal}
@@ -49,4 +49,4 @@ XGBoost & 0.1392 & 0.1758 & 0.1802 & 0.1712 & hurts, 0/10 \\
 Random forest & 0.1305 & 0.1836 & 0.1787 & 0.1795 & hurts, 0/10 \\
 \bottomrule
 \end{tabular}
-\end{table}
+\end{table*}

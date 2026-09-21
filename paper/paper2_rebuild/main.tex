@@ -338,15 +338,15 @@ measure of confidence on known attacks, close in spirit to recall; it is not
 a calibration error, and no model can be penalised by it for being
 over-confident.
 
-\begin{figure*}[t]
+\begin{figure}[t]
   \centering
-  \includegraphics[width=\textwidth]{figs/fig1_identity.pdf}
+  \includegraphics[width=\columnwidth]{figs/fig1_identity.pdf}
   \caption{(a) Measured calibration error on the rare subset against
   $1-\bar p$, for every model and run on both corpora: they are the same
   number. (b) Calibration is only measurable where per-bin accuracy varies,
   which on the rare subset it cannot.}
   \label{fig:identity}
-\end{figure*}
+\end{figure}
 
 We verify Eq.~\eqref{eq:identity} numerically for every model and every run
 (Fig.~\ref{fig:identity}(a)): the largest absolute deviation is
@@ -622,13 +622,13 @@ $\punswQubits$ qubits). The claim this paper supports is a claim about tree
 ensembles, not a claim that a quantum kernel is the most reliable model
 available.
 
-\begin{figure*}[t]
+\begin{figure}[t]
   \centering
-  \includegraphics[width=\textwidth]{figs/fig4_refarm.pdf}
+  \includegraphics[width=\columnwidth]{figs/fig4_refarm.pdf}
   \caption{Giving the tree ensembles a richer representation, with every
   hyper-parameter held fixed. Ranking improves; calibration gets worse.}
   \label{fig:refarm}
-\end{figure*}
+\end{figure}
 
 \subsection{Are the tree baselines handicapped?}
 The trees share the quantum kernel's low-dimensional representation, which
@@ -749,15 +749,15 @@ ensembles in ten of ten corrected comparisons.
 
 \input{tables/depth_tables}
 
-\begin{figure*}[t]
+\begin{figure}[t]
   \centering
-  \includegraphics[width=\textwidth]{figs/fig6_threshold.pdf}
+  \includegraphics[width=\columnwidth]{figs/fig6_threshold.pdf}
   \caption{(a) U2R recall against the decision threshold. The margin-based
   models recover the rare class as the threshold falls; the tree ensembles
   do not. (b) The Murphy decomposition separates the two axes: the tree
   ensembles sit top-right, discriminating best and calibrating worst.}
   \label{fig:threshold}
-\end{figure*}
+\end{figure}
 
 \subsection{Ranking is not reliability, as a decomposition}
 So far the separation of the two axes has been an observation about two
