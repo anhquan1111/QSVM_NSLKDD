@@ -5,6 +5,10 @@
    "n_test": 22544,
    "n_rare": 2952
   },
+  "kddtest21": {
+   "n_test": 11850,
+   "n_rare": 2952
+  },
   "sample100_cu": {
    "n_test": 100,
    "n_rare": 10

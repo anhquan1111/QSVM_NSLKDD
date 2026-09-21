@@ -1,0 +1,23 @@
+% Sinh boi runners/make_p2_rebuild_tables.py -- dung sua tay.
+\begin{table}[t]
+\centering
+\caption{Reliability regime map. For each condition, the best-calibrated model and whether the quantum kernel is better calibrated than both tree ensembles. It leads outright only under the smallest training budget, and beats both tree ensembles everywhere.}
+\label{tab:regime}
+\begin{tabular}{llc}
+\toprule
+Condition & Best calibrated & Beats both trees \\
+\midrule
+NSL-KDD, operating mix & MLP & \checkmark \\
+NSL-KDD, temporal drift & MLP & \checkmark \\
+UNSW-NB15, $\plegacyQubits$ qubits & MLP & \checkmark \\
+UNSW-NB15, $\punswQubits$ qubits & MLP & \checkmark \\
+Label scarcity, $N=99$ & QSVM-\ZZ{} & \checkmark \\
+Label scarcity, $N=200$ & MLP & \checkmark \\
+Label scarcity, $N=500$ & MLP & \checkmark \\
+Label scarcity, $N=1000$ & MLP & \checkmark \\
+Balanced prior & MLP & \checkmark \\
+Attack-heavy prior & MLP & \checkmark \\
+DoS-only prior & QSVM-\ZZ{} & \checkmark \\
+\bottomrule
+\end{tabular}
+\end{table}
