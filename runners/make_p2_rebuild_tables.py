@@ -203,6 +203,40 @@ def macros(long, st, platt, ref, cal, identity) -> str:
         for model, key in MACRO.items():
             m[f"calrare{key}{tag}"] = num(gcp[(cname, model)])
 
+    # Phep kiem bat cap cho tung bo hieu chinh. Truoc day bai phat bieu
+    # "giup mo hinh nao" bang cach so hai trung binh, va dieu do sai: mot
+    # muc chenh 0,003 tren SVM-RBF thang 5/10 run duoc goi la "giup".
+    ct = pd.read_csv(NSL / "p2_rebuild_cal_tests.csv")
+    VERDICT = {"helps": "helps", "hurts": "hurts", "no effect": "no effect"}
+    for model, key in MACRO.items():
+        g = ct[ct.model == model]
+        m[f"ctest{key}"] = VERDICT[g.overall.iloc[0]]
+        # DAO DAU: quy uoc cua muc nay la "cai thien", giong \pQsvmPlattDelta
+        # o ngay tren -- duong la tot len. `mean_delta` trong artifact la
+        # sau - truoc nen phai doi dau, neu khong thi hai doan ke nhau dung
+        # hai quy uoc nguoc nhau.
+        m[f"ctest{key}Best"] = f"{-g.mean_delta.min():+.4f}"
+        m[f"ctest{key}Worst"] = f"{-g.mean_delta.max():+.4f}"
+        m[f"ctest{key}MinHolm"] = num(g.holm_p.min())
+        m[f"ctest{key}MaxHolm"] = num(g.holm_p.max())
+        m[f"ctest{key}Better"] = "/".join(
+            str(int(v)) for v in (g.n_better.min(), g.n_runs.iloc[0]))
+        for cname, tag in (("platt", "Platt"), ("isotonic", "Iso"),
+                           ("temperature", "Temp")):
+            r = g[g.calibrator == cname].iloc[0]
+            m[f"ctest{key}{tag}D"] = f"{-r.mean_delta:+.4f}"
+            m[f"ctest{key}{tag}Holm"] = num(r.holm_p)
+            m[f"ctest{key}{tag}N"] = f"{int(r.n_better)}/{int(r.n_runs)}"
+    m["ctestHelped"] = ", ".join(
+        PRETTY[mo] for mo in ORDER
+        if ct[ct.model == mo].overall.iloc[0] == "helps")
+    m["ctestHurt"] = ", ".join(
+        PRETTY[mo] for mo in ORDER
+        if ct[ct.model == mo].overall.iloc[0] == "hurts")
+    m["ctestNull"] = ", ".join(
+        PRETTY[mo] for mo in ORDER
+        if ct[ct.model == mo].overall.iloc[0] == "no effect")
+
     # Bao hoa va do trung cua diem so -- co che giai thich ba ket qua kia.
     sa = pd.read_csv(NSL / "p2_rebuild_saturation.csv")
     gs = sa.groupby("model")[["sat_raw", "sat_cal", "distinct_frac"]].mean()
@@ -332,15 +366,26 @@ def side_tables(long: pd.DataFrame) -> str:
     gc = cal.groupby(["model", "calibrator"]).ece_full.mean()
     cals = [("none", "none"), ("platt", "Platt"),
             ("isotonic", "isotonic"), ("temperature", "temperature")]
+    # Cot cuoi la KET LUAN CUA PHEP KIEM, khong phai cua viec so hai trung
+    # binh. Can no: temperature scaling ha trung binh cua SVM-RBF mot chut
+    # nhung chi thang 5/10 run, in dam o do se doc thanh mot ket qua that.
+    ct = pd.read_csv(NSL / "p2_rebuild_cal_tests.csv")
+    ov = ct.groupby("model").overall.first()
+    nb = ct.groupby("model").n_better.min()
+    nr = ct.groupby("model").n_runs.first()
     out += [r"\begin{table}[t]", r"\centering",
             r"\caption{Calibration error before and after post-hoc "
             r"recalibration on KDDTest+, mean over $\pnRuns$ runs. A cell is "
-            r"bold when recalibration improves on leaving the native "
-            r"probability alone; only the quantum kernel has any.}",
+            r"bold when its mean improves on leaving the native probability "
+            r"alone. The last column is the paired Wilcoxon verdict, "
+            r"Holm-corrected over the three recalibrators: it is what the "
+            r"text claims, because a mean can move without the per-run "
+            r"comparison supporting it.}",
             r"\label{tab:recal}",
-            r"\begin{tabular}{lcccc}", r"\toprule",
-            r"Model & " + " & ".join(lab for _, lab in cals) + r" \\",
-            r"\midrule"]
+            r"\begin{tabular}{lccccl}", r"\toprule",
+            r"Model & " + " & ".join(lab for _, lab in cals)
+            + r" & Paired test \\",
+            r" & & & & & (runs improved) \\", r"\midrule"]
     for mdl in ORDER:
         base = gc[(mdl, "none")]
         cells = []
@@ -348,7 +393,13 @@ def side_tables(long: pd.DataFrame) -> str:
             v = num(gc[(mdl, key)])
             cells.append(r"\textbf{" + v + "}" if key != "none"
                          and gc[(mdl, key)] < base else v)
-        out.append(f"{PRETTY[mdl]} & " + " & ".join(cells) + r" \\")
+        rng = (f"{int(nb[mdl])}/{int(nr[mdl])}"
+               if nb[mdl] == ct[ct.model == mdl].n_better.max() else
+               f"{int(nb[mdl])}--{int(ct[ct.model == mdl].n_better.max())}"
+               f"/{int(nr[mdl])}")
+        tail = f"{ov[mdl]}, {rng}"
+        out.append(f"{PRETTY[mdl]} & " + " & ".join(cells)
+                   + f" & {tail}" + r" \\")
     out += [r"\bottomrule", r"\end{tabular}", r"\end{table}", ""]
     return "\n".join(out)
 

@@ -35,17 +35,18 @@ Random forest & 0.1599 & 0.2136 & 0.1111 \\
 
 \begin{table}[t]
 \centering
-\caption{Calibration error before and after post-hoc recalibration on KDDTest+, mean over $\pnRuns$ runs. A cell is bold when recalibration improves on leaving the native probability alone; only the quantum kernel has any.}
+\caption{Calibration error before and after post-hoc recalibration on KDDTest+, mean over $\pnRuns$ runs. A cell is bold when its mean improves on leaving the native probability alone. The last column is the paired Wilcoxon verdict, Holm-corrected over the three recalibrators: it is what the text claims, because a mean can move without the per-run comparison supporting it.}
 \label{tab:recal}
-\begin{tabular}{lcccc}
+\begin{tabular}{lccccl}
 \toprule
-Model & none & Platt & isotonic & temperature \\
+Model & none & Platt & isotonic & temperature & Paired test \\
+ & & & & & (runs improved) \\
 \midrule
-QSVM-\ZZ{} & 0.1969 & \textbf{0.1421} & \textbf{0.1398} & \textbf{0.1399} \\
-SVM-RBF & 0.1171 & 0.1272 & 0.1254 & \textbf{0.1140} \\
-MLP & 0.1084 & 0.1172 & 0.1356 & 0.1144 \\
-XGBoost & 0.1392 & 0.1758 & 0.1802 & 0.1712 \\
-Random forest & 0.1305 & 0.1836 & 0.1787 & 0.1795 \\
+QSVM-\ZZ{} & 0.1969 & \textbf{0.1421} & \textbf{0.1398} & \textbf{0.1399} & helps, 10/10 \\
+SVM-RBF & 0.1171 & 0.1272 & 0.1254 & \textbf{0.1140} & no effect, 3--5/10 \\
+MLP & 0.1084 & 0.1172 & 0.1356 & 0.1144 & hurts, 0/10 \\
+XGBoost & 0.1392 & 0.1758 & 0.1802 & 0.1712 & hurts, 0/10 \\
+Random forest & 0.1305 & 0.1836 & 0.1787 & 0.1795 & hurts, 0/10 \\
 \bottomrule
 \end{tabular}
 \end{table}

@@ -71,7 +71,8 @@ MLP is better calibrated than the quantum kernel everywhere. Giving the
 trees the full one-hot representation improves their ranking and worsens
 their calibration, so the comparison is made in the trees' most favourable
 calibration setting. Post-hoc recalibration --- Platt, isotonic or
-temperature --- helps the quantum kernel and no other model, and lowering
+temperature --- helps the quantum kernel and no other model, hurting the
+MLP and both tree ensembles in every paired run, and lowering
 the decision threshold recovers the rare attack classes for the
 margin-based models and not for the tree ensembles. One property of the
 score distributions accounts for both: a forest emits a distinct
@@ -131,8 +132,10 @@ well-defined, on two corpora and at two circuit widths.
   \item The finding that the quantum kernel is better calibrated than both
         tree ensembles in every setting tested, and is not better than an
         MLP.
-  \item The finding that post-hoc recalibration helps the quantum kernel and
-        degrades every other model, robust to the choice of recalibrator.
+  \item The finding that post-hoc recalibration helps the quantum kernel in
+        every run and under every recalibrator tested, degrades the MLP and
+        both tree ensembles in every run, and leaves the classical RBF
+        kernel statistically unchanged.
   \item A mechanism for that finding, measured rather than conjectured: the
         tree ensembles' scores are quantised and saturated, a monotone
         recalibrator cannot separate tied records, and the same property
@@ -165,9 +168,11 @@ quantum kernel (Table~\ref{tab:priorshift}).
 
 (iv) \emph{The recalibration claim is corrected in both directions.} That
 version concluded Platt scaling suits margin-based quantum \emph{and} SVM
-models. It helps the quantum kernel alone; the classical SVM degrades
-slightly ($\pRbfPlattDelta$). The finding is narrower than claimed and, once
-isotonic and temperature scaling are added, more robust.
+models. It helps the quantum kernel alone; on the classical SVM no
+recalibrator is distinguishable from leaving the score alone
+($p_{\text{Holm}}\geq\pctestRbfMinHolm$ for all three). The
+finding is narrower than claimed and, once isotonic and temperature scaling
+are added, more robust.
 
 (v) \emph{The identical-footing claim was false.} That version reused cached
 quantum models whose training subset differed from the subset used to fit
@@ -333,15 +338,15 @@ measure of confidence on known attacks, close in spirit to recall; it is not
 a calibration error, and no model can be penalised by it for being
 over-confident.
 
-\begin{figure}[t]
+\begin{figure*}[t]
   \centering
-  \includegraphics[width=\columnwidth]{figs/fig1_identity.pdf}
+  \includegraphics[width=\textwidth]{figs/fig1_identity.pdf}
   \caption{(a) Measured calibration error on the rare subset against
   $1-\bar p$, for every model and run on both corpora: they are the same
   number. (b) Calibration is only measurable where per-bin accuracy varies,
   which on the rare subset it cannot.}
   \label{fig:identity}
-\end{figure}
+\end{figure*}
 
 We verify Eq.~\eqref{eq:identity} numerically for every model and every run
 (Fig.~\ref{fig:identity}(a)): the largest absolute deviation is
@@ -513,15 +518,15 @@ significance whatever the effect size.
 
 \input{tables/main_table}
 
-\begin{figure}[t]
+\begin{figure*}[t]
   \centering
-  \includegraphics[width=\columnwidth]{figs/fig2_paired.pdf}
+  \includegraphics[width=\textwidth]{figs/fig2_paired.pdf}
   \caption{Paired differences in calibration error, quantum kernel minus
   baseline, with bootstrap confidence intervals and Holm-corrected $p$.
   Blue favours the quantum kernel, orange the baseline, grey is
   inconclusive.}
   \label{fig:paired}
-\end{figure}
+\end{figure*}
 
 \subsection{The census}
 Before the individual comparisons, the tally. Across every setting, metric
@@ -552,16 +557,16 @@ $\plegacyQubits$ qubits $\pdUnswFourRf$ and $\pdUnswFourXgb$. Eight of eight
 comparisons are corrected-significant in the quantum kernel's favour, and
 the effect is far larger on UNSW-NB15 than on NSL-KDD.
 
-\begin{figure}[t]
+\begin{figure*}[t]
   \centering
-  \includegraphics[width=\columnwidth]{figs/fig5_reliability.pdf}
+  \includegraphics[width=\textwidth]{figs/fig5_reliability.pdf}
   \caption{(a) Reliability diagram on KDDTest+. Every model lies above the
   diagonal over most of the range: all five are under-confident rather than
   over-confident on this corpus. (b) Mean predicted attack probability by
   category. Both rare categories sit below the decision threshold for every
   model.}
   \label{fig:reliability}
-\end{figure}
+\end{figure*}
 
 \subsection{What the calibration curves look like}
 Fig.~\ref{fig:reliability}(a) plots the curve that Eq.~\eqref{eq:metrics}
@@ -617,13 +622,13 @@ $\punswQubits$ qubits). The claim this paper supports is a claim about tree
 ensembles, not a claim that a quantum kernel is the most reliable model
 available.
 
-\begin{figure}[t]
+\begin{figure*}[t]
   \centering
-  \includegraphics[width=\columnwidth]{figs/fig4_refarm.pdf}
+  \includegraphics[width=\textwidth]{figs/fig4_refarm.pdf}
   \caption{Giving the tree ensembles a richer representation, with every
   hyper-parameter held fixed. Ranking improves; calibration gets worse.}
   \label{fig:refarm}
-\end{figure}
+\end{figure*}
 
 \subsection{Are the tree baselines handicapped?}
 The trees share the quantum kernel's low-dimensional representation, which
@@ -646,8 +651,12 @@ setting rather than a cramped one.
 \begin{figure}[t]
   \centering
   \includegraphics[width=\columnwidth]{figs/fig3_platt.pdf}
-  \caption{Post-hoc recalibration helps the quantum kernel and degrades
-  every other model.}
+  \caption{Post-hoc recalibration helps the quantum kernel in all $\pnRuns$
+  runs, degrades the MLP and both tree ensembles in all of them, and leaves
+  the RBF kernel unchanged. The labels are the Holm-corrected paired
+  verdicts of Table~\ref{tab:recal} rather than a comparison of means: the
+  RBF kernel's mean does improve under temperature scaling, but it wins in
+  only $\pctestRbfTempN$ runs.}
   \label{fig:platt}
 \end{figure}
 
@@ -655,15 +664,39 @@ setting rather than a cramped one.
 Platt scaling reduces the quantum kernel's calibration error from
 $\pQsvmPlattBefore$ to $\pQsvmPlattAfter$ ($\pQsvmPlattDelta$) and is the
 only model of the five it helps: Random Forest moves by $\pRfPlattDelta$ and
-XGBoost by $\pXgbPlattDelta$, both worse, and the classical SVM degrades
-slightly ($\pRbfPlattDelta$).
+XGBoost by $\pXgbPlattDelta$, both worse, and the classical SVM by
+$\pRbfPlattDelta$.
 
 This is not an artefact of choosing a logistic map. Isotonic regression and
 temperature scaling give the same picture: on the quantum kernel all three
 land within a narrow band ($\pcalQsvmPlatt$, $\pcalQsvmIso$,
-$\pcalQsvmTemp$ against $\pcalQsvmNone$ uncalibrated), while on both tree
-ensembles all three are worse than leaving the native probability alone
-(Random Forest $\pcalRfNone$ uncalibrated against $\pcalRfIso$ isotonic).
+$\pcalQsvmTemp$ against $\pcalQsvmNone$ uncalibrated), while on the MLP and
+both tree ensembles all three are worse than leaving the native probability
+alone (Random Forest $\pcalRfNone$ uncalibrated against $\pcalRfIso$
+isotonic).
+
+Which of those movements are real is a separate question from their size,
+and the last column of Table~\ref{tab:recal} answers it with the same
+paired test used everywhere else, Holm-corrected over the three
+recalibrators. Three verdicts come back, not two. All three maps improve
+the quantum kernel in $\pctestQsvmBetter$ runs
+($p_{\text{Holm}}=\pctestQsvmMinHolm$ for each), the largest mean gain
+being $\pctestQsvmBest$. All three make the MLP, XGBoost and Random Forest
+worse in every run --- none of the three improves any of them even once, at
+the same corrected $p$. The RBF kernel is neither case: its best map,
+temperature scaling, moves the mean by $\pctestRbfTempD$ but wins in only
+$\pctestRbfTempN$ runs ($p_{\text{Holm}}=\pctestRbfTempHolm$), and its
+worst moves it by $\pctestRbfPlattD$ at
+$p_{\text{Holm}}=\pctestRbfPlattHolm$. We therefore claim that
+recalibration helps the quantum kernel and no other model, and \emph{not}
+that it degrades every other model --- for the RBF kernel the data do not
+separate the effect from zero in either direction. The distinction is not
+bookkeeping: the mechanism of Section~\ref{sec:mechanism} predicts a null
+there rather than a loss, because the RBF kernel's scores are as
+unsaturated as the quantum kernel's ($\psatRbfDistinct\%$ of test records
+receive a distinct probability against $\psatQsvmDistinct\%$) while its
+uncalibrated error is already the second lowest of the five, leaving a
+monotone map little room to help and little to spoil.
 
 A global improvement can hide a local regression, so we repeat the
 comparison on the rare categories alone. It does not: the quantum kernel's
@@ -716,15 +749,15 @@ ensembles in ten of ten corrected comparisons.
 
 \input{tables/depth_tables}
 
-\begin{figure}[t]
+\begin{figure*}[t]
   \centering
-  \includegraphics[width=\columnwidth]{figs/fig6_threshold.pdf}
+  \includegraphics[width=\textwidth]{figs/fig6_threshold.pdf}
   \caption{(a) U2R recall against the decision threshold. The margin-based
   models recover the rare class as the threshold falls; the tree ensembles
   do not. (b) The Murphy decomposition separates the two axes: the tree
   ensembles sit top-right, discriminating best and calibrating worst.}
   \label{fig:threshold}
-\end{figure}
+\end{figure*}
 
 \subsection{Ranking is not reliability, as a decomposition}
 So far the separation of the two axes has been an observation about two
