@@ -239,6 +239,15 @@ def main() -> int:
     audit_invariants()
     audit_assets()
 
+    # TU KIEM: moi ham audit_* phai duoc goi. O audit_p2_rebuild.py da xay ra
+    # chuyen ba ham nam trong file ma khong he duoc goi, va audit van bao
+    # xanh -- 62 phep kiem la ma chet. Them o day de khong lap lai.
+    src = read(Path(__file__))
+    defined = set(re.findall(r"^def (audit_\w+)", src, re.M))
+    called = set(re.findall(r"^    (audit_\w+)\(", src, re.M))
+    dead = sorted(defined - called)
+    check(not dead, f"khong co ham audit_* nao la ma chet (chet: {dead})")
+
     n_ok = sum(1 for ok, _ in _checks if ok)
     for ok, label in _checks:
         if not ok:

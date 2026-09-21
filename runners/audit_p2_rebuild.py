@@ -281,6 +281,24 @@ def main() -> int:
     audit_macros_defined(tex, m)
     audit_prose_numbers(read(PAPER / "main.tex"))
     audit_invariants(long, st, platt, ref, cal, idf)
+    audit_percat(m, pd.read_csv(NSL / "p2_rebuild_percat.csv"),
+                 pd.read_csv(NSL / "p2_rebuild_curve.csv"))
+    audit_census(m, st)
+    audit_regime(long, st)
+
+    # TU KIEM: moi ham audit_* dinh nghia trong file nay PHAI duoc goi o day.
+    #
+    # Da xay ra that: audit_percat, audit_census va audit_regime nam trong
+    # file suot may lan sua ma khong he duoc goi -- mot patch noi day chung
+    # vao main() truot am tham, va audit van bao xanh. Nhung luan diem tuong
+    # ung coi nhu chua bao gio duoc kiem. Mot bo kiem co ham chet thi te hon
+    # khong co bo kiem, vi no tao cam giac an toan gia.
+    src = read(Path(__file__))
+    defined = set(re.findall(r"^def (audit_\w+)", src, re.M))
+    called = set(re.findall(r"^    (audit_\w+)\(", src, re.M))
+    dead = sorted(defined - called)
+    check(not dead, f"khong co ham audit_* nao la ma chet (chet: {dead})")
+
     figs = ["fig1_identity", "fig2_paired", "fig3_platt", "fig4_refarm",
             "fig5_reliability"]
     for rel in [f"figs/{f}.pdf" for f in figs] + ["tables/main_table.tex",
