@@ -1,0 +1,17 @@
+{
+ "Balanced_50/50": {
+  "n": 19422,
+  "attack_ratio": 0.5,
+  "n_rare": 2234
+ },
+ "AttackHeavy_30/70": {
+  "n": 18332,
+  "attack_ratio": 0.7000327296530657,
+  "n_rare": 2952
+ },
+ "DoS_only": {
+  "n": 17171,
+  "attack_ratio": 0.43445343893774385,
+  "n_rare": 0
+ }
+}
