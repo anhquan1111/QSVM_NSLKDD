@@ -2,11 +2,14 @@
 
     python runners/audit_p2_rebuild.py
 
-Ba lop, cung khuon voi audit_paper3.py:
+Bon lop:
   A. Moi macro trong tables/numbers_macros.tex tinh lai duoc tu artifact.
-  B. Cau van khong chua so viet tay.
-  C. Cac bat bien cua thiet ke van dung -- day la phan quan trong nhat, vi
-     ca bai dung tren chuyen "do dac cho du luc".
+  B. Moi macro DUNG trong bai deu duoc DINH NGHIA. Thieu lop nay thi go sai
+     mot ten macro se lot -- audit xanh con LaTeX chet.
+  C. Cau van khong chua so viet tay.
+  D. Cac bat bien cua LAP LUAN. Day la lop quan trong nhat: no khoa dung
+     nhung gi bai duoc phep va khong duoc phep claim, nen sua du lieu ma ket
+     luan doi chieu thi bao ngay.
 """
 
 from __future__ import annotations
@@ -23,11 +26,15 @@ from scipy import stats
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
-IN = ROOT / "results" / "nslkdd" / "p2_rebuild"
+NSL = ROOT / "results" / "nslkdd" / "p2_rebuild"
+UNSW = ROOT / "results" / "unsw" / "p2_rebuild"
 PAPER = ROOT / "paper" / "paper2_rebuild"
 BS = chr(92)
+
 MACRO = {"QSVM": "Qsvm", "SVM-RBF": "Rbf", "MLP": "Mlp",
          "XGBoost": "Xgb", "RandomForest": "Rf"}
+SETTINGS = {"NSL-KDD/full": "Nsl", "UNSW/4qb": "UnswFour", "UNSW/6qb": "UnswSix"}
+TREES = ("RandomForest", "XGBoost")
 
 _checks: list[tuple[bool, str]] = []
 
@@ -41,52 +48,53 @@ def read(p):
         return f.read()
 
 
-def audit_macros(m, df, st, platt):
-    full = df[df.test_set == "full_kddtest_plus"]
-    old = df[df.test_set == "sample100_cu"]
-    g, go = full.groupby("model"), old.groupby("model")
+def load_long():
+    n = pd.read_csv(NSL / "p2_rebuild_per_run.csv")
+    n["setting"] = "NSL-KDD/" + n.test_set.map(
+        {"full_kddtest_plus": "full", "sample100_cu": "sample100"})
+    u = pd.read_csv(UNSW / "p2_unsw_per_run.csv")
+    u["setting"] = "UNSW/" + u.n_qubits.astype(str) + "qb"
+    return pd.concat([n, u], ignore_index=True)
 
-    check(m["nRuns"] == str(full.run_id.nunique()), "nRuns")
-    check(m["nRare"] == f"{int(full.n_rare.iloc[0]):,}".replace(",", BS + ","), "nRare")
-    check(m["nTest"] == f"{int(full.n_test.iloc[0]):,}".replace(",", BS + ","), "nTest")
-    check(m["nRareOld"] == str(int(old.n_rare.iloc[0])), "nRareOld")
-    check(m["nTestOld"] == str(int(old.n_test.iloc[0])), "nTestOld")
-    ntr = pd.read_csv(ROOT / "data/nslkdd/processed_data/multi_run/train_run1.csv").shape[0]
-    check(m["nTrain"] == "{:,}".format(ntr).replace(",", BS + ","), "nTrain")
 
+# --- A -----------------------------------------------------------------
+def audit_macros(m, long, st, platt, ref, cal, idf):
+    nsl = long[long.setting == "NSL-KDD/full"]
+    check(m["nRuns"] == str(nsl.run_id.nunique()), "nRuns")
+    check(m["nRareOld"] == str(int(
+        long[long.setting == "NSL-KDD/sample100"].n_rare.iloc[0])), "nRareOld")
+    check(m["identityMaxDev"].startswith(f"{idf.abs_dev.max():.1e}"[:3]),
+          "identityMaxDev")
+
+    for setting, tag in SETTINGS.items():
+        sub = long[long.setting == setting]
+        for model, key in MACRO.items():
+            s = sub[sub.model == model]
+            check(m[f"{tag}{key}EceFull"] == f"{s.ece_full.mean():.4f}",
+                  f"{tag}{key}EceFull")
+        p = st[(st.setting == setting) & (st.metric == "ece_full")]
+        for _, r in p.iterrows():
+            k = MACRO[r["baseline"]]
+            check(m[f"d{tag}{k}"] == f"{r['mean_delta']:+.4f}", f"d{tag}{k}")
+            check(m[f"d{tag}{k}Holm"] == f"{r['holm_p']:.4f}", f"d{tag}{k}Holm")
+            check(m[f"d{tag}{k}Dz"] == f"{r['dz']:+.2f}", f"d{tag}{k}Dz")
+
+    g = ref.groupby(["repr", "model"])
+    for rep, tag in (("pca4", "Pca"), ("k20", "KTwenty"), ("all122", "Full")):
+        for model, key in (("RandomForest", "Rf"), ("XGBoost", "Xgb")):
+            check(m[f"ref{tag}{key}EceFull"] == f"{g.ece_full.mean()[(rep, model)]:.4f}",
+                  f"ref{tag}{key}EceFull")
+    c = cal.groupby(["model", "calibrator"]).ece_full.mean()
     for model, key in MACRO.items():
-        for col, tag in (("ece_rare", "EceRare"), ("brier_rare", "BrierRare"),
-                         ("auc_pr", "AucPr"), ("f1", "Fone")):
-            check(m[f"{key}{tag}"] == f"{g[col].mean()[model]:.4f}", f"{key}{tag}")
-            check(m[f"{key}{tag}Sd"] == f"{g[col].std()[model]:.4f}", f"{key}{tag}Sd")
-        check(m[f"{key}EceRareOld"] == f"{go['ece_rare'].mean()[model]:.4f}",
-              f"{key}EceRareOld")
+        for cname, tag in (("none", "None"), ("platt", "Platt"),
+                           ("isotonic", "Iso"), ("temperature", "Temp")):
+            check(m[f"cal{key}{tag}"] == f"{c[(model, cname)]:.4f}", f"cal{key}{tag}")
         pl = platt[platt.model == model]
-        check(m[f"{key}PlattBefore"] == f"{pl.ece_before.mean():.4f}", f"{key}PlattBefore")
-        check(m[f"{key}PlattAfter"] == f"{pl.ece_after.mean():.4f}", f"{key}PlattAfter")
         check(m[f"{key}PlattDelta"] == f"{pl.delta.mean():+.4f}", f"{key}PlattDelta")
 
-    s = st[st.test_set == "full_kddtest_plus"]
-    for _, r in s[s.metric.isin(("ece_rare", "brier_rare"))].iterrows():
-        tag = "Ece" if r["metric"] == "ece_rare" else "Brier"
-        k = MACRO[r["baseline"]]
-        check(m[f"d{tag}{k}"] == f"{r['mean_delta']:+.4f}", f"d{tag}{k}")
-        check(m[f"d{tag}{k}Holm"] == f"{r['holm_p']:.4f}", f"d{tag}{k}Holm")
-        check(m[f"d{tag}{k}Dz"] == f"{r['dz']:+.2f}", f"d{tag}{k}Dz")
 
-
-NUMBER_WHITELIST = {"1", "4", "20", "0", "5", "1000", "0.0625"}
-
-
+# --- B -----------------------------------------------------------------
 def audit_macros_defined(tex, m):
-    """Moi macro \\p... DUNG trong bai phai duoc DINH NGHIA.
-
-    Khong co phep kiem nay thi go sai mot ten macro se lot: audit van xanh
-    vi no chi doi chieu nhung macro da co, con LaTeX thi chet voi
-    'Undefined control sequence'.
-    """
-    # Bat TEN DAY DU cua lenh (ke ca chu p dau), roi tru ra lenh cua chinh
-    # LaTeX. Danh sach nay ngan va on dinh; them muc moi thi phai co ly do.
     latex_p = {"paragraph", "pm", "pi", "par", "pageref", "protect",
                "printindex", "pounds", "pagestyle", "pagenumbering"}
     used = {name[1:] for name in re.findall(BS + BS + r"(p[A-Za-z]+)", tex)
@@ -96,104 +104,95 @@ def audit_macros_defined(tex, m):
                        f"(thieu: {missing})")
 
 
+# --- C -----------------------------------------------------------------
+NUMBER_WHITELIST = {"0", "1", "2", "4", "5", "0.0625"}
+
+
 def audit_prose_numbers(tex):
     body = re.sub(r"(?<!" + BS + BS + r")%.*", "", tex)
     body = body.split(BS + "maketitle", 1)[-1]
     body = body.split(BS + "begin{thebibliography}", 1)[0]
     body = re.sub(BS + BS + r"includegraphics(\[[^\]]*\])?\{[^}]*\}", " ", body)
-    body = re.sub(BS + BS + r"(label|ref|input|url|newcommand)\{[^}]*\}", " ", body)
+    body = re.sub(BS + BS + r"(label|ref|eqref|input|url|newcommand)\{[^}]*\}",
+                  " ", body)
     bad = [t for t in re.findall(r"(?<![\w.])\d+(?:\.\d+)?(?![\w.])", body)
            if t not in NUMBER_WHITELIST]
     check(not bad, f"khong co so viet tay trong cau van (thay: {sorted(set(bad))})")
 
 
-def audit_invariants(df, st, platt):
-    full = df[df.test_set == "full_kddtest_plus"]
-    old = df[df.test_set == "sample100_cu"]
+# --- D -----------------------------------------------------------------
+def audit_invariants(long, st, platt, ref, cal, idf):
+    nsl = long[long.setting == "NSL-KDD/full"]
+    old = long[long.setting == "NSL-KDD/sample100"]
 
-    # Thiet ke: 10 run, va tap test day du phai lon hon han tap cu.
-    check(full.run_id.nunique() == 10, "du 10 run")
-    check(full.n_rare.iloc[0] > 100 * old.n_rare.iloc[0],
+    check(nsl.run_id.nunique() == 10, "du 10 run")
+    check(nsl.n_rare.iloc[0] > 100 * old.n_rare.iloc[0],
           "tap test day du co nhieu hon 100 lan mau hiem")
-
-    # Voi 5 cap, Wilcoxon khong bao gio dat p<0.05 -- ly do phai chay 10 run.
     check(stats.wilcoxon(np.arange(1., 6.)).pvalue > 0.05,
           "5 cap: Wilcoxon khong the dat p<0.05")
     check(stats.wilcoxon(np.arange(1., 11.)).pvalue < 0.05,
           "10 cap: Wilcoxon dat duoc p<0.05")
 
-    s = st[st.test_set == "full_kddtest_plus"]
-    e = s[s.metric == "ece_rare"].set_index("baseline")
-    # Luan diem duoc claim: thang ca hai mo hinh cay sau Holm.
-    for b in ("RandomForest", "XGBoost"):
-        check(e.loc[b, "holm_p"] < 0.05 and e.loc[b, "mean_delta"] < 0,
-              f"QSVM thang {b} sau Holm (ECE_rare)")
-    # Luan diem KHONG duoc claim: thang RBF.
-    check(e.loc["SVM-RBF", "holm_p"] >= 0.05,
-          "QSVM vs SVM-RBF la inconclusive (ECE_rare) -- bai khong duoc claim thang")
+    # Dang thuc suy bien -- luan diem phuong phap cua bai.
+    check(idf.abs_dev.max() < 1e-12,
+          f"ECE_rare == 1-mean(p) (lech max {idf.abs_dev.max():.1e})")
+    check(idf.acc_bin_std.min() > 0.05,
+          "ECE tren toan tap test KHONG suy bien (acc tung bin bien thien)")
 
-    # Platt chi giup DUY NHAT kernel luong tu.
-    d = platt.groupby("model").delta.mean()
-    helped = sorted(d[d > 0].index)
-    check(helped == ["QSVM"], f"Platt chi giup QSVM (thuc te: {helped})")
+    # Luan diem chinh: thang CA HAI mo hinh cay o MOI thiet lap, sau Holm.
+    e = st[st.metric == "ece_full"]
+    for setting in SETTINGS:
+        s = e[e.setting == setting].set_index("baseline")
+        for b in TREES:
+            check(s.loc[b, "holm_p"] < 0.05 and s.loc[b, "mean_delta"] < 0,
+                  f"{setting}: QSVM thang {b} sau Holm")
+        # Luan diem KHONG duoc claim: thang MLP.
+        check(not (s.loc["MLP", "holm_p"] < 0.05
+                   and s.loc["MLP", "mean_delta"] < 0),
+              f"{setting}: bai KHONG duoc claim thang MLP")
 
-    # Tren tap test cu, thu hang cua QSVM cao hon -- day la luan diem canh bao.
-    r_old = old.groupby("model").ece_rare.mean().rank()["QSVM"]
-    r_new = full.groupby("model").ece_rare.mean().rank()["QSVM"]
-    check(r_old < r_new,
-          f"QSVM xep hang cao hon tren tap test nho ({r_old:.0f} vs {r_new:.0f})")
-
-
-def audit_refarm(m, ref, cal):
-    """Nhanh doi chung va ba bo hieu chinh."""
+    # Nhanh doi chung: du dac trung thi xep hang tot len, hieu chinh te di.
     g = ref.groupby(["repr", "model"])
-    for rep, tag in (("pca4", "Pca"), ("k20", "KTwenty"), ("all122", "Full")):
-        for model, key in (("RandomForest", "Rf"), ("XGBoost", "Xgb")):
-            check(m[f"ref{tag}{key}EceRare"] == f"{g.ece_rare.mean()[(rep, model)]:.4f}",
-                  f"ref{tag}{key}EceRare")
-            check(m[f"ref{tag}{key}AucPr"] == f"{g.auc_pr.mean()[(rep, model)]:.4f}",
-                  f"ref{tag}{key}AucPr")
-    c = cal.groupby(["model", "calibrator"]).ece_full.mean()
-    for model, key in MACRO.items():
-        for cname, tag in (("none", "None"), ("platt", "Platt"),
-                           ("isotonic", "Iso"), ("temperature", "Temp")):
-            check(m[f"cal{key}{tag}"] == f"{c[(model, cname)]:.4f}", f"cal{key}{tag}")
-
-    # Luan diem A: cho cay du dac trung thi XEP HANG tot hon ma HIEU CHINH te di.
-    e = g.ece_rare.mean(); a = g.auc_pr.mean()
-    for model in ("RandomForest", "XGBoost"):
-        check(e[("all122", model)] > e[("pca4", model)],
+    for model in TREES:
+        check(g.ece_full.mean()[("all122", model)]
+              > g.ece_full.mean()[("pca4", model)],
               f"{model}: 122 dac trung hieu chinh TE hon PCA-4")
-    check(a[("all122", "RandomForest")] > a[("pca4", "RandomForest")],
+    check(g.auc_pr.mean()[("all122", "RandomForest")]
+          > g.auc_pr.mean()[("pca4", "RandomForest")],
           "RandomForest: 122 dac trung xep hang TOT hon PCA-4")
 
-    # Luan diem B: hieu chinh hau ky chi giup kernel luong tu.
-    for model in ("RandomForest", "XGBoost"):
+    # Hieu chinh hau ky chi giup kernel luong tu.
+    c = cal.groupby(["model", "calibrator"]).ece_full.mean()
+    for model in TREES:
         for cname in ("platt", "isotonic", "temperature"):
             check(c[(model, cname)] > c[(model, "none")],
                   f"{model}: {cname} lam XAU hon khong hieu chinh")
     for cname in ("platt", "isotonic", "temperature"):
         check(c[("QSVM", cname)] < c[("QSVM", "none")],
               f"QSVM: {cname} lam TOT hon khong hieu chinh")
+    d = platt.groupby("model").delta.mean()
+    check(sorted(d[d > 0].index) == ["QSVM"],
+          f"Platt chi giup QSVM (thuc te: {sorted(d[d > 0].index)})")
 
 
 def main() -> int:
-    df = pd.read_csv(IN / "p2_rebuild_per_run.csv")
-    st = pd.read_csv(IN / "p2_rebuild_pairwise.csv")
-    platt = pd.read_csv(IN / "p2_rebuild_platt.csv")
+    long = load_long()
+    st = pd.read_csv(NSL / "p2_rebuild_pairwise.csv")
+    platt = pd.read_csv(NSL / "p2_rebuild_platt.csv")
+    ref = pd.read_csv(NSL / "p2_rebuild_refarm.csv")
+    cal = pd.read_csv(NSL / "p2_rebuild_calibrators.csv")
+    idf = pd.read_csv(NSL / "p2_rebuild_identity.csv")
     m = dict(re.findall(BS + BS + r"newcommand\{" + BS + BS + r"p(\w+)\}\{([^}]*)\}",
                         read(PAPER / "tables" / "numbers_macros.tex")))
 
-    audit_macros(m, df, st, platt)
-    tex = read(PAPER / "main.tex")
+    tex = read(PAPER / "main.tex") + read(PAPER / "tables" / "main_table.tex")
+    audit_macros(m, long, st, platt, ref, cal, idf)
     audit_macros_defined(tex, m)
-    audit_prose_numbers(tex)
-    audit_invariants(df, st, platt)
-    audit_refarm(m, pd.read_csv(IN / "p2_rebuild_refarm.csv"),
-                 pd.read_csv(IN / "p2_rebuild_calibrators.csv"))
-    for rel in ("figs/fig1_test_size.pdf", "figs/fig2_paired.pdf",
+    audit_prose_numbers(read(PAPER / "main.tex"))
+    audit_invariants(long, st, platt, ref, cal, idf)
+    for rel in ("figs/fig1_identity.pdf", "figs/fig2_paired.pdf",
                 "figs/fig3_platt.pdf", "figs/fig4_refarm.pdf",
-                "tables/rare_table.tex", "main.tex"):
+                "tables/main_table.tex", "main.tex"):
         check((PAPER / rel).exists(), f"co {rel}")
 
     n_ok = sum(1 for ok, _ in _checks if ok)
