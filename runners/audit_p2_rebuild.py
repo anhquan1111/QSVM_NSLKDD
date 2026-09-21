@@ -223,8 +223,14 @@ def audit_percat(m, pc, cv):
 
 
 def audit_census(m, st):
-    """Kiem dem toan bo so sanh, va hai claim manh rut ra tu no."""
-    cen = st[st.setting != "NSL-KDD/sample100"]
+    """Kiem dem toan bo so sanh, va hai claim manh rut ra tu no.
+
+    `ece_rare` bi loai khoi kiem dem: muc III chung minh no bang dung
+    1 - p_bar tren tap mot lop va KHONG phai sai so hieu chinh, nen dem no
+    vao bang tong la bai tu mau thuan. `brier_rare` o lai.
+    """
+    cen = st[(st.setting != "NSL-KDD/sample100")
+             & (st.metric != "ece_rare")]
     vc = cen.verdict.value_counts()
     check(m["cenTotal"] == str(len(cen)), "cenTotal")
     check(m["cenQsvm"] == str(int(vc.get("QSVM-favorable", 0))), "cenQsvm")
@@ -244,6 +250,30 @@ def audit_census(m, st):
     n_win = int((cal2.verdict == "QSVM-favorable").sum())
     check(n_win >= len(cal2) // 3,
           f"loi the cua QSVM nam o calibration ({n_win}/{len(cal2)})")
+
+    # LOP D. Ban truoc cong bo tong 96 roi chi tach hai ho 32+32=64: ba
+    # muoi hai so sanh khong duoc goi ten, va chung chua 15 trong 31 lan
+    # thang cua QSVM. Nguoi doc cong lai la thay. Tu gio ba ho phai phu
+    # KIN kiem dem, va tung con so phai khop artifact.
+    fams = {"Cal": ["ece_full", "brier_full"],
+            "Rank": ["auc_pr", "f1"],
+            "Rare": ["brier_rare"]}
+    covered = 0
+    for tag, metrics in fams.items():
+        sub = cen[cen.metric.isin(metrics)]
+        covered += len(sub)
+        check(m[f"cen{tag}Total"] == str(len(sub)), f"cen{tag}Total")
+        check(m[f"cen{tag}Qsvm"]
+              == str(int((sub.verdict == "QSVM-favorable").sum())),
+              f"cen{tag}Qsvm")
+    check(covered == len(cen),
+          f"ba ho phu kin kiem dem ({covered}/{len(cen)}) -- neu lech thi "
+          f"co metric khong duoc goi ten trong muc VI-A")
+    check(sum(int(m[f"cen{t}Qsvm"]) for t in fams) == int(m["cenQsvm"]),
+          "tong thang ba ho = cenQsvm")
+    check(m["cenDropped"] == str(len(
+        st[(st.setting != "NSL-KDD/sample100")
+           & (st.metric == "ece_rare")])), "cenDropped")
 
 
 def audit_caltests(m, ct):
