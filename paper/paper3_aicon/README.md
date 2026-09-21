@@ -69,9 +69,16 @@ python runners/make_paper3_figures.py   # 2 hình
 python runners/make_paper3_tables.py    # bảng + macro số
 python runners/audit_paper3.py          # 47/47
 python runners/check_latex.py paper/paper3_aicon/main.tex
+python runners/make_paper3_zip.py       # gói để tải lên Overleaf
 ```
 
-Compile: **pdfLaTeX**. `llncs.cls` có sẵn trên Overleaf.
+**Máy này không có LaTeX**, nên bài phải compile trên Overleaf:
+**New Project → Upload Project** với `dist/AICON2026_paper3.zip`, rồi Recompile.
+Đừng kéo zip thả vào project đang có — Overleaf giải nén vào thư mục con rồi báo thiếu file.
+
+Compiler: **pdfLaTeX**. `llncs.cls` có sẵn trên Overleaf, không cần đóng gói kèm.
+Gói tự kiểm ba điều: đúng một `\documentclass`, mọi `\input` và mọi `\includegraphics`
+đều trỏ tới file **có trong gói**.
 
 ## Kỷ luật về số
 
