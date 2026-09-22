@@ -101,8 +101,9 @@ kernels~\cite{havlicek2019,schuld2019hilbert}, and since separations were
 established for carefully constructed learning problems~\cite{liu2021speedup},
 the intrusion-detection literature has measured them by accuracy and $F_1$.
 On tabular data of this kind, gradient-boosted trees and random forests
-usually win that contest, which makes an accuracy-only comparison both
-unfavourable to the quantum kernel and uninformative about deployment.
+usually win that contest~\cite{grinsztajn2022tabular}, which makes an
+accuracy-only comparison both unfavourable to the quantum kernel and
+uninformative about deployment.
 
 This paper asks the other half of the question: when one of these models
 reports a probability, how far can that number be trusted? We find first
@@ -208,6 +209,13 @@ $\plegacyQubits$ qubits at $r{=}2$ on NSL-KDD and $\punswQubits$ on
 UNSW-NB15. Reusing it without modification is what lets the present paper
 isolate classifier reliability from embedding choice.
 
+What such a kernel can buy is itself contested. Huang \emph{et
+al.}~\cite{huang2021power} show that access to training data shifts the
+comparison substantially, and that a quantum model's advantage must be
+argued against classical learners given the same data rather than against a
+worst case. We take that as the standard the comparison here has to meet,
+and apply it to reliability rather than to accuracy.
+
 \subsection{Confidence Calibration}
 \begin{definition}[Calibration]
 A probabilistic classifier producing $\hat{p}(\mathbf{x})\in[0,1]$ is
@@ -217,11 +225,27 @@ $\Pr\!\big(y{=}1\mid\hat{p}(\mathbf{x}){=}q\big)=q$ for all $q$.
 Expected Calibration Error (ECE) and the Brier score are the standard
 scalar summaries of the gap from perfect
 calibration~\cite{naeini2015ece,brier1950}, and a reliability diagram is
-the graphical counterpart. Tree ensembles are often over-confident on the
-minority class~\cite{guo2017calibration}, motivating post-hoc
-recalibration such as Platt scaling~\cite{platt1999svm}, a logistic map
-from decision scores to probabilities. Calibration is rarely reported in
-quantum-IDS studies, and never compared against strong tabular learners.
+the graphical counterpart. The Brier score is a strictly proper scoring
+rule~\cite{gneiting2007scoring}, so it is minimised only by the true
+conditional probability; ECE is not, and is an estimator with a free bin
+count whose bias is known to be substantial~\cite{kumar2019verified}.
+
+Which models miscalibrate, and in which direction, is not arbitrary.
+Niculescu-Mizil and Caruana~\cite{niculescu2005predicting} showed that
+maximum-margin methods push probability mass away from $0$ and $1$ while
+other families push it toward the extremes, and that the shape of the
+distortion determines which post-hoc correction can repair it. That
+observation is the classical ancestor of the mechanism we measure in
+Section~\ref{sec:mechanism}. Modern high-capacity classifiers are
+systematically over-confident and the effect grows with
+capacity~\cite{guo2017calibration}, motivating post-hoc recalibration such
+as Platt scaling~\cite{platt1999svm}, a logistic map from decision scores
+to probabilities, and isotonic regression~\cite{zadrozny2002transforming},
+its non-parametric counterpart. Neither is guaranteed to help:
+Kumar \emph{et al.}~\cite{kumar2019verified} report that scaling methods
+are less calibrated than their measured error suggests. Calibration is
+rarely reported in quantum-IDS studies, and never compared against strong
+tabular learners.
 
 The gap is not an oversight so much as an inheritance. The applied
 quantum-IDS literature grew out of demonstrations that a quantum feature map
@@ -236,6 +260,17 @@ intrusion detection without reporting a probability-quality measure. None
 of the three reports a calibration curve, a Brier score, or an ECE, and
 none compares against a gradient-boosted tree. Table~\ref{tab:coverage}
 places them against the three gaps this paper addresses.
+
+The literature has continued to grow along the same axis. Abreu \emph{et
+al.}~\cite{abreu2024qmlids} report a hybrid quantum--classical IDS
+evaluated on public corpora in binary and multiclass settings, and
+Kukliansky \emph{et al.}~\cite{kukliansky2024qnn} evaluate quantum neural
+networks for network anomaly detection on noisy hardware rather than in
+simulation --- the one axis this paper cannot reach, and which
+Section~\ref{sec:limits} names as its own next experiment. We place these
+two outside Table~\ref{tab:coverage}: scoring a work against the three
+axes requires reading what it measures, and we restrict the table to works
+we have assessed in full.
 
 That matters more here than it would elsewhere, because the accuracy
 comparison is the one a four-qubit kernel is least likely to win. On tabular
@@ -275,7 +310,11 @@ ordering, while ECE/Brier differences reflect calibration.
 Random Forests~\cite{breiman2001rf} and gradient-boosted trees
 (XGBoost~\cite{chen2016xgboost}) are the strongest non-deep models on
 tabular data and the comparators a reviewer expects for any practical IDS
-claim; we adopt both alongside SVM-RBF~\cite{cortes1995svm}.
+claim; we adopt both alongside SVM-RBF~\cite{cortes1995svm}. This is not
+folklore: on a benchmark of tabular datasets drawn from varied domains,
+with hyper-parameter search accounted for, Grinsztajn \emph{et
+al.}~\cite{grinsztajn2022tabular} found tree ensembles still ahead of deep
+architectures at the data scale studied here.
 
 \subsection{Position Against Prior Work}
 Table~\ref{tab:coverage} contrasts representative QSVM-IDS works against
@@ -501,10 +540,13 @@ than one matrix product. Both are outside what we measure.
 
 \subsection{Statistics}
 We report paired Wilcoxon signed-rank tests with bootstrap confidence
-intervals and $d_z$, Holm-corrected within baseline families. Ten runs are
-the minimum for which this is meaningful: with five paired runs the smallest
-attainable two-sided $p$ is $0.0625$, so no comparison can reach
-significance whatever the effect size.
+intervals and $d_z$, following the standard recommendation for comparing
+classifiers over repeated runs~\cite{demsar2006statistical}, and correct
+for multiplicity within baseline families by the Holm sequentially
+rejective procedure~\cite{holm1979simple}. Ten runs are the minimum for
+which this is meaningful: with five paired runs the smallest attainable
+two-sided $p$ is $0.0625$, so no comparison can reach significance
+whatever the effect size.
 
 %==============================================================================
 \section{Results}\label{sec:results}
@@ -769,7 +811,8 @@ ensembles in ten of ten corrected comparisons.
 
 \subsection{Ranking is not reliability, as a decomposition}
 So far the separation of the two axes has been an observation about two
-columns of a table. The Murphy decomposition turns it into an identity.
+columns of a table. The Murphy decomposition~\cite{murphy1973vector} turns
+it into an identity.
 Writing $\Brier=\mathrm{REL}-\mathrm{RES}+\mathrm{UNC}$ over the same bins
 Eq.~\eqref{eq:metrics} uses, the reliability term $\mathrm{REL}$ is the
 squared calibration gap, the resolution term $\mathrm{RES}$ measures how far
@@ -919,13 +962,29 @@ Section~\ref{sec:results}.
 
 \subsection{Construct validity}
 Binned calibration error is an estimator with a free parameter, and a
-different bin count gives a different number. We use equal-frequency bins
-throughout and report the Brier score, which needs no binning, alongside
-every ECE; the two agree on the ordering in Table~\ref{tab:main}. The
-identity of Section~\ref{sec:identity} is a stronger warning about the same
-family of estimators: a scalar summary can be well-defined arithmetically
-and still measure nothing, and the only defence is to check what varies in
-the subset one has restricted to.
+different bin count gives a different number. This is not a detail we
+raise defensively: Kumar \emph{et al.}~\cite{kumar2019verified} show the
+bias of the binned estimator is large enough that recalibrated models are
+routinely less calibrated than their reported ECE implies. We therefore use
+equal-frequency bins throughout and report the Brier score alongside every
+ECE, which needs no binning and is strictly
+proper~\cite{gneiting2007scoring}; the two agree on the ordering in
+Table~\ref{tab:main}.
+
+The identity of Section~\ref{sec:identity} is a stronger warning about the
+same family of estimators: a scalar summary can be well-defined
+arithmetically and still measure nothing, and the only defence is to check
+what varies in the subset one has restricted to. That failure mode is not
+peculiar to calibration metrics. Chicco and
+Jurman~\cite{chicco2020advantages} show that $F_1$ and accuracy return
+inflated values on imbalanced data precisely because neither reads all four
+cells of the confusion matrix; Christen \emph{et
+al.}~\cite{christen2023review} collect the same criticism of the F-measure
+and its alternatives; and in security specifically, Arp \emph{et
+al.}~\cite{arp2022dosdonts} list inappropriate performance measures and the
+base rate fallacy among ten recurring pitfalls. Section~\ref{sec:identity}
+is an instance of that family in which the degeneracy is exact rather than
+statistical.
 
 \subsection{Internal validity}
 The recalibrators are fitted on the training split. For a model that can
@@ -954,7 +1013,11 @@ whether shot or device noise perturbs \emph{calibration} is untouched by
 that check and by ours. It is the obvious next experiment, and on the
 mechanism of Section~\ref{sec:mechanism} it is not a neutral one: noise
 would blur the decision scores, which is the direction that helps a
-recalibrator rather than hinders it.
+recalibrator rather than hinders it. Evaluation on noisy hardware is
+already feasible for the adjacent task --- Kukliansky \emph{et
+al.}~\cite{kukliansky2024qnn} run quantum neural networks for network
+anomaly detection on real devices --- so the obstacle is access rather than
+method.
 
 \subsection{Statistical conclusion validity}
 Ten paired runs is the minimum at which a two-sided Wilcoxon test can reach
@@ -1131,6 +1194,74 @@ M.~O. Kalinin and V.~M. Krundyshev,
 ``Security intrusion detection using quantum machine learning
   techniques,'' \emph{J. Comput. Virol. Hacking Tech.}, vol.~19,
 no.~1, pp.~125--136, 2023.
+\bibitem{murphy1973vector}
+A.~H. Murphy, ``A new vector partition of the probability score,''
+\emph{J. Appl. Meteorol.}, vol.~12, no.~4, pp.~595--600, 1973.
+
+\bibitem{gneiting2007scoring}
+T.~Gneiting and A.~E. Raftery, ``Strictly proper scoring rules, prediction,
+and estimation,'' \emph{J. Amer. Statist. Assoc.}, vol.~102, no.~477,
+pp.~359--378, 2007.
+
+\bibitem{zadrozny2002transforming}
+B.~Zadrozny and C.~Elkan, ``Transforming classifier scores into accurate
+multiclass probability estimates,'' in \emph{Proc. 8th ACM SIGKDD Int.
+Conf. Knowl. Discov. Data Min.}, 2002, pp.~694--699.
+
+\bibitem{niculescu2005predicting}
+A.~Niculescu-Mizil and R.~Caruana, ``Predicting good probabilities with
+supervised learning,'' in \emph{Proc. 22nd Int. Conf. Mach. Learn.
+(ICML)}, 2005, pp.~625--632.
+
+\bibitem{kumar2019verified}
+A.~Kumar, P.~Liang, and T.~Ma, ``Verified uncertainty calibration,'' in
+\emph{Adv. Neural Inf. Process. Syst. (NeurIPS)}, 2019.
+
+\bibitem{holm1979simple}
+S.~Holm, ``A simple sequentially rejective multiple test procedure,''
+\emph{Scand. J. Statist.}, vol.~6, no.~2, pp.~65--70, 1979.
+
+\bibitem{demsar2006statistical}
+J.~Dem\v{s}ar, ``Statistical comparisons of classifiers over multiple data
+sets,'' \emph{J. Mach. Learn. Res.}, vol.~7, pp.~1--30, 2006.
+
+\bibitem{grinsztajn2022tabular}
+L.~Grinsztajn, E.~Oyallon, and G.~Varoquaux, ``Why do tree-based models
+still outperform deep learning on typical tabular data?'' in \emph{Adv.
+Neural Inf. Process. Syst. (NeurIPS), Datasets and Benchmarks Track},
+2022.
+
+\bibitem{chicco2020advantages}
+D.~Chicco and G.~Jurman, ``The advantages of the Matthews correlation
+coefficient (MCC) over F1 score and accuracy in binary classification
+evaluation,'' \emph{BMC Genomics}, vol.~21, no.~1, art.~6, 2020.
+
+\bibitem{christen2023review}
+P.~Christen, D.~J. Hand, and N.~Kirielle, ``A review of the F-measure: its
+history, properties, criticism, and alternatives,'' \emph{ACM Comput.
+Surv.}, vol.~56, no.~3, art.~73, 2023.
+
+\bibitem{arp2022dosdonts}
+D.~Arp, E.~Quiring, F.~Pendlebury, A.~Warnecke, F.~Pierazzi,
+C.~Wressnegger, L.~Cavallaro, and K.~Rieck, ``Dos and don'ts of machine
+learning in computer security,'' in \emph{Proc. 31st USENIX Security
+Symp.}, 2022, pp.~3971--3988.
+
+\bibitem{huang2021power}
+H.-Y. Huang, M.~Broughton, M.~Mohseni, R.~Babbush, S.~Boixo, H.~Neven, and
+J.~R. McClean, ``Power of data in quantum machine learning,'' \emph{Nature
+Commun.}, vol.~12, art.~2631, 2021.
+
+\bibitem{abreu2024qmlids}
+D.~Abreu, C.~E. Rothenberg, and A.~Abelem, ``QML-IDS: Quantum machine
+learning intrusion detection system,'' in \emph{Proc. IEEE Symp. Comput.
+Commun. (ISCC)}, 2024, pp.~1--6.
+
+\bibitem{kukliansky2024qnn}
+A.~Kukliansky, M.~Orescanin, C.~Bollmann, and T.~Huffmire, ``Network
+anomaly detection using quantum neural networks on noisy quantum
+computers,'' \emph{IEEE Trans. Quantum Eng.}, vol.~5, pp.~1--11, 2024.
+
 \bibitem{moustafa2015unsw}
 N.~Moustafa and J.~Slay,
 ``UNSW-NB15: a comprehensive data set for network intrusion detection
