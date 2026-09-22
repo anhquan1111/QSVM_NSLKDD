@@ -42,7 +42,8 @@
   Technology under Project T2026-02-10TN. \textit{(Corresponding author: Quan Tran Anh Vo.)}}
 \thanks{The authors are with The University of Danang -- University of
   Science and Technology, Danang, Vietnam (e-mail:
-  votrananhquan1111@gmail.com).}}
+  votrananhquan1111@gmail.com).}
+\thanks{Q. T. A. Vo is with ORCID 0009-0000-9420-1767.}}
 
 \markboth{Manuscript under review,~Vol.~XX, No.~Y, Month~2026}%
 {Nguyen \MakeLowercase{\textit{et al.}}: Reliability and Calibration of Quantum-Kernel Intrusion Detection}
@@ -75,8 +76,11 @@ absent from ranking.
 \end{abstract}
 
 \begin{IEEEkeywords}
-Quantum machine learning, quantum kernel, calibration, reliability,
-intrusion detection, NSL-KDD, UNSW-NB15.
+% Sau tu khoa: phan lon tap chi Wiley gioi han 6. Bo "reliability" vi no
+% trung y voi "calibration", giu lai duoc hai ten bo du lieu de bai tim
+% thay duoc khi ai search theo benchmark.
+Quantum machine learning, quantum kernel, calibration, intrusion detection,
+NSL-KDD, UNSW-NB15.
 \end{IEEEkeywords}
 
 %==============================================================================
@@ -1010,6 +1014,41 @@ which would establish whether any of this survives the noise of a real
 device. Neither is expensive, and the second is the question our simulation
 is constitutionally unable to answer.
 
+%==============================================================================
+%  Tuyen bo bat buoc cua Wiley. Phan lon con duoc dien LAI trong he thong
+%  nop bai (ScholarOne) -- Wiley thu Data Availability, COI va Funding qua
+%  form chu khong qua ban thao. Viet o day de ban thao tu day du, va dien
+%  lai trong form khi nop.
+%==============================================================================
+\section*{Author Contributions}
+\textbf{Quan Tran Anh Vo:} conceptualization; methodology; software; formal
+analysis; validation; visualization; writing -- original draft; funding
+acquisition. \textbf{Nguyen Quang Anh:} software; investigation; data
+curation; formal analysis; validation; visualization. \textbf{Nguyen Nang
+Hung Van:} conceptualization; supervision; writing -- review and editing.
+\textbf{Minh Tuan Pham:} supervision; resources; writing -- review and
+editing.
+
+\section*{Funding}
+This work was supported by The University of Danang -- University of Science
+and Technology under Project T2026-02-10TN.
+
+\section*{Data Availability Statement}
+Every number reported in this paper is computed from artifacts released with
+it. The processed data, the cached quantum kernel matrices, the scripts that
+generate every figure and table, and the audit scripts that recompute each
+reported number from those artifacts are openly available in the project
+repository. The two corpora are public benchmarks:
+NSL-KDD~\cite{tavallaee2009nslkdd} and UNSW-NB15~\cite{moustafa2015unsw}.
+
+\section*{Conflict of Interest Statement}
+The authors declare no conflict of interest.
+
+\section*{Ethics Statement}
+This study used only public benchmark datasets of network traffic records and
+involved no human participants, no animal subjects and no personally
+identifiable information. Ethical approval was therefore not required.
+
 \begin{thebibliography}{20}
 
 \bibitem{tavallaee2009nslkdd}
@@ -1100,6 +1139,10 @@ N.~Moustafa and J.~Slay,
 
 \end{thebibliography}
 
-\input{biographies}
+% Bo 4 khoi IEEEbiography: do la dinh dang rieng cua IEEE, va tap chi Wiley
+% KHONG in tieu su tac gia kem anh chan dung. De nguyen thi editor thay ngay
+% bai nay viet cho IEEE roi dem nop Wiley. Bo di cung tiet kiem ~1,5 trang.
+% Bat lai khi nao nop cho mot tap chi IEEE.
+%\input{biographies}
 
 \end{document}

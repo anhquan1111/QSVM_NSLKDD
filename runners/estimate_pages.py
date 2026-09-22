@@ -91,7 +91,11 @@ def count(path: Path) -> tuple[int, int, int, int]:
     words = len(re.findall(r"[A-Za-z][A-Za-z'\-]+", prose))
 
     n_bio = 0
-    whole = io.open(path, encoding="utf-8").read()
+    # PHAI bo comment truoc khi quet \input. Khi tieu su bi tat bang cach
+    # comment dong `%\input{biographies}`, ban cu van dem du 4 khoi va bao
+    # them ~1 trang khong ton tai.
+    whole = re.sub(r"(?<!\\)%.*", "",
+                   io.open(path, encoding="utf-8").read())
     for m in re.findall(r"\\input\{([^}]*)\}", whole):
         q = path.parent / m
         q = q if q.suffix else q.with_suffix(".tex")
@@ -127,7 +131,16 @@ def _pdf_size_in(p: Path) -> tuple[float, float] | None:
 #   fig4 7,16x2,50  fig5 7,16x2,90  fig6 7,16x2,80
 # => 1,337 + 1,166 + 2,800 + 1,215 + 1,409 + 1,361 = 9,29 inch-cot.
 # So nay la mot phan cua diem hieu chuan: sua kho hinh thi DUNG sua no.
-CALIB_FIG_COLIN = 9.29
+#
+# CAP NHAT 2026-09-22. Lan do that moi nhat (6503 tu -> 12,0 trang) duoc
+# lay TREN CHINH bo hinh hien tai, do 23,15 inch-cot, va tren ban con du 4
+# khoi tieu su. Neu cu de moc cu 9,29 thi cho ma hinh chiem bi cong HAI
+# LAN -- mot lan da nam trong diem 12,0 trang, mot lan qua so hieu chinh --
+# va script in ra "thieu -1,0 trang" cung khoang nguoc dau.
+CALIB_FIG_COLIN = 23.15
+# So khoi tieu su co trong lan do that moi nhat. Ban hien tai da bo chung
+# (tap chi Wiley khong in tieu su), nen phai TRU ra.
+CALIB_N_BIO = 4
 
 # Diem KIEM CHUNG cho rieng so hang hinh. Ban "Paper2_rebuild__8_.pdf"
 # (2026-09-21) co dung 6467 tu nhu ban hien tai nhung NAM hinh hai cot:
@@ -206,21 +219,27 @@ def main() -> int:
           f"doi lech 1,8 trang.")
 
     d_fig, wide, narrow = figure_space(path)
+    print(f"\n  Hinh: {len(wide)} hai cot ({', '.join(wide) or '-'}), "
+          f"{len(narrow)} mot cot")
     if abs(d_fig) > 0.05:
-        print(f"\n  Hinh: {len(wide)} hai cot ({', '.join(wide) or '-'}), "
-              f"{len(narrow)} mot cot")
         print(f"  Cho ma hinh chiem, so voi lan do that gan nhat "
               f"(tinh tu kho that cua tung .pdf): {d_fig:+.1f} trang")
         est += d_fig
-        vw, vcol, vreal = VALIDATION
-        vpred = (p2 + (vw - w2) / slope
-                 + (vcol - CALIB_FIG_COLIN) / (2.0 * TEXT_HEIGHT_IN))
-        print(f"  -> uoc {est:.1f} trang. Tren diem kiem chung "
-              f"({vw} tu, {vcol:.1f} inch-cot hinh) mo hinh nay bao "
-              f"{vpred:.1f}")
-        print(f"     con do that la {vreal:.1f}, tuc THIEU "
-              f"{vreal - vpred:.1f} trang. Nen doc {est:.1f} nhu CAN DUOI; "
-              f"khoang thuc te ~{est:.1f}-{est + (vreal - vpred):.1f}.")
+    else:
+        print(f"  Kho hinh khong doi so voi lan do that gan nhat "
+              f"(lech {d_fig:+.2f} trang) -- khong hieu chinh.")
+
+    d_bio = (b - CALIB_N_BIO) * BIO_PAGE
+    if abs(d_bio) > 0.05:
+        print(f"  Tieu su: {b} khoi, lan do that co {CALIB_N_BIO} "
+              f"-> {d_bio:+.1f} trang")
+        est += d_bio
+
+    print(f"\n  -> uoc {est:.1f} trang.")
+    print(f"     Day la noi suy tu MOT diem do that gan nhat cong ba so "
+          f"hieu chinh (tu, hinh, tieu su).")
+    print(f"     Ba lan truoc mo hinh deu doan HUT khi bo cuc doi nhieu "
+          f"(1,8 roi 0,7 trang), nen doc {est:.1f} nhu CAN DUOI.")
     for target in (10.0, 11.0):
         need = (target - est) * slope
         if need > 0:
