@@ -1,0 +1,85 @@
+Dear Editor-in-Chief,
+
+We submit for your consideration the manuscript entitled "A Reliability and
+Calibration Benchmark of QSVM Against Strong Tabular Learners on NSL-KDD and
+UNSW-NB15" as an Original Paper in Security and Privacy.
+
+WHAT THE PAPER DOES
+
+An intrusion detector is deployed behind a threshold, so the quantity that
+governs operations is a probability rather than a label. Quantum-kernel
+classifiers, however, are almost always evaluated on accuracy alone. This
+paper asks the other half of the question: when such a model reports a
+probability, how far can that number be trusted?
+
+We find first that the natural way to pose the question is unavailable.
+Restricting a binned calibration estimate to the rare attack classes yields a
+quantity that is identically one minus mean confidence, because every record
+in that subset carries the same label. It measures confidence on known
+attacks and cannot detect miscalibration at all. We verify the identity to
+2.2e-16 across every model and run. Several published evaluations report
+exactly this quantity as a calibration error.
+
+Measured where both classes are present, over ten paired runs with
+Holm-corrected Wilcoxon tests and on two corpora at two circuit widths, a
+four-qubit quantum kernel is better calibrated than both Random Forest and
+XGBoost in all eight comparisons, and is not better than a small multilayer
+perceptron anywhere. Post-hoc recalibration helps the quantum kernel and no
+other model. One measured property of the score distributions accounts for
+that and for two further results: the tree ensembles emit a distinct
+probability for only 2.3% of test records against 73.6% for the quantum
+kernel, and a monotone recalibrator cannot separate records that already
+share a score.
+
+WHY SECURITY AND PRIVACY
+
+The contribution is a reliability result about intrusion detectors rather
+than an accuracy claim about quantum computing. It concerns whether a
+deployed detector's probabilities can be acted on, which we believe is
+squarely within the journal's scope. We report the negative findings as
+prominently as the positive ones: of 80 Holm-corrected comparisons, 25
+favour the quantum kernel and 30 favour a classical baseline, and the
+quantum kernel does not rank better than any baseline anywhere.
+
+REPRODUCIBILITY
+
+Every number in the manuscript is computed from released artifacts and
+reaches the text through a generated macro; no value is typed by hand. The
+artifacts, the figure and table scripts, and an audit script that recomputes
+each reported number and fails if any disagrees are archived at
+https://doi.org/10.5281/zenodo.22893683
+
+RELATED SUBMISSION
+
+A companion manuscript by the same group, "NISQ-aware quantum kernel SVM for
+network intrusion detection: a regime-specific benchmark on NSL-KDD", is
+currently under review at IEEE Transactions on Emerging Topics in Computing
+(manuscript TETC-2026-05-0252). It is cited as reference [2] of the present
+manuscript.
+
+The two do not overlap. The companion studies classification accuracy and
+the regime in which a quantum kernel is competitive; the present manuscript
+studies calibration and reliability and makes no accuracy claim. The present
+work takes only the embedding width from the companion, which we state
+explicitly in Section II-A so that the two results remain separable, and
+re-derives everything else. We mention this so that the relationship is on
+the record rather than discovered later.
+
+DECLARATIONS
+
+The manuscript is original, is not under consideration elsewhere, and has not
+been published. All authors have approved the submission and the author
+contribution statement. The study used only public benchmark datasets and
+involved no human participants and no personally identifiable information.
+The authors declare no conflict of interest.
+
+We hope the manuscript is of interest to the readership, and we thank you for
+your time.
+
+Yours sincerely,
+
+Quan Tran Anh Vo (on behalf of all co-authors)
+ORCID 0009-0000-9420-1767
+University of Science and Technology - The University of Danang
+Danang 550000, Vietnam
+votrananhquan1111@gmail.com
