@@ -75,11 +75,10 @@ matplotlib==3.10.8
 xgboost
 """
 
-README = r"""# Artifacts for "Are Quantum-Kernel Intrusion Detectors Trustworthy?"
+README = r"""# Artifacts: a reliability and calibration benchmark of QSVM
 
-Reproduction package for the paper *Are Quantum-Kernel Intrusion Detectors
-Trustworthy? A Reliability and Calibration Benchmark of QSVM Against Strong
-Tabular Learners on NSL-KDD and UNSW-NB15*.
+Reproduction package for the paper *A Reliability and Calibration Benchmark
+of QSVM Against Strong Tabular Learners on NSL-KDD and UNSW-NB15*.
 
 Every number that appears in the manuscript is computed from the artifacts in
 this package. Nothing in the paper is typed by hand: numbers reach the text
