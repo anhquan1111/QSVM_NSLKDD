@@ -306,6 +306,20 @@ def audit_assets() -> None:
     check("anonymous.4open.science/r/" in body,
           "muc Reproducibility co link mirror an danh")
 
+    # CHOT AN TOAN. De xem ten tac gia, nguoi ta se lat \anonymousfalse roi
+    # compile. Quen lat lai truoc khi nop la nop mot PDF CO TEN vao mot hoi
+    # nghi phan bien hai chieu mu -- bi loai thang, khong can ly do khac.
+    # Day la loai loi khong ai doc lai ma thay, vi bai van dep.
+    #
+    # DEN LUC CAMERA-READY: bai da duoc nhan, luc do lat \anonymousfalse la
+    # DUNG, va phai sua chinh phep kiem nay (doi thanh check nguoc lai).
+    src = read(PAPER / "main.tex")
+    code = re.sub(r"(?<!" + BS + BS + r")%.*", "", src)
+    check(BS + "anonymoustrue" in code,
+          "con dat \\anonymoustrue -- ban nop PHAI an danh")
+    check(BS + "anonymousfalse" not in code,
+          "khong bat nham \\anonymousfalse (lo ten trong ban nop)")
+
     census = pd.read_csv(ROOT / "results/unsw/paper3/degeneracy_census.csv")
     tex = read(PAPER / "tables" / "degeneracy_census.tex")
     n_rows = tex.count(r"\\") - 1  # tru dong tieu de
