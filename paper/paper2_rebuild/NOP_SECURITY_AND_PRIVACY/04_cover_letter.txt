@@ -35,8 +35,9 @@ WHY SECURITY AND PRIVACY
 
 The contribution is a reliability result about intrusion detectors rather
 than an accuracy claim about quantum computing. It concerns whether a
-deployed detector's probabilities can be acted on, which we believe is
-squarely within the journal's scope. We report the negative findings as
+deployed detector's probabilities can be acted on, and falls under the
+journal's Information Security scope, specifically intrusion detection
+methods and data-centric security. We report the negative findings as
 prominently as the positive ones: of 80 Holm-corrected comparisons, 25
 favour the quantum kernel and 30 favour a classical baseline, and the
 quantum kernel does not rank better than any baseline anywhere.

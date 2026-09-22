@@ -1,44 +1,79 @@
 # Nộp Paper 2 — Security and Privacy (Wiley)
 
-Mọi thứ cần để nộp đều nằm trong thư mục này. Không phải đi tìm đâu khác.
+Mọi thứ cần để nộp đều nằm trong thư mục này.
 
-**Dựng ngày 22-09-2026.** Nếu sau này sửa bài thì phải chạy lại
-`python scripts/build_bo_nop_paper2.py` để làm mới thư mục này, nếu không
-sẽ nộp nhầm bản cũ.
+Checklist này viết theo **quy tắc thật** của tạp chí (`paper/quytac.md`),
+không phải phỏng đoán.
+
+> ⚠️ **PDF trong đây có thể cũ.** Từ khoá vừa đổi 6 → 7 sau lần build gần
+> nhất. **Build lại trên Overleaf** rồi chạy
+> `python scripts/build_bo_nop_paper2.py` để làm mới thư mục này.
 
 ---
 
 ## File trong đây
 
-| File | Dùng để |
+Tên file **tiếng Anh** có chủ ý: tên file hiện ra trước mắt biên tập khi họ
+tải về. Thư mục và file này thì tiếng Việt vì không bao giờ được tải lên.
+
+| File | Nhãn phải chọn khi upload |
 |---|---|
-| `01_ban_thao.pdf` | Bản thảo — tải lên ô *Main Document* |
-| `02_nguon_latex.zip` | Nguồn LaTeX — tải lên khi hệ thống hỏi source files |
-| `03_cover_letter.txt` | **Dán thẳng** vào ô Cover Letter (dễ nhất) |
-| `03_cover_letter.tex` | Nếu hệ thống bắt nộp cover letter dạng PDF thì compile file này |
+| `01_manuscript_pdf.pdf` | **Main Document – LaTeX PDF** |
+| `02_main_document.tex` | **Main Document – LaTeX .tex File** |
+| `03_latex_supplementary.zip` | **LaTeX Supplementary File** |
+| `04_cover_letter.txt` | dán thẳng vào ô Cover Letter |
+| `04_cover_letter.tex` | nếu bắt nộp dạng PDF |
+
+Ba nhãn đầu là **nguyên văn** tên nhãn trong hệ thống. Quy tắc mục 4 ghi rõ:
+nộp LaTeX thì phải kèm **cả** file `.tex` **và** bản PDF, file phụ trợ gắn
+nhãn *LaTeX Supplementary File*.
 
 ---
 
 ## Đường vào
 
-Vào thẳng trang tạp chí rồi tìm nút **Submit an Article**:
-
-**https://onlinelibrary.wiley.com/journal/24756725**
-
-Hướng dẫn tác giả (nên mở xem giới hạn độ dài trước):
+Tạp chí dùng **Research Exchange**, không phải ScholarOne.
 
 **https://onlinelibrary.wiley.com/page/journal/24756725/homepage/forauthors.html**
+→ nút **"Start your submission"**
 
-> ⛔ **ĐỪNG bấm nút `start manuscript transfer`** trong email từ chối của IJNM.
-> Nó chuyển kèm hồ sơ quyết định của IJNM sang tạp chí mới, mà **không** mang
-> theo phản biện nào — vì bài bị loại thẳng, không có phản biện. Nộp mới cho
-> điểm khởi đầu tốt hơn. Nếu đã lỡ mở một bản nháp transfer thì vào xoá đi.
+Theo dõi trạng thái: **https://submission.wiley.com** → *My Submissions*
+
+> ⛔ **ĐỪNG bấm `start manuscript transfer`** trong email từ chối của IJNM.
+> Nó chuyển kèm hồ sơ quyết định của IJNM mà **không** mang theo phản biện
+> nào — vì bài bị loại thẳng, không có phản biện. Nếu đã lỡ mở bản nháp
+> transfer thì vào xoá.
+
+Hỗ trợ kỹ thuật: `submissionhelp@wiley.com` · Toà soạn: `SPYoffice@wiley.com`
 
 ---
 
-## Các ô phải điền trong hệ thống
+## Đối chiếu bài với quy tắc
 
-Chép nguyên, không cần sửa.
+| Quy tắc | Yêu cầu | Bài | |
+|---|---|---|---|
+| Abstract | ≤ 250 từ | 203 | ✅ |
+| Keywords | **bảy** | 7 | ✅ |
+| Loại bài | Original Paper | Original Paper | ✅ |
+| Định dạng | Free Format | IEEEtran giữ nguyên được | ✅ |
+| Tài liệu tham khảo | *"any style, as long as consistent"* | IEEEtran số | ✅ |
+| ORCID tác giả nộp | bắt buộc | `0009-0000-9420-1767` | ✅ |
+| Data availability | bắt buộc, có link kho | Zenodo DOI | ✅ |
+| Conflict of interest | bắt buộc | có | ✅ |
+| Cover letter | **không bắt buộc** | có | ✅ |
+| Phản biện | **single-anonymized** | — | tác giả **không** cần ẩn danh |
+
+**Tiêu đề:** quy tắc ghi *"less than 40 characters"* — tiêu đề của bạn 104.
+Đó là **lỗi mẫu**, không ai theo: một bài đã đăng trên chính tạp chí này
+(`10.1002/spy2.496`, 2025) dài ~125 ký tự. Giữ nguyên.
+
+**Tài liệu tham khảo:** nộp lần đầu thì kiểu nào cũng được miễn nhất quán.
+Nhưng nếu được nhận, tạp chí dùng **AMA** (số Ả Rập viết **trên dòng**).
+Lúc revision mới phải chuyển — chưa cần bây giờ.
+
+---
+
+## Các ô phải điền
 
 **Title**
 ```
@@ -48,21 +83,24 @@ Learners on NSL-KDD and UNSW-NB15
 
 **Article type** — `Original Paper`
 
-**Authors** (đúng thứ tự này)
+**Authors** (đúng thứ tự)
 
-| # | Tên | Vai trò |
+| # | Tên | |
 |---|---|---|
 | 1 | Nang Hung Van Nguyen | |
-| 2 | Quan Tran Anh Vo | **corresponding author**, ORCID `0009-0000-9420-1767` |
+| 2 | Quan Tran Anh Vo | **corresponding**, ORCID `0009-0000-9420-1767` |
 | 3 | Quang Anh Nguyen | |
 | 4 | Minh Tuan Pham | |
 
 Đơn vị cả bốn: `University of Science and Technology – The University of Danang, Danang 550000, Vietnam`
 
-**Keywords** (6)
+> Quy tắc mục 4 đòi **email của mọi đồng tác giả**, không chỉ tác giả liên
+> hệ — để toà soạn báo kết quả cho tất cả. Chuẩn bị sẵn 4 email.
+
+**Keywords** (bảy)
 ```
-Quantum machine learning; quantum kernel; calibration; intrusion detection;
-NSL-KDD; UNSW-NB15
+Quantum machine learning; quantum kernel; calibration; reliability;
+intrusion detection; NSL-KDD; UNSW-NB15
 ```
 
 **Data Availability Statement**
@@ -109,31 +147,26 @@ Minh Tuan Pham: supervision; resources; writing - review and editing.
 ## Hai câu hệ thống có thể hỏi
 
 **"Bài này đã nộp tạp chí Wiley nào chưa?"**
-→ Trả lời **thật**: có, IJNM, đã bị từ chối 05-09-2026 (manuscript 7478947).
+→ Trả lời **thật**: có, IJNM, bị từ chối 05-09-2026, manuscript 7478947.
 Không tự khai thì thôi, nhưng hỏi thẳng thì phải trả lời đúng.
 
 **"Có bài liên quan nào đang được xét ở nơi khác không?"**
-→ **Có** — Paper 1 ở IEEE TETC, mã `TETC-2026-05-0252`. Cover letter đã khai
-sẵn, chỉ cần nhắc lại.
+→ **Có** — Paper 1 ở IEEE TETC, `TETC-2026-05-0252`. Cover letter đã khai.
 
 ---
 
-## Chưa kiểm được
+## Một chỗ lệch nhỏ, không chặn
 
-Tôi **không đọc được** trang author guidelines của tạp chí (Wiley chặn truy
-cập tự động, lỗi 403). Nên hai điều sau bạn phải **tự mở xem**:
-
-1. **Giới hạn độ dài** cho Original Paper — bài đang 12 trang IEEEtran hai cột
-2. Xác nhận tạp chí nhận **free format** — trang transfer có ghi "Free format"
-   nên gần như chắc chắn được, nhưng nên tự xác nhận
-
----
+Quy tắc ghi *"Authors should list all funding sources in the
+**Acknowledgments** section"*, còn bài đang để **Funding** thành mục riêng.
+Cả hai đều rõ ràng và toà soạn thường không bắt bẻ. Nếu muốn khớp tuyệt đối
+thì đổi tiêu đề mục `Funding` thành `Acknowledgments` — nói tôi một tiếng.
 
 ## Đã kiểm
 
 ```
 audit_p2_rebuild   296/296     mọi số trong bài tính lại được từ artifact
 check_latex        sạch
-Zenodo DOI         10.5281/zenodo.22893683   (đã kiểm qua API, metadata đúng)
+Zenodo DOI         10.5281/zenodo.22893683   (kiểm qua API, metadata đúng)
 Tài liệu           30 mục, 30 được trích, không mục rác, không trích treo
 ```
