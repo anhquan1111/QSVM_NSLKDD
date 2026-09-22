@@ -1,0 +1,17 @@
+% Sinh boi runners/make_p2_rebuild_tables.py -- dung sua tay.
+\begin{table*}[t]
+\centering
+\caption{Mean predicted attack probability by category on KDDTest+, over $\pnRuns$ runs. Normal is the negative class, so lower is better there and higher is better elsewhere. Every model falls below the $0.5$ decision threshold on both rare categories.}
+\label{tab:percat}
+\begin{tabular}{lrccccc}
+\toprule
+Category & $n$ & QSVM-\ZZ{} & SVM-RBF & MLP & XGBoost & Random forest \\
+\midrule
+Normal & 9\,711 & 0.0960 & 0.1419 & 0.1180 & 0.0803 & \textbf{0.0693} \\
+DoS & 7\,460 & 0.7720 & 0.7491 & 0.7818 & \textbf{0.7830} & 0.7697 \\
+Probe & 2\,421 & 0.7184 & 0.8284 & 0.9159 & \textbf{0.9228} & 0.8975 \\
+R2L & 2\,885 & 0.4589 & \textbf{0.4902} & 0.4685 & 0.3797 & 0.3446 \\
+U2R & 67 & \textbf{0.4483} & 0.4098 & 0.3787 & 0.3487 & 0.3137 \\
+\bottomrule
+\end{tabular}
+\end{table*}

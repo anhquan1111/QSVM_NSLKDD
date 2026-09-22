@@ -1,0 +1,1279 @@
+%==============================================================================
+%  Paper 2 -- BAN DUNG LAI (2026-09-21)
+%
+%  Khac ban da nop IJNM bon diem, tat ca ve DO DAC chu khong ve mo hinh:
+%    1. Chi so. ECE tren tap con MOT lop suy bien thanh 1 - trung binh(p), nen
+%       ECE_rare cua ban cu khong do calibration. Chi so chinh doi sang ECE
+%       tren toan tap test, noi co ca hai lop.
+%    2. Tap test. KDDTest+ day du thay vi mot mau 100 dong (10 hiem).
+%    3. So run. 10 thay vi 5 -- voi 5 cap, Wilcoxon khong bao gio dat p<0.05.
+%    4. Khong dung model cache: moi baseline huan luyen lai tren CUNG mot tap.
+%  Cong them UNSW-NB15, chay ca 4 lan 6 qubit de go confound.
+%
+%  Khoi tac gia giu nguyen ban da nop.
+%  Compile: pdfLaTeX. Moi con so phai goi qua macro trong tables/.
+%==============================================================================
+\documentclass[journal]{IEEEtran}
+
+% Moi goi, tham so dat float va macro nam o preamble.tex -- cung
+% khuon voi paper 1.
+\input{preamble}
+
+\begin{document}
+
+% IEEEtran bat flushbottom o che do hai cot: no GIAN khoang trong theo chieu
+% doc de hai cot bang nhau. Voi trang cuoi -- danh muc tham khao va cac khoi
+% tieu su co anh -- ket qua la cac khoi bi day xa nhau, giua la khoang trang
+% lon. Ban da nop IJNM cung tat no o day. Phai \let truoc vi IEEEtran goi lai
+% \flushbottom o moi trang.
+\let\flushbottom\raggedbottom
+\raggedbottom
+
+\title{Are Quantum-Kernel Intrusion Detectors Trustworthy?
+  A Reliability and Calibration Benchmark of QSVM Against Strong
+  Tabular Learners on NSL-KDD and UNSW-NB15}
+
+\author{Nguyen~Nang~Hung~Van,
+        Quan~Tran~Anh~Vo,
+        Nguyen~Quang~Anh,
+        and~Minh~Tuan~Pham
+\thanks{Manuscript received [Date]; revised [Date]. This work was
+  supported by The University of Danang -- University of Science and
+  Technology under Project T2026-02-10TN. \textit{(Corresponding author: Quan Tran Anh Vo.)}}
+\thanks{The authors are with The University of Danang -- University of
+  Science and Technology, Danang, Vietnam (e-mail:
+  votrananhquan1111@gmail.com).}
+\thanks{Q. T. A. Vo is with ORCID 0009-0000-9420-1767.}}
+
+\markboth{Manuscript under review,~Vol.~XX, No.~Y, Month~2026}%
+{Nguyen \MakeLowercase{\textit{et al.}}: Reliability and Calibration of Quantum-Kernel Intrusion Detection}
+
+\maketitle
+
+\begin{abstract}
+An intrusion detector is deployed on the strength of its probabilities, yet
+quantum-kernel classifiers are almost always evaluated on accuracy alone. We
+benchmark a \QSVM{} against Random Forest, XGBoost, an MLP and an SVM-RBF
+baseline under one zero-leakage pipeline and one recalibration protocol, on
+NSL-KDD and UNSW-NB15. The natural way to pose the question is unavailable:
+the rare-attack union consists entirely of attack records, so binned
+calibration error collapses there to one minus mean confidence --- an
+identity we verify to $\pidentityMaxDev$. Measured where both classes are
+present, over $\pnRuns$ paired runs with Holm-corrected Wilcoxon tests, the
+quantum kernel is better calibrated than both tree ensembles in every
+setting ($\Delta\ECE=\pdNslRf$, $p_{\text{Holm}}=\pdNslRfHolm$ on NSL-KDD;
+$\pdUnswSixRf$, $p_{\text{Holm}}=\pdUnswSixRfHolm$ on UNSW-NB15) and at
+their own most favourable representation, while an MLP is better calibrated
+everywhere. Post-hoc recalibration helps the quantum kernel and no other
+model, and lowering the decision threshold recovers the rare classes for
+the margin-based models alone. One measured property explains both: a
+forest emits a distinct probability for $\psatRfDistinct\%$ of test records
+against $\psatQsvmDistinct\%$ for the quantum kernel, and a monotone
+recalibrator cannot separate tied scores. Of $\pcenTotal$ Holm-corrected
+comparisons $\pcenQsvm$ favour the quantum kernel and $\pcenBase$ favour a
+classical baseline: the advantage is confined to calibration, and it is
+absent from ranking.
+\end{abstract}
+
+\begin{IEEEkeywords}
+% Sau tu khoa: phan lon tap chi Wiley gioi han 6. Bo "reliability" vi no
+% trung y voi "calibration", giu lai duoc hai ten bo du lieu de bai tim
+% thay duoc khi ai search theo benchmark.
+Quantum machine learning, quantum kernel, calibration, intrusion detection,
+NSL-KDD, UNSW-NB15.
+\end{IEEEkeywords}
+
+%==============================================================================
+\section{Introduction}\label{sec:intro}
+
+% TODO(tac gia): doc lai va nới rong neu can. Khung lap luan da day du.
+An intrusion detection system is rarely deployed as a bare classifier. It is
+deployed behind a threshold, feeding a queue that a human or a downstream
+policy has to triage, and the quantity that governs that queue is a
+probability rather than a label. A detector that is right often but confident
+at the wrong moments is harder to operate than one that is slightly less
+accurate and honest about it. Accuracy therefore answers only half of the
+deployment question.
+
+Quantum-kernel classifiers are almost always evaluated on the other half
+alone. Since quantum feature maps were proposed as a route to expressive
+kernels~\cite{havlicek2019,schuld2019hilbert}, and since separations were
+established for carefully constructed learning problems~\cite{liu2021speedup},
+the intrusion-detection literature has measured them by accuracy and $F_1$.
+On tabular data of this kind, gradient-boosted trees and random forests
+usually win that contest~\cite{grinsztajn2022tabular}, which makes an
+accuracy-only comparison both unfavourable to the quantum kernel and
+uninformative about deployment.
+
+This paper asks the other half of the question: when one of these models
+reports a probability, how far can that number be trusted? We find first
+that the natural way to pose the question --- restrict the estimate to the
+rare attack classes that matter most --- is unavailable for a structural
+reason, and that the quantity such a restriction produces is not a
+calibration error at all. We then measure calibration where it is
+well-defined, on two corpora and at two circuit widths.
+
+\subsection*{Contributions}
+\begin{enumerate}
+  \item A measurement result: on a subset drawn by attack category, every
+        record carries the same label, so binned calibration error is
+        identically one minus mean confidence and cannot detect
+        miscalibration. We verify the identity to $\pidentityMaxDev$ across
+        every model and run, and give the non-degenerate counterpart.
+  \item A calibration benchmark of a quantum kernel against four baselines
+        under one pipeline and one recalibration protocol, on two corpora and
+        at two circuit widths, over $\pnRuns$ paired runs with
+        Holm-corrected Wilcoxon tests.
+  \item The finding that the quantum kernel is better calibrated than both
+        tree ensembles in every setting tested, and is not better than an
+        MLP.
+  \item The finding that post-hoc recalibration helps the quantum kernel in
+        every run and under every recalibrator tested, degrades the MLP and
+        both tree ensembles in every run, and leaves the classical RBF
+        kernel statistically unchanged.
+  \item A mechanism for that finding, measured rather than conjectured: the
+        tree ensembles' scores are quantised and saturated, a monotone
+        recalibrator cannot separate tied records, and the same property
+        explains why no decision threshold recovers the rare classes for
+        them.
+\end{enumerate}
+
+\subsection*{Relation to the submitted version}
+This paper is a substantially revised version of an earlier submission, and
+five of that version's claims do not survive the revised protocol. We state
+them here rather than in a footnote.
+
+(i) \emph{The headline rare-attack result is withdrawn.} That version
+reported $\ECE_{\text{rare}}=\psubQsvmEceRare$ for the quantum kernel
+against $\psubRbfEceRare$ for the RBF kernel and concluded it was the most
+trustworthy model on the rare classes. The estimate was computed on
+$\psubNRareTest$ rare test records, and
+Section~\ref{sec:identity} shows that on a subset of one class the quantity
+is not a calibration error at all. Both the measurement and its
+interpretation are replaced.
+
+(ii) \emph{The low-data claim is narrowed.} That version placed the quantum
+kernel first from $N\geq200$ onward. Measured where calibration is
+well-defined it leads at $N=\pldNmin$ only, and the MLP leads at every
+larger budget (Table~\ref{tab:lowdata}).
+
+(iii) \emph{The balanced-operating-point claim is withdrawn.} The
+best-calibrated model under a balanced prior is \ppsBalWinner{}, not the
+quantum kernel (Table~\ref{tab:priorshift}).
+
+(iv) \emph{The recalibration claim is corrected in both directions.} That
+version concluded Platt scaling suits margin-based quantum \emph{and} SVM
+models. It helps the quantum kernel alone; on the classical SVM no
+recalibrator is distinguishable from leaving the score alone
+($p_{\text{Holm}}\geq\pctestRbfMinHolm$ for all three). The
+finding is narrower than claimed and, once isotonic and temperature scaling
+are added, more robust.
+
+(v) \emph{The identical-footing claim was false.} That version reused cached
+quantum models whose training subset differed from the subset used to fit
+their calibrator, while the tree baselines were fitted and calibrated on the
+same data. Every model here is trained from scratch on one subset.
+
+All five were found by re-running the protocol at a scale the original
+design could not reach, and not in response to any external report.
+
+\subsection*{Reproducibility}
+Every number in this paper is emitted by a script into an artifact file and
+read back into the text through a generated macro; no figure is drawn by
+hand and no value is typed into the prose. The accompanying audit
+recomputes each of them from the artifacts, checks that the text contains no
+literal number, and asserts the claims the paper is and is not entitled to
+make --- including the negative ones. A separate script verifies the
+identity of Section~\ref{sec:identity} numerically across every model and
+run. The full pipeline, the artifacts and the checks are released with the
+paper.
+
+%==============================================================================
+\section{Background and Related Work}\label{sec:related}
+
+\subsection{Quantum Kernel and the \ZZ{}-FeatureMap}
+\begin{definition}[Quantum kernel]
+For a data-dependent unitary $U:\mathbb{R}^n\!\to\!\mathcal{U}(2^n)$ with
+state map $\phi(\mathbf{x})=U(\mathbf{x})|0\rangle^{\otimes n}$, the
+induced quantum kernel is
+$K^{\mathrm{Q}}(\mathbf{x},\mathbf{x}')=
+|\langle 0|U^{\dagger}(\mathbf{x}')U(\mathbf{x})|0\rangle|^2$.
+\end{definition}
+We use the depth-$r$ \ZZ{}-FeatureMap with full entanglement,
+$U^{(r)}_{\ZZ}(\mathbf{x})$, whose entangling layer encodes pairwise
+feature products as quantum phases. The embedding width is not tuned here:
+it is taken from the companion study's three-stage selection
+rule~\cite{companion}, which screens candidate widths on retained variance,
+then on kernel--target alignment, then on two-qubit gate cost, and returns
+$\plegacyQubits$ qubits at $r{=}2$ on NSL-KDD and $\punswQubits$ on
+UNSW-NB15. Reusing it without modification is what lets the present paper
+isolate classifier reliability from embedding choice.
+
+What such a kernel can buy is itself contested. Huang \emph{et
+al.}~\cite{huang2021power} show that access to training data shifts the
+comparison substantially, and that a quantum model's advantage must be
+argued against classical learners given the same data rather than against a
+worst case. We take that as the standard the comparison here has to meet,
+and apply it to reliability rather than to accuracy.
+
+\subsection{Confidence Calibration}
+\begin{definition}[Calibration]
+A probabilistic classifier producing $\hat{p}(\mathbf{x})\in[0,1]$ is
+\emph{perfectly calibrated} if
+$\Pr\!\big(y{=}1\mid\hat{p}(\mathbf{x}){=}q\big)=q$ for all $q$.
+\end{definition}
+Expected Calibration Error (ECE) and the Brier score are the standard
+scalar summaries of the gap from perfect
+calibration~\cite{naeini2015ece,brier1950}, and a reliability diagram is
+the graphical counterpart. The Brier score is a strictly proper scoring
+rule~\cite{gneiting2007scoring}, so it is minimised only by the true
+conditional probability; ECE is not, and is an estimator with a free bin
+count whose bias is known to be substantial~\cite{kumar2019verified}.
+
+Which models miscalibrate, and in which direction, is not arbitrary.
+Niculescu-Mizil and Caruana~\cite{niculescu2005predicting} showed that
+maximum-margin methods push probability mass away from $0$ and $1$ while
+other families push it toward the extremes, and that the shape of the
+distortion determines which post-hoc correction can repair it. That
+observation is the classical ancestor of the mechanism we measure in
+Section~\ref{sec:mechanism}. Modern high-capacity classifiers are
+systematically over-confident and the effect grows with
+capacity~\cite{guo2017calibration}, motivating post-hoc recalibration such
+as Platt scaling~\cite{platt1999svm}, a logistic map from decision scores
+to probabilities, and isotonic regression~\cite{zadrozny2002transforming},
+its non-parametric counterpart. Neither is guaranteed to help:
+Kumar \emph{et al.}~\cite{kumar2019verified} report that scaling methods
+are less calibrated than their measured error suggests. Calibration is
+rarely reported in quantum-IDS studies, and never compared against strong
+tabular learners.
+
+The gap is not an oversight so much as an inheritance. The applied
+quantum-IDS literature grew out of demonstrations that a quantum feature map
+can separate classes at all, and the natural way to report such a
+demonstration is accuracy against a classical baseline. Payares and
+Mart\'{i}nez-Santos~\cite{payares2021dos} compare quantum and classical
+models on denial-of-service detection by accuracy; Suryotrisongko and
+Musashi~\cite{suryotrisongko2022dga} evaluate a hybrid
+quantum--classical architecture on botnet traffic on the same footing;
+Kalinin and Krundyshev~\cite{kalinin2023qids} survey quantum techniques for
+intrusion detection without reporting a probability-quality measure. None
+of the three reports a calibration curve, a Brier score, or an ECE, and
+none compares against a gradient-boosted tree. Table~\ref{tab:coverage}
+places them against the three gaps this paper addresses.
+
+The literature has continued to grow along the same axis. Abreu \emph{et
+al.}~\cite{abreu2024qmlids} report a hybrid quantum--classical IDS
+evaluated on public corpora in binary and multiclass settings, and
+Kukliansky \emph{et al.}~\cite{kukliansky2024qnn} evaluate quantum neural
+networks for network anomaly detection on noisy hardware rather than in
+simulation --- the one axis this paper cannot reach, and which
+Section~\ref{sec:limits} names as its own next experiment. We place these
+two outside Table~\ref{tab:coverage}: scoring a work against the three
+axes requires reading what it measures, and we restrict the table to works
+we have assessed in full.
+
+That matters more here than it would elsewhere, because the accuracy
+comparison is the one a four-qubit kernel is least likely to win. On tabular
+data the tree ensembles are the reference
+point~\cite{breiman2001rf,chen2016xgboost}, and a representation compressed
+to four components to fit a NISQ budget gives the quantum branch little room.
+Measuring only accuracy therefore both understates what a quantum kernel
+offers and leaves the deployment question --- whether the reported
+probability can be acted on --- entirely open.
+
+The calibration literature supplies the other half of the setting.
+Guo~\emph{et~al.}~\cite{guo2017calibration} established that modern
+high-capacity classifiers are systematically over-confident and that the
+effect worsens with capacity, which motivated the post-hoc correction we
+apply uniformly here. Two features of our results sit awkwardly with that
+picture and are worth flagging early: on this corpus the models are
+\emph{under}-confident rather than over-confident, and the correction helps
+exactly one of the five. Section~\ref{sec:mechanism} argues that both
+follow from a property of the score distributions rather than from model
+capacity.
+
+\begin{proposition}[Platt scaling preserves ranking]
+\label{prop:platt}
+Platt scaling applies a strictly increasing logistic transform
+$\sigma(As+B)$, $A{>}0$, to a score $s$. Because the transform is
+monotone, the induced ordering of samples is unchanged; hence
+threshold-free ranking metrics (AUC-ROC, AUC-PR) are invariant to Platt
+scaling, while binning-based calibration metrics (ECE) and the Brier
+score are not.
+\end{proposition}
+Proposition~\ref{prop:platt} is the methodological reason our comparison
+can apply one uniform Platt protocol to every model without distorting
+the ranking comparison: any AUC difference reflects the raw model
+ordering, while ECE/Brier differences reflect calibration.
+
+\subsection{Strong Tabular Baselines}
+Random Forests~\cite{breiman2001rf} and gradient-boosted trees
+(XGBoost~\cite{chen2016xgboost}) are the strongest non-deep models on
+tabular data and the comparators a reviewer expects for any practical IDS
+claim; we adopt both alongside SVM-RBF~\cite{cortes1995svm}. This is not
+folklore: on a benchmark of tabular datasets drawn from varied domains,
+with hyper-parameter search accounted for, Grinsztajn \emph{et
+al.}~\cite{grinsztajn2022tabular} found tree ensembles still ahead of deep
+architectures at the data scale studied here.
+
+\subsection{Position Against Prior Work}
+Table~\ref{tab:coverage} contrasts representative QSVM-IDS works against
+the three gaps. None reports calibration, compares against strong tabular
+learners, or separates ranking from trust. The present paper is, to our
+knowledge, the first calibration-centric reliability study of a quantum
+kernel for IDS.
+
+\begin{table}[t]
+\centering
+\caption{Coverage of the three gaps by representative QSVM-IDS works
+  (G1: strong tabular baselines; G2: calibration; G3: ranking vs.\ trust).
+  A check denotes the axis is explicitly studied.}
+\label{tab:coverage}
+\small
+\begin{tabular}{lccc}
+\toprule
+Work & G1 & G2 & G3\\\midrule
+Payares \emph{et al.}~\cite{payares2021dos}        & \ding{55} & \ding{55} & \ding{55}\\
+Suryotrisongko \emph{et al.}~\cite{suryotrisongko2022dga} & \ding{55} & \ding{55} & \ding{55}\\
+Kalinin \emph{et al.}~\cite{kalinin2023qids}       & \ding{55} & \ding{55} & \ding{55}\\
+Companion (Paper~1)~\cite{companion}               & \ding{55} & partial   & \ding{55}\\
+\textbf{This work}                                 & \checkmark & \checkmark & \checkmark\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+% ============================================================
+
+%==============================================================================
+\section{Why the rare-attack subset cannot answer the question}
+\label{sec:identity}
+
+The obvious way to ask whether a detector is trustworthy on the attacks that
+matter is to restrict the calibration estimate to those attacks. On both
+corpora this does not work, for a reason that is structural rather than
+statistical.
+
+The rare union is defined by attack category --- User-to-Root and
+Remote-to-Local on NSL-KDD, and Worms, Shellcode, Backdoor and Analysis on
+UNSW-NB15. Every record in it is an attack, so its binary label is one.
+Under equal-frequency binning each bin $B$ then contains only positives and
+$\mathrm{acc}(B)=1$ identically, so
+\begin{equation}
+\ECE = \sum_B \frac{|B|}{n}\,\bigl|\mathrm{acc}(B)-\mathrm{conf}(B)\bigr|
+     = \sum_B \frac{|B|}{n}\,\bigl(1-\mathrm{conf}(B)\bigr)
+     = 1-\bar{p},
+\label{eq:identity}
+\end{equation}
+where $\bar p$ is the mean predicted attack probability on the subset. The
+right-hand side does not depend on the binning at all. The quantity is a
+measure of confidence on known attacks, close in spirit to recall; it is not
+a calibration error, and no model can be penalised by it for being
+over-confident.
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=\columnwidth]{figs/fig1_identity.pdf}
+  \caption{(a) Measured calibration error on the rare subset against
+  $1-\bar p$, for every model and run on both corpora: they are the same
+  number. (b) Calibration is only measurable where per-bin accuracy varies,
+  which on the rare subset it cannot.}
+  \label{fig:identity}
+\end{figure}
+
+We verify Eq.~\eqref{eq:identity} numerically for every model and every run
+(Fig.~\ref{fig:identity}(a)): the largest absolute deviation is
+$\pidentityMaxDev$. We also verify the
+converse, that the estimate on the full test split is not degenerate: there
+both classes are present, per-bin accuracy varies, and the identity fails by
+a wide margin. All calibration numbers below are therefore measured on the
+full test split of each corpus, and we report the rare-subset quantity under
+its own name where it is informative.
+
+%==============================================================================
+\section{Reliability Evaluation Framework}\label{sec:method}
+
+\subsection{What we measure}
+For a test set $\{(\mathbf{x}_i,y_i)\}_{i=1}^{n}$ and calibrated
+probabilities $\hat p_i$, partitioned into $B$ equal-frequency bins,
+\begin{equation}
+\ECE = \sum_{b}\frac{|B_b|}{n}\bigl|\mathrm{acc}(B_b)-\mathrm{conf}(B_b)\bigr|,
+\qquad
+\Brier = \frac{1}{n}\sum_{i=1}^{n}(\hat p_i-y_i)^2 ,
+\label{eq:metrics}
+\end{equation}
+with $\mathrm{acc}$ and $\mathrm{conf}$ the empirical accuracy and mean
+confidence in a bin. Equal-frequency rather than equal-width binning keeps
+every bin populated on a skewed score distribution. We report
+AUC-PR alongside, because ranking quality and probability quality are
+separate axes and a model can lead on one while trailing on the other.
+
+\subsection{One recalibration protocol for every model}
+Each model is reduced to a one-dimensional score before recalibration: the
+decision function for the kernel machines, the log-odds of the
+positive-class probability for the tree ensembles and the MLP. A single
+logistic map is then fitted on the \emph{training} scores and applied to the
+test scores, so no test label enters the calibrator. By
+Proposition~\ref{prop:platt} this leaves AUC-PR and AUC-ROC untouched, which
+is what allows one protocol to be applied uniformly without distorting the
+ranking comparison.
+
+\begin{algorithm}[t]
+\caption{Uniform probability and reliability protocol}
+\label{alg:protocol}
+\begin{algorithmic}[1]
+\STATE \textbf{input} train split $(X_{\mathrm{tr}},y_{\mathrm{tr}})$, test
+       split $(X_{\mathrm{te}},y_{\mathrm{te}})$, model $M$, bins $B$
+\STATE fit $M$ on $(X_{\mathrm{tr}},y_{\mathrm{tr}})$
+\STATE $s_{\mathrm{tr}} \leftarrow \mathrm{score}(M,X_{\mathrm{tr}})$,\;
+       $s_{\mathrm{te}} \leftarrow \mathrm{score}(M,X_{\mathrm{te}})$
+       \COMMENT{decision function, or log-odds for probabilistic models}
+\STATE fit recalibrator $g$ on $(s_{\mathrm{tr}},y_{\mathrm{tr}})$
+       \COMMENT{no test label is seen}
+\STATE $\hat p \leftarrow g(s_{\mathrm{te}})$
+\STATE partition $\hat p$ into $B$ equal-frequency bins
+\STATE \textbf{return} $\ECE$, $\Brier$, AUC-PR from
+       Eq.~(\ref{eq:metrics})
+\end{algorithmic}
+\end{algorithm}
+
+Algorithm~\ref{alg:protocol} states the procedure applied identically to
+every model. Two properties matter. The recalibrator sees only training
+scores and training labels, so no test information reaches the probability;
+and reducing each model to a one-dimensional score before recalibration is
+what makes a single protocol applicable to a kernel machine, a tree ensemble
+and a neural network at once. Where the literature usually compares
+calibration numbers produced by whatever each library happens to emit, every
+number here comes from the same seven lines.
+
+\subsection{The five questions}
+We ask the same question under five conditions, and the conditions are
+chosen because they correspond to things that change in deployment rather
+than to things that are convenient to vary.
+
+\begin{enumerate}
+  \item \textbf{Operating calibration.} Calibration on the full test split
+        of each corpus (Table~\ref{tab:main}).
+  \item \textbf{Representation.} Whether the tree ensembles are
+        disadvantaged by sharing the quantum kernel's low-dimensional input
+        (Fig.~\ref{fig:refarm}).
+  \item \textbf{Label scarcity.} Calibration against training-set size
+        (Table~\ref{tab:lowdata}).
+  \item \textbf{Class-prior shift.} Calibration when the deployment mix
+        differs from the benchmark mix (Table~\ref{tab:priorshift}).
+  \item \textbf{Temporal drift.} Calibration on the harder KDDTest-21
+        split, whose records the original benchmark's classical learners
+        all misclassified.
+\end{enumerate}
+
+Each is reported with paired tests and effect sizes rather than with point
+estimates, and we report the conditions in which the quantum kernel does not
+lead as prominently as those in which it does.
+
+%==============================================================================
+\section{Experimental Setup}\label{sec:setup}
+
+% TODO(tac gia): pipeline chi tiet, sieu tham so. Giu mo ta cua ban cu.
+
+All models share a zero-leakage front end: one-hot encoding,
+\textsc{SelectKBest}, PCA and a min--max map onto $[0,\pi]$, every
+transformer fitted on the training subset alone. Reliability is evaluated
+over $\pnRuns$ independent stratified training subsets of $\pnTrain$
+records. Every model, quantum and classical, is trained from scratch on the
+same subset; the submitted version reused cached quantum models whose
+training subset differed from the one used to fit their calibrator, so the
+quantum and tree branches were not in fact on an identical footing.
+
+\subsection{Corpora}
+NSL-KDD~\cite{tavallaee2009nslkdd} is the de-duplicated revision of KDD'99
+and remains the reference corpus for this line of work. Its training split
+holds $\pcorpNslTrain$ records at $\pcorpNslAttackTrain\%$ attack, its test
+split $\pcorpNslTest$ at $\pcorpNslAttackTest\%$, and attacks are grouped
+into $\pcorpNslCats$ categories of which User-to-Root and Remote-to-Local
+are the rare and security-critical ones. The test split deliberately
+contains attack types absent from training, which is what makes it a test of
+generalisation rather than of memorisation --- and, as
+Fig.~\ref{fig:reliability}(a) shows, what makes every model on it
+under-confident.
+
+UNSW-NB15~\cite{moustafa2015unsw} was built to address the age of KDD'99: it
+is synthesised from modern traffic with a contemporary attack mix. Its
+training split holds $\pcorpUnswTrain$ records at
+$\pcorpUnswAttackTrain\%$ attack and its test split $\pcorpUnswTest$ at
+$\pcorpUnswAttackTest\%$, over $\pcorpUnswCats$ attack categories. The rare
+union here is Worms, Shellcode, Backdoor and Analysis. The two corpora
+differ in era, in attack taxonomy and in the direction of their prior shift
+between splits, which is what makes agreement across them informative.
+
+\subsection{Test splits}
+NSL-KDD is evaluated on the full KDDTest+ split, $\pnTest$ records of which
+$\pnRare$ belong to the rare union; UNSW-NB15 on its full test split,
+$\punswTest$ records of which $\punswRare$ are rare. The submitted version
+used a $\pnTestOld$-record sample of KDDTest+ holding $\pnRareOld$ rare
+records. The reason for the small sample was the cost of the quantum Gram
+matrix; evaluating the feature map in closed form removes that cost, so the
+constraint no longer binds.
+
+\subsection{Circuit width}
+The companion study's selection rule returns $\plegacyQubits$ qubits on
+NSL-KDD and $\punswQubits$ on UNSW-NB15, so comparing the corpora at their
+selected widths would change the dataset and the width together. We
+therefore run UNSW-NB15 at both widths and report both.
+
+\subsection{What the quantum branch costs}
+A recommendation is only actionable if the recommended model is affordable,
+and for a quantum kernel that is not a detail: the cost of the Gram matrix
+is precisely why the submitted version evaluated on
+$\pnTestOld$ records rather than $\pnTest$. Evaluating the feature map in
+closed form removes it. Averaged over five runs at $N=\pnTrain$ training
+records and $\pcostNtest$ test records, the quantum kernel fits in
+$\pcostQsvmFit$\,s and scores the full test split in $\pcostQsvmPred$\,s.
+The classical RBF kernel, which carries the same support-vector arithmetic
+at inference, takes $\pcostRbfPred$\,s on the same split --- within a few
+percent. Fitting is the cheapest of the five models, because the Gram
+matrix reduces to one dense product; only the MLP, at $\pcostMlpFit$\,s, is
+an order of magnitude slower to train.
+
+The cost objection to quantum kernels is therefore not operative at this
+scale. It returns at larger $N$, where the Gram grows quadratically, and on
+real hardware, where each entry needs repeated circuit execution rather
+than one matrix product. Both are outside what we measure.
+
+\subsection{Statistics}
+We report paired Wilcoxon signed-rank tests with bootstrap confidence
+intervals and $d_z$, following the standard recommendation for comparing
+classifiers over repeated runs~\cite{demsar2006statistical}, and correct
+for multiplicity within baseline families by the Holm sequentially
+rejective procedure~\cite{holm1979simple}. Ten runs are the minimum for
+which this is meaningful: with five paired runs the smallest attainable
+two-sided $p$ is $0.0625$, so no comparison can reach significance
+whatever the effect size.
+
+%==============================================================================
+\section{Results}\label{sec:results}
+
+\input{tables/main_table}
+
+\begin{figure*}[t]
+  \centering
+  \includegraphics[width=\textwidth]{figs/fig2_paired.pdf}
+  \caption{Paired differences in calibration error, quantum kernel minus
+  baseline, with bootstrap confidence intervals and Holm-corrected $p$.
+  Blue favours the quantum kernel, orange the baseline, grey is
+  inconclusive.}
+  \label{fig:paired}
+\end{figure*}
+
+\subsection{The census}
+Before the individual comparisons, the tally. Across every setting, metric
+and baseline, the protocol produces $\pcenTotal$ Holm-corrected
+comparisons: $\pcenQsvm$ favour the quantum kernel, $\pcenBase$ favour a
+classical baseline, and $\pcenIncon$ are inconclusive. There is no general
+advantage here, and a paper that reported only its wins could have drawn a
+very different picture from the same runs.
+
+The tally covers three families of metric and nothing else. On calibration
+measured where both classes are present --- ECE and the Brier score on the
+full test split --- the quantum kernel takes $\pcenCalQsvm$ of
+$\pcenCalTotal$. On ranking --- AUC-PR and $F_1$ --- it takes
+$\pcenRankQsvm$ of $\pcenRankTotal$. On the Brier score restricted to the
+rare union it takes $\pcenRareQsvm$ of $\pcenRareTotal$. The three families
+sum to $\pcenTotal$, so no comparison is counted twice and none is left out
+of the report.
+
+One quantity is deliberately absent. ECE on the rare union is excluded from
+the tally, because Section~\ref{sec:identity} shows it equals
+$1-\bar{p}$ identically there and is not a calibration error; counting it
+among calibration wins would contradict that section. It would have added
+$\pcenDropped$ comparisons. It is still reported, under its own name and
+per category, in Section~\ref{sec:results}. The Brier score on the same
+subset is kept, because a proper scoring rule does not degenerate when the
+subset carries one label.
+
+The structure inside the tally is the result. The quantum kernel does not
+rank better than any baseline anywhere, and it calibrates better than half
+of them everywhere. That is the shape of the claim this paper makes, and
+the reason a single scalar comparison would have hidden it.
+
+\subsection{Calibration against the tree ensembles}
+The quantum kernel is better calibrated than both tree ensembles in every
+setting tested. On NSL-KDD the paired difference is $\pdNslRf$
+$[\pdNslRfLo,\pdNslRfHi]$ ($p_{\text{Holm}}=\pdNslRfHolm$, $d_z=\pdNslRfDz$)
+against Random Forest and $\pdNslXgb$ $[\pdNslXgbLo,\pdNslXgbHi]$
+($p_{\text{Holm}}=\pdNslXgbHolm$) against XGBoost. On UNSW-NB15 at the
+selected width the same comparisons give $\pdUnswSixRf$
+($p_{\text{Holm}}=\pdUnswSixRfHolm$, $d_z=\pdUnswSixRfDz$) and
+$\pdUnswSixXgb$ ($p_{\text{Holm}}=\pdUnswSixXgbHolm$), and at
+$\plegacyQubits$ qubits $\pdUnswFourRf$ and $\pdUnswFourXgb$. Eight of eight
+comparisons are corrected-significant in the quantum kernel's favour, and
+the effect is far larger on UNSW-NB15 than on NSL-KDD.
+
+\begin{figure*}[t]
+  \centering
+  \includegraphics[width=\textwidth]{figs/fig5_reliability.pdf}
+  \caption{(a) Reliability diagram on KDDTest+. Every model lies above the
+  diagonal over most of the range: all five are under-confident rather than
+  over-confident on this corpus. (b) Mean predicted attack probability by
+  category. Both rare categories sit below the decision threshold for every
+  model.}
+  \label{fig:reliability}
+\end{figure*}
+
+\subsection{What the calibration curves look like}
+Fig.~\ref{fig:reliability}(a) plots the curve that Eq.~\eqref{eq:metrics}
+summarises. The shape is the same for all five models and it is not the one
+the calibration literature leads us to expect. Tree ensembles are usually
+reported as over-confident~\cite{guo2017calibration}; here every model is
+\emph{under}-confident, lying above the diagonal in $\pcurveQsvmUnder$ of
+$\pcurveNbins$ bins for the quantum kernel and similarly for the rest. The
+observed attack fraction exceeds the predicted probability across most of
+the range.
+
+The reason is the corpus rather than the models. KDDTest+ contains attack
+types absent from the training split, so records that a model scores low on
+familiarity grounds are nonetheless attacks. A detector tuned on this
+benchmark will under-alert if its probabilities are taken at face value,
+and that applies to the quantum kernel as much as to the baselines.
+
+\input{tables/percat_table}
+
+\subsection{Which attacks the probabilities can be trusted on}
+Section~\ref{sec:identity} showed that a calibration estimate restricted to
+one attack category is exactly one minus the mean confidence on it. That
+quantity is still worth reporting --- under its own name, and per category
+rather than pooled. Table~\ref{tab:percat} and
+Fig.~\ref{fig:reliability}(b) give it.
+
+The ordering differs sharply by category. On Probe the quantum kernel is the
+weakest of the five ($\pcatProbeQsvm$ against $\pcatProbeXgb$ for XGBoost),
+and on Normal it is neither the most nor the least conservative. On the two
+rare categories the ordering reverses: the quantum kernel assigns the
+highest mean attack probability to \catUtoRName{} ($\pcatUtoRQsvm$ against
+$\pcatUtoRRf$ for Random Forest), and on R2L it is second behind the RBF
+kernel. This is the defensible form of the rare-attack claim: not that the
+quantum kernel is better calibrated there --- that statement is not
+measurable --- but that it is the least reluctant of the five to call a
+rare attack an attack.
+
+One observation applies to every model and matters more than the ordering.
+The mean probability on both rare categories falls below the decision
+threshold for all five: at a default cut-off, none of these detectors would
+raise an alert on a typical R2L or U2R record. The families differ in how
+far below they sit, not in whether they clear it.
+
+\subsection{Where the quantum kernel does not lead}
+The MLP is better calibrated than the quantum kernel in every setting
+($\pdNslMlp$ on NSL-KDD, $p_{\text{Holm}}=\pdNslMlpHolm$; $\pdUnswSixMlp$ on
+UNSW-NB15, $p_{\text{Holm}}=\pdUnswSixMlpHolm$), and we report this as
+prominently as the wins. Against the classical RBF kernel the outcome is
+dataset-dependent: on NSL-KDD the RBF kernel is ahead ($\pdNslRbf$,
+$p_{\text{Holm}}=\pdNslRbfHolm$), while on UNSW-NB15 the comparison is
+inconclusive at both widths ($p_{\text{Holm}}=\pdUnswSixRbfHolm$ at
+$\punswQubits$ qubits). The claim this paper supports is a claim about tree
+ensembles, not a claim that a quantum kernel is the most reliable model
+available.
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=\columnwidth]{figs/fig4_refarm.pdf}
+  \caption{Giving the tree ensembles a richer representation, with every
+  hyper-parameter held fixed. Ranking improves; calibration gets worse.}
+  \label{fig:refarm}
+\end{figure}
+
+\subsection{Are the tree baselines handicapped?}
+The trees share the quantum kernel's low-dimensional representation, which
+invites the objection that they are compared in a form that suits them
+badly. We repeat them on the $\prefKTwentyDims$ selected features and on the
+full $\prefFullDims$ one-hot encoding, holding every hyper-parameter fixed
+so that only the representation changes.
+
+More features do not make the trees better calibrated. Random Forest's
+calibration error moves from $\prefPcaRfEceFull$ to $\prefFullRfEceFull$ and
+XGBoost's from $\prefPcaXgbEceFull$ to $\prefFullXgbEceFull$ --- slightly
+worse in both cases, and in neither case enough to approach the quantum
+kernel. Ranking moves the other way and by a larger margin: Random Forest's
+AUC-PR improves from $\prefPcaRfAucPr$ to $\prefFullRfAucPr$. The point is
+not that the richer representation harms the trees much; it is that it does
+not help their calibration at all, so the comparison in
+Table~\ref{tab:main} is made in the trees' most favourable calibration
+setting rather than a cramped one.
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=\columnwidth]{figs/fig3_platt.pdf}
+  \caption{Post-hoc recalibration helps the quantum kernel in all $\pnRuns$
+  runs, degrades the MLP and both tree ensembles in all of them, and leaves
+  the RBF kernel unchanged. The labels are the Holm-corrected paired
+  verdicts of Table~\ref{tab:recal} rather than a comparison of means: the
+  RBF kernel's mean does improve under temperature scaling, but it wins in
+  only $\pctestRbfTempN$ runs.}
+  \label{fig:platt}
+\end{figure}
+
+\subsection{When post-hoc recalibration helps}
+Platt scaling reduces the quantum kernel's calibration error from
+$\pQsvmPlattBefore$ to $\pQsvmPlattAfter$ ($\pQsvmPlattDelta$) and is the
+only model of the five it helps: Random Forest moves by $\pRfPlattDelta$ and
+XGBoost by $\pXgbPlattDelta$, both worse, and the classical SVM by
+$\pRbfPlattDelta$.
+
+This is not an artefact of choosing a logistic map. Isotonic regression and
+temperature scaling give the same picture: on the quantum kernel all three
+land within a narrow band ($\pcalQsvmPlatt$, $\pcalQsvmIso$,
+$\pcalQsvmTemp$ against $\pcalQsvmNone$ uncalibrated), while on the MLP and
+both tree ensembles all three are worse than leaving the native probability
+alone (Random Forest $\pcalRfNone$ uncalibrated against $\pcalRfIso$
+isotonic).
+
+Which of those movements are real is a separate question from their size,
+and the last column of Table~\ref{tab:recal} answers it with the same
+paired test used everywhere else, Holm-corrected over the three
+recalibrators. Three verdicts come back, not two. All three maps improve
+the quantum kernel in $\pctestQsvmBetter$ runs
+($p_{\text{Holm}}=\pctestQsvmMinHolm$ for each), the largest mean gain
+being $\pctestQsvmBest$. All three make the MLP, XGBoost and Random Forest
+worse in every run --- none of the three improves any of them even once, at
+the same corrected $p$. The RBF kernel is neither case: its best map,
+temperature scaling, moves the mean by $\pctestRbfTempD$ but wins in only
+$\pctestRbfTempN$ runs ($p_{\text{Holm}}=\pctestRbfTempHolm$), and its
+worst moves it by $\pctestRbfPlattD$ at
+$p_{\text{Holm}}=\pctestRbfPlattHolm$. We therefore claim that
+recalibration helps the quantum kernel and no other model, and \emph{not}
+that it degrades every other model --- for the RBF kernel the data do not
+separate the effect from zero in either direction. The distinction is not
+bookkeeping: the mechanism of Section~\ref{sec:mechanism} predicts a null
+there rather than a loss, because the RBF kernel's scores are as
+unsaturated as the quantum kernel's ($\psatRbfDistinct\%$ of test records
+receive a distinct probability against $\psatQsvmDistinct\%$) while its
+uncalibrated error is already the second lowest of the five, leaving a
+monotone map little room to help and little to spoil.
+
+A global improvement can hide a local regression, so we repeat the
+comparison on the rare categories alone. It does not: the quantum kernel's
+mean confidence there is $\pcalrareQsvmPlatt$ under Platt,
+$\pcalrareQsvmIso$ under isotonic and $\pcalrareQsvmTemp$ under temperature
+scaling, the highest of the five under every recalibrator, and no
+recalibrator pushes the tree ensembles above $\pcalrareRfTemp$. Temperature
+scaling is the only combination that lifts any model over the decision
+threshold on the rare union, and it does so for the RBF kernel
+($\pcalrareRbfTemp$) rather than for the quantum kernel.
+
+\input{tables/side_tables}
+
+\subsection{Training-set size}
+Reliability is not uniform in the amount of training data.
+Table~\ref{tab:lowdata} sweeps $N\in\{\pldNmin,\ldots,\pldNmax\}$, refitting
+every model on each subset. The best-calibrated model at the smallest size
+is \pldWinnerMin{} ($\pldQsvmMin$ against $\pldMlpMin$ for the MLP and
+$\pldRfMin$ for Random Forest) --- the one condition in this study where the
+quantum kernel leads the field outright. Its relative standing falls as $N$
+grows: at $N=\pldNmax$ it is $\pldQsvmMax$ against $\pldMlpMax$ for the MLP.
+The advantage, such as it is, belongs to the low-data regime, which is also
+the regime in which a four-qubit kernel is cheapest to run.
+
+\subsection{Class-prior shift}
+A benchmark's class mix is not the deployment mix, and a calibrator fitted
+under one can fail under the other. We rebuild three operating conditions
+from the full test split rather than from a fixed sample
+(Table~\ref{tab:priorshift}): a balanced mix ($\ppsBalN$ records), an
+attack-heavy mix ($\ppsAttN$), and a DoS-only mix ($\ppsDosN$). The
+best-calibrated model is \ppsBalWinner{} on the balanced mix ($\ppsBalMlp$
+against $\ppsBalQsvm$ for the quantum kernel), \ppsAttWinner{} on the
+attack-heavy mix, and \ppsDosWinner{} on the DoS-only mix ($\ppsDosQsvm$).
+The quantum kernel is ahead of both tree ensembles under all three
+conditions ($\ppsBalRf$, $\ppsAttRf$, $\ppsDosRf$ for Random Forest), which
+is the same ordering as Table~\ref{tab:main} and not a separate effect.
+
+\subsection{Temporal drift}
+KDDTest-21 retains the records of KDDTest+ that the original benchmark's
+classical learners all misclassified, and is the standard stand-in for
+drift on this corpus. The ordering is unchanged there: the quantum kernel is
+better calibrated than Random Forest by $\pdDriftRf$
+$[\pdDriftRfLo,\pdDriftRfHi]$ ($p_{\text{Holm}}=\pdDriftRfHolm$,
+$d_z=\pdDriftRfDz$) and than XGBoost by $\pdDriftXgb$
+($p_{\text{Holm}}=\pdDriftXgbHolm$), behind the MLP by $\pdDriftMlp$
+($p_{\text{Holm}}=\pdDriftMlpHolm$), and inconclusive against the RBF kernel
+($p_{\text{Holm}}=\pdDriftRbfHolm$). Counting KDDTest-21 alongside the four
+settings of Table~\ref{tab:main}, the quantum kernel beats both tree
+ensembles in ten of ten corrected comparisons.
+
+\input{tables/depth_tables}
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=\columnwidth]{figs/fig6_threshold.pdf}
+  \caption{(a) U2R recall against the decision threshold. The margin-based
+  models recover the rare class as the threshold falls; the tree ensembles
+  do not. (b) The Murphy decomposition separates the two axes: the tree
+  ensembles sit top-right, discriminating best and calibrating worst.}
+  \label{fig:threshold}
+\end{figure}
+
+\subsection{Ranking is not reliability, as a decomposition}
+So far the separation of the two axes has been an observation about two
+columns of a table. The Murphy decomposition~\cite{murphy1973vector} turns
+it into an identity.
+Writing $\Brier=\mathrm{REL}-\mathrm{RES}+\mathrm{UNC}$ over the same bins
+Eq.~\eqref{eq:metrics} uses, the reliability term $\mathrm{REL}$ is the
+squared calibration gap, the resolution term $\mathrm{RES}$ measures how far
+a model's bins depart from the base rate --- that is, how much it
+discriminates --- and $\mathrm{UNC}$ depends only on the data and is
+therefore identical across models.
+
+Table~\ref{tab:murphy} and Fig.~\ref{fig:threshold}(b) give the result, and
+it is the cleanest statement of this paper's thesis. The best resolution
+belongs to \pbrBestRes{} ($\pbrRfRes$), and so does the \emph{worst}
+reliability ($\pbrRfRel$). The best reliability belongs to \pbrBestRel{}
+($\pbrMlpRel$) on a resolution that is lower ($\pbrMlpRes$). The quantum
+kernel's resolution, $\pbrQsvmRes$, is within a thousandth of the MLP's,
+while its reliability is $\pbrQsvmRel$: it discriminates as well and
+calibrates less well. A single Brier number would have hidden all of this,
+because the two terms move in opposite directions and partly cancel.
+
+\subsection{Choosing an operating point}
+Section~\ref{sec:results} left an open question: if the mean probability on
+the rare categories is below the threshold for every model, what threshold
+would be needed, and what does it cost? Table~\ref{tab:threshold} and
+Fig.~\ref{fig:threshold}(a) answer it, and the answer separates the model
+families more sharply than any calibration number does.
+
+For the margin-based models, lowering the threshold works. The quantum
+kernel's U2R recall rises from $\pthQsvmRecallHalf$ at the default to
+$\pthQsvmRecallStar$ at its macro-$F_1$ optimum $\tau^{\ast}=\pthQsvmStar$,
+at a false-positive rate on normal traffic of $\pthQsvmFpr$. The MLP reaches
+$\pthMlpRecallStar$ and the RBF kernel $\pthRbfRecallStar$ on the same
+sweep.
+
+For the tree ensembles it does not. Random Forest moves only from
+$\pthRfRecallHalf$ to $\pthRfRecallStar$, and XGBoost from
+$\pthXgbRecallHalf$ to $\pthXgbRecallStar$; across the entire sweep neither
+exceeds $\pthRfRecallBest$ and $\pthXgbRecallBest$ respectively. Their
+probability mass on U2R is concentrated so near zero that no threshold
+recovers the class. This is a deployment consequence of the calibration
+result rather than a restatement of it: a practitioner who responds to
+missed rare attacks by lowering the threshold will be rewarded with a
+margin-based detector and will not be with a tree ensemble.
+
+%==============================================================================
+\section{Why the Families Differ}\label{sec:mechanism}
+
+Three results so far point the same way: recalibration helps the quantum
+kernel and not the tree ensembles; lowering the threshold recovers the rare
+class for the margin-based models and not for the trees; and the trees hold
+the best resolution together with the worst reliability. A single property
+of the score distributions accounts for all three, and it is measurable
+rather than conjectural.
+
+A post-hoc recalibrator --- Platt, isotonic or temperature --- is a
+\emph{monotone} map. It can move scores along the line but it cannot
+separate two records that received the same score. Whatever resolution the
+raw scores lack, no such map can supply. So the question is how much
+distinct information the raw scores carry before recalibration begins.
+
+They differ by more than an order of magnitude. Over $\pnRuns$ runs on
+KDDTest+, the quantum kernel emits a distinct probability for
+$\psatQsvmDistinct\%$ of test records and the RBF kernel for
+$\psatRbfDistinct\%$, while Random Forest emits one for $\psatRfDistinct\%$
+and XGBoost for $\psatXgbDistinct\%$. A forest's output is a vote fraction
+over a finite ensemble, and on a training set of this size most leaves are
+pure, so the fraction collapses onto a handful of values at the extremes:
+$\psatRfRaw\%$ of Random Forest's raw probabilities fall below $0.01$ or
+above $0.99$, against $\psatQsvmRaw\%$ for the quantum kernel, whose
+decision function is continuous and never saturates.
+
+This explains the three results together. Ties and saturation give the trees
+high resolution, because the extremes separate the classes sharply --- and
+poor reliability, because the extremes are more confident than the data
+warrant. Recalibration cannot repair it, since the map is monotone and the
+tied records stay tied; indeed it makes matters worse, pushing
+$\psatRfCal\%$ of Random Forest's calibrated probabilities into the
+saturated tails. And no threshold recovers the rare classes for a model
+whose mass on them is already concentrated at zero.
+
+The corollary is not about quantum computing. Any classifier whose scores
+are continuous and unsaturated will recalibrate well on this task, and any
+classifier whose scores are quantised and saturated will not. The quantum
+kernel is on the favourable side of that divide because it is a margin
+machine, not because it is quantum. What the quantum kernel adds over the
+classical margin machines on this evidence is not calibration quality but
+the resolution it achieves at that quality --- $\pbrQsvmRes$ against
+$\pbrRbfRes$ for the RBF kernel, at four qubits.
+
+\subsection{Where the account is incomplete}
+Saturation explains the contrast between the kernel machines and the tree
+ensembles. It does not explain the model that actually wins. The MLP
+saturates $\psatMlpRaw\%$ of its raw outputs --- much closer to the trees
+than to the kernels --- and emits distinct values for $\psatMlpDistinct\%$
+of records, again intermediate. On the saturation account it should
+calibrate somewhere between the two families. It does not: it has the
+lowest reliability term of the five, $\pbrMlpRel$, against $\pbrQsvmRel$ for
+the quantum kernel and $\pbrRfRel$ for Random Forest.
+
+So saturation is necessary for the failure mode and not sufficient for the
+success. A plausible reading is that what matters is not saturation alone
+but whether the saturated mass is placed correctly: a network trained by
+cross-entropy is optimising a proper scoring rule directly and can be
+confident \emph{and} right, whereas a forest's vote fraction saturates as a
+by-product of leaf purity and carries no such guarantee. We cannot settle
+that from the evidence here --- it would need an ablation over training
+objectives, which is a different experiment --- and we flag it rather than
+present the mechanism as more complete than it is.
+
+That the strongest baseline in this study is a small multilayer perceptron
+rather than a tree ensemble is itself worth stating plainly, because the
+quantum-IDS literature rarely includes one. On the deployment question this
+paper asks, the model to beat is not the one the accuracy benchmarks
+suggest.
+
+%==============================================================================
+\section{Reliability Regime Map}\label{sec:regime}
+
+\input{tables/regime_table}
+
+Table~\ref{tab:regime} collects every condition in one place: which model is
+best calibrated, and whether the quantum kernel is better calibrated than
+both tree ensembles. Read down the last column, the answer is uniform ---
+the quantum kernel beats both tree ensembles in every condition tested,
+across two corpora, two circuit widths, a drift split, four training
+budgets and three deployment priors. Read down the middle column, the
+answer is almost as uniform in the other direction: the MLP is the
+best-calibrated model nearly everywhere.
+
+The two conditions where the quantum kernel leads outright are the smallest
+training budget and the DoS-only prior. Both are narrow, and we do not
+claim they generalise beyond what is in the table. But they are not
+arbitrary: the low-data regime is where a four-qubit kernel is cheapest to
+evaluate, and it is the regime in which the classical baselines have least
+to work with.
+
+\subsection*{A decision rule}
+For a practitioner the map reduces to three statements. If the deployment
+mix and training budget resemble the benchmark, a small neural network is
+the better-calibrated choice and a quantum kernel buys nothing. If the
+candidate set is restricted to kernel machines and tree ensembles --- which
+is the usual comparison in this literature --- the quantum kernel is the
+better-calibrated choice, consistently and by a margin that survives
+correction. And in either case the probabilities on the rare categories
+should not be used at a default threshold without the recalibration of
+Section~\ref{sec:results}.
+
+%==============================================================================
+\section{Threats to Validity}\label{sec:limits}
+
+\subsection{Construct validity}
+Binned calibration error is an estimator with a free parameter, and a
+different bin count gives a different number. This is not a detail we
+raise defensively: Kumar \emph{et al.}~\cite{kumar2019verified} show the
+bias of the binned estimator is large enough that recalibrated models are
+routinely less calibrated than their reported ECE implies. We therefore use
+equal-frequency bins throughout and report the Brier score alongside every
+ECE, which needs no binning and is strictly
+proper~\cite{gneiting2007scoring}; the two agree on the ordering in
+Table~\ref{tab:main}.
+
+The identity of Section~\ref{sec:identity} is a stronger warning about the
+same family of estimators: a scalar summary can be well-defined
+arithmetically and still measure nothing, and the only defence is to check
+what varies in the subset one has restricted to. That failure mode is not
+peculiar to calibration metrics. Chicco and
+Jurman~\cite{chicco2020advantages} show that $F_1$ and accuracy return
+inflated values on imbalanced data precisely because neither reads all four
+cells of the confusion matrix; Christen \emph{et
+al.}~\cite{christen2023review} collect the same criticism of the F-measure
+and its alternatives; and in security specifically, Arp \emph{et
+al.}~\cite{arp2022dosdonts} list inappropriate performance measures and the
+base rate fallacy among ten recurring pitfalls. Section~\ref{sec:identity}
+is an instance of that family in which the degeneracy is exact rather than
+statistical.
+
+\subsection{Internal validity}
+The recalibrators are fitted on the training split. For a model that can
+memorise that split --- the tree ensembles above all --- the fitted map is
+in-sample, which flatters it. This biases the comparison \emph{towards} the
+trees, and they lose anyway, so the conclusion is safe in direction; but the
+magnitudes in Table~\ref{tab:recal} would change with a held-out
+calibration split, and the finding that recalibration helps the quantum
+kernel alone should be read with that caveat. A second exposure is the
+hyper-parameters, which are inherited from the companion study rather than
+re-tuned here; re-tuning per model could move any row of
+Table~\ref{tab:main}, and we did not do it because tuning each family on its
+own criterion would reintroduce exactly the asymmetry that
+Section~\ref{sec:setup} removes.
+
+\subsection{External validity}
+Two corpora, both offline benchmark captures with known idiosyncrasies, and
+both with attack types in the test split that are absent from training ---
+which is why every model is under-confident in
+Fig.~\ref{fig:reliability}(a). Whether the ordering holds on live traffic is
+not established here. The quantum kernel is evaluated by exact statevector
+simulation, so shot noise and device noise are absent. The companion study
+reports that finite-shot estimation leaves macro $F_1$ close to the
+statevector value, but reports it from a single run and does not claim more;
+whether shot or device noise perturbs \emph{calibration} is untouched by
+that check and by ours. It is the obvious next experiment, and on the
+mechanism of Section~\ref{sec:mechanism} it is not a neutral one: noise
+would blur the decision scores, which is the direction that helps a
+recalibrator rather than hinders it. Evaluation on noisy hardware is
+already feasible for the adjacent task --- Kukliansky \emph{et
+al.}~\cite{kukliansky2024qnn} run quantum neural networks for network
+anomaly detection on real devices --- so the obstacle is access rather than
+method.
+
+\subsection{Statistical conclusion validity}
+Ten paired runs is the minimum at which a two-sided Wilcoxon test can reach
+$\alpha=0.05$, so the design has no power to spare. Comparisons we report as
+inconclusive --- the quantum kernel against the RBF kernel on three of four
+settings --- may be real effects this design cannot resolve, and should not
+be read as evidence of equivalence. The comparisons we do claim clear Holm
+correction within their baseline family, but the families were fixed in
+advance rather than chosen after seeing the results.
+
+%==============================================================================
+\section{Conclusion}\label{sec:conclusion}
+
+% TODO(tac gia): doc lai truoc khi nop.
+We set out to ask whether a quantum-kernel intrusion detector can be trusted
+at the level of its probabilities, and found first that the question has to
+be posed carefully. Restricting a binned calibration estimate to the rare
+attack classes yields a quantity that is identically one minus mean
+confidence, because every record in that subset carries the same label; it
+measures confidence on known attacks and cannot detect over-confidence at
+all. Reported as a calibration error it would overstate what has been
+measured.
+
+Measured where both classes are present, the result is narrow but it holds
+everywhere we looked. Across two corpora and two circuit widths, over
+$\pnRuns$ paired runs with Holm-corrected tests, the quantum kernel is
+better calibrated than both tree ensembles in all eight comparisons, and the
+margin is several times larger on UNSW-NB15 than on NSL-KDD. It is not
+better calibrated than a small multilayer perceptron anywhere, and against a
+classical RBF kernel the outcome depends on the corpus. Giving the trees the
+full one-hot representation improves their ranking without improving their
+calibration, so the comparison is made on terms that favour them. Post-hoc
+recalibration helps the quantum kernel and no other model, whether the
+recalibrator is Platt, isotonic or temperature scaling.
+
+Underneath the benchmark there is a mechanism, and it is not a quantum one.
+A post-hoc recalibrator is a monotone map and cannot separate records that
+share a score. The tree ensembles emit a distinct probability for only
+$\psatRfDistinct\%$ of test records against $\psatQsvmDistinct\%$ for the
+quantum kernel, and saturate $\psatRfRaw\%$ of their outputs at the extremes
+against $\psatQsvmRaw\%$. That single property accounts for all three of
+our secondary findings at once: why the trees hold the best resolution and
+the worst reliability, why no recalibrator repairs them, and why lowering
+the threshold recovers the rare classes for the margin-based models alone.
+The quantum kernel lands on the favourable side of that divide because it
+is a margin machine, and what it adds over the classical margin machines is
+resolution at a comparable calibration, not calibration itself.
+
+The practical reading is modest. A four-qubit kernel is not the most
+reliable model available for this task, but among the families an
+intrusion-detection practitioner would actually reach for first --- the tree
+ensembles --- it is the better-calibrated choice, and it is the one that
+post-hoc recalibration can still improve. Two things would sharpen the
+picture: a held-out calibration split, which would remove the in-sample
+advantage the tree ensembles currently enjoy, and a finite-shot evaluation,
+which would establish whether any of this survives the noise of a real
+device. Neither is expensive, and the second is the question our simulation
+is constitutionally unable to answer.
+
+%==============================================================================
+%  Tuyen bo bat buoc cua Wiley. Phan lon con duoc dien LAI trong he thong
+%  nop bai (ScholarOne) -- Wiley thu Data Availability, COI va Funding qua
+%  form chu khong qua ban thao. Viet o day de ban thao tu day du, va dien
+%  lai trong form khi nop.
+%==============================================================================
+\section*{Author Contributions}
+\textbf{Quan Tran Anh Vo:} conceptualization; methodology; software; formal
+analysis; validation; visualization; writing -- original draft; funding
+acquisition. \textbf{Nguyen Quang Anh:} software; investigation; data
+curation; formal analysis; validation; visualization. \textbf{Nguyen Nang
+Hung Van:} conceptualization; supervision; writing -- review and editing.
+\textbf{Minh Tuan Pham:} supervision; resources; writing -- review and
+editing.
+
+\section*{Funding}
+This work was supported by The University of Danang -- University of Science
+and Technology under Project T2026-02-10TN.
+
+\section*{Data Availability Statement}
+Every number reported in this paper is computed from artifacts released with
+it. The processed data, the cached quantum kernel matrices, the scripts that
+generate every figure and table, and the audit scripts that recompute each
+reported number from those artifacts are openly available in the project
+repository. The two corpora are public benchmarks:
+NSL-KDD~\cite{tavallaee2009nslkdd} and UNSW-NB15~\cite{moustafa2015unsw}.
+
+\section*{Conflict of Interest Statement}
+The authors declare no conflict of interest.
+
+\section*{Ethics Statement}
+This study used only public benchmark datasets of network traffic records and
+involved no human participants, no animal subjects and no personally
+identifiable information. Ethical approval was therefore not required.
+
+\begin{thebibliography}{20}
+
+\bibitem{tavallaee2009nslkdd}
+M.~Tavallaee, E.~Bagheri, W.~Lu, and A.~A. Ghorbani,
+``A detailed analysis of the KDD CUP 99 data set,'' in
+\emph{Proc. IEEE Symp. Comput. Intell. Security Defense Appl. (CISDA)},
+Ottawa, Canada, 2009, pp.~1--6.
+
+\bibitem{companion}
+M.~T. Pham, P.~H. Do, N.~N.~H. Van, Q.~A. Nguyen, and Q.~T.~A. Vo,
+``NISQ-aware quantum kernel SVM for network intrusion detection: a
+  regime-specific benchmark on NSL-KDD,'' \emph{companion manuscript},
+  2026.
+
+\bibitem{havlicek2019}
+V.~Havl\'i\v{c}ek \emph{et al.},
+``Supervised learning with quantum-enhanced feature spaces,''
+\emph{Nature}, vol.~567, pp.~209--212, 2019.
+
+\bibitem{schuld2019hilbert}
+M.~Schuld and N.~Killoran,
+``Quantum machine learning in feature Hilbert spaces,''
+\emph{Phys. Rev. Lett.}, vol.~122, no.~4, p.~040504, 2019.
+
+\bibitem{liu2021speedup}
+Y.~Liu, S.~Arunachalam, and K.~Temme,
+``A rigorous and robust quantum speed-up in supervised machine
+  learning,'' \emph{Nature Physics}, vol.~17, pp.~1013--1017, 2021.
+
+\bibitem{guo2017calibration}
+C.~Guo, G.~Pleiss, Y.~Sun, and K.~Q. Weinberger,
+``On calibration of modern neural networks,'' in
+\emph{Proc. Int. Conf. Mach. Learn. (ICML)}, 2017, pp.~1321--1330.
+
+\bibitem{naeini2015ece}
+M.~P. Naeini, G.~Cooper, and M.~Hauskrecht,
+``Obtaining well calibrated probabilities using Bayesian binning,''
+in \emph{Proc. AAAI Conf. Artif. Intell.}, 2015, pp.~2901--2907.
+
+\bibitem{brier1950}
+G.~W. Brier,
+``Verification of forecasts expressed in terms of probability,''
+\emph{Monthly Weather Review}, vol.~78, no.~1, pp.~1--3, 1950.
+
+\bibitem{platt1999svm}
+J.~C. Platt,
+``Probabilistic outputs for support vector machines and comparisons
+  to regularized likelihood methods,'' in
+\emph{Advances in Large Margin Classifiers}, 1999, pp.~61--74.
+
+\bibitem{cortes1995svm}
+C.~Cortes and V.~Vapnik, ``Support-vector networks,''
+\emph{Mach. Learn.}, vol.~20, no.~3, pp.~273--297, 1995.
+
+\bibitem{breiman2001rf}
+L.~Breiman, ``Random forests,'' \emph{Mach. Learn.}, vol.~45, no.~1,
+pp.~5--32, 2001.
+
+\bibitem{chen2016xgboost}
+T.~Chen and C.~Guestrin,
+``XGBoost: A scalable tree boosting system,'' in
+\emph{Proc. 22nd ACM SIGKDD Int. Conf. Knowl. Discov. Data Min.},
+2016, pp.~785--794.
+
+\bibitem{payares2021dos}
+E.~D. Payares and J.~C. Mart\'inez-Santos,
+``Quantum machine learning for intrusion detection of distributed
+  denial of service attacks: a comparative overview,'' in
+\emph{Proc. SPIE Quantum Comput. Commun. Simul.}, vol.~11699, 2021,
+p.~116990F.
+
+\bibitem{suryotrisongko2022dga}
+H.~Suryotrisongko and Y.~Musashi,
+``Evaluating hybrid quantum-classical deep learning for cybersecurity
+  botnet DGA detection,'' \emph{Procedia Comput. Sci.}, vol.~197,
+pp.~223--229, 2022.
+
+\bibitem{kalinin2023qids}
+M.~O. Kalinin and V.~M. Krundyshev,
+``Security intrusion detection using quantum machine learning
+  techniques,'' \emph{J. Comput. Virol. Hacking Tech.}, vol.~19,
+no.~1, pp.~125--136, 2023.
+\bibitem{murphy1973vector}
+A.~H. Murphy, ``A new vector partition of the probability score,''
+\emph{J. Appl. Meteorol.}, vol.~12, no.~4, pp.~595--600, 1973.
+
+\bibitem{gneiting2007scoring}
+T.~Gneiting and A.~E. Raftery, ``Strictly proper scoring rules, prediction,
+and estimation,'' \emph{J. Amer. Statist. Assoc.}, vol.~102, no.~477,
+pp.~359--378, 2007.
+
+\bibitem{zadrozny2002transforming}
+B.~Zadrozny and C.~Elkan, ``Transforming classifier scores into accurate
+multiclass probability estimates,'' in \emph{Proc. 8th ACM SIGKDD Int.
+Conf. Knowl. Discov. Data Min.}, 2002, pp.~694--699.
+
+\bibitem{niculescu2005predicting}
+A.~Niculescu-Mizil and R.~Caruana, ``Predicting good probabilities with
+supervised learning,'' in \emph{Proc. 22nd Int. Conf. Mach. Learn.
+(ICML)}, 2005, pp.~625--632.
+
+\bibitem{kumar2019verified}
+A.~Kumar, P.~Liang, and T.~Ma, ``Verified uncertainty calibration,'' in
+\emph{Adv. Neural Inf. Process. Syst. (NeurIPS)}, 2019.
+
+\bibitem{holm1979simple}
+S.~Holm, ``A simple sequentially rejective multiple test procedure,''
+\emph{Scand. J. Statist.}, vol.~6, no.~2, pp.~65--70, 1979.
+
+\bibitem{demsar2006statistical}
+J.~Dem\v{s}ar, ``Statistical comparisons of classifiers over multiple data
+sets,'' \emph{J. Mach. Learn. Res.}, vol.~7, pp.~1--30, 2006.
+
+\bibitem{grinsztajn2022tabular}
+L.~Grinsztajn, E.~Oyallon, and G.~Varoquaux, ``Why do tree-based models
+still outperform deep learning on typical tabular data?'' in \emph{Adv.
+Neural Inf. Process. Syst. (NeurIPS), Datasets and Benchmarks Track},
+2022.
+
+\bibitem{chicco2020advantages}
+D.~Chicco and G.~Jurman, ``The advantages of the Matthews correlation
+coefficient (MCC) over F1 score and accuracy in binary classification
+evaluation,'' \emph{BMC Genomics}, vol.~21, no.~1, art.~6, 2020.
+
+\bibitem{christen2023review}
+P.~Christen, D.~J. Hand, and N.~Kirielle, ``A review of the F-measure: its
+history, properties, criticism, and alternatives,'' \emph{ACM Comput.
+Surv.}, vol.~56, no.~3, art.~73, 2023.
+
+\bibitem{arp2022dosdonts}
+D.~Arp, E.~Quiring, F.~Pendlebury, A.~Warnecke, F.~Pierazzi,
+C.~Wressnegger, L.~Cavallaro, and K.~Rieck, ``Dos and don'ts of machine
+learning in computer security,'' in \emph{Proc. 31st USENIX Security
+Symp.}, 2022, pp.~3971--3988.
+
+\bibitem{huang2021power}
+H.-Y. Huang, M.~Broughton, M.~Mohseni, R.~Babbush, S.~Boixo, H.~Neven, and
+J.~R. McClean, ``Power of data in quantum machine learning,'' \emph{Nature
+Commun.}, vol.~12, art.~2631, 2021.
+
+\bibitem{abreu2024qmlids}
+D.~Abreu, C.~E. Rothenberg, and A.~Abelem, ``QML-IDS: Quantum machine
+learning intrusion detection system,'' in \emph{Proc. IEEE Symp. Comput.
+Commun. (ISCC)}, 2024, pp.~1--6.
+
+\bibitem{kukliansky2024qnn}
+A.~Kukliansky, M.~Orescanin, C.~Bollmann, and T.~Huffmire, ``Network
+anomaly detection using quantum neural networks on noisy quantum
+computers,'' \emph{IEEE Trans. Quantum Eng.}, vol.~5, pp.~1--11, 2024.
+
+\bibitem{moustafa2015unsw}
+N.~Moustafa and J.~Slay,
+``UNSW-NB15: a comprehensive data set for network intrusion detection
+  systems,'' in \emph{Military Communications and Information Systems
+  Conference (MilCIS)}, 2015, pp.~1--6.
+
+\end{thebibliography}
+
+% Bo 4 khoi IEEEbiography: do la dinh dang rieng cua IEEE, va tap chi Wiley
+% KHONG in tieu su tac gia kem anh chan dung. De nguyen thi editor thay ngay
+% bai nay viet cho IEEE roi dem nop Wiley. Bo di cung tiet kiem ~1,5 trang.
+% Bat lai khi nao nop cho mot tap chi IEEE.
+%\input{biographies}
+
+\end{document}

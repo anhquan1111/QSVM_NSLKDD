@@ -1,0 +1,18 @@
+{
+ "categories": [
+  "Normal",
+  "DoS",
+  "Probe",
+  "R2L",
+  "U2R"
+ ],
+ "counts": {
+  "Normal": 9711,
+  "DoS": 7460,
+  "Probe": 2421,
+  "R2L": 2885,
+  "U2R": 67
+ },
+ "n_runs": 10,
+ "n_bins": 10
+}

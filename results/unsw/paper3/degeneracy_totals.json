@@ -1,0 +1,9 @@
+{
+ "n_rows_scanned": 840,
+ "n_models": 7,
+ "n_degenerate_rows": 9,
+ "models_with_degeneracy": [
+  "SVM_RBF"
+ ],
+ "qsvm_zz_min_recall_macro": 0.5406594673293252
+}

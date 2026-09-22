@@ -1,0 +1,36 @@
+% Sinh boi runners/make_paper3_tables.py -- dung sua tay.
+\begin{table}[t]
+\centering
+\caption{What selection returns on a denser grid, under three
+objectives. The grid is the same for every row; only the quantity
+$\arg\max$ maximises changes. \emph{Degenerate} counts the runs on
+which the selected model assigns every test record to the attack
+class. Two things follow. A class-averaged objective is not
+sufficient: for the linear kernel all three objectives return the
+same $C$ and that $C$ is still degenerate on one run. And the
+original grid, not only the objective, was part of the failure:
+on this grid even binary $F_1$ finds a non-degenerate maximum for
+the quantum kernel.}
+\label{tab:objective}
+\begin{tabular}{l@{\hskip 1.0em}l@{\hskip 1.4em}r@{\hskip 1.4em}r@{\hskip 1.4em}r@{\hskip 1.4em}r}
+\toprule
+Kernel & Selection objective & Returns $C$ & CV score & Degen. & Macro $\Fone$ \\
+\midrule
+Quantum (ZZ) & binary $F_1$ & 0.562 & 0.8692 & 0/5 & 0.5627 \\
+ & macro $F_1$ & 10 & 0.6744 & 0/5 & 0.6308 \\
+ & balanced accuracy & 10 & 0.6762 & 0/5 & 0.6308 \\
+\addlinespace[2pt]
+SVM-RBF & binary $F_1$ & 0.316 & 0.8813 & 1/5 & 0.5422 \\
+ & macro $F_1$ & 31.6 & 0.6317 & 0/5 & 0.6291 \\
+ & balanced accuracy & 31.6 & 0.6333 & 0/5 & 0.6291 \\
+\addlinespace[2pt]
+SVM-poly2 & binary $F_1$ & 17.8 & 0.8870 & 0/5 & 0.6285 \\
+ & macro $F_1$ & 17.8 & 0.6423 & 0/5 & 0.6285 \\
+ & balanced accuracy & 17.8 & 0.6400 & 0/5 & 0.6285 \\
+\addlinespace[2pt]
+SVM-linear & binary $F_1$ & 0.0562 & 0.8813 & 1/5 & 0.5669 \\
+ & macro $F_1$ & 0.0562 & 0.6216 & 1/5 & 0.5669 \\
+ & balanced accuracy & 0.0562 & 0.6200 & 1/5 & 0.5669 \\
+\bottomrule
+\end{tabular}
+\end{table}

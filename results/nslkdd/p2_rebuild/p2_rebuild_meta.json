@@ -1,0 +1,29 @@
+{
+ "n_runs": 10,
+ "test_sets": {
+  "full_kddtest_plus": {
+   "n_test": 22544,
+   "n_rare": 2952
+  },
+  "kddtest21": {
+   "n_test": 11850,
+   "n_rare": 2952
+  },
+  "sample100_cu": {
+   "n_test": 100,
+   "n_rare": 10
+  }
+ },
+ "hyperparameters": {
+  "QSVM_C": 1.0,
+  "SVM_RBF_C": 10.0,
+  "n_qubits": 4,
+  "zz_reps": 2
+ },
+ "models_retrained_from_scratch": true,
+ "cache_used": false,
+ "rare_groups": [
+  "U2R",
+  "R2L"
+ ]
+}
