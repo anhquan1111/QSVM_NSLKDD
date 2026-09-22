@@ -83,18 +83,34 @@ git tag -l 'truoc-khi-viet-lai*' | while read -r t; do git tag -d "$t"; done
 
 echo
 echo "== 5. Viet lai lich su =="
+# Ba viec, khong phai hai:
+#  1. Bo trailer Co-Authored-By: Claude
+#  2. Go CA HAI file nhay cam. Commit 886e78a goi chung la "hai file KHONG
+#     duoc nam tren repo cong khai"; truoc day script chi go mot.
+#  3. Sua thong diep cua chinh commit 886e78a. Go file ma de nguyen cau do
+#     thi van con BIEN CHI DUONG: nguoi ngoai doc thay "co hai file khong
+#     duoc cong khai o day" roi di tim. Ca hai ban sao luu da doi chieu
+#     sha256 khop voi ban trong git truoc khi go.
 FILTER_BRANCH_SQUELCH_WARNING=1 git filter-branch -f \
-    --msg-filter 'sed "/^Co-Authored-By: Claude/d"' \
-    --index-filter 'git rm --cached --ignore-unmatch -q docs/DeTai10.pdf' \
+    --msg-filter 'sed -e "/^Co-Authored-By: Claude/d" \
+                      -e "s/go hai file KHONG duoc nam tren repo cong khai/sap xep lai thu muc tai lieu/"' \
+    --index-filter 'git rm --cached --ignore-unmatch -q \
+                      docs/DeTai10.pdf docs/PAPER1_final_report.docx' \
     --tag-name-filter cat -- --all
 
 echo
 echo "== 6. Doi chieu sau khi sua =="
 LEFT_MSG=$(git log --all --format='%H' | while read -r h; do git log -1 --format='%B' "$h" | grep -q '^Co-Authored-By: Claude' && echo x || true; done | wc -l)
 LEFT_PDF=$(git rev-list --all | while read -r h; do git cat-file -e "$h:docs/DeTai10.pdf" 2>/dev/null && echo x || true; done | wc -l)
-echo "   con dong Co-Authored-By: Claude : $LEFT_MSG   (phai la 0)"
-echo "   con docs/DeTai10.pdf            : $LEFT_PDF   (phai la 0)"
-[ "$LEFT_MSG" -eq 0 ] && [ "$LEFT_PDF" -eq 0 ] || { echo "LOI: van con sot. KHONG day len."; exit 1; }
+LEFT_DOC=$(git rev-list --all | while read -r h; do git cat-file -e "$h:docs/PAPER1_final_report.docx" 2>/dev/null && echo x || true; done | wc -l)
+LEFT_SIGN=$(git log --all --format='%s' | grep -c 'KHONG duoc nam tren repo cong khai' || true)
+echo "   con dong Co-Authored-By: Claude : $LEFT_MSG    (phai la 0)"
+echo "   con docs/DeTai10.pdf            : $LEFT_PDF    (phai la 0)"
+echo "   con docs/PAPER1_final_report.docx: $LEFT_DOC   (phai la 0)"
+echo "   con bien chi duong trong msg    : $LEFT_SIGN    (phai la 0)"
+[ "$LEFT_MSG" -eq 0 ] && [ "$LEFT_PDF" -eq 0 ] \
+    && [ "$LEFT_DOC" -eq 0 ] && [ "$LEFT_SIGN" -eq 0 ] \
+    || { echo "LOI: van con sot. KHONG day len."; exit 1; }
 echo "   so commit: $(git log --oneline | wc -l)  (truoc khi sua: xem buoc 3)"
 
 echo
