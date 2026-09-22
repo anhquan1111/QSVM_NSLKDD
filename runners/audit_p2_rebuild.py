@@ -400,6 +400,21 @@ def main() -> int:
     for f in figs:
         check(f"figs/{f}.pdf" in body, f"bai co chen {f}")
 
+    # Nam tuyen bo bat buoc cua Wiley. Thieu mot cai la ban thao bi tra lai
+    # o vong bien tap, truoc khi co ai doc toi phuong phap.
+    for sec in ("Author Contributions", "Funding", "Data Availability",
+                "Conflict of Interest", "Ethics Statement"):
+        check(f"section*{{{sec}" in body, f"co muc {sec}")
+
+    # Muc Data Availability phai tro toi mot DOI THAT. Doan van do la thu
+    # bien tap doc dau tien, va mot placeholder lot ra ban nop thi khong ai
+    # doc lai ma thay. `\url{}` duoc loai khoi phep quet so viet tay nen
+    # khong co gi khac bat duoc cho nay.
+    check("doi.org/10.5281/zenodo." in body,
+          "Data Availability tro toi DOI Zenodo")
+    check("XXXX" not in body and "zenodo.XXX" not in body,
+          "khong con placeholder trong bai")
+
     n_ok = sum(1 for ok, _ in _checks if ok)
     for ok, label in _checks:
         if not ok:
