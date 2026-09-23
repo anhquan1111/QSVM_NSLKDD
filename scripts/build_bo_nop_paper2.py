@@ -26,18 +26,21 @@ DEST = ROOT / "paper" / "paper2_rebuild" / "NOP_SECURITY_AND_PRIVACY"
 
 # (nguon, ten khi tai len). Thu tu so khop thu tu upload.
 COPY = [
+    # PDF mac dinh lay o goc repo (cho Overleaf tra ve). Neu da don goc repo
+    # roi thi ban PDF trong chinh thu muc nop duoc giu lai -- script chi ghi
+    # de khi tim thay ban moi hon.
     (ROOT / "Paper2_rebuild.pdf",
-     "01_manuscript_pdf.pdf"),
+     "manuscript.pdf"),
     (ROOT / "paper/paper2_rebuild/main.tex",
-     "02_main_document.tex"),
+     "main_document.tex"),
     (ROOT / "paper/paper2_rebuild/dist/Paper2_rebuild.zip",
-     "03_latex_supplementary.zip"),
+     "latex_supplementary.zip"),
     (ROOT / "paper/paper2_rebuild/cover_letter.tex",
-     "04_cover_letter.tex"),
+     "cover_letter.tex"),
 ]
 
 # Viet tay, khong dung toi.
-KEEP = {"00_DOC_TRUOC_KHI_NOP.md", "04_cover_letter.txt"}
+KEEP = {"00_DOC_TRUOC_KHI_NOP.md", "cover_letter.txt"}
 
 
 def sha(p: Path) -> str:
@@ -49,7 +52,17 @@ def main() -> int:
         COPY[0] = (Path(sys.argv[1]).resolve(), COPY[0][1])
 
     DEST.mkdir(parents=True, exist_ok=True)
-    for src, _ in COPY:
+    # PDF thieu khong phai loi chet: ban trong thu muc nop van dung duoc,
+    # chi la cu. Bao ro roi bo qua, thay vi chan ca script.
+    missing_pdf = not COPY[0][0].exists()
+    if missing_pdf:
+        kept = DEST / COPY[0][1]
+        print(f"  (!) khong thay {COPY[0][0].name} o goc repo.")
+        print(f"      giu nguyen {COPY[0][1]} dang co"
+              f"{' -- CAN BUILD LAI' if kept.exists() else ' -- VA KHONG CO BAN NAO'}")
+        if not kept.exists():
+            return 1
+    for src, _ in COPY[1:]:
         if not src.exists():
             print(f"  THIEU {src}")
             if src.suffix == ".pdf":
@@ -58,7 +71,7 @@ def main() -> int:
                       "python scripts/build_bo_nop_paper2.py <file.pdf>")
             return 1
 
-    for src, name in COPY:
+    for src, name in (COPY[1:] if missing_pdf else COPY):
         dst = DEST / name
         old = sha(dst) if dst.exists() else None
         shutil.copy2(src, dst)

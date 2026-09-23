@@ -5,8 +5,8 @@ Mọi thứ cần để nộp đều nằm trong thư mục này.
 Checklist này viết theo **quy tắc thật** của tạp chí (`paper/quytac.md`),
 không phải phỏng đoán.
 
-> ⚠️ **PDF trong đây có thể cũ.** Từ khoá vừa đổi 6 → 7 sau lần build gần
-> nhất. **Build lại trên Overleaf** rồi chạy
+> ⚠️ **`manuscript.pdf` trong đây ĐÃ CŨ.** Sau lần build đó bài còn đổi:
+> tên thầy Vân, đơn vị + email 4 tác giả, và mục **Use of AI Tools**. **Build lại trên Overleaf** rồi chạy
 > `python scripts/build_bo_nop_paper2.py` để làm mới thư mục này.
 
 ---
@@ -18,11 +18,11 @@ tải về. Thư mục và file này thì tiếng Việt vì không bao giờ đ
 
 | File | Nhãn phải chọn khi upload |
 |---|---|
-| `01_manuscript_pdf.pdf` | **Main Document – LaTeX PDF** |
-| `02_main_document.tex` | **Main Document – LaTeX .tex File** |
-| `03_latex_supplementary.zip` | **LaTeX Supplementary File** |
-| `04_cover_letter.txt` | dán thẳng vào ô Cover Letter |
-| `04_cover_letter.tex` | nếu bắt nộp dạng PDF |
+| `manuscript.pdf` | **Main Document – LaTeX PDF** |
+| `main_document.tex` | **Main Document – LaTeX .tex File** |
+| `latex_supplementary.zip` | **LaTeX Supplementary File** |
+| `cover_letter.txt` | dán thẳng vào ô Cover Letter |
+| `cover_letter.tex` | nếu bắt nộp dạng PDF |
 
 Ba nhãn đầu là **nguyên văn** tên nhãn trong hệ thống. Quy tắc mục 4 ghi rõ:
 nộp LaTeX thì phải kèm **cả** file `.tex` **và** bản PDF, file phụ trợ gắn
@@ -62,6 +62,8 @@ Hỗ trợ kỹ thuật: `submissionhelp@wiley.com` · Toà soạn: `SPYoffice@w
 | Conflict of interest | bắt buộc | có | ✅ |
 | Cover letter | **không bắt buộc** | có | ✅ |
 | Phản biện | **single-anonymized** | — | tác giả **không** cần ẩn danh |
+| Khai dùng AI | **bắt buộc, ngay trong bài** | mục *Use of AI Tools* + *Tooling* | ✅ |
+| Email đồng tác giả | bắt buộc | đủ 4 | ✅ |
 
 **Tiêu đề:** quy tắc ghi *"less than 40 characters"* — tiêu đề của bạn 104.
 Đó là **lỗi mẫu**, không ai theo: một bài đã đăng trên chính tạp chí này
@@ -87,12 +89,20 @@ Learners on NSL-KDD and UNSW-NB15
 
 | # | Tên | |
 |---|---|---|
-| 1 | Nang Hung Van Nguyen | |
+| 1 | Nguyen Nang Hung Van | |
 | 2 | Quan Tran Anh Vo | **corresponding**, ORCID `0009-0000-9420-1767` |
 | 3 | Quang Anh Nguyen | |
 | 4 | Minh Tuan Pham | |
 
-Đơn vị cả bốn: `University of Science and Technology – The University of Danang, Danang 550000, Vietnam`
+Đơn vị cả bốn: `University of Science and Technology - The University of Danang, Danang 550000, Vietnam`
+
+Email bốn người (đúng thứ tự tác giả):
+```
+nguyenvan@dut.udn.vn
+votrananhquan1111@gmail.com
+anh1303052005@gmail.com
+pmtuan@dut.udn.vn
+```
 
 > Quy tắc mục 4 đòi **email của mọi đồng tác giả**, không chỉ tác giả liên
 > hệ — để toà soạn báo kết quả cho tất cả. Chuẩn bị sẵn 4 email.
@@ -137,7 +147,7 @@ Quan Tran Anh Vo: conceptualization; methodology; software; formal analysis;
 validation; visualization; writing - original draft; funding acquisition.
 Quang Anh Nguyen: software; investigation; data curation; formal analysis;
 validation; visualization.
-Nang Hung Van Nguyen: conceptualization; supervision; writing - review and
+Nguyen Nang Hung Van: conceptualization; supervision; writing - review and
 editing.
 Minh Tuan Pham: supervision; resources; writing - review and editing.
 ```
@@ -165,7 +175,7 @@ thì đổi tiêu đề mục `Funding` thành `Acknowledgments` — nói tôi m
 ## Đã kiểm
 
 ```
-audit_p2_rebuild   296/296     mọi số trong bài tính lại được từ artifact
+audit_p2_rebuild   299/299     mọi số trong bài tính lại được từ artifact
 check_latex        sạch
 Zenodo DOI         10.5281/zenodo.22893683   (kiểm qua API, metadata đúng)
 Tài liệu           30 mục, 30 được trích, không mục rác, không trích treo
