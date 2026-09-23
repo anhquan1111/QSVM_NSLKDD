@@ -13,6 +13,21 @@ không phải phỏng đoán.
 
 ---
 
+## ĐÃ NỘP — 23-09-2026
+
+| | |
+|---|---|
+| **Mã bản thảo (dùng mọi lúc)** | **`1966048`** |
+| Mã cổng nộp Research Exchange | `7d51d61e-ac10-4294-a33d-27b565e456da` |
+| Loại bài | Research Article |
+| Toà soạn | `SPYoffice@wiley.com` |
+| Hỗ trợ kỹ thuật | `submissionhelp@wiley.com` |
+
+Toà soạn tự gửi thư xác nhận tới **cả bốn tác giả**. Phần dưới là hồ sơ của lần nộp,
+giữ để đối chiếu khi có revision.
+
+---
+
 ## Tải lên ở đâu — theo đúng màn hình *Upload Manuscript*
 
 Màn hình thật **không** có nhãn "Main Document – LaTeX PDF" như tôi đoán
