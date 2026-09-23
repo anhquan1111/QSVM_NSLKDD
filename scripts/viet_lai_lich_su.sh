@@ -100,10 +100,15 @@ FILTER_BRANCH_SQUELCH_WARNING=1 git filter-branch -f \
 
 echo
 echo "== 6. Doi chieu sau khi sua =="
-LEFT_MSG=$(git log --all --format='%H' | while read -r h; do git log -1 --format='%B' "$h" | grep -q '^Co-Authored-By: Claude' && echo x || true; done | wc -l)
-LEFT_PDF=$(git rev-list --all | while read -r h; do git cat-file -e "$h:docs/DeTai10.pdf" 2>/dev/null && echo x || true; done | wc -l)
-LEFT_DOC=$(git rev-list --all | while read -r h; do git cat-file -e "$h:docs/PAPER1_final_report.docx" 2>/dev/null && echo x || true; done | wc -l)
-LEFT_SIGN=$(git log --all --format='%s' | grep -c 'KHONG duoc nam tren repo cong khai' || true)
+# PHAI dung --branches chu KHONG phai --all. `--all` gom ca
+# refs/original/* -- ref sao luu do chinh filter-branch vua tao, dung nghia
+# la ban lich su CU. Dung --all thi phep kiem luon bao "con sot 100 file"
+# ngay ca khi viet lai da thanh cong, va script tu chan minh o buoc day.
+# Da dinh dung loi nay mot lan.
+LEFT_MSG=$(git log --branches --format='%H' | while read -r h; do git log -1 --format='%B' "$h" | grep -q '^Co-Authored-By: Claude' && echo x || true; done | wc -l)
+LEFT_PDF=$(git rev-list --branches | while read -r h; do git cat-file -e "$h:docs/DeTai10.pdf" 2>/dev/null && echo x || true; done | wc -l)
+LEFT_DOC=$(git rev-list --branches | while read -r h; do git cat-file -e "$h:docs/PAPER1_final_report.docx" 2>/dev/null && echo x || true; done | wc -l)
+LEFT_SIGN=$(git log --branches --format='%s' | grep -c 'KHONG duoc nam tren repo cong khai' || true)
 echo "   con dong Co-Authored-By: Claude : $LEFT_MSG    (phai la 0)"
 echo "   con docs/DeTai10.pdf            : $LEFT_PDF    (phai la 0)"
 echo "   con docs/PAPER1_final_report.docx: $LEFT_DOC   (phai la 0)"
