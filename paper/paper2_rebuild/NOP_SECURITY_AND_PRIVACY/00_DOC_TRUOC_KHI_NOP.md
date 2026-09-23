@@ -231,6 +231,11 @@ goi LaTeX          164 KB, khong con ghi chu noi bo, khong con file thua
 cover_letter.docx  624 tu, dung bang cover_letter.txt
 ```
 
-**Một việc duy nhất tôi không kiểm được:** giới hạn số trang của tạp chí.
-Trang hướng dẫn tác giả của Wiley chặn truy cập tự động (lỗi 403). Bài
-dài **12 trang** — bạn mở trang hướng dẫn xem có trần nào không trước khi bấm nộp.
+**Về độ dài:** `paper/quytac.md` là toàn văn Author Guidelines của tạp chí,
+và **không có giới hạn số từ hay số trang** cho bài. Ba ràng buộc về độ dài
+duy nhất là: abstract ≤ 250 từ (bài 203), bảy từ khoá (bài 7), và tiêu đề
+< 40 ký tự (lỗi mẫu, xem trên). Bài dài 12 trang — không vướng.
+
+**Một mục tự chọn đã cố ý bỏ:** *Practitioner Points* — tối đa ba ý chính
+viết cho người làm thực tế, in kèm bài. Quy tắc ghi rõ *optional*. Nếu bài
+được nhận thì đáng thêm ở vòng revision.
