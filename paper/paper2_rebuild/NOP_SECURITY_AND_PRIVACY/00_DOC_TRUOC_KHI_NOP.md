@@ -5,9 +5,10 @@ Mọi thứ cần để nộp đều nằm trong thư mục này.
 Checklist này viết theo **quy tắc thật** của tạp chí (`paper/quytac.md`),
 không phải phỏng đoán.
 
-> ⚠️ **`manuscript.pdf` trong đây ĐÃ CŨ.** Sau lần build đó bài còn đổi:
-> tên thầy Vân, đơn vị + email 4 tác giả, và mục **Use of AI Tools**. **Build lại trên Overleaf** rồi chạy
-> `python scripts/build_bo_nop_paper2.py` để làm mới thư mục này.
+> ✅ **`manuscript.pdf` là bản mới nhất (23-09-2026), đã đọc tay từng trang để kiểm.**
+> Đúng tên thầy Vân theo dạng thầy tự sửa, đủ 4 email, có ORCID, 7 từ khoá,
+> có mục **Use of AI Tools**. `main_document.tex` và `latex_supplementary.zip`
+> trùng hệt `main.tex` sinh ra PDF này.
 
 ---
 
@@ -179,4 +180,10 @@ audit_p2_rebuild   299/299     mọi số trong bài tính lại được từ a
 check_latex        sạch
 Zenodo DOI         10.5281/zenodo.22893683   (kiểm qua API, metadata đúng)
 Tài liệu           30 mục, 30 được trích, không mục rác, không trích treo
+manuscript.pdf     12 trang, đọc tay trang 1 / 11 / 12
+main_document.tex  sha256 trùng main.tex đang dùng
 ```
+
+**Một việc duy nhất tôi không kiểm được:** giới hạn số trang của tạp chí.
+Trang hướng dẫn tác giả của Wiley chặn truy cập tự động (lỗi 403). Bài
+dài **12 trang** — bạn mở trang hướng dẫn xem có trần nào không trước khi bấm nộp.
