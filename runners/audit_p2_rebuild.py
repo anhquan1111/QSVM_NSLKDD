@@ -403,8 +403,17 @@ def main() -> int:
     # Nam tuyen bo bat buoc cua Wiley. Thieu mot cai la ban thao bi tra lai
     # o vong bien tap, truoc khi co ai doc toi phuong phap.
     for sec in ("Author Contributions", "Funding", "Data Availability",
-                "Conflict of Interest", "Ethics Statement"):
+                "Conflict of Interest", "Ethics Statement",
+                "Use of AI Tools"):
         check(f"section*{{{sec}" in body, f"co muc {sec}")
+
+    # O xac nhan luc nop doi khai dung cong cu AI NGAY TRONG BAI, khong chi
+    # tick o. Tick ma bai khong co doan khai la ky vao mot dieu khong dung.
+    # Doan khai phai neu TEN cong cu -- "an AI tool" chung chung khong dat.
+    check("Claude" in body and "Anthropic" in body,
+          "khai bao AI co neu ten cong cu")
+    check("not an author" in body,
+          "khai bao AI noi ro cong cu khong phai tac gia")
 
     # Muc Data Availability phai tro toi mot DOI THAT. Doan van do la thu
     # bien tap doc dau tien, va mot placeholder lot ra ban nop thi khong ai
