@@ -51,16 +51,19 @@ qua mười run, hiệu chỉnh Holm:
 
 ## Phần đáng xem về mặt kỹ thuật
 
-**Lớp kiểm chứng mới là phần đáng đọc.** Năm bộ audit tính lại mọi con số đã công bố từ dữ
+**Lớp kiểm chứng mới là phần đáng đọc.** Bảy bộ audit tính lại mọi con số đã công bố từ dữ
 liệu thô, và báo lỗi thẳng nếu lệch:
 
 ```bash
-python runners/audit_c4.py        # 100/100  mọi thống kê công bố
-python runners/audit_figures.py   #  36      mọi con số vẽ trên hình
-python runners/audit_prose.py     # 134/134  mọi con số viết trong câu văn bài báo
-python runners/verify_lemma1.py   #  15/15   khai triển nhân, đối chiếu nhân chính xác
-python runners/verify_noise10.py  #  40/40   phép kiểm nhiễu 10 run, kèm ngưỡng Holm
-python runners/check_latex.py     #          cấu trúc .tex, cho máy không cài LaTeX
+python runners/audit_c4.py              # 100/100  mọi thống kê công bố
+python runners/audit_figures.py         #  36      mọi con số vẽ trên hình
+python runners/audit_prose.py           # 134/134  mọi con số viết trong câu văn bài báo
+python runners/verify_lemma1.py         #  15/15   khai triển nhân, đối chiếu nhân chính xác
+python runners/verify_noise10.py        #  40/40   phép kiểm nhiễu 10 run, kèm ngưỡng Holm
+
+python runners/audit_p2_rebuild.py      # 299/299  mọi con số trong bài thứ hai
+python runners/verify_rare_identity.py  # 152/152  đồng nhất thức suy biến, tới 2.2e-16
+python runners/check_latex.py           #          cấu trúc .tex, cho máy không cài LaTeX
 ```
 
 Quyết định thiết kế đáng nói: **`audit_c4.py` không gọi lại hàm thống kê trong
@@ -124,7 +127,9 @@ models/  { nslkdd/, unsw/ }   transformer đã fit (joblib) + ma trận Gram (np
 results/ { nslkdd/, unsw/ }   artifact JSON/CSV  ← nguồn của mọi con số trong bài
 
 paper/paper1/              Mã nguồn bản thảo (có README riêng)
-paper/paper2/              Bài thứ hai
+paper/paper2/              Bài thứ hai, bản nộp tháng 8-2026
+paper/paper2_rebuild/      Bài thứ hai, bản đang được phản biện
+scripts/                   Tiện ích đóng gói và dọn dẹp
 docs/                      Báo cáo revision, thư reviewer, danh mục code bổ sung
 ```
 
@@ -157,9 +162,9 @@ bài**. Xem `paper/paper1/figs_revision/MANIFEST.md` để biết xuất xứ t�
 
 ```bash
 uv sync
-python runners/run_c4.py               # kết quả chính (~vài giờ)
+python runners/run_c4.py                # kết quả chính (~vài giờ)
 python runners/make_paper1_figures.py
-python runners/audit_c4.py             # xác nhận số khớp
+python runners/audit_c4.py              # xác nhận số khớp
 ```
 
 Môi trường: NumPy 2.4 · SciPy 1.17 · scikit-learn 1.8 · XGBoost 3.3 · Qiskit 2.3 với
@@ -171,8 +176,13 @@ qiskit-machine-learning 0.9 · Qiskit Aer 0.17.
 
 | | Trọng tâm | Trạng thái |
 |---|---|---|
-| **Bài 1** | Nhân lượng tử đáng giá ở chế độ nào? | Major revision tại **IEEE TETC**, hạn nộp lại 13-10-2026 |
-| **Bài 2** | Xác suất cảnh báo của QSVM có đáng tin không? | Đã nộp **IJNM** (Wiley), 04-08-2026 |
+| **Bài 1** | Nhân lượng tử đáng giá ở chế độ nào? | Bản sửa đang được phản biện tại **IEEE TETC** từ 17-09-2026 |
+| **Bài 2** | Xác suất cảnh báo của QSVM đáng tin tới đâu? | Đang được phản biện tại **Security and Privacy** (Wiley) từ 23-09-2026 |
+
+Bài 2 đo độ tin cậy và calibration, đối chiếu với Random Forest, XGBoost, một MLP và
+một SVM-RBF, trên cả hai bộ dữ liệu. Artifact của nó — từng số đo của mọi lần chạy,
+mọi script sinh hình và bảng, và bộ audit tính lại từng con số rồi báo lỗi nếu lệch —
+được lưu tại <https://doi.org/10.5281/zenodo.22893683>.
 
 Tác giả: Minh Tuan Pham, Phuc Hao Do, Nguyen Nang Hung Van, Quang Anh Nguyen, và
 Quan Tran Anh Vo (tác giả liên hệ). Đề tài T2026-02-10TN, Trường Đại học Bách khoa —

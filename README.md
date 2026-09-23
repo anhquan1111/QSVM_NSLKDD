@@ -51,16 +51,19 @@ There is **no general advantage**. What there *is* is structure worth reporting:
 
 ## What is engineering-notable here
 
-**The verification layer is the part worth reading.** Five audit scripts recompute every
+**The verification layer is the part worth reading.** Seven audit scripts recompute every
 published number from the raw artifacts and fail loudly on any mismatch:
 
 ```bash
-python runners/audit_c4.py        # 100/100  every published statistic
-python runners/audit_figures.py   #  36      every number plotted on a figure
-python runners/audit_prose.py     # 134/134  every number written in the manuscript text
-python runners/verify_lemma1.py   #  15/15   the kernel expansion, against the exact kernel
-python runners/verify_noise10.py  #  40/40   the ten-run noise check, incl. Holm thresholds
-python runners/check_latex.py     #          .tex structure, for machines without LaTeX
+python runners/audit_c4.py              # 100/100  every published statistic
+python runners/audit_figures.py         #  36      every number plotted on a figure
+python runners/audit_prose.py           # 134/134  every number written in the manuscript text
+python runners/verify_lemma1.py         #  15/15   the kernel expansion, against the exact kernel
+python runners/verify_noise10.py        #  40/40   the ten-run noise check, incl. Holm thresholds
+
+python runners/audit_p2_rebuild.py      # 299/299  every number in the companion paper
+python runners/verify_rare_identity.py  # 152/152  the rare-subset degeneracy, to 2.2e-16
+python runners/check_latex.py           #          .tex structure, for machines without LaTeX
 ```
 
 Design decision that matters: **`audit_c4.py` does not call the statistics functions in
@@ -128,7 +131,9 @@ models/  { nslkdd/, unsw/ }   fitted transformers (joblib) + Gram matrices (npy)
 results/ { nslkdd/, unsw/ }   JSON/CSV artifacts  ← the source of every number in the paper
 
 paper/paper1/              Manuscript source (own README)
-paper/paper2/              Companion paper
+paper/paper2/              Companion paper, the version submitted in August 2026
+paper/paper2_rebuild/      Companion paper, the version now under review
+scripts/                   Packaging and housekeeping utilities
 docs/                      Revision report, reviewer letter, supplementary-code index
 ```
 
@@ -162,9 +167,9 @@ provenance.
 
 ```bash
 uv sync
-python runners/run_c4.py               # main result (a few hours)
+python runners/run_c4.py                # main result (a few hours)
 python runners/make_paper1_figures.py
-python runners/audit_c4.py             # confirm the numbers match
+python runners/audit_c4.py              # confirm the numbers match
 ```
 
 Environment: NumPy 2.4 · SciPy 1.17 · scikit-learn 1.8 · XGBoost 3.3 · Qiskit 2.3 with
@@ -176,8 +181,14 @@ qiskit-machine-learning 0.9 · Qiskit Aer 0.17.
 
 | | Focus | Status |
 |---|---|---|
-| **Paper 1** | Where is a quantum kernel worth its cost? | Major revision at **IEEE TETC**, resubmission due 13-10-2026 |
-| **Paper 2** | Are QSVM alert probabilities trustworthy? | Submitted to **IJNM** (Wiley), 04-08-2026 |
+| **Paper 1** | Where is a quantum kernel worth its cost? | Revised version under review at **IEEE TETC** since 17-09-2026 |
+| **Paper 2** | How far can a quantum kernel's alert probabilities be trusted? | Under review at **Security and Privacy** (Wiley) since 23-09-2026 |
+
+Paper 2 is a calibration and reliability benchmark against Random Forest, XGBoost, an MLP
+and an SVM-RBF baseline, on both corpora. Its artifacts — every stored per-run
+measurement, every figure and table script, and an audit script that recomputes each
+reported number and fails on any mismatch — are archived at
+<https://doi.org/10.5281/zenodo.22893683>.
 
 Authors: Minh Tuan Pham, Phuc Hao Do, Nguyen Nang Hung Van, Quang Anh Nguyen, and
 Quan Tran Anh Vo (corresponding author). Supported by The University of Danang — University
