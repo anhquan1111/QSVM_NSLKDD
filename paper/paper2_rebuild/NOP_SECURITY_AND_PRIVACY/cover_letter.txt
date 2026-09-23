@@ -50,6 +50,14 @@ artifacts, the figure and table scripts, and an audit script that recomputes
 each reported number and fails if any disagrees are archived at
 https://doi.org/10.5281/zenodo.22893683
 
+That archive, and the project repository at
+https://github.com/anhquan1111/QSVM_NSLKDD, both contain the LaTeX source of
+this manuscript. They do so because the audit script reads the manuscript in
+order to check each printed number against the stored records, so the check
+cannot run without it. We have declared this on the submission form under
+prior availability. The manuscript itself has not been posted to a preprint
+server.
+
 RELATED SUBMISSION
 
 A companion manuscript by the same group, "NISQ-aware quantum kernel SVM for
