@@ -1,11 +1,6 @@
 % =====================================================================
-%  PREAMBLE -- Paper 2 (ban dung lai)
-%
-%  Theo dung khuon cua paper/paper1/preamble.tex: cung bo goi, cung tham
-%  so dat float, cung quy uoc macro. Sua o day thi ca bai cung doi.
-%
-%  Bien dich: pdflatex -> pdflatex (bibliography la thebibliography,
-%             khong can BibTeX)
+%  PREAMBLE -- Paper 2 (ban dung lai). Cung khuon paper 1.
+%  Bien dich: pdflatex -> pdflatex (thebibliography, khong can BibTeX).
 % =====================================================================
 
 \usepackage{cite}
@@ -13,9 +8,8 @@
 \usepackage{amsthm}
 \usepackage[T1]{fontenc}
 \usepackage{newtxtext,newtxmath}
-% `algorithmic` chi cho cac lenh BEN TRONG; `algorithm` moi la cai float bao
-% ngoai. Thieu no thi \begin{algorithm}[t] in ra chu "[t]" tran lan, caption
-% khong duoc danh so, va \ref{alg:...} tro ve so MUC ("Algorithm IV-B").
+% Can CA HAI: `algorithmic` la cac lenh ben trong, `algorithm` la float bao
+% ngoai. Thieu cai sau thi caption khong duoc danh so va \ref tro ve so muc.
 \usepackage{algorithmic}
 \usepackage{algorithm}
 \usepackage{graphicx}
@@ -32,12 +26,9 @@
 \graphicspath{{./}}
 
 % =====================================================================
-%  Tham so dat float. Mac dinh cua LaTeX chi cho float chiem <=70% dinh
-%  trang va bat chua >=20% chu, nen hinh rong ca trang gan nhu luon bi day
-%  di cho khac; day du xa thi no roi xuong cuoi bai va xen vao danh muc tai
-%  lieu. Noi rong ra thi hinh dat duoc ngay trang no duoc nhac toi.
-%  Bai nay co 9 bang va 6 hinh (5 hinh rong ca trang) nen khong co doan nay
-%  la bo cuc vo.
+%  Tham so dat float. Mac dinh LaTeX (float <=70% dinh trang, >=20% chu)
+%  day hinh rong ca trang xuong cuoi bai, xen vao danh muc tham khao.
+%  Bai co 6 hinh, 5 trong so do rong ca trang.
 % =====================================================================
 \setcounter{topnumber}{2}
 \setcounter{bottomnumber}{1}
@@ -50,9 +41,8 @@
 \renewcommand{\dbltopfraction}{0.92}
 \renewcommand{\dblfloatpagefraction}{0.80}
 
-% Trang chi co float: mac dinh LaTeX can giua theo chieu doc, nen hai hinh
-% bi keo xa nhau bang mot khoang trang lon. Ep can tren, khoang cach co
-% dinh, phan du don xuong duoi.
+% Trang chi co float: mac dinh can giua theo chieu doc nen hai hinh bi keo
+% xa nhau. Ep can tren, khoang cach co dinh, phan du don xuong duoi.
 \makeatletter
 \setlength{\@fptop}{0pt}
 \setlength{\@fpsep}{10pt plus 1fil}
