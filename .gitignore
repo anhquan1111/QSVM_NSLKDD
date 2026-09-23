@@ -80,3 +80,11 @@ paper/paper1/v2_submitted/*.zip
 # Ban sao o thu muc goc cua ban nop R1 -- ban that nam trong
 # paper/paper1/v2_submitted/. File dang bi mo nen chua xoa duoc.
 /TETC-2026-05-0252-R1-manuscript-clean.pdf
+
+# Bai AICON 2026 -- phan bien MU DOI, chua nop.
+# Thu muc nay chua toan van bai va ca ma dinh danh cua mirror an danh
+# tren anonymous.4open.science ma ban nop dua cho phan bien. Repo la
+# PUBLIC va mang ten that, nen de o day thi phan bien chi can tim mot cau
+# trong bai, hoac tim chinh duong link mirror, la ghep duoc bai an danh voi
+# bon tac gia. Giu tren may, khong day len, cho toi khi co ban camera-ready.
+paper/paper3_aicon/
