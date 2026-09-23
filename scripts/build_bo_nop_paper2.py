@@ -31,16 +31,19 @@ COPY = [
     # de khi tim thay ban moi hon.
     (ROOT / "Paper2_rebuild.pdf",
      "manuscript.pdf"),
-    (ROOT / "paper/paper2_rebuild/main.tex",
-     "main_document.tex"),
-    (ROOT / "paper/paper2_rebuild/dist/Paper2_rebuild.zip",
-     "latex_supplementary.zip"),
     (ROOT / "paper/paper2_rebuild/cover_letter.tex",
      "cover_letter.tex"),
 ]
 
-# Viet tay, khong dung toi.
-KEEP = {"00_DOC_TRUOC_KHI_NOP.md", "cover_letter.txt"}
+# `main_document.tex` va `latex_supplementary.zip` KHONG copy o day nua.
+# Goi trong dist/ la goi de mo tren Overleaf: README cua no ghi chu noi bo
+# bang tieng Viet ("con phai viet prose o cac cho TODO", "ban da nop IJNM"),
+# va no keo theo anh chan dung ma bai da comment. Bien tap giai nen ra la
+# doc duoc het. Hai file do do build_goi_latex_p2.py sinh rieng cho ban nop.
+
+# Viet tay hoac do script khac sinh -- khong dung toi.
+KEEP = {"00_DOC_TRUOC_KHI_NOP.md", "cover_letter.txt", "cover_letter.docx",
+        "main_document.tex", "latex_supplementary.zip"}
 
 
 def sha(p: Path) -> str:

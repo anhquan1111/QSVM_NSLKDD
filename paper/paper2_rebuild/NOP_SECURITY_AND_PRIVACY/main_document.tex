@@ -1,43 +1,43 @@
-%==============================================================================
-%  Paper 2 -- BAN DUNG LAI (2026-09-21)
 %
-%  Khac ban da nop IJNM bon diem, tat ca ve DO DAC chu khong ve mo hinh:
-%    1. Chi so. ECE tren tap con MOT lop suy bien thanh 1 - trung binh(p), nen
-%       ECE_rare cua ban cu khong do calibration. Chi so chinh doi sang ECE
-%       tren toan tap test, noi co ca hai lop.
-%    2. Tap test. KDDTest+ day du thay vi mot mau 100 dong (10 hiem).
-%    3. So run. 10 thay vi 5 -- voi 5 cap, Wilcoxon khong bao gio dat p<0.05.
-%    4. Khong dung model cache: moi baseline huan luyen lai tren CUNG mot tap.
-%  Cong them UNSW-NB15, chay ca 4 lan 6 qubit de go confound.
 %
-%  Khoi tac gia giu nguyen ban da nop.
-%  Compile: pdfLaTeX. Moi con so phai goi qua macro trong tables/.
-%==============================================================================
+%
+%
+%
+%
+%
+%
+%
+%
+%
+%
+%
+%
+%
 \documentclass[journal]{IEEEtran}
 
-% Moi goi, tham so dat float va macro nam o preamble.tex -- cung
-% khuon voi paper 1.
+%
+%
 \input{preamble}
 
 \begin{document}
 
-% IEEEtran bat flushbottom o che do hai cot: no GIAN khoang trong theo chieu
-% doc de hai cot bang nhau. Voi trang cuoi -- danh muc tham khao va cac khoi
-% tieu su co anh -- ket qua la cac khoi bi day xa nhau, giua la khoang trang
-% lon. Ban da nop IJNM cung tat no o day. Phai \let truoc vi IEEEtran goi lai
-% \flushbottom o moi trang.
+%
+%
+%
+%
+%
 \let\flushbottom\raggedbottom
 \raggedbottom
 
-% Thay Van gop y 22-09-2026: tieu de khong nen dat cau hoi. Bo ve menh de
-% khang dinh, giu nguyen phan mo ta vi no da noi du bai lam gi.
+%
+%
 \title{A Reliability and Calibration Benchmark of QSVM Against Strong
   Tabular Learners on NSL-KDD and UNSW-NB15}
 
-% Thay Van tu sua tren Overleaf 23-09 ve dang nay. Hom truoc toi doi sang
-% "Nang Hung Van Nguyen" cho dong bo voi ba nguoi con lai, nhung lam vay lai
-% LECH voi chinh Paper 1 -- bai companion ma Paper 2 trich dan -- dang o TETC
-% voi ten "Nguyen Nang Hung Van". Thay dung, giu theo thay.
+%
+%
+%
+%
 \author{Nguyen~Nang~Hung~Van,
         Quan~Tran~Anh~Vo,
         Quang~Anh~Nguyen,
@@ -45,13 +45,13 @@
 \thanks{Manuscript received [Date]; revised [Date]. This work was
   supported by The University of Danang - University of Science and
   Technology under Project T2026-02-10TN. \textit{(Corresponding author: Quan Tran Anh Vo.)}}
-% Don vi va email chep DUNG theo Paper 1 (paper/paper1/document.tex), vi hai
-% bai cung mot nhom va bien tap se doi chieu. Paper 1 ghi don vi theo thu tu
-% "University of Science and Technology - The University of Danang" va co
-% ma buu chinh 550000; ban truoc cua Paper 2 dao thu tu va thieu ma so.
 %
-% Va quy tac muc 4 cua tap chi doi email CUA MOI DONG TAC GIA, khong chi tac
-% gia lien he -- de toa soan bao ket qua cho tat ca.
+%
+%
+%
+%
+%
+%
 \thanks{The authors are with the University of Science and Technology -
   The University of Danang, Danang 550000, Vietnam (e-mail:
   nguyenvan@dut.udn.vn; votrananhquan1111@gmail.com;
@@ -89,18 +89,18 @@ absent from ranking.
 \end{abstract}
 
 \begin{IEEEkeywords}
-% BAY tu khoa. Author guidelines cua Security and Privacy ghi ro "Please
-% provide seven keywords" -- khong phai gioi han tren, ma la so luong mong
-% doi. Truoc do toi cat con 6 vi doan phan lon tap chi Wiley chan o 6; doc
-% quy tac that thi sai. Da tra lai "reliability".
+%
+%
+%
+%
 Quantum machine learning, quantum kernel, calibration, reliability,
 intrusion detection, NSL-KDD, UNSW-NB15.
 \end{IEEEkeywords}
 
-%==============================================================================
+%
 \section{Introduction}\label{sec:intro}
 
-% TODO(tac gia): doc lai va nới rong neu can. Khung lap luan da day du.
+%
 An intrusion detection system is rarely deployed as a bare classifier. It is
 deployed behind a threshold, feeding a queue that a human or a downstream
 policy has to triage, and the quantity that governs that queue is a
@@ -202,7 +202,7 @@ identity of Section~\ref{sec:identity} numerically across every model and
 run. The full pipeline, the artifacts and the checks are released with the
 paper.
 
-%==============================================================================
+%
 \section{Background and Related Work}\label{sec:related}
 
 \subsection{Quantum Kernel and the \ZZ{}-FeatureMap}
@@ -356,9 +356,9 @@ Companion (Paper~1)~\cite{companion}               & \ding{55} & partial   & \di
 \end{tabular}
 \end{table}
 
-% ============================================================
+%
 
-%==============================================================================
+%
 \section{Why the rare-attack subset cannot answer the question}
 \label{sec:identity}
 
@@ -403,7 +403,7 @@ a wide margin. All calibration numbers below are therefore measured on the
 full test split of each corpus, and we report the rare-subset quantity under
 its own name where it is informative.
 
-%==============================================================================
+%
 \section{Reliability Evaluation Framework}\label{sec:method}
 
 \subsection{What we measure}
@@ -483,10 +483,10 @@ Each is reported with paired tests and effect sizes rather than with point
 estimates, and we report the conditions in which the quantum kernel does not
 lead as prominently as those in which it does.
 
-%==============================================================================
+%
 \section{Experimental Setup}\label{sec:setup}
 
-% TODO(tac gia): pipeline chi tiet, sieu tham so. Giu mo ta cua ban cu.
+%
 
 All models share a zero-leakage front end: one-hot encoding,
 \textsc{SelectKBest}, PCA and a min--max map onto $[0,\pi]$, every
@@ -569,7 +569,7 @@ generated by it; every number reported here is recomputed from the stored
 run records by the audit script. The Use of AI Tools statement after the
 Ethics Statement gives the full declaration.
 
-%==============================================================================
+%
 \section{Results}\label{sec:results}
 
 \input{tables/main_table}
@@ -875,7 +875,7 @@ result rather than a restatement of it: a practitioner who responds to
 missed rare attacks by lowering the threshold will be rewarded with a
 margin-based detector and will not be with a tree ensemble.
 
-%==============================================================================
+%
 \section{Why the Families Differ}\label{sec:mechanism}
 
 Three results so far point the same way: recalibration helps the quantum
@@ -946,7 +946,7 @@ quantum-IDS literature rarely includes one. On the deployment question this
 paper asks, the model to beat is not the one the accuracy benchmarks
 suggest.
 
-%==============================================================================
+%
 \section{Reliability Regime Map}\label{sec:regime}
 
 \input{tables/regime_table}
@@ -978,7 +978,7 @@ correction. And in either case the probabilities on the rare categories
 should not be used at a default threshold without the recalibration of
 Section~\ref{sec:results}.
 
-%==============================================================================
+%
 \section{Threats to Validity}\label{sec:limits}
 
 \subsection{Construct validity}
@@ -1049,10 +1049,10 @@ be read as evidence of equivalence. The comparisons we do claim clear Holm
 correction within their baseline family, but the families were fixed in
 advance rather than chosen after seeing the results.
 
-%==============================================================================
+%
 \section{Conclusion}\label{sec:conclusion}
 
-% TODO(tac gia): doc lai truoc khi nop.
+%
 We set out to ask whether a quantum-kernel intrusion detector can be trusted
 at the level of its probabilities, and found first that the question has to
 be posed carefully. Restricting a binned calibration estimate to the rare
@@ -1098,12 +1098,12 @@ which would establish whether any of this survives the noise of a real
 device. Neither is expensive, and the second is the question our simulation
 is constitutionally unable to answer.
 
-%==============================================================================
-%  Tuyen bo bat buoc cua Wiley. Phan lon con duoc dien LAI trong he thong
-%  nop bai (ScholarOne) -- Wiley thu Data Availability, COI va Funding qua
-%  form chu khong qua ban thao. Viet o day de ban thao tu day du, va dien
-%  lai trong form khi nop.
-%==============================================================================
+%
+%
+%
+%
+%
+%
 \section*{Author Contributions}
 \textbf{Quan Tran Anh Vo:} conceptualization; methodology; software; formal
 analysis; validation; visualization; writing -- original draft; funding
@@ -1136,14 +1136,14 @@ This study used only public benchmark datasets of network traffic records and
 involved no human participants, no animal subjects and no personally
 identifiable information. Ethical approval was therefore not required.
 
-%==============================================================================
-%  Khai bao dung cong cu AI. Wiley BAT BUOC khai, va o xac nhan luc nop noi
-%  ro phai khai TRONG BAI chu khong chi tick o. Paper 1 da khai mot doan
-%  tuong tu o muc Acknowledgment. Muc V co mot cau tro ve day.
 %
-%  Doan nay phai DUNG SU THAT. Neu sau nay co ai kiem, thu duy nhat bao ve
-%  duoc nhom la da khai day du tu dau.
-%==============================================================================
+%
+%
+%
+%
+%
+%
+%
 \section*{Use of AI Tools}
 The authors used Anthropic's Claude (Opus~5) as an assistant in preparing
 this work. Its use covered four areas: drafting and editing prose throughout
@@ -1320,10 +1320,10 @@ N.~Moustafa and J.~Slay,
 
 \end{thebibliography}
 
-% Bo 4 khoi IEEEbiography: do la dinh dang rieng cua IEEE, va tap chi Wiley
-% KHONG in tieu su tac gia kem anh chan dung. De nguyen thi editor thay ngay
-% bai nay viet cho IEEE roi dem nop Wiley. Bo di cung tiet kiem ~1,5 trang.
-% Bat lai khi nao nop cho mot tap chi IEEE.
-%\input{biographies}
+%
+%
+%
+%
+%
 
 \end{document}

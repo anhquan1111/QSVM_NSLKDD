@@ -8,26 +8,66 @@ không phải phỏng đoán.
 > ✅ **`manuscript.pdf` là bản mới nhất (23-09-2026), đã đọc tay từng trang để kiểm.**
 > Đúng tên thầy Vân theo dạng thầy tự sửa, đủ 4 email, có ORCID, 7 từ khoá,
 > có mục **Use of AI Tools**. `main_document.tex` và `latex_supplementary.zip`
-> trùng hệt `main.tex` sinh ra PDF này.
+> là đúng `main.tex` sinh ra PDF này, chỉ khác ở chỗ đã xoá ghi chú nội bộ
+> tiếng Việt (xem bên dưới) — phần in ra không đổi một ký tự.
 
 ---
 
-## File trong đây
+## Tải lên ở đâu — theo đúng màn hình *Upload Manuscript*
+
+Màn hình thật **không** có nhãn "Main Document – LaTeX PDF" như tôi đoán
+lúc đầu. Nó có **1 ô bắt buộc** và **6 ô tự chọn**. Chỉ điền **3 ô**:
+
+| Ô trên màn hình | Đưa file nào |
+|---|---|
+| **Main Manuscript** *(bắt buộc, tối đa 1 file)* | `manuscript.pdf` — nếu hệ thống không nhận PDF thì đưa `latex_supplementary.zip` |
+| **LaTeX Supplementary File** | `latex_supplementary.zip` |
+| **Cover letter / Comments** *(tối đa 1 file)* | `cover_letter.docx` |
+
+**Bỏ trống 4 ô còn lại:** *Figure*, *Table*, *Supporting Information*,
+*Additional File* (cả hai loại). Hình và bảng đã nằm trong bài rồi — chính
+ô Main Manuscript ghi *"may include embedded figures and tables"*.
+
+### Vì sao thử `manuscript.pdf` trước
+
+Ô Main Manuscript ghi loại file nhận là *"MS Word or LaTeX"* — **không liệt kê
+PDF**. Nhưng hầu hết tạp chí Wiley vẫn nhận PDF ở lần nộp đầu. Thử mất vài
+giây và không hề mất gì: **nếu nó chặn thì bạn biết ngay tại chỗ**, lúc đó
+đưa `latex_supplementary.zip` vào ô đó thay (ô này ghi rõ được phép dùng
+một archive gồm toàn bộ file LaTeX, hình, bảng) và bỏ trống ô LaTeX
+Supplementary.
+
+**Đặt PDF lên trước tốt hơn** vì phản biện sẽ đọc đúng bản dàn trang bạn đã
+kiểm, thay vì bản do máy của họ tự compile ra.
+
+### Hai thứ tôi đã gỡ khỏi gói zip
+
+Gói cũ **1,17 MB**, gói mới **164 KB**. Gỡ hai thứ, cả hai đều là lỗi thật:
+
+1. **README tiếng Việt ghi chú nội bộ.** Nó viết nguyên văn *"Còn phải làm
+   trước khi nộp: viết prose ở các chỗ % TODO"*, *"giữ danh mục của bản đã
+   nộp IJNM"*, *"bản này đổi trục chủ đạo so với bản đã nộp"*. Biên tập giải
+   nén ra là đọc được. Gói mới có README tiếng Anh, chỉ nói cách compile.
+2. **Comment tiếng Việt trong chính `main.tex`** — 73 dòng, trong đó có
+   *"Khác bản đã nộp IJNM bốn điểm"* và ba chỗ `TODO(tac gia)`. Đã xoá **nội
+   dung** comment nhưng **giữ dấu `%`** — vì một dấu `%` cuối dòng là lệnh
+   nối dòng của TeX (bài có 5 chỗ); xoá cả dòng sẽ sinh ra dấu cách thừa.
+   Script tự kiểm rằng phần **sẽ in ra** không đổi một ký tự nào.
+
+   Đồng thời bỏ `biographies.tex` và 4 ảnh chân dung: `main.tex` đã comment
+   `\input` chúng, Wiley không in tiểu sử kiểu IEEE, và ô Main Manuscript ghi
+   *"should not include any supplementary materials"*.
+
+Dựng lại gói bằng: `python scripts/build_goi_latex_p2.py`
+
+**Bản trong repo giữ nguyên mọi ghi chú** — chỉ bản gửi đi mới bị làm sạch.
 
 Tên file **tiếng Anh** có chủ ý: tên file hiện ra trước mắt biên tập khi họ
-tải về. Thư mục và file này thì tiếng Việt vì không bao giờ được tải lên.
+tải về. Thư mục và file checklist này thì tiếng Việt vì không bao giờ được
+tải lên.
 
-| File | Nhãn phải chọn khi upload |
-|---|---|
-| `manuscript.pdf` | **Main Document – LaTeX PDF** |
-| `main_document.tex` | **Main Document – LaTeX .tex File** |
-| `latex_supplementary.zip` | **LaTeX Supplementary File** |
-| `cover_letter.txt` | dán thẳng vào ô Cover Letter |
-| `cover_letter.tex` | nếu bắt nộp dạng PDF |
-
-Ba nhãn đầu là **nguyên văn** tên nhãn trong hệ thống. Quy tắc mục 4 ghi rõ:
-nộp LaTeX thì phải kèm **cả** file `.tex` **và** bản PDF, file phụ trợ gắn
-nhãn *LaTeX Supplementary File*.
+`cover_letter.txt` giữ lại để dán vào ô nhập tay nếu gặp; `cover_letter.tex`
+là bản nguồn, không tải lên.
 
 ---
 
@@ -181,7 +221,8 @@ check_latex        sạch
 Zenodo DOI         10.5281/zenodo.22893683   (kiểm qua API, metadata đúng)
 Tài liệu           30 mục, 30 được trích, không mục rác, không trích treo
 manuscript.pdf     12 trang, đọc tay trang 1 / 11 / 12
-main_document.tex  sha256 trùng main.tex đang dùng
+goi LaTeX          164 KB, khong con ghi chu noi bo, khong con file thua
+cover_letter.docx  624 tu, dung bang cover_letter.txt
 ```
 
 **Một việc duy nhất tôi không kiểm được:** giới hạn số trang của tạp chí.
