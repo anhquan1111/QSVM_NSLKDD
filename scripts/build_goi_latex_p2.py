@@ -51,19 +51,57 @@ def khong_bi_comment(text: str) -> str:
     return "\n".join(BO_COMMENT.sub("", d) for d in text.splitlines())
 
 
+def tach(dong: str):
+    """Tra ve (phan truoc dau %, co dau % hay khong)."""
+    m = BO_COMMENT.search(dong)
+    return (dong[:m.start()], True) if m else (dong, False)
+
+
 def lam_sach_comment(text: str) -> str:
-    """Xoa NOI DUNG comment nhung GIU dau %.
+    """Bo het ghi chu, giu dau % noi dong.
 
     Ban trong repo ghi chu bang tieng Viet: khac ban da nop IJNM cho nao,
     thay Van sua gi, cho nao con `TODO(tac gia)`. Bien tap tai ma nguon ve
     la doc duoc het. Day la ghi chu de lam viec, khong phai thu de gui di.
 
-    Khong duoc xoa ca dong: mot dau % cuoi dong la lenh NOI dong cua TeX
-    (main.tex co 5 cho). Xoa dau % do thi sinh ra mot dau cach khong mong
-    muon. Giu dau %, chi bo chu sau no -- phep bien doi nay khong dong
-    mot ky tu nao cua phan se in ra, va ham main() kiem dung dieu do.
+    Hai truong hop khac nhau:
+      - Dong CHI CO comment  -> xoa ca dong. TeX nuot ca dong lan dau
+        xuong dong cua no, nen xoa di la tuong duong tuyet doi.
+      - Comment nam CUOI dong co noi dung -> cat con lai dau %. Khong duoc
+        bo not dau % do: no la lenh NOI dong cua TeX (main.tex co 5 cho),
+        bo di se sinh ra mot dau cach thua.
     """
-    return "\n".join(BO_COMMENT.sub("%", d) for d in text.splitlines())
+    ra = []
+    for dong in text.splitlines():
+        truoc, co = tach(dong)
+        if co and not truoc.strip():
+            continue
+        ra.append(truoc + "%" if co else dong)
+    # Nhieu dong trong lien nhau = mot dau ngat doan, y het mot dong trong.
+    goc = "\n".join(ra)
+    while "\n\n\n" in goc:
+        goc = goc.replace("\n\n\n", "\n\n")
+    return goc
+
+
+def luong_in(text: str) -> str:
+    """Dung lai dung luong ky tu ma TeX thuc su doc, de doi chieu.
+
+    Mo hinh hoa doc lap voi ham lam sach o tren: dong chi co comment thi
+    khong sinh ra gi ca, dong ket thuc bang % thi khong sinh dau xuong
+    dong. Chay ham nay tren ban goc va ban da lam sach, hai ket qua phai
+    trung nhau -- do la bang chung phep lam sach khong dong vao bai.
+    """
+    ra = []
+    for dong in text.splitlines():
+        truoc, co = tach(dong)
+        if co and not truoc.strip():
+            continue
+        ra.append(truoc if co else truoc + "\n")
+    out = "".join(ra)
+    while "\n\n\n" in out:
+        out = out.replace("\n\n\n", "\n\n")
+    return out
 
 
 def doc(ten: str) -> str:
@@ -116,7 +154,7 @@ def main() -> int:
     for f in tex:
         goc = (SRC / f).read_text(encoding="utf-8")
         moi = lam_sach_comment(goc)
-        if khong_bi_comment(moi) != khong_bi_comment(goc):
+        if luong_in(moi) != luong_in(goc):
             print(f"  {f}: lam sach comment da dong vao phan se in ra")
             return 1
         sach[f] = moi

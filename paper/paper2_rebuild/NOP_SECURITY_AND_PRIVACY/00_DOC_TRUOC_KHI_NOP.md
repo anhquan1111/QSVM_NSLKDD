@@ -49,10 +49,16 @@ Gói cũ **1,17 MB**, gói mới **164 KB**. Gỡ hai thứ, cả hai đều là
    nộp IJNM"*, *"bản này đổi trục chủ đạo so với bản đã nộp"*. Biên tập giải
    nén ra là đọc được. Gói mới có README tiếng Anh, chỉ nói cách compile.
 2. **Comment tiếng Việt trong chính `main.tex`** — 73 dòng, trong đó có
-   *"Khác bản đã nộp IJNM bốn điểm"* và ba chỗ `TODO(tac gia)`. Đã xoá **nội
-   dung** comment nhưng **giữ dấu `%`** — vì một dấu `%` cuối dòng là lệnh
-   nối dòng của TeX (bài có 5 chỗ); xoá cả dòng sẽ sinh ra dấu cách thừa.
-   Script tự kiểm rằng phần **sẽ in ra** không đổi một ký tự nào.
+   *"Khác bản đã nộp IJNM bốn điểm"* và ba chỗ `TODO(tac gia)`. **Bản gửi đi
+   không còn một dòng chú thích nào.**
+
+   Dòng chỉ có chú thích thì xoá hẳn cả dòng. Chú thích nằm cuối một dòng
+   có nội dung thì cắt còn lại dấu `%` — **không được bỏ nốt dấu đó**, vì
+   `%` cuối dòng là lệnh nối dòng của TeX; bỏ đi sẽ sinh ra dấu cách thừa.
+   Trong bài có đúng 1 chỗ như vậy (sau `\markboth`).
+
+   Script dựng lại **luồng ký tự mà TeX thực sự đọc** từ cả hai bản rồi so
+   nhau; khác một ký tự là nó dừng, không xuất file.
 
    Đồng thời bỏ `biographies.tex` và 4 ảnh chân dung: `main.tex` đã comment
    `\input` chúng, Wiley không in tiểu sử kiểu IEEE, và ô Main Manuscript ghi
