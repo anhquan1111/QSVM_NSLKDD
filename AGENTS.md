@@ -13,11 +13,12 @@ và **liệu dự đoán có đáng tin** khi triển khai.
 Pipeline chung:
 `NSL-KDD (41 ft) → One-Hot (122D) → SelectKBest (20D) → PCA (4D) → MinMax[0,π] → QSVM (ZZFeatureMap 4-qubit, reps=2, full)`
 
-### Hai bài báo (xem chi tiết trong `docs/`)
+### Ba bài báo (xem chi tiết trong `docs/`)
 | | Trọng tâm | Trạng thái | Doc |
 |---|---|---|---|
-| **Paper 1** | Hiệu năng theo regime (khi nào QSVM thắng SVM cổ điển) | **Major revision @ IEEE TETC** (hạn 13-Oct-2026) | [docs/BAO_CAO_REVISION.md](docs/BAO_CAO_REVISION.md) |
-| **Paper 2** | Độ tin cậy / calibration (vs RF, XGBoost) | **Đã nộp @ IJNM (Wiley, Q2)** | [docs/PAPER2_overview.md](docs/PAPER2_overview.md) |
+| **Paper 1** | Hiệu năng theo regime (khi nào QSVM thắng SVM cổ điển) | Major revision @ IEEE TETC; **bản R1 nộp lại 17-09-2026, đang chờ phản biện** | [docs/BAO_CAO_REVISION.md](docs/BAO_CAO_REVISION.md) |
+| **Paper 2** | Độ tin cậy / calibration (vs RF, XGBoost) | IJNM desk-reject 05-09-2026; **nộp lại Security and Privacy (Wiley) 23-09-2026, đang chờ phản biện** | [docs/PAPER2_overview.md](docs/PAPER2_overview.md) |
+| **Paper 3** | Bẫy chọn siêu tham số (tuning trap) trên UNSW-NB15 | **Được nhận @ EAI AICON 2026 (26-10-2026)**, đang làm camera-ready | `paper/paper3_aicon/` (chỉ trên máy, gitignore) |
 
 ## Cấu trúc thư mục (tổ chức theo dataset)
 ```
