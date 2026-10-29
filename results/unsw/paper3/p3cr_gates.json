@@ -1,0 +1,8 @@
+{
+  "sampler_reproduces_n100": true,
+  "sampler_max_abs_dev": 0.0,
+  "quantum_gram_max_abs_dev": 3.2307490016592055e-14,
+  "cv_f1_max_abs_dev": 0.0,
+  "passed": true,
+  "elapsed_sec": 113.78545260429382
+}

@@ -162,7 +162,12 @@ def evaluate(K_tr, K_te, ytr, yte, C):
         recall=recall_score(yte, yp, average="binary", zero_division=0),
         accuracy=accuracy_score(yte, yp),
         tn=int(tn), fp=int(fp), fn=int(fn), tp=int(tp),
-        degenerate=bool(tn == 0),
+        # Suy bien = KHONG du doan ban ghi nao la normal, tuc TN = FN = 0.
+        # Ban nop AICON dung `tn == 0`, va phan bien R1 chi dung: TN = 0 van
+        # con cho cho FN > 0 (mo hinh goi vai tan cong la normal). Kiem
+        # thang tren du doan cho chac, roi giu TN/FN de doi chieu.
+        degenerate=bool(np.all(yp == 1)),
+        constant=bool(np.unique(yp).size == 1),
     )
 
 

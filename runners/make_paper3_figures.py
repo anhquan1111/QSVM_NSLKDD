@@ -159,7 +159,7 @@ def fig1_tuning_trap():
     # ngay tren duong san thi no de len chinh duong quantum.
     ax.text(
         115, floor + 0.0105,
-        f"constant all-attack classifier, $F_1={floor:.4f}$",
+        f"constant all-attack baseline, $F_1={floor:.4f}$",
         color=ORANGE, fontsize=6.8, va="bottom", ha="right", zorder=7,
     )
 
@@ -182,7 +182,9 @@ def fig1_tuning_trap():
 
     ax.set_xscale("log")
     ax.set_xlabel("SVM regularisation $C$  (log scale)")
-    ax.set_ylabel("5-fold CV $F_1$")
+    # Phan bien R2/R4: bai tron ba loai F1. Truc nay la F1 NHI PHAN (lop
+    # tan cong la duong), trung binh tren 5 fold CV cua tap train run 1.
+    ax.set_ylabel("binary $F_1$, 5-fold CV")
     ax.set_title("(a)  Selection cannot escape the floor", loc="left")
     ax.set_ylim(0.740, 0.906)
     tidy(ax)
@@ -253,12 +255,15 @@ def fig2_k_sweep():
     nrun = c1["metadata"]["n_runs"]
 
     # Nguong suy bien: F1 cua bo phan loai hang, da luu trong tung run.
-    floor = rows[0]["per_run"][0]["quantum"]["f1_predict_all_attack"]
+    # Ban nop lay run 1 (0,7805) trong khi bai viet 0,7760 la trung binh 5
+    # run -- R2 doc thay hai so khac nhau. Dung trung binh cho khop \pdegFone.
+    floor = float(np.mean([r["quantum"]["f1_predict_all_attack"]
+                           for r in rows[0]["per_run"]]))
 
     fig, ax = plt.subplots(figsize=(TEXTW, 2.30))
 
     ax.axhline(floor, color=ORANGE, lw=1.3, ls=(0, (4, 2)), zorder=2)
-    ax.text(10.4, floor - 0.0016, "degenerate $F_1$", color=ORANGE,
+    ax.text(10.4, floor - 0.0016, "all-attack baseline (test)", color=ORANGE,
             fontsize=7, va="top", ha="left", zorder=6)
 
     s = KERNEL_STYLE["quantum"]
@@ -282,9 +287,12 @@ def fig2_k_sweep():
     ax.set_xticklabels([str(k) for k in ks])
     ax.minorticks_off()
     ax.set_xlabel("SelectKBest $K$")
-    ax.set_ylabel("Macro $F_1$, quantum kernel")
-    ax.set_title(f"At $C=1.0$: {sum(ndeg)}/{len(ks) * nrun} runs degenerate", loc="left")
-    ax.set_ylim(0.7765, 0.816)
+    # Ban nop ghi "Macro F1" -- SAI (R2, R4). c1_results.json luu F1 nhi
+    # phan tren tap test; duong san 0,7805 cung la F1 nhi phan cua bo doan
+    # hang. Macro F1 cua bo doan hang chi khoang 0,39.
+    ax.set_ylabel("binary $F_1$ (test), quantum")
+    ax.set_title(f"At $C=1.0$: {sum(ndeg)} of {len(ks) * nrun} runs degenerate", loc="left")
+    ax.set_ylim(0.7715, 0.816)  # du cho duong san trung binh 0,7760
     tidy(ax)
 
     save(fig, "fig2_k_sweep")
@@ -336,7 +344,7 @@ def fig3_objective_blindness():
                 ha="center", va="center", zorder=6)
 
     ax.plot(q.C, q.f1, color=ORANGE, ls="-", lw=2.0, marker="o", ms=3.6,
-            mew=0.5, mec=SURFACE, zorder=6, label="binary $F_1$ (used)")
+            mew=0.5, mec=SURFACE, zorder=6, label="binary $F_1$")
     ax.plot(q.C, q.f1m, color=BLUE, ls=(0, (4, 1.6)), lw=1.8, marker="s",
             ms=3.6, mew=0.5, mec=SURFACE, zorder=5,
             label="macro $F_1$")

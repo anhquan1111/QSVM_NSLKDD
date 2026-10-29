@@ -5,5 +5,15 @@
  "models_with_degeneracy": [
   "SVM_RBF"
  ],
- "qsvm_zz_min_recall_macro": 0.5406594673293252
+ "qsvm_zz_min_recall_macro": 0.5406594673293252,
+ "degenerate_n_train": [
+  100
+ ],
+ "degenerate_arms": [
+  "tuned_once"
+ ],
+ "degenerate_accuracy": [
+  0.5506
+ ],
+ "test_attack_ratio": null
 }

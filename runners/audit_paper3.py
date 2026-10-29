@@ -306,25 +306,97 @@ def audit_assets() -> None:
     check("anonymous.4open.science/r/" in body,
           "muc Reproducibility co link mirror an danh")
 
-    # CHOT AN TOAN. De xem ten tac gia, nguoi ta se lat \anonymousfalse roi
-    # compile. Quen lat lai truoc khi nop la nop mot PDF CO TEN vao mot hoi
-    # nghi phan bien hai chieu mu -- bi loai thang, khong can ly do khac.
-    # Day la loai loi khong ai doc lai ma thay, vi bai van dep.
+    # CHOT AN TOAN -- DOI VAI TRO 23-09-2026.
+    # Truoc day cong tac nay bat \anonymoustrue vi ta tuong hoi nghi phan
+    # bien hai chieu mu (CFP cua session ghi "anonymised PDF"). Nhung trang
+    # nop cua Confy+ noi ro: "This conference uses single-blind review model.
+    # The names and affiliations of authors will be shown to the Program
+    # Committee Members and Reviewers." Ban gui di la ban CO TEN.
     #
-    # DEN LUC CAMERA-READY: bai da duoc nhan, luc do lat \anonymousfalse la
-    # DUNG, va phai sua chinh phep kiem nay (doi thanh check nguoc lai).
+    # `main.tex` gio la ban lam viec, KHONG phai ban gui di:
+    # `scripts/build_goi_overleaf_p3.py` moi la thu dung goi -- no lat cong
+    # tac, dien link kho ma that, go chu thich, va tu kiem lay. Nen o day
+    # chi con kiem rang co che lat van nguyen ven de quay ve ban an danh
+    # duoc, neu chair xac nhan lai la mu doi that.
     src = read(PAPER / "main.tex")
     code = re.sub(r"(?<!" + BS + BS + r")%.*", "", src)
-    check(BS + "anonymoustrue" in code,
-          "con dat \\anonymoustrue -- ban nop PHAI an danh")
-    check(BS + "anonymousfalse" not in code,
-          "khong bat nham \\anonymousfalse (lo ten trong ban nop)")
+    check(BS + "newif" + BS + "ifanonymous" in code,
+          "main.tex con giu cong tac \\ifanonymous")
+    check((ROOT / "scripts" / "build_goi_overleaf_p3.py").exists(),
+          "co bo dung goi Overleaf ban co ten")
 
     census = pd.read_csv(ROOT / "results/unsw/paper3/degeneracy_census.csv")
     tex = read(PAPER / "tables" / "degeneracy_census.tex")
     n_rows = tex.count(r"\\") - 1  # tru dong tieu de
     check(n_rows == len(census),
           f"bang co {n_rows} dong du lieu, CSV co {len(census)}")
+
+
+# --------------------------------------------------------------------------
+# D. Ban camera-ready: cac phep do theo y phan bien
+# --------------------------------------------------------------------------
+def audit_camera_ready(m: dict[str, str]) -> None:
+    """Doi chieu macro moi voi artifact, tinh lai doc lap tu CSV tho."""
+    out = ROOT / "results/unsw/paper3"
+    gates = load("results/unsw/paper3/p3cr_gates.json")
+    check(gates["passed"] and gates["sampler_reproduces_n100"],
+          "cong kiem chung camera-ready: bo lay mau tai lap dung run N=100")
+    check(gates["quantum_gram_max_abs_dev"] < 1e-9,
+          "cong kiem chung camera-ready: Gram luong tu khop cache")
+
+    d = pd.read_csv(out / "p3cr_selection.csv")
+    base = d[(d.class_weight == "none") & (d.objective == "f1_binary")
+             & (d.rule == "first") & (d.grid == "original")]
+
+    def ndeg(n, k, **kw):
+        q = d[(d.n == n) & (d.kernel == k) & (d.grid == "original")]
+        sel = dict(class_weight="none", objective="f1_binary", rule="first")
+        sel.update(kw)
+        for col, v in sel.items():
+            q = q[q[col] == v]
+        check(len(q) == 5, f"p3cr co du 5 run cho {n}/{k}/{kw}")
+        return int(q.test_degenerate.sum())
+
+    check(m["prQHundred"] == str(ndeg(100, "quantum")), "prQHundred")
+    check(all(m["prLinHundred"] == str(ndeg(100, k))
+              for k in ("linear", "poly", "rbf")), "prLinHundred = moi kernel co dien")
+    check(m["prMaxFiveHundred"] == "0"
+          and all(ndeg(500, k) == 0 for k in ("quantum", "linear", "poly", "rbf")),
+          "N=500: argmax khong con run nao sup")
+    check(m["prOneSeLinFive"] == str(ndeg(500, "linear", rule="1se")), "prOneSeLinFive")
+    check(m["prOneSePolyFive"] == str(ndeg(500, "poly", rule="1se")), "prOneSePolyFive")
+    check(m["prBalQFive"] == str(ndeg(500, "quantum", class_weight="balanced")),
+          "prBalQFive")
+    # "every objective that reads the negative class avoided collapse"
+    reads_neg = d[d.objective.isin(["f1_macro", "mcc", "f1_normal"])
+                  & (d.rule == "first") & (d.class_weight == "none")]
+    check(int(reads_neg.test_degenerate.sum()) == 0,
+          "macro F1 / MCC / F1-normal khong sup lan nao")
+    # "Breaking ties towards the larger C instead changed no count"
+    for (n, k, g), q in d[(d.class_weight == "none")
+                          & (d.objective == "f1_binary")].groupby(
+                              ["n", "kernel", "grid"]):
+        a = int(q[q.rule == "first"].test_degenerate.sum())
+        b = int(q[q.rule == "last"].test_degenerate.sum())
+        check(a == b, f"pha hoa ve C lon khong doi so dem ({n}/{k}/{g})")
+    # "genuine models now clear it by more than the fold standard deviation"
+    n5 = base[base.n == 500]
+    check(bool(((n5.cv_mean - n5.cv_constant_baseline) > 0).all()),
+          "N=500: moi C duoc chon vuot baseline")
+
+    cur = pd.read_csv(out / "p3_c_curve.csv")
+    check(m["curveTnZeroFnPos"] == "0"
+          and int(((cur.tn == 0) & (cur.fn > 0)).sum()) == 0,
+          "TN=0 va FN>0 khong xay ra lan nao (dinh nghia R1 trung khop)")
+    check(bool((cur.degenerate == ((cur.tn == 0) & (cur.fn == 0))).all()),
+          "cot degenerate = (TN=0 va FN=0) tren moi dong")
+
+    tune = load("results/unsw/c_tuning_results.json")
+    q = {r["C"]: r for r in tune["quantum"]["scores_per_C"]}
+    gap = q[0.01]["mean"] - max(r["mean"] for c, r in q.items() if c > 0.1)
+    check(m["floorGap"] == f"{gap:.4f}", "floorGap")
+    check(gap < q[0.01]["std"], "khoang cach toi san nho hon do lech theo fold")
+    check((PAPER / "tables" / "remedies_table.tex").exists(), "co tables/remedies_table.tex")
 
 
 def main() -> int:
@@ -336,6 +408,7 @@ def main() -> int:
     audit_prose_numbers(tex)
     audit_invariants()
     audit_assets()
+    audit_camera_ready(macros)
 
     # TU KIEM: moi ham audit_* phai duoc goi. O audit_p2_rebuild.py da xay ra
     # chuyen ba ham nam trong file ma khong he duoc goi, va audit van bao

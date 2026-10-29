@@ -42,6 +42,16 @@ PRETTY = {
     "RandomForest": "Random forest", "XGBoost": "XGBoost",
 }
 
+# C ma nhanh `tuned_once` cua giao thuc revision dung o moi N: tune MOT lan
+# tren tap tuning 2000 mau, macro F1, quy tac 1-SE (runners/run_c4.py).
+REV_TUNED_ONCE_PATH = "results/unsw/c4_revision/cache/tuned_once_UNSW_NB15.json"
+REV_TUNED_ONCE = {
+    k: v.get("C", v.get("svc__C"))
+    for k, v in json.load(io.open(ROOT / REV_TUNED_ONCE_PATH,
+                                  encoding="utf-8")).items()
+    if isinstance(v, dict) and ("C" in v or "svc__C" in v)
+}
+
 # Ten giao thuc nhu muc 2 cua bai dat, khong phai ten arm trong code.
 PRETTY_PROTO = {
     "legacy-tuned": "tuned",
@@ -104,15 +114,22 @@ def census_revision() -> list[dict]:
     """
     df = pd.read_csv(ROOT / "results/unsw/c4_revision/c4_per_run_unsw_natural_refit_per_N.csv")
     df = df[df.test_split == "full_test"]
-    deg = df[df.recall_macro.round(10) == 0.5]
+    # Phan bien R1: macro recall = 0,5 chua chung minh du doan hang (mo hinh
+    # doan bua cung cho 0,5). Them dieu kien: precision macro = accuracy / 2,
+    # chi xay ra khi lop kia khong duoc du doan lan nao.
+    const = ((df.recall_macro.round(10) == 0.5)
+             & ((df.precision_macro - df.accuracy / 2).abs() < 1e-9))
+    df = df.assign(_const=const)
+    deg = df[df._const]
     rows = []
     for (model, arm, n_train), g in df.groupby(["model", "arm", "n_train"]):
-        d = len(g[g.recall_macro.round(10) == 0.5])
+        d = int(g._const.sum())
         if d == 0:
             continue
         rows.append(dict(
             protocol=f"revision-{arm}", n_qubits=6, n_train=int(n_train),
-            n_runs=len(g), model=model, selected_C=None, n_degenerate=d,
+            n_runs=len(g), model=model, selected_C=REV_TUNED_ONCE[model],
+            n_degenerate=d,
             recall=round(g.recall_macro.mean(), 4), recall_std=None,
             precision=None,
         ))
@@ -123,6 +140,11 @@ def census_revision() -> list[dict]:
         "n_degenerate_rows": len(deg),
         "models_with_degeneracy": sorted(deg.model.unique().tolist()),
         "qsvm_zz_min_recall_macro": float(df[df.model == "QSVM_ZZ"].recall_macro.min()),
+        "degenerate_n_train": sorted(deg.n_train.unique().astype(int).tolist()),
+        "degenerate_arms": sorted(deg.arm.unique().tolist()),
+        # Ty le tan cong cua tap test day du = accuracy cua bo doan hang.
+        "degenerate_accuracy": sorted(deg.accuracy.round(4).unique().tolist()),
+        "test_attack_ratio": None,
     }
     return rows, totals
 
@@ -133,13 +155,12 @@ def to_latex(df: pd.DataFrame) -> str:
         r"\begin{table}[t]",
         r"\centering",
         r"\caption{Degeneracy census. A model is degenerate on a run when it",
-        r"assigns every test record to the attack class ($\mathrm{TN}=0$).",
-        r"Collapse is not specific to the quantum kernel: under the tuned",
-        r"protocol it occurs for three of the four kernels, under the revision",
-        r"protocol only for an RBF kernel, and under a neutral $C$ for none.",
-        r"What is specific to the quantum kernel is that it collapsed on",
-        r"\emph{every} run, so no value of $C$ on the grid scored above the",
-        r"degenerate floor and $\arg\max$ selection locked the collapse in.}",
+        r"predicts the attack class for every test record, i.e.\ $\mathrm{TN}",
+        r"= \mathrm{FN} = 0$, checked directly on the predictions. Tuned rows",
+        r"use the $C$ selected once on the training split of run~1. The",
+        r"revision row is the RBF kernel at $N_{\text{train}} = 100$ with the",
+        r"$C$ tuned once on a separate set; no other model, size or arm of",
+        r"that protocol is degenerate.}",
         r"\label{tab:degeneracy}",
         # Ba cot so can phai, ma tieu de lai rong hon so ben duoi, nen khong
         # chen khoang thi tieu de dinh vao nhau: "Selected C Degenerate Runs"
@@ -159,6 +180,8 @@ def to_latex(df: pd.DataFrame) -> str:
         # va "legacy-neutral" thi khong duoc dinh nghia o dau ca.
         if proto != prev and proto in PRETTY_PROTO:
             shown = PRETTY_PROTO[proto]
+            if proto.startswith("revision"):
+                shown += f", $N={int(r['n_train'])}$"
         elif proto != prev:
             shown = proto.replace("_", r"\_")
         else:
@@ -277,16 +300,14 @@ def objective_table() -> tuple[str, pd.DataFrame]:
         "% Sinh boi runners/make_paper3_tables.py -- dung sua tay.",
         r"\begin{table}[t]",
         r"\centering",
-        r"\caption{What selection returns on a denser grid, under three",
-        r"objectives. The grid is the same for every row; only the quantity",
-        r"$\arg\max$ maximises changes. \emph{Degenerate} counts the runs on",
-        r"which the selected model assigns every test record to the attack",
-        r"class. Two things follow. A class-averaged objective is not",
-        r"sufficient: for the linear kernel all three objectives return the",
-        r"same $C$ and that $C$ is still degenerate on one run. And the",
-        r"original grid, not only the objective, was part of the failure:",
-        r"on this grid even binary $F_1$ finds a non-degenerate maximum for",
-        r"the quantum kernel.}",
+        r"\caption{What selection returns on a denser grid under three",
+        r"objectives, with $C$ selected once on run~1 and applied to all five",
+        r"runs, as in the tuned protocol. CV score is the mean of the five",
+        r"per-fold scores. \emph{Degen.} counts the runs on which the selected",
+        r"model predicts the attack class for every test record. On this grid",
+        r"even binary $F_1$ finds a non-degenerate $C$ for the quantum kernel,",
+        r"while for the linear kernel every objective returns a $C$ that is",
+        r"degenerate on one run.}",
         r"\label{tab:objective}",
         r"\begin{tabular}{l@{\hskip 1.0em}l@{\hskip 1.4em}r@{\hskip 1.4em}"
         r"r@{\hskip 1.4em}r@{\hskip 1.4em}r}",
@@ -355,6 +376,147 @@ def objective_macros(o: pd.DataFrame) -> dict:
     return m
 
 
+# --------------------------------------------------------------------------
+# Ban camera-ready: cac phep do theo y phan bien (run_paper3_camera_ready.py)
+# --------------------------------------------------------------------------
+CR_ROWS = [
+    # (nhan trong bang, class_weight, objective, rule)
+    (r"binary $F_1$, $\arg\max$", "none", "f1_binary", "first"),
+    (r"binary $F_1$, one-SE rule", "none", "f1_binary", "1se"),
+    (r"binary $F_1$, balanced class weights", "balanced", "f1_binary", "first"),
+    (r"binary $F_1$, normal class positive", "none", "f1_normal", "first"),
+    (r"macro $F_1$, $\arg\max$", "none", "f1_macro", "first"),
+    (r"MCC, $\arg\max$", "none", "mcc", "first"),
+]
+CR_KERNELS = ["quantum", "linear", "poly", "rbf"]
+
+
+def cr_table() -> tuple[str, pd.DataFrame]:
+    """Bang 3 -- chon C RIENG trong tung run, o N = 100 va N = 500.
+
+    Tra loi R1.3 (chon theo tung run), R4.1 (quy mo lon hon), R4.3 (lop duong
+    la lop thieu so) va R4.4 (trong so lop, MCC, quy tac 1-SE). Luoi C goc.
+    """
+    d = pd.read_csv(CSV_OUT / "p3cr_selection.csv")
+    d = d[d.grid == "original"]
+    sizes = sorted(d.n.unique())
+    lines = [
+        "% Sinh boi runners/make_paper3_tables.py -- dung sua tay.",
+        r"\begin{table}[t]",
+        r"\centering",
+        r"\caption{Degenerate runs (of five) when $C$ is selected separately",
+        r"on each run's own training split, on the original grid. Q, L, P, R",
+        r"are the quantum, linear, degree-two polynomial and RBF kernels. At",
+        r"$N = 500$ the $\arg\max$ trap disappears, while the one-SE rule and",
+        r"class weighting can still return a constant classifier.}",
+        r"\label{tab:remedies}",
+        r"\setlength{\tabcolsep}{3.2pt}",
+        r"\begin{tabular}{l" + "cccc" * len(sizes) + "}",
+        r"\toprule",
+        " & " + " & ".join(
+            rf"\multicolumn{{4}}{{c}}{{$N_{{\text{{train}}}} = N_{{\text{{test}}}} = {n}$}}"
+            for n in sizes) + r" \\",
+        "".join(rf"\cmidrule(lr){{{2 + 4 * i}-{5 + 4 * i}}}"
+                for i in range(len(sizes))),
+        "Selection & " + " & ".join(["Q & L & P & R"] * len(sizes)) + r" \\",
+        r"\midrule",
+    ]
+    for label, cw, obj, rule in CR_ROWS:
+        cells = []
+        for n in sizes:
+            for k in CR_KERNELS:
+                q = d[(d.n == n) & (d.kernel == k) & (d.class_weight == cw)
+                      & (d.objective == obj) & (d.rule == rule)]
+                assert len(q) == 5, (n, k, cw, obj, rule, len(q))
+                cells.append(str(int(q.test_degenerate.sum())))
+        lines.append(label + " & " + " & ".join(cells) + r" \\")
+    lines += [r"\bottomrule", r"\end{tabular}", r"\end{table}", ""]
+    return "\n".join(lines), d
+
+
+def cr_macros() -> dict:
+    """Moi con so moi cua ban camera-ready di qua day."""
+    d = pd.read_csv(CSV_OUT / "p3cr_selection.csv")
+    sc = pd.read_csv(CSV_OUT / "p3cr_kernel_scale.csv")
+    gates = json.load(io.open(CSV_OUT / "p3cr_gates.json", encoding="utf-8"))
+    cur = pd.read_csv(CSV_OUT / "p3_c_curve.csv")
+    tune = load("results/unsw/c_tuning_results.json")
+    c4m = load("results/unsw/c4_results_C1.json")["metadata"]
+    assert gates["passed"], "cong kiem chung cua run_paper3_camera_ready truot"
+
+    def deg(n, k, cw="none", obj="f1_binary", rule="first", grid="original"):
+        q = d[(d.n == n) & (d.kernel == k) & (d.class_weight == cw)
+              & (d.objective == obj) & (d.rule == rule) & (d.grid == grid)]
+        return int(q.test_degenerate.sum())
+
+    qrows = {r["C"]: r for r in tune["quantum"]["scores_per_C"]}
+    floor_std = qrows[0.01]["std"]
+    best_nd = max((r for r in tune["quantum"]["scores_per_C"] if r["C"] > 0.1),
+                  key=lambda r: r["mean"])
+    sel = d[(d.class_weight == "none") & (d.objective == "f1_binary")
+            & (d.rule == "first") & (d.grid == "original")]
+    n500 = sel[sel.n == 500]
+    # Bien sup cua tung kernel tren duong cong C day: C lon nhat ma MOI run
+    # deu sup.
+    g = cur.groupby(["kernel", "C"]).degenerate.sum().reset_index()
+    nrun = int(cur.run.nunique())
+    edge = {k: float(g[(g.kernel == k) & (g.degenerate == nrun)].C.max())
+            for k in CR_KERNELS}
+    spread = sc[sc.n == 100].groupby("kernel").offdiag_std.mean()
+    # Cau van dua vao hai dang thuc nay: "\pprLinHundred{} for each classical
+    # kernel" va "\pedgeRbf{} for both the RBF and the quantum kernel".
+    assert deg(100, "linear") == deg(100, "poly") == deg(100, "rbf")
+    assert edge["quantum"] == edge["rbf"]
+    # "the order follows the spread": bien sup tang khi do phan tan giam.
+    order_edge = sorted(CR_KERNELS, key=lambda k: edge[k])
+    order_spread = sorted(CR_KERNELS, key=lambda k: -spread[k])
+    assert [k for k in order_edge if k != "quantum"] == [
+        k for k in order_spread if k != "quantum"]
+    assert spread["quantum"] == spread.min()
+    m = {
+        # Dinh nghia suy bien da kiem lai (R1.1)
+        "curveEvals": str(len(cur)),
+        "curveTnZeroFnPos": str(int(((cur.tn == 0) & (cur.fn > 0)).sum())),
+        # Do lech theo fold (R4.1)
+        "floorFoldStd": f"{floor_std:.3f}",
+        "bestNonDegFoldStd": f"{best_nd['std']:.3f}",
+        "floorGap": f"{tune['quantum']['scores_per_C'][0]['mean'] - best_nd['mean']:.4f}",
+        # Thiet lap (R4 minor)
+        "kSelect": "35",
+        "trainAttackRatio": f"{sc[sc.n == 100].train_attack_ratio.mean():.2f}",
+        "testAttackRatio": f"{sc[sc.n == 100].test_attack_ratio.mean():.3f}",
+        "nFiveHundredTrainRatio": f"{sc[sc.n == 500].train_attack_ratio.mean():.2f}",
+        "perturbSigmas": ", ".join(f"{x:g}" for x in c4m["perturbation_sigmas"]),
+        # Chon theo tung run (R1.3) va quy mo lon hon (R4.1, R4.5)
+        "prQHundred": str(deg(100, "quantum")),
+        "prLinHundred": str(deg(100, "linear")),
+        "prMaxFiveHundred": str(max(deg(500, k) for k in CR_KERNELS)),
+        "prOneSeLinFive": str(deg(500, "linear", rule="1se")),
+        "prOneSePolyFive": str(deg(500, "poly", rule="1se")),
+        "prBalQFive": str(deg(500, "quantum", cw="balanced")),
+        "nFiveBaseline": f"{n500.cv_constant_baseline.mean():.3f}",
+        "nFiveFoldStdMax": f"{n500.cv_std.max():.3f}",
+        "macroHundredLo": f"{sel[sel.n == 100].groupby('kernel').test_f1_macro.mean().min():.2f}",
+        "macroHundredHi": f"{sel[sel.n == 100].groupby('kernel').test_f1_macro.mean().max():.2f}",
+        "macroFiveLo": f"{n500.groupby('kernel').test_f1_macro.mean().min():.2f}",
+        "macroFiveHi": f"{n500.groupby('kernel').test_f1_macro.mean().max():.2f}",
+        # Thang do Gram va bien sup (R4.2)
+        "edgeQ": f"{edge['quantum']:.2g}",
+        "edgeRbf": f"{edge['rbf']:.2g}",
+        "edgeLin": f"{edge['linear']:.2g}",
+        "edgePoly": f"{edge['poly']:.2g}",
+        "spreadQ": f"{spread['quantum']:.2f}",
+        "spreadRbf": f"{spread['rbf']:.2f}",
+        "spreadLin": f"{spread['linear']:.1f}",
+        "spreadPoly": f"{spread['poly']:.1f}",
+        # Vi sao RBF sup o giao thuc revision (R4.6)
+        "revRbfC": f"{REV_TUNED_ONCE['SVM_RBF']:g}",
+        "revTuneN": "2\\,000",
+        "nLarge": str(int(d.n.max())),
+    }
+    return m
+
+
 def main() -> int:
     rev_rows, totals = census_revision()
     rows = census_legacy_tuned() + census_legacy_neutral() + rev_rows
@@ -374,9 +536,15 @@ def main() -> int:
     with io.open(obj_path, "w", encoding="utf-8") as f:
         f.write(obj_tex)
 
+    cr_tex, _ = cr_table()
+    cr_path = TEX_OUT / "remedies_table.tex"
+    with io.open(cr_path, "w", encoding="utf-8") as f:
+        f.write(cr_tex)
+
     mac_path = TEX_OUT / "numbers_macros.tex"
     with io.open(mac_path, "w", encoding="utf-8") as f:
-        f.write(write_macros(df, totals, objective_macros(obj_df)))
+        f.write(write_macros(df, totals,
+                             {**objective_macros(obj_df), **cr_macros()}))
 
     print(df.to_string(index=False))
     print()
