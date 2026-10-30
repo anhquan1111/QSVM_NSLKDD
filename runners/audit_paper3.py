@@ -372,6 +372,18 @@ def audit_camera_ready(m: dict[str, str]) -> None:
                   & (d.rule == "first") & (d.class_weight == "none")]
     check(int(reads_neg.test_degenerate.sum()) == 0,
           "macro F1 / MCC / F1-normal khong sup lan nao")
+    # Tom tat: "Macro F1, MCC and a minority-positive F1 avoided collapse
+    # whenever C was selected on the run it was applied to" -- moi luoi, moi
+    # quy tac, moi trong so lop.
+    three = d[d.objective.isin(["f1_macro", "mcc", "f1_normal"])]
+    check(int(three.test_degenerate.sum()) == 0,
+          "macro F1 / MCC / F1-normal khong sup o BAT KY cau hinh chon tung run nao")
+    # "...but no objective did so when C was transferred from another run":
+    # bang 2, kernel tuyen tinh, ca ba ham muc tieu deu sup it nhat mot run.
+    obj = pd.read_csv(out / "p3_objective.csv")
+    lin = obj[obj.kernel == "linear"]
+    check(len(lin) == 3 and bool((lin.n_degenerate > 0).all()),
+          "bang 2: kernel tuyen tinh sup duoi CA BA ham muc tieu khi chuyen C")
     # "Breaking ties towards the larger C instead changed no count"
     for (n, k, g), q in d[(d.class_weight == "none")
                           & (d.objective == "f1_binary")].groupby(

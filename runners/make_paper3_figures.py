@@ -185,7 +185,7 @@ def fig1_tuning_trap():
     # Phan bien R2/R4: bai tron ba loai F1. Truc nay la F1 NHI PHAN (lop
     # tan cong la duong), trung binh tren 5 fold CV cua tap train run 1.
     ax.set_ylabel("binary $F_1$, 5-fold CV")
-    ax.set_title("(a)  Selection cannot escape the floor", loc="left")
+    ax.set_title("(a)  Nothing clearly above the baseline", loc="left")
     ax.set_ylim(0.740, 0.906)
     tidy(ax)
     # Goc duoi-phai: duong luong tu cam xuong 0,749 tai C=100 nen goc

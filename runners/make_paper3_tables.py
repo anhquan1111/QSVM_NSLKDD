@@ -405,7 +405,8 @@ def cr_table() -> tuple[str, pd.DataFrame]:
         r"\begin{table}[t]",
         r"\centering",
         r"\caption{Degenerate runs (of five) when $C$ is selected separately",
-        r"on each run's own training split, on the original grid. Q, L, P, R",
+        r"on each run's own training split, on the original grid, with",
+        r"$N = N_{\text{train}} = N_{\text{test}}$. Q, L, P, R",
         r"are the quantum, linear, degree-two polynomial and RBF kernels. At",
         r"$N = 500$ the $\arg\max$ trap disappears, while the one-SE rule and",
         r"class weighting can still return a constant classifier.}",
@@ -414,7 +415,9 @@ def cr_table() -> tuple[str, pd.DataFrame]:
         r"\begin{tabular}{l" + "cccc" * len(sizes) + "}",
         r"\toprule",
         " & " + " & ".join(
-            rf"\multicolumn{{4}}{{c}}{{$N_{{\text{{train}}}} = N_{{\text{{test}}}} = {n}$}}"
+            # Tieu de ngan: "N_train = N_test = 100" rong hon bon cot so ben
+            # duoi, lam bang tran le textwidth 4,8 inch cua llncs.
+            rf"\multicolumn{{4}}{{c}}{{$N = {n}$}}"
             for n in sizes) + r" \\",
         "".join(rf"\cmidrule(lr){{{2 + 4 * i}-{5 + 4 * i}}}"
                 for i in range(len(sizes))),
