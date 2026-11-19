@@ -4,10 +4,10 @@ Kế hoạch: `docs/PAPER1_KE_HOACH_QMI.md`. Cập nhật 19-11-2026.
 
 | Việc | Trạng thái |
 |---|---|
-| 1.1 Bỏ dòng test trùng train | Đang dựng script (chưa chạy) |
+| 1.1 Bỏ dòng test trùng train | Script xong; đang chạy đủ (19-11 từ 15:25) |
 | 1.2 Bỏ "exponential", không nói nhân quả | Xong danh sách câu + máy kiểm |
 | 1.3 Bỏ "parity" | Xong danh sách câu + máy kiểm |
-| 1.4 Mâu thuẫn enrichment / 7 trên 10 | Chờ thư từ chối nguyên văn |
+| 1.4 Mâu thuẫn enrichment / 7 trên 10 | Tự soi xong 4 chỗ (dưới); chờ thư R3 để đối chiếu |
 | 1.5 Nhiễu 10 run | Xong: `runners/verify_noise10.py` chạy lại 40/40, mã thoát 0 |
 | 1.6 Đối chiếu Cirillo 2026 | Xong bảng (dưới) |
 
@@ -45,6 +45,33 @@ Số thật (cột tham chiếu XGBoost đủ 122 đặc trưng, `tables/ref_arm
 Cách nói mới: "không khác biệt có ý nghĩa (Δ = …, CI 95 % […]); thiết kế này không đủ để kết
 luận hai bên ngang nhau." Áp ở: tóm tắt `document.tex:60–65`, `01_introduction.tex:59–67`,
 `05_results.tex:211`, `06_regimemap.tex:50`, `08_conclusion.tex:20–24`.
+
+## 1.4 Mâu thuẫn (tự soi, chưa đối chiếu thư R3 nguyên văn)
+
+**(a) "10/10" so với "7/10": lỗi thật, đã kiểm bằng số.** `results/unsw/c4_revision/u1_nstar_robustness.csv`:
+n* = 6 ở 10/10 tập con khi ε = 0,02 và 0,05; khi ε = 0,1 chỉ 7/10 (3/10 ra n* = 5). Nhưng
+`01_introduction.tex:72–74` ghi gọn "recovered on 10/10 independent subsets", và `03b_theory.tex:143–145`
+còn thêm "and under every threshold perturbation we tested", **sai** với chính `05_results.tex:253–254`.
+Cách sửa: mọi chỗ ghi đủ "10/10 với ε ≤ 0,05, 7/10 với ε = 0,1". Máy kiểm: luật "10/10 không kèm 7/10"
+trong `audit_wording_r3.py` (đang bắt 2 chỗ).
+
+**(b) Nhánh tăng mẫu tấn công hiếm: nói "dẫn" khi chưa có ý nghĩa thống kê.** `05_results.tex:186–196`:
+nhánh tăng mẫu để 26/30 ô "không kết luận", nhưng câu sau lại viết "the tree ensembles lead under both
+priors" (chỉ là dấu của hiệu, không phải kết luận). Tóm tắt và `01_introduction.tex:67–70` lặp lại "lead".
+Cách sửa: "hiệu mang dấu âm ở cả 5 cỡ N; k/5 đạt ý nghĩa sau hiệu chỉnh" (điền k từ CSV).
+
+**(c) "Tấn công hiếm" hai nghĩa dễ đọc thành ngược nhau.** `05_results.tex:~232`: ở N = 10⁴ phân phối
+tự nhiên, QSVM "far better on rare attacks than either tree ensemble" (F1 lớp hiếm 0,507 so với 0,33),
+trong khi nhánh tăng mẫu tấn công hiếm thì cây dẫn (F1 macro, N ≤ 2000). Hai câu đo hai thứ khác nhau
+(F1 lớp hiếm ở N lớn, F1 macro ở N nhỏ). Cách sửa: nói rõ chỉ số và cỡ N ở cả hai chỗ, một câu nối hai
+kết quả.
+
+**(d) Bản đồ 110 ô gộp hai protocol.** 68/110 ô (kể cả hai hiệu ứng lớn nhất, ô C3 cân bằng 50/50) từ
+nhánh tăng mẫu, trong khi bài nói nhánh này "không quyết được" về đảo chiều. Bài đã tách đếm (42 ô tự
+nhiên: 11/9/22) nhưng tóm tắt vẫn đưa tổng 21/21/68 lên trước. Cách sửa ở GĐ 2: tóm tắt đưa khối tự
+nhiên lên trước, tổng 110 ô để sau.
+
+Khi có thư R3 nguyên văn: đối chiếu xem R3 chỉ đúng (a)–(d) hay còn chỗ khác.
 
 ## 1.6 Đối chiếu Cirillo, Esposito, Seo 2026
 

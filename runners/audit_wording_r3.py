@@ -59,6 +59,10 @@ RULES: list[tuple[str, callable]] = [
     ("nhan qua: concentration -> ket qua", causal_concentration),
     ("parity / on par / tied",
      lambda s: re.search(r"\bparity\b(?!\s+functions?)|\bon par\b|\btied\b", s, re.I)),
+    # u1_nstar_robustness.csv: n*=6 o 10/10 khi eps<=0.05, chi 7/10 khi eps=0.1
+    # (3/10 ra n*=5). Noi "10/10" ma khong kem 7/10 la noi qua (R3).
+    ("10/10 khong kem 7/10 (on dinh cua n*)",
+     lambda s: "10/10" in s and "7/10" not in s),
     ("nhac phan bien / ban da nop",
      lambda s: re.search(r"\\revnote|\\begin\{revbody\}|\breviewers?\b"
                          r"|submitted version|\bwe withdraw\b", s, re.I)),
