@@ -104,6 +104,8 @@ từ trang hướng dẫn tác giả của Springer), hình dùng lại từ `pa
    chiếu Cirillo 2026) → giới hạn → kết luận → tóm tắt (viết cuối, khi số đã chốt).
 3. Mỗi mục xong thì chạy hai máy kiểm: `audit_wording_r3.py paper/paper1_qmi` (chữ) và kiểm số đối chiếu
    CSV; bảng số sinh bằng script, không gõ tay.
+   Thêm soát giọng văn theo skill Humanizer (`~/projects/channel_3_asian_explained/.claude/skills/humanizer/SKILL.md`,
+   26 dấu hiệu văn AI; chủ nhân 20-11): mỗi mục ghi các dấu hiệu đã sửa. Không có máy chấm điểm, Claude tự soát.
 4. Đọc lại toàn bài một lượt như người phản biện mới (không biết bản cũ).
 
 **Đạt khi:**
