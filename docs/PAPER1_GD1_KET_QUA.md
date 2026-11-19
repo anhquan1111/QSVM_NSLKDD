@@ -38,6 +38,15 @@ thuyết: lưới N khác (thử 52 lưới con) và seed của run khác (thử
 accuracy 0,741661, không cách dựng nào ra số này. Chưa rõ nguyên nhân. Đang chạy nốt các file còn lại ở
 chế độ chẩn đoán (`--diagnose`) để biết còn file nào lệch.
 
+**Cách xử lý file không tái hiện (chốt 19-11, chủ nhân giao Claude chọn).**
+- *Số chính:* "trước" và "sau" đều lấy từ lần chạy lại (cột `rerun_*` ↔ `after_*`, chạy với
+  `--include-failed`). Câu hỏi của 1.1 là bỏ trùng có đổi kết luận không; hai số cùng một lần chạy nên
+  phép so vẫn sạch, dù tập train của file đó khác cache gốc. Bài ghi rõ: "2 trong 260 lần huấn luyện
+  không dựng lại được đúng tập train gốc; chúng tôi dùng tập dựng lại cho cả hai phía".
+- *Kiểm phụ:* bỏ hẳn run 2 ở N = 10⁴ (`--allow-partial`, ô đó còn 9 run). Hai cách cùng kết luận thì
+  việc lệch cache không ảnh hưởng; khác nhau thì ghi cả hai.
+- Bảng "trước" của bài (cache gốc) không đổi: phân tích đã khớp 168/168 + 120/120 ô với bảng lưu.
+
 **Số trùng trong bài sai định nghĩa.** `07_limitations.tex:122–123` ghi NSL-KDD "610 test rows identical …
 in both features and label (617 match on features alone)". Đếm lại trên `KDDTrain+.txt` / `KDDTest+.txt`:
 trùng 41 đặc trưng = **664**; trùng đặc trưng + nhãn tấn công = 610; trùng đặc trưng + nhãn nhị phân = 617.
