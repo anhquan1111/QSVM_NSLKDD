@@ -1,0 +1,13 @@
+dataset,regime,repr_mode,arm,test_split,in_regime_map_110,n_cells,n_complete,n_changed_before_to_after,n_changed_rerun_to_after,n_changed_before_to_rerun,before_Q,before_C,before_I,rerun_Q,rerun_C,rerun_I,after_Q,after_C,after_I,rerunQ_to_afterQ,rerunQ_to_afterC,rerunQ_to_afterI,rerunC_to_afterQ,rerunC_to_afterC,rerunC_to_afterI,rerunI_to_afterQ,rerunI_to_afterC,rerunI_to_afterI
+NSL-KDD,matched,frozen_c1,frozen_c2,fixed_300,False,6,6,1,1,0,1,0,5,1,0,5,0,0,6,0,0,1,0,0,0,0,0,5
+NSL-KDD,matched,frozen_c1,frozen_c2,full_test,False,6,6,0,0,0,1,0,5,1,0,5,1,0,5,1,0,0,0,0,0,0,0,5
+NSL-KDD,matched,frozen_c1,tuned_per_N,fixed_300,False,6,6,1,1,0,1,0,5,1,0,5,0,0,6,0,0,1,0,0,0,0,0,5
+NSL-KDD,matched,frozen_c1,tuned_per_N,full_test,False,6,6,0,0,0,1,0,5,1,0,5,1,0,5,1,0,0,0,0,0,0,0,5
+NSL-KDD,matched,refit_per_N,frozen_c2,fixed_300,False,30,30,1,1,0,2,8,20,2,8,20,2,9,19,2,0,0,0,8,0,0,1,19
+NSL-KDD,matched,refit_per_N,frozen_c2,full_test,False,30,30,2,2,0,3,3,24,3,3,24,2,4,24,2,0,1,0,3,0,0,1,23
+NSL-KDD,matched,refit_per_N,tuned_per_N,fixed_300,False,30,30,1,1,0,3,3,24,3,3,24,2,3,25,2,0,1,0,3,0,0,0,24
+NSL-KDD,matched,refit_per_N,tuned_per_N,full_test,True,30,30,1,1,0,2,2,26,2,2,26,2,3,25,2,0,0,0,2,0,0,1,25
+NSL-KDD,natural,refit_per_N,frozen_c2,fixed_300,False,42,24,3,3,0,7,0,17,7,0,17,7,3,14,7,0,0,0,0,0,0,3,14
+NSL-KDD,natural,refit_per_N,frozen_c2,full_test,False,42,24,3,4,1,8,3,13,8,2,14,7,3,14,7,0,1,0,1,1,0,2,12
+NSL-KDD,natural,refit_per_N,tuned_per_N,fixed_300,False,42,24,0,0,0,2,5,17,2,5,17,2,5,17,2,0,0,0,5,0,0,0,17
+NSL-KDD,natural,refit_per_N,tuned_per_N,full_test,True,42,24,0,0,0,2,7,15,2,7,15,2,7,15,2,0,0,0,7,0,0,0,15

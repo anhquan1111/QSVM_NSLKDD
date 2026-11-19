@@ -1,0 +1,15 @@
+{
+ "dataset": "unsw",
+ "definition": "dong test co bo dac trung tho y het mot dong bat ky cua TOAN BO raw train",
+ "features": "34 cot (moi cot tru id/label/attack_cat)",
+ "raw_train": "data/unsw/raw/UNSW_NB15_training-set.parquet",
+ "raw_test": "data/unsw/raw/UNSW_NB15_testing-set.parquet",
+ "raw_train_sha256": "f6989e65032e75770f37a5fa64d1d556effd6ac6240c99b0ab4df73b490c1918",
+ "raw_test_sha256": "a0270aeb2219aaa686551cdf6d4f94c4478b69f819225176149606cd1492d5e1",
+ "n_train_raw": 175341,
+ "n_test_raw": 82332,
+ "n_test_duplicate": 20851,
+ "frac_test_duplicate": 0.2532551134431327,
+ "fixed_300_source": "stratified seed 777 tu test day du",
+ "n_fixed_300_duplicate": 75
+}

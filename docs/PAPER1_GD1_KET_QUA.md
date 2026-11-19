@@ -4,7 +4,7 @@ Kế hoạch: `docs/PAPER1_KE_HOACH_QMI.md`. Cập nhật 19-11-2026.
 
 | Việc | Trạng thái |
 |---|---|
-| 1.1 Bỏ dòng test trùng train | UNSW xong (2/36 ô đổi, không đổi chiều); NSL-KDD vướng run 2 N = 10⁴ không tái hiện, đang chạy chẩn đoán |
+| 1.1 Bỏ dòng test trùng train | Xong: không ô nào đổi chiều; NSL-KDD 1/72 ô C4 đổi, UNSW 2/36 |
 | 1.2 Bỏ "exponential", không nói nhân quả | Xong danh sách câu + máy kiểm |
 | 1.3 Bỏ "parity" | Xong danh sách câu + máy kiểm |
 | 1.4 Mâu thuẫn enrichment / 7 trên 10 | Tự soi xong 4 chỗ (dưới); chờ thư R3 để đối chiếu |
@@ -31,21 +31,40 @@ kết luận, không ô nào đổi chiều:
 đổi (cùng kiểu, ra không kết luận). Hai ô đổi đều có p sát 0,05 từ trước; bỏ trùng làm hiệu nhỏ lại chút
 (|Δ| giảm 0,001–0,002), không đổi dấu.
 
-**NSL-KDD: chưa xong.** Lần chạy đủ dừng ở file 147/260: `natural_refit_per_N_*_N10000_run2` (cả frozen_c2
-lẫn tuned_per_N) không tái hiện được. Mọi mô hình đều lệch, kể cả SVM tuyến tính và RF (tất định), nên tập
-train dựng lại khác tập của cache gốc. Run 2 ở N = 5000 và run 1, 3 ở N = 10⁴ thì khớp. Đã loại hai giả
-thuyết: lưới N khác (thử 52 lưới con) và seed của run khác (thử run 1–10): SVM tuyến tính cache cho
-accuracy 0,741661, không cách dựng nào ra số này. Chưa rõ nguyên nhân. Đang chạy nốt các file còn lại ở
-chế độ chẩn đoán (`--diagnose`) để biết còn file nào lệch.
+**NSL-KDD (xong 19-11, 260 file).** Test bỏ 664/22.544 dòng (2,95 %). Bản đồ regime, khối C4 (72/110 ô:
+`tuned_per_N`, test đầy đủ, 42 ô tự nhiên + 30 ô tăng mẫu):
 
-**Cách xử lý file không tái hiện (chốt 19-11, chủ nhân giao Claude chọn).**
-- *Số chính:* "trước" và "sau" đều lấy từ lần chạy lại (cột `rerun_*` ↔ `after_*`, chạy với
-  `--include-failed`). Câu hỏi của 1.1 là bỏ trùng có đổi kết luận không; hai số cùng một lần chạy nên
-  phép so vẫn sạch, dù tập train của file đó khác cache gốc. Bài ghi rõ: "2 trong 260 lần huấn luyện
-  không dựng lại được đúng tập train gốc; chúng tôi dùng tập dựng lại cho cả hai phía".
-- *Kiểm phụ:* bỏ hẳn run 2 ở N = 10⁴ (`--allow-partial`, ô đó còn 9 run). Hai cách cùng kết luận thì
-  việc lệch cache không ảnh hưởng; khác nhau thì ghi cả hai.
-- Bảng "trước" của bài (cache gốc) không đổi: phân tích đã khớp 168/168 + 120/120 ô với bảng lưu.
+| Khối (quantum / cổ điển / không kết luận) | Trước (cache gốc) | Sau khi bỏ trùng |
+|---|---|---|
+| Tự nhiên, 42 ô | 11 / 9 / 22 | 11 / 9 / 22 |
+| Tăng mẫu, 30 ô | 2 / 2 / 26 | 2 / 3 / 25 |
+| Bản đồ 110 ô (38 ô C2/C3 không chạy lại) | 21 / 21 / 68 | 21 / 22 / 67 |
+
+Ô đổi duy nhất: tăng mẫu, N = 1000, ZZ so với Z-map: Δ −0,0215 (p Holm 0,0645, không kết luận) →
+−0,0234 [−0,043; −0,003] (p 0,037, nghiêng cổ điển). Không ô nào đổi chiều. Số chính (trước ↔ sau cùng
+lần chạy lại) thêm một ô sát ngưỡng: tự nhiên, N = 5000, so với RF: +0,0080 (p 0,0488) → +0,0062 (p 0,160);
+so với cache gốc ô này vốn đã không kết luận (p 0,0645). Các nhánh ngoài bản đồ (frozen_c2, fixed_300) đổi
+0–4 ô mỗi nhánh, cùng kiểu (ô sát ngưỡng). Với 10 run, p sau Holm chỉ nhận vài giá trị rời rạc (0,037;
+0,0488; 0,0645 …) nên ô sát ngưỡng lật khi số liệu nhích nhẹ.
+
+**Cổng tái hiện NSL-KDD: 246/260 file qua, 14 file lệch, hai loại.**
+- *Tập train khác cache gốc (mọi mô hình lệch):* 10 file = 5 chuỗi của nhánh tự nhiên: N = 10⁴ ở run 2, 6,
+  9, 10 và N = 5000 ở run 9 (mỗi chuỗi cả frozen_c2 lẫn tuned_per_N). Chỉ ở N lớn; số dòng lớp hiếm vẫn
+  khớp. Giả thuyết (chưa kiểm được vì không còn pool gốc): pool lúc chạy gốc khác pool bây giờ vài dòng
+  cùng lớp ở cùng vị trí, N càng lớn càng dễ bốc trúng. Đã loại: lưới N khác (52 lưới), seed run khác (run 1–10).
+- *Sai số số học QSVM:* 4 file (tự nhiên: frozen N = 200 run 6, N = 5000 run 4; tuned N = 1000 run 8,
+  N = 5000 run 4), một mô hình lật 2–3 dòng / 22.544, vượt dung sai 1 dòng.
+
+**Cách xử lý (chốt 19-11, chủ nhân giao Claude chọn).** Số chính: trước và sau đều từ lần chạy lại
+(`--include-failed`), phép so bỏ trùng vẫn sạch. Kiểm phụ: bỏ cả 14 file (`--allow-partial`, kết quả ở
+`*_bo_file_lech.csv`): bản đồ vẫn chỉ đổi đúng ô tăng mẫu N = 1000 nói trên (các ô tự nhiên N ≥ 5000
+thiếu run nên không đếm). Hai cách cùng kết luận. Bảng "trước" của bài (cache gốc) giữ nguyên: phân tích
+khớp 168/168 + 120/120 ô với bảng lưu. Bài ghi: "10 trong 260 lần huấn luyện không dựng lại được đúng
+tập train gốc; ở đó cả hai phía của phép so dùng tập dựng lại".
+
+**Câu cho bài (GĐ 2):** bỏ dòng test trùng train không đổi chiều ô nào ở cả hai tập; NSL-KDD đổi 1/72 ô
+C4 (không kết luận → nghiêng cổ điển), UNSW đổi 2/36 ô (có ý nghĩa → không kết luận). Khối tự nhiên 42 ô
+NSL-KDD giữ nguyên 11/9/22.
 
 **Số trùng trong bài sai định nghĩa.** `07_limitations.tex:122–123` ghi NSL-KDD "610 test rows identical …
 in both features and label (617 match on features alone)". Đếm lại trên `KDDTrain+.txt` / `KDDTest+.txt`:

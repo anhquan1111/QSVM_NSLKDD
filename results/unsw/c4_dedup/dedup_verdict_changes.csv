@@ -1,0 +1,5 @@
+dataset,regime,repr_mode,arm,test_split,in_regime_map_110,n_cells,n_complete,n_changed_before_to_after,n_changed_rerun_to_after,n_changed_before_to_rerun,before_Q,before_C,before_I,rerun_Q,rerun_C,rerun_I,after_Q,after_C,after_I,rerunQ_to_afterQ,rerunQ_to_afterC,rerunQ_to_afterI,rerunC_to_afterQ,rerunC_to_afterC,rerunC_to_afterI,rerunI_to_afterQ,rerunI_to_afterC,rerunI_to_afterI
+UNSW-NB15,natural,refit_per_N,tuned_once,fixed_300,False,36,36,1,1,0,12,12,12,12,12,12,11,12,13,11,0,1,0,12,0,0,0,12
+UNSW-NB15,natural,refit_per_N,tuned_once,full_test,False,36,36,2,2,0,14,12,10,14,12,10,12,12,12,12,0,2,0,12,0,0,0,10
+UNSW-NB15,natural,refit_per_N,tuned_per_N,fixed_300,False,36,36,0,0,0,11,11,14,11,11,14,11,11,14,11,0,0,0,11,0,0,0,14
+UNSW-NB15,natural,refit_per_N,tuned_per_N,full_test,False,36,36,2,2,0,12,11,13,12,11,13,11,10,15,11,0,1,0,10,1,0,0,13

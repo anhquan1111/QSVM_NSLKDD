@@ -1,0 +1,15 @@
+{
+ "dataset": "nslkdd",
+ "definition": "dong test co bo dac trung tho y het mot dong bat ky cua TOAN BO raw train",
+ "features": "41 cot dac trung KDD (bo cot nhan 41 va do kho 42)",
+ "raw_train": "data/nslkdd/raw/KDDTrain+.txt",
+ "raw_test": "data/nslkdd/raw/KDDTest+.txt",
+ "raw_train_sha256": "1b86d2f957b33082081bba410fe129b475efebcc13c9014c3f447c8271aadf95",
+ "raw_test_sha256": "fa46b0935342616aa83b7c2578db355b6a7aaabbc492248172c7a1e8b7ab8f84",
+ "n_train_raw": 125973,
+ "n_test_raw": 22544,
+ "n_test_duplicate": 664,
+ "frac_test_duplicate": 0.029453513129879347,
+ "fixed_300_source": "NSL_KDD_Test_Sample300.csv, ghep ve test bang chu ky hang",
+ "n_fixed_300_duplicate": 7
+}
