@@ -89,6 +89,31 @@ hình, số qubit, nhiễu / phần cứng thật, giao thức thống kê, kế
 **Đạt khi:** mỗi ô có trích dẫn trang hoặc mục của bài họ; nêu ≥ 3 điểm khác cụ thể; chỗ nào kết
 quả giống họ thì trích họ, không nhận là mới.
 
+## Giai đoạn 2: chi tiết (chủ nhân gật 19-11)
+
+**Đầu vào:** `paper/paper1/` (chỉ đọc) + danh sách câu cần đổi trong `docs/PAPER1_GD1_KET_QUA.md`
+(1.1–1.4, 1.6). **Đầu ra:** thư mục mới `paper/paper1_qmi/`, mẫu LaTeX Springer Nature (`sn-jnl.cls`, tải
+từ trang hướng dẫn tác giả của Springer), hình dùng lại từ `paper/paper1/figs_revision/`.
+
+**Các bước (mỗi bước một commit):**
+1. Dựng khung: tải mẫu Springer, `main.tex` + `sections/`, đưa hình và danh mục tham khảo sang.
+2. Viết lại từng mục theo thứ tự: kết quả → bản đồ regime → phương pháp → giới thiệu và liên quan (đối
+   chiếu Cirillo 2026) → giới hạn → kết luận → tóm tắt (viết cuối, khi số đã chốt).
+3. Mỗi mục xong thì chạy hai máy kiểm: `audit_wording_r3.py paper/paper1_qmi` (chữ) và kiểm số đối chiếu
+   CSV; bảng số sinh bằng script, không gõ tay.
+4. Đọc lại toàn bài một lượt như người phản biện mới (không biết bản cũ).
+
+**Đạt khi:**
+- `uv run python runners/audit_wording_r3.py paper/paper1_qmi` ra 0 (không "exponential" về số đo của
+  ta, không câu nhân quả, không "parity", không "10/10" thiếu "7/10", không nhắc phản biện / bản cũ).
+- Tóm tắt 150–250 từ, tiêu đề có UNSW-NB15; tóm tắt đưa khối 42 ô tự nhiên lên trước tổng 110 ô.
+- Mọi con số trong bài có trong một CSV của repo; câu bỏ trùng (1.1) và số 664 / 610 đã thay đúng.
+- Độ dài mục tiêu ≤ 9.000 từ thân bài (bản cũ ~13.100; AE TETC chê dài), phụ lục tách riêng.
+- Compile được: tải gói `.zip` lên Overleaf (máy không có LaTeX; cài TeX tại máy phải hỏi trước).
+
+**Khai báo AI (QMI):** dùng LLM viết nội dung thì phải khai ở mục Methods; chỉ sửa ngữ pháp, văn phong thì
+không cần. AE của TETC đã chê "mùi AI". Cách viết do chủ nhân chọn (xem "Cần chủ nhân").
+
 ## Thứ tự và thời gian
 
 1. 1.6 và lấy thư từ chối (rẻ, làm trước; 1.6 có thể ảnh hưởng cách định vị).
@@ -97,6 +122,9 @@ quả giống họ thì trích họ, không nhận là mới.
 4. Cổng cuối GĐ 1: bảng trước/sau bỏ trùng + danh sách câu đổi, đưa chủ nhân xem.
 
 ## Cần chủ nhân
+
+- **Cách viết GĐ 2** (chưa chốt): (a) Claude soạn nháp từng mục, chủ nhân và thầy Vân sửa lại bằng giọng
+  mình, khai AI ở Methods; hay (b) chủ nhân viết, Claude chỉ soát số, soát chữ theo máy kiểm (không phải khai).
 
 - **Thư từ chối 11-11-2026 nguyên văn** (nhất là ý R3): máy chỉ có bản tóm tắt trong bộ nhớ.
   Dán vào `docs/Review_R1_tu_choi.md` (giống `docs/Review.md` của vòng trước).
