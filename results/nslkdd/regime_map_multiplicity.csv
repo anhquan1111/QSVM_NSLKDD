@@ -1,0 +1,9 @@
+block,n_cells,correction,quantum,classical,inconclusive,min_raw_p
+all_110,110,none,25,24,61,0.001953125
+all_110,110,holm_within_family,21,21,68,0.001953125
+all_110,110,bh_block,21,18,71,0.001953125
+all_110,110,holm_block,0,0,110,0.001953125
+c4_natural_42,42,none,11,11,20,0.001953125
+c4_natural_42,42,holm_within_family,11,9,22,0.001953125
+c4_natural_42,42,bh_block,11,8,23,0.001953125
+c4_natural_42,42,holm_block,0,0,42,0.001953125

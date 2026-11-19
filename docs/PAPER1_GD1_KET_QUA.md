@@ -108,7 +108,7 @@ Cách nói mới: "không khác biệt có ý nghĩa (Δ = …, CI 95 % […]); 
 luận hai bên ngang nhau." Áp ở: tóm tắt `document.tex:60–65`, `01_introduction.tex:59–67`,
 `05_results.tex:211`, `06_regimemap.tex:50`, `08_conclusion.tex:20–24`.
 
-## 1.4 Mâu thuẫn (tự soi, chưa đối chiếu thư R3 nguyên văn)
+## 1.4 Mâu thuẫn (tự soi; đã đối chiếu thư R3 nguyên văn, xem cuối mục)
 
 **(a) "10/10" so với "7/10": lỗi thật, đã kiểm bằng số.** `results/unsw/c4_revision/u1_nstar_robustness.csv`:
 n* = 6 ở 10/10 tập con khi ε = 0,02 và 0,05; khi ε = 0,1 chỉ 7/10 (3/10 ra n* = 5). Nhưng
@@ -138,7 +138,38 @@ nhánh tăng mẫu, trong khi bài nói nhánh này "không quyết được" v�
 nhiên: 11/9/22) nhưng tóm tắt vẫn đưa tổng 21/21/68 lên trước. Cách sửa ở GĐ 2: tóm tắt đưa khối tự
 nhiên lên trước, tổng 110 ô để sau.
 
-Khi có thư R3 nguyên văn: đối chiếu xem R3 chỉ đúng (a)–(d) hay còn chỗ khác.
+### Đối chiếu thư từ chối nguyên văn (20-11, `docs/Review_R1_tu_choi.md`)
+
+| Ý trong thư | Đã có ở | Còn phải làm ở GĐ 2 |
+|---|---|---|
+| R3 trùng train–test: phân tích độ nhạy "at least for the principal comparative and cross-dataset findings" | 1.1 (72 ô C4 NSL-KDD + 36 ô UNSW) | Đưa kết quả vào bài. Quy tắc chọn số qubit chỉ đọc tập train (300 dòng lấy từ file train, `runners/run_c1_ksens.py:60–74`, đã mở bản NSL-KDD; bản UNSW chưa mở) nên không chạm dòng test trùng |
+| R3 tập trung kernel: "power-law trend … does not establish exponential"; tương quan ≠ nhân quả | 1.2 | Nói "phù hợp với tập trung kernel" |
+| R3 **mới**: "Claims that improved hardware cannot expand the useful regime should also be qualified" | chưa có | `05_results.tex:321–322` ("does not widen with better hardware. It is set by the kernel"), `06_regimemap.tex:97–100` ("closed from above by the physics … rather than … better hardware"). Cách nói mới: kết quả ở mô phỏng không nhiễu cho thấy giới hạn này có cả khi không có lỗi cổng; ta không kiểm phần cứng tốt hơn hay feature map khác, nên không kết luận phần cứng tốt hơn không mở rộng được |
+| R3 "parity" | 1.3 | |
+| R3 **mới**: "Recommendations … should also reflect their sensitivity to the chosen multiplicity correction" | chưa có | Xem (e) dưới |
+| R3 mâu thuẫn tăng mẫu / đảo chiều | 1.4 (b), (d). Bài cũ đã viết "không quyết được" ở 4 chỗ (`document.tex:66`, `01_introduction.tex:68`, `05_results.tex:201`, `08_conclusion.tex:25`); chỗ vênh là các câu "lead" và bản đồ gộp | |
+| R3 10/10 và 7/10 | 1.4 (a) | |
+| R3 nhiễu: "restrict the conclusions explicitly to the single tested configuration" | 1.5 (10 run) | Câu "the conclusion is unchanged" (`05_results.tex:78`, `07_limitations.tex:35`) phải ghi rõ "dưới một mô hình nhiễu (FakeManilaV2, 512 shot)" |
+| R1 tiêu đề có UNSW-NB15; tóm tắt ngắn; không nhắc phản biện (mục 2E cũ); câu tóm tắt ngắn | tiêu chí GĐ 2 | |
+| R2 thiếu tính mới: "positive findings either reproduced by a classical kernel or correspond to known phenomena" | 1.6 (5 điểm khác Cirillo) | Giới thiệu phải nêu đóng góp là **giao thức benchmark có kiểm định** (quét N, ghép cặp, tune đối xứng, bỏ trùng), không nhận lợi thế lượng tử |
+| AE: sửa quá nhiều, "mùi AI", 18 trang, nhắc phản biện, nghi tác giả | tiêu chí GĐ 2 + cách viết (a) | |
+
+**(e) Độ nhạy theo cách hiệu chỉnh đa so sánh (mới, R3).** `runners/regime_map_multiplicity.py` →
+`results/nslkdd/regime_map_multiplicity.csv`. **Bài cũ có lỗi:** cột `p_value` của
+`regime_map_rows.csv` là p đã hiệu chỉnh Holm trong họ; tóm tắt cũ áp thêm BH lên cột đó ra 17/15/78
+(hiệu chỉnh hai lần, tính lại khớp đúng). Tính lại từ p thô (`raw_p` = Wilcoxon p):
+
+| Cách hiệu chỉnh | 110 ô (Q / C / không kết luận) | 42 ô tự nhiên |
+|---|---|---|
+| Không hiệu chỉnh | 25 / 24 / 61 | 11 / 11 / 20 |
+| Holm trong họ baseline (số chính) | 21 / 21 / 68 | 11 / 9 / 22 |
+| BH trên cả khối | **21 / 18 / 71** (bài cũ: 17/15/78) | 11 / 8 / 23 |
+| Holm trên cả khối | 0 / 0 / 110 | 0 / 0 / 42 |
+
+Holm trên cả khối không thể bác bỏ ô nào: với 10 run, p Wilcoxon hai phía nhỏ nhất là 2/2¹⁰ = 0,00195,
+còn ngưỡng là 0,05/110 = 0,00045 (0,05/42 = 0,00119 cho khối tự nhiên). Đó là giới hạn của số run,
+không phải bằng chứng không có khác biệt; bài phải nói đúng như vậy. Khối tự nhiên gần như không đổi
+giữa ba cách còn lại (ô nghiêng quantum giữ 11).
 
 ## 1.6 Đối chiếu Cirillo, Esposito, Seo 2026
 

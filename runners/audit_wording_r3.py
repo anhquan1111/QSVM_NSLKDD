@@ -7,7 +7,8 @@
   2. Dong tu nhan qua noi do tap trung voi ket qua -- ta chi co tuong quan (R3).
   3. "parity" / "on par" / "tied" -- khong bac bo duoc khac biet khong phai la
      bang nhau (R3). Bo qua "parity function(s)" (nghia toan hoc o phu luc).
-  4. Nhac phan bien hay ban da nop (\\revnote, "reviewer", "submitted version")
+  4. "Phan cung tot hon khong mo rong duoc" -- chua kiem (R3); so BH cu 17/15/78.
+  5. Nhac phan bien hay ban da nop (\\revnote, "reviewer", "submitted version")
      -- AE cua TETC che dieu nay; ban nop tap chi moi khong duoc con.
 
 Moi cau vi pham in ra kem file:dong. Het vi pham -> exit 0.
@@ -63,6 +64,15 @@ RULES: list[tuple[str, callable]] = [
     # (3/10 ra n*=5). Noi "10/10" ma khong kem 7/10 la noi qua (R3).
     ("10/10 khong kem 7/10 (on dinh cua n*)",
      lambda s: "10/10" in s and "7/10" not in s),
+    # R3: "Claims that improved hardware cannot expand the useful regime should
+    # also be qualified." Ta chi chay mo phong khong nhieu, khong thu phan cung tot hon.
+    ("phan cung tot hon khong mo rong duoc (chua kiem)",
+     lambda s: re.search(r"\b(better|improved|future|lower-noise)\s+hardware\b", s, re.I)
+     and re.search(r"\b(not|cannot|never|rather than|no amount)\b", s, re.I)),
+    # 17/15/78 la BH ap len p da hieu chinh Holm (hieu chinh hai lan); so dung
+    # trong results/nslkdd/regime_map_multiplicity.csv
+    ("so BH cu 17/15/78 (hieu chinh hai lan)",
+     lambda s: re.search(r"\b17\b.{0,12}\b15\b.{0,12}\b78\b", s)),
     ("nhac phan bien / ban da nop",
      lambda s: re.search(r"\\revnote|\\begin\{revbody\}|\breviewers?\b"
                          r"|submitted version|\bwe withdraw\b", s, re.I)),
