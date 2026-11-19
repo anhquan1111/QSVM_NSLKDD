@@ -4,7 +4,14 @@ Tra ngày 19-11-2026. Ô nào cũng có nguồn ở cuối file; "chưa kiểm" 
 Ràng buộc: không có ngân sách APC (phí đăng mở); không nộp lại TETC (cấm); không nộp Security and
 Privacy (Paper 2 đang ở đó).
 
-## Đề xuất
+## Đã chốt (19-11-2026)
+
+**Nộp Quantum Machine Intelligence.** Chủ nhân giao Claude chọn, điều kiện chi phí ngang TETC.
+TETC: không phí tới 12 trang, vượt thì trả phí trang vượt (MOPC, không xin miễn; xem `docs/Review.md`).
+QMI: đăng thường không phí, không giới hạn trang, nên chi phí bằng 0, không cao hơn TETC.
+Không chọn đăng mở (Open Choice) vì phần đó mới có APC.
+
+## Đề xuất (lúc tra)
 
 - **Chính: Quantum Machine Intelligence (Springer).** Hybrid, đăng thường **không mất phí**
   ("Publication fees / Page charges: None"); **không giới hạn trang** ("articles of arbitrary
