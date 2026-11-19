@@ -1,0 +1,89 @@
+% =====================================================================
+%  Paper 1 -- ban nop Quantum Machine Intelligence (Springer Nature)
+%
+%  Viet lai tu paper/paper1/ (ban TETC, chi doc). Ke hoach va tieu chi dat:
+%  docs/PAPER1_KE_HOACH_QMI.md, muc "Giai doan 2". So lieu va cau phai doi:
+%  docs/PAPER1_GD1_KET_QUA.md.
+%
+%  Mau: sn-jnl.cls ban 3.1 (12-2024), tai tu trang LaTeX author support cua
+%  Springer Nature (goi 18782940/data/v12) ngay 19-11-2026.
+%
+%  Bien dich: Overleaf, pdfLaTeX. Dong goi: uv run python runners/make_qmi_zip.py
+%  Hinh lay tu paper/paper1/figs_revision/ (goi zip chep vao cung duong dan).
+%
+%  Kiem chu: uv run python runners/audit_wording_r3.py paper/paper1_qmi -> 0
+% =====================================================================
+\documentclass[pdflatex,sn-mathphys-num]{sn-jnl}
+
+\usepackage{graphicx}%
+\usepackage{multirow}%
+\usepackage{amsmath,amssymb,amsfonts}%
+\usepackage{amsthm}%
+\usepackage[title]{appendix}%
+\usepackage{xcolor}%
+\usepackage{textcomp}%
+\usepackage{booktabs}%
+\usepackage{array}%
+\usepackage{bm}%
+
+\input{macros}
+
+\raggedbottom
+
+\begin{document}
+
+% TIEU DE NHAP -- chu nhan va thay Van chot. Dieu kien: co ca NSL-KDD lan
+% UNSW-NB15 (R1 vong truoc doi).
+\title[Regime map for four-qubit quantum kernels in intrusion detection]{When
+does a four-qubit quantum kernel help network intrusion detection? A regime map
+on NSL-KDD and UNSW-NB15}
+
+% Tac gia giu nhu ban TETC. Ho cua thay Van la Nguyen (khong phai "Van").
+\author[1]{\fnm{Minh Tuan} \sur{Pham}}\email{pmtuan@dut.udn.vn}
+
+\author[2,3]{\fnm{Phuc Hao} \sur{Do}}\email{do.hf@sut.ru}
+
+\author[1]{\fnm{Nang Hung Van} \sur{Nguyen}}\email{nguyenvan@dut.udn.vn}
+
+\author[1]{\fnm{Quang Anh} \sur{Nguyen}}\email{anh1303052005@gmail.com}
+
+\author*[1]{\fnm{Quan Tran Anh} \sur{Vo}}\email{votrananhquan1111@gmail.com}
+
+\affil[1]{\orgname{University of Science and Technology -- The University of
+Danang}, \orgaddress{\city{Danang}, \postcode{550000}, \country{Vietnam}}}
+
+\affil[2]{\orgname{The Bonch-Bruevich Saint Petersburg State University of
+Telecommunications}, \orgaddress{\city{Saint Petersburg}, \postcode{193232},
+\country{Russia}}}
+
+\affil[3]{\orgname{Danang Architecture University}, \orgaddress{\city{Danang},
+\postcode{550000}, \country{Vietnam}}}
+
+% TOM TAT: viet CUOI CUNG, khi so da chot (150-250 tu, khong trich dan,
+% khong cong thuc). Khoi 42 o tu nhien dua len truoc tong 110 o.
+\abstract{Abstract to be written last.}
+
+\keywords{quantum kernel methods, quantum support vector machine, network
+intrusion detection, NISQ, NSL-KDD, UNSW-NB15}
+
+\maketitle
+
+\input{sections/01_introduction}
+\input{sections/02_related}
+\input{sections/03_methods}
+\input{sections/04_results}
+\input{sections/05_regime_map}
+\input{sections/06_limitations}
+\input{sections/07_conclusion}
+
+\backmatter
+
+\input{sections/declarations}
+
+\begin{appendices}
+\input{sections/appendix}
+\end{appendices}
+
+\input{bibliography}
+
+\end{document}

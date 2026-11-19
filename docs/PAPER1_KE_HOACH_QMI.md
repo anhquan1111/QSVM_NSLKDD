@@ -97,6 +97,9 @@ từ trang hướng dẫn tác giả của Springer), hình dùng lại từ `pa
 
 **Các bước (mỗi bước một commit):**
 1. Dựng khung: tải mẫu Springer, `main.tex` + `sections/`, đưa hình và danh mục tham khảo sang.
+   **Xong 19-11:** mẫu `sn-jnl` 3.1 (12-2024), 7 mục + declarations + phụ lục (mỗi file ghi nguồn cũ, câu
+   phải đổi, số từ mục tiêu), `runners/make_qmi_zip.py` đóng gói Overleaf (15 file), audit chữ ra 0.
+   Chưa compile thử trên Overleaf. Danh mục tham khảo vẫn kiểu IEEE (`thebibliography`).
 2. Viết lại từng mục theo thứ tự: kết quả → bản đồ regime → phương pháp → giới thiệu và liên quan (đối
    chiếu Cirillo 2026) → giới hạn → kết luận → tóm tắt (viết cuối, khi số đã chốt).
 3. Mỗi mục xong thì chạy hai máy kiểm: `audit_wording_r3.py paper/paper1_qmi` (chữ) và kiểm số đối chiếu
@@ -112,7 +115,11 @@ từ trang hướng dẫn tác giả của Springer), hình dùng lại từ `pa
 - Compile được: tải gói `.zip` lên Overleaf (máy không có LaTeX; cài TeX tại máy phải hỏi trước).
 
 **Khai báo AI (QMI):** dùng LLM viết nội dung thì phải khai ở mục Methods; chỉ sửa ngữ pháp, văn phong thì
-không cần. AE của TETC đã chê "mùi AI". Cách viết do chủ nhân chọn (xem "Cần chủ nhân").
+không cần. AE của TETC đã chê "mùi AI".
+
+**Cách viết (chốt 19-11, chủ nhân chọn (a)):** Claude soạn nháp từng mục; chủ nhân và thầy Vân sửa lại bằng
+giọng mình, riêng tóm tắt, giới thiệu, kết luận viết lại hẳn; bài khai dùng LLM ở mục Methods. Đã cân nhắc
+và bỏ (b) "chủ nhân tự viết, Claude chỉ soát" vì tốn thời gian chủ nhân hơn.
 
 ## Thứ tự và thời gian
 
@@ -122,9 +129,6 @@ không cần. AE của TETC đã chê "mùi AI". Cách viết do chủ nhân ch�
 4. Cổng cuối GĐ 1: bảng trước/sau bỏ trùng + danh sách câu đổi, đưa chủ nhân xem.
 
 ## Cần chủ nhân
-
-- **Cách viết GĐ 2** (chưa chốt): (a) Claude soạn nháp từng mục, chủ nhân và thầy Vân sửa lại bằng giọng
-  mình, khai AI ở Methods; hay (b) chủ nhân viết, Claude chỉ soát số, soát chữ theo máy kiểm (không phải khai).
 
 - **Thư từ chối 11-11-2026 nguyên văn** (nhất là ý R3): máy chỉ có bản tóm tắt trong bộ nhớ.
   Dán vào `docs/Review_R1_tu_choi.md` (giống `docs/Review.md` của vòng trước).

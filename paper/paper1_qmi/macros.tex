@@ -1,0 +1,18 @@
+% Macro dung chung. Lay tu paper/paper1/preamble.tex, bo phan danh dau ban
+% sua TETC (revbody, revnote) va tham so float cua IEEEtran.
+\theoremstyle{thmstyleone}%
+\newtheorem{lemma}{Lemma}%
+\theoremstyle{thmstylethree}%
+\newtheorem{definition}{Definition}%
+\newtheorem{assumption}{Assumption}%
+\theoremstyle{thmstyletwo}%
+\newtheorem{remark}{Remark}%
+
+\newcommand{\ZZ}{\textsc{zz}}
+\newcommand{\Zmap}{\textsc{z}}
+\newcommand{\QSVM}{QSVM-\ZZ}
+\newcommand{\Fmac}{F_1^{\mathrm{macro}}}
+
+% So cua nhanh tham chieu (XGBoost/RF du 122 dac trung), sinh boi
+% runners/make_ref_arm_table.py. File nam o paper/paper1/tables/; goi zip chep sang.
+\input{tables/ref_arm_macros}
