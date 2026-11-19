@@ -4,12 +4,46 @@ Kế hoạch: `docs/PAPER1_KE_HOACH_QMI.md`. Cập nhật 19-11-2026.
 
 | Việc | Trạng thái |
 |---|---|
-| 1.1 Bỏ dòng test trùng train | Script xong; đang chạy đủ (19-11 từ 15:25) |
+| 1.1 Bỏ dòng test trùng train | UNSW xong (2/36 ô đổi, không đổi chiều); NSL-KDD vướng run 2 N = 10⁴ không tái hiện, đang chạy chẩn đoán |
 | 1.2 Bỏ "exponential", không nói nhân quả | Xong danh sách câu + máy kiểm |
 | 1.3 Bỏ "parity" | Xong danh sách câu + máy kiểm |
 | 1.4 Mâu thuẫn enrichment / 7 trên 10 | Tự soi xong 4 chỗ (dưới); chờ thư R3 để đối chiếu |
 | 1.5 Nhiễu 10 run | Xong: `runners/verify_noise10.py` chạy lại 40/40, mã thoát 0 |
 | 1.6 Đối chiếu Cirillo 2026 | Xong bảng (dưới) |
+
+## 1.1 Bỏ dòng test trùng train
+
+Dòng trùng = dòng test có 41 (NSL-KDD) / 34 (UNSW) đặc trưng thô y hệt một dòng của toàn bộ raw train.
+Chạy lại 7 mô hình với siêu tham số đọc từ cache, lưu dự đoán từng dòng, chấm trên test đầy đủ và test
+đã bỏ trùng. Script: `runners/run_dedup_sensitivity.py` → `runners/analyze_dedup_sensitivity.py`.
+Kết quả: `results/<ds>/c4_dedup/dedup_pairwise_before_after.csv`, `dedup_verdict_changes.csv`.
+
+**UNSW-NB15 (xong 19-11, 120/120 file qua cổng tái hiện, 36 ô ngoài bản đồ 110 ô).** Test bỏ 20.851/82.332
+dòng (25,3 %). Ô đổi kết luận, nhánh `tuned_per_N`, test đầy đủ: **2/36**, cả hai từ có ý nghĩa thành không
+kết luận, không ô nào đổi chiều:
+
+| N | So với | Trước: Δ, p (Holm) | Sau: Δ [CI 95 %], p |
+|---|---|---|---|
+| 5000 | SVM-Poly2 | +0,040, 0,049 (nghiêng quantum) | +0,038 [−0,001; +0,078], 0,064 |
+| 5000 | XGBoost | −0,016, 0,020 (nghiêng cổ điển) | −0,015 [−0,030; +0,001], 0,064 |
+
+Đếm 36 ô (quantum / cổ điển / không kết luận): trước 12/11/13 → sau 11/10/15. Nhánh `tuned_once`: 2/36 ô
+đổi (cùng kiểu, ra không kết luận). Hai ô đổi đều có p sát 0,05 từ trước; bỏ trùng làm hiệu nhỏ lại chút
+(|Δ| giảm 0,001–0,002), không đổi dấu.
+
+**NSL-KDD: chưa xong.** Lần chạy đủ dừng ở file 147/260: `natural_refit_per_N_*_N10000_run2` (cả frozen_c2
+lẫn tuned_per_N) không tái hiện được. Mọi mô hình đều lệch, kể cả SVM tuyến tính và RF (tất định), nên tập
+train dựng lại khác tập của cache gốc. Run 2 ở N = 5000 và run 1, 3 ở N = 10⁴ thì khớp. Đã loại hai giả
+thuyết: lưới N khác (thử 52 lưới con) và seed của run khác (thử run 1–10): SVM tuyến tính cache cho
+accuracy 0,741661, không cách dựng nào ra số này. Chưa rõ nguyên nhân. Đang chạy nốt các file còn lại ở
+chế độ chẩn đoán (`--diagnose`) để biết còn file nào lệch.
+
+**Số trùng trong bài sai định nghĩa.** `07_limitations.tex:122–123` ghi NSL-KDD "610 test rows identical …
+in both features and label (617 match on features alone)". Đếm lại trên `KDDTrain+.txt` / `KDDTest+.txt`:
+trùng 41 đặc trưng = **664**; trùng đặc trưng + nhãn tấn công = 610; trùng đặc trưng + nhãn nhị phân = 617.
+Vậy "617 on features alone" sai, phải là 664. UNSW: bài ghi 25,0 %, mặt nạ ta dùng ra 25,3 % (chỉ theo đặc
+trưng); GĐ 2 ghi rõ định nghĩa kèm số. Câu "We have not re-scored … per-row predictions were not retained"
+phải thay bằng kết quả mục này.
 
 ## Máy kiểm chữ: `runners/audit_wording_r3.py`
 
