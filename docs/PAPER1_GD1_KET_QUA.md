@@ -58,7 +58,12 @@ trong `audit_wording_r3.py` (đang bắt 2 chỗ).
 **(b) Nhánh tăng mẫu tấn công hiếm: nói "dẫn" khi chưa có ý nghĩa thống kê.** `05_results.tex:186–196`:
 nhánh tăng mẫu để 26/30 ô "không kết luận", nhưng câu sau lại viết "the tree ensembles lead under both
 priors" (chỉ là dấu của hiệu, không phải kết luận). Tóm tắt và `01_introduction.tex:67–70` lặp lại "lead".
-Cách sửa: "hiệu mang dấu âm ở cả 5 cỡ N; k/5 đạt ý nghĩa sau hiệu chỉnh" (điền k từ CSV).
+Số (`results/nslkdd/regime_map_rows.csv`, khối C4, N = 100…2000): so với RF và XGBoost, nhánh tăng
+mẫu đạt ý nghĩa ở **0/10** ô (dấu âm 9/10; RF ở N = 200 là +0,003), nhánh tự nhiên **8/10** (trừ N = 2000).
+So với SVM-RBF: 0/5 ở cả hai nhánh. 4 ô có kết luận của nhánh tăng mẫu là Linear N = 1000, 2000 (nghiêng
+quantum), Z-map và RBF ở N = 2000 (nghiêng cổ điển); không ô nào là cây.
+Cách sửa: "dưới phân phối tự nhiên cây dẫn có ý nghĩa ở 8/10 ô; dưới tăng mẫu hiệu cùng dấu âm nhưng
+0/10 ô đạt ý nghĩa sau hiệu chỉnh".
 
 **(c) "Tấn công hiếm" hai nghĩa dễ đọc thành ngược nhau.** `05_results.tex:~232`: ở N = 10⁴ phân phối
 tự nhiên, QSVM "far better on rare attacks than either tree ensemble" (F1 lớp hiếm 0,507 so với 0,33),
