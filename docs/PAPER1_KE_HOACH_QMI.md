@@ -185,9 +185,10 @@ từ trang hướng dẫn tác giả của Springer), hình dùng lại từ `pa
    (trước đó mục trích đầu tiên đứng thứ 23). Sửa lỗi chép từ PDF có từ bản TETC: đuôi rác "IEEE TRANSACTIONS
    ON EMERGING TOPICS IN COMPUTING 11" ở `ref10`; "K--bler" → Kübler; số trang có dấu cách ("21 954");
    mất gạch nối (quantumenhanced, quantumclassical ×2, kerneltarget, AlNemrat); 28 cặp ngoặc kép thẳng
-   → ``…''. Còn chờ: `ref29` Qiskit chỉ ghi "Qiskit Contributors, 2024" (nên đổi sang bài Qiskit chính
-   thức, cần chủ nhân gật); chưa mở lại toàn văn Bowles / Schnabel / Gillani; vẫn `thebibliography` kiểu
-   IEEE, chưa sang `.bib` + `sn-mathphys-num`.
+   → ``…''. `ref29` Qiskit đổi sang Javadi-Abhari et al. 2024, arXiv:2405.08810 (lấy từ `CITATION.bib`
+   của repo Qiskit; chủ nhân gật 20-11). Từ khóa "NISQ" thay bằng "benchmarking" (chủ nhân gật 20-11).
+   Còn chờ: chưa mở lại toàn văn Bowles / Schnabel / Gillani; vẫn `thebibliography` kiểu IEEE, chưa sang
+   `.bib` + `sn-mathphys-num`.
 3. Mỗi mục xong thì chạy hai máy kiểm: `audit_wording_r3.py paper/paper1_qmi` (chữ) và kiểm số đối chiếu
    CSV; bảng số sinh bằng script, không gõ tay.
    Thêm soát giọng văn theo skill Humanizer (`~/projects/channel_3_asian_explained/.claude/skills/humanizer/SKILL.md`,
@@ -218,4 +219,19 @@ và bỏ (b) "chủ nhân tự viết, Claude chỉ soát" vì tốn thời gian
 
 ## Cần chủ nhân
 
-- Không có việc chờ (thư từ chối đã lưu ở `docs/Review_R1_tu_choi.md` ngày 20-11).
+- **Repo code ghi trong bài (chốt 20-11):** dùng repo phát hành `haodpsut/nisq-qsvm-nids-benchmark` (đã ở bản
+  TETC, tag `tetc-r1`), không dùng repo làm việc `anhquan1111/QSVM_NSLKDD` (lịch sử còn hợp đồng PII). Chủ nhân
+  không có quyền ghi repo đó: anh Phúc Hảo (hoặc người được cấp quyền) làm trước khi nộp:
+  1. **Gỡ file riêng tư đang công khai:** `docs/DeTai10.pdf` (hợp đồng có PII), `paper/paper1/v1_submitted/paper1_with_bios.pdf`,
+     `.claude/` (cấu hình agent), `docs/PAPER1_final_report.docx`. Gỡ cả trong lịch sử, không chỉ commit xóa.
+  2. Thêm các file bản QMI dùng mà repo chưa có (đếm 20-11): `runners/verify_noise10.py` (bài nêu tên),
+     `verify_rare_identity.py`, `run_dedup_sensitivity.py`, `analyze_dedup_sensitivity.py`,
+     `regime_map_multiplicity.py`, `make_qmi_tables.py`; `results/nslkdd/c2_revision/` (12 file),
+     `results/nslkdd/c4_dedup/` (6), `results/unsw/c4_dedup/` (4), `results/nslkdd/regime_map_multiplicity.csv`.
+     Không chép đồ Paper 2, Paper 3 (`p2_*`, `paper3*`).
+  3. Sửa mô tả repo (đang ghi "NISQ-Aware … TETC revision 1"), tạo tag mới, rồi điền tag vào `03_methods.tex`
+     và `declarations.tex` (đang ghi "release tag to be added on submission").
+- Declarations còn trống: lời cảm ơn, xung đột lợi ích, đóng góp từng tác giả (Claude không điền thay).
+  Data availability và Code availability đã điền 20-11.
+- Đoạn khai LLM (`sec:llm`) giữ nguyên bản nháp; câu "authors rewrote and checked all text" chỉ đúng sau khi
+  chủ nhân và thầy Vân viết lại Tóm tắt, Giới thiệu, Kết luận.
