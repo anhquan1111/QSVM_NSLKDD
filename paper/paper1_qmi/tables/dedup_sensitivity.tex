@@ -1,0 +1,25 @@
+% Sinh boi runners/make_qmi_tables.py tu results/{nslkdd,unsw}/c4_dedup/dedup_verdict_changes.csv. KHONG sua tay.
+\begin{table}[t]
+\centering
+\caption{Sensitivity of the training-set-size comparisons to test records duplicated in the
+training data. All seven models were retrained with their stored hyper-parameters (tuned at
+each $N$) and scored on the full test set and on the test set with duplicates removed; both
+columns come from this retraining. A duplicate is a test record whose raw features equal
+those of any training record: 664 of
+22,544 test records for NSL-KDD (2.9\%),
+20,851 of 82,332 for UNSW-NB15
+(25.3\%). Cells are counted as favouring \QSVM{} /
+favouring the classical baseline / inconclusive (Holm-adjusted $p\ge0.05$).}
+\label{tab:dedup}
+\footnotesize
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{@{}ll r ccc@{}}
+\toprule
+Dataset & Prior & Cells & Full test & Duplicates removed & Changed \\
+\midrule
+NSL-KDD & natural & 42 & 12/9/21 & 11/9/22 & 1 \\
+NSL-KDD & rare-enriched & 30 & 2/2/26 & 2/3/25 & 1 \\
+UNSW-NB15 & natural & 36 & 12/11/13 & 11/10/15 & 2 \\
+\bottomrule
+\end{tabular}
+\end{table}

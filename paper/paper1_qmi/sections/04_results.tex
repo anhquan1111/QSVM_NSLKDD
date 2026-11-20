@@ -1,31 +1,264 @@
-% Nguon: paper/paper1/sections/05_results.tex (~2680 tu). Muc tieu ~2600 tu.
-% VIET DAU TIEN. Moi so lay tu CSV trong results/ (bang sinh bang script).
-% Phai doi:
-%  - 1.2: dong 285, 307, 309 cu (mechanism, flattens, exponential); ghi
-%    r = +0,77 [+0,04; +0,96] (ZZ), +0,32 [-0,57; +0,87] (Z), 7 do rong.
-%  - 1.3: dong 211 cu (parity -> Delta + CI).
-%  - 1.4(b): dong 186-196 cu: tu nhien 8/10 o cay co y nghia; tang mau 0/10.
-%  - 1.4(c): noi ro chi so va co N o "rare attacks" (dong ~232 cu).
-%  - 1.5: nhieu 10 run, QSVM-ZZ trung binh 0,8501 duoi FakeManilaV2; mot backend.
-%  - 1.6: dong 314 cu (Cirillo) giu, doi chieu lai.
-%  - R3 (thu nguyen van): bo "does not widen with better hardware" (dong 321-322
-%    cu); chi noi gioi han xuat hien ca khi mo phong khong nhieu.
-%  - R3 nhieu: "conclusion unchanged" (dong 78 cu) -> "duoi mot mo hinh nhieu
-%    (FakeManilaV2, 512 shot)".
+% =====================================================================
+%  Results (ban nhap Claude 20-11, chu nhan va thay Van sua lai giong van).
+%  Nguon: paper/paper1/sections/05_results.tex. Muc tieu ~2600 tu.
+%  So: moi so doi chieu CSV; bang sinh bang runners/make_qmi_tables.py;
+%  runners/audit_c4.py 100/100, runners/audit_figures.py 36/36 (20-11).
+%  Da ap: 1.1 (muc res-dedup moi), 1.2 (khong "exponential", khong nhan qua),
+%  1.3 (Delta + CI thay "parity"), 1.4(a)(b)(c), 1.5 (nhieu 10 run, mot backend),
+%  R3 "better hardware" (khong ket luan ve phan cung tot hon).
+%  Cirillo 2026: chi giu dieu da doc trong bai ho (ToN_IoT la tap chinh, CNOT
+%  20-35 can bang tot nhat, muc 8.2). Cau "suy giam sau ~60 cong" cua ban cu
+%  CHUA doi chieu lai nen bo; can thi mo bai ho kiem roi them.
+% =====================================================================
 \section{Results}\label{sec:results}
+
+Table~\ref{tab:protocol} lists the training pool, training-set size and test set behind each
+result below. Unless stated otherwise, a comparison is a paired difference \QSVM{} minus
+baseline over ten runs, reported as a mean with a $95\%$ confidence interval and a
+Holm-adjusted Wilcoxon $p$ (Sec.~\ref{sec:stats}).
 
 \subsection{Embedding size}\label{sec:res-embed}
 
+\input{figs/fig_ksweep}
+\input{figs/fig_c1_selection}
+
+The number of retained features $K$ and the number of qubits $n$ are coupled through the
+selection rule of Sec.~\ref{sec:pipeline}. Fig.~\ref{fig:ksweep}(a) sweeps $K$ with a linear SVM
+proxy. Without projection, macro-$F_1$ rises steadily to $0.9727$ at $K=122$. After projection to
+four components it peaks at $0.9283$ at $K=80$, and at $K=20$ it is $0.9007$.
+
+Applied at $K=20$, the variance gate $V(n)\geq0.85$ admits $n\in\{4,\dots,10\}$. The maximum
+alignment is $\mathrm{KTA}_{\max}=0.2439$ at $n=5$, so the alignment gate (threshold $0.2317$)
+keeps $\{4,5,6\}$, and the cost stage selects $n^{\ast}=4$, a circuit with $24$ two-qubit gates
+(Fig.~\ref{fig:c1-selection}). At larger budgets the same rule returns $n^{\ast}=4,7,8,9$ for
+$K=20,40,80,122$ (Fig.~\ref{fig:ksweep}b). With more features retained, the same variance is
+spread over more components, $V(n)$ falls at every $n$, and the variance gate admits only wider
+circuits. Moving from $K=20$ to $K=80$ raises the proxy's macro-$F_1$ by $0.028$ and the
+two-qubit gate count from $24$ to $112$. We use $K=20$ because it is the largest budget the
+rule serves with four qubits; Sec.~\ref{sec:res-width} reports the quantum kernel at $K=80$.
+
 \subsection{Entanglement ablation}\label{sec:res-ent}
+
+\input{figs/fig_ablation}
+\input{figs/fig_perrun}
+
+At $n^{\ast}=4$ we compare \QSVM{} with the same circuit without its entangling layer
+(\QSVM{}-\Zmap{}) and with five classical baselines. Entanglement raises kernel--target
+alignment by $\Delta\mathrm{KTA}=+0.1378$ $[+0.1267,+0.1489]$ ($d_z=8.91$). The macro-$F_1$
+difference is $+0.0114$ $[-0.0054,+0.0281]$ ($p_{\mathrm{Holm}}=0.23$); the interval contains
+zero, and no significant difference was detected (Fig.~\ref{fig:ablation}).
+
+The mean macro-$F_1$ of the seven models (Fig.~\ref{fig:perrun}) is XGBoost $0.8503$
+$[0.8412,0.8595]$, \QSVM{} $0.8469$ $[0.8321,0.8616]$, random forest $0.8446$, SVM-RBF
+$0.8362$, \QSVM{}-\Zmap{} $0.8355$, SVM-poly2 $0.8327$ and linear SVM $0.8137$. The intervals of
+the first two overlap, so we read this as an ordering of point estimates.
 
 \subsection{Distribution shift}\label{sec:res-shift}
 
+\input{figs/fig_priorshift}
+
+We apply four shifts to the $N=1000$ models (Fig.~\ref{fig:priorshift}). In the taxonomy of
+\cite{ref33}, the first two change the class prior and the mix of attack types, the third
+changes the collection period and the fourth perturbs the features.
+
+\emph{Class prior.} When the attack fraction of the test mixture is raised to $30$, $50$ and
+$70\%$, \QSVM{} separates from its \Zmap{} control ($+0.0237$ at $50\%$ and $+0.0367$ at $70\%$,
+both significant after correction) and from the linear kernel. It degrades faster than both tree
+ensembles: over the shift it loses $0.032$ macro-$F_1$, against $0.021$ for XGBoost and $0.025$
+for the random forest. At $70\%$ attacks the difference against XGBoost favours the classical
+model ($-0.0242$, $p_{\mathrm{Holm}}=0.039$).
+
+\emph{Attack composition.} On a $50/50$ mixture of normal and DoS traffic, \QSVM{} is ahead of
+all four kernel baselines, with effect sizes from $1.56$ to $3.02$. No significant difference
+was detected against either tree ensemble ($+0.0014$ and $+0.0006$).
+
+\emph{Temporal shift.} On the KDDTest-21 partition, \QSVM{} loses more than its \Zmap{} control
+and more than the linear and polynomial kernels; all three comparisons favour the baseline. The
+comparisons against SVM-RBF and both ensembles are inconclusive.
+
+\emph{Feature perturbation.} Under additive noise of increasing standard deviation, the
+macro-$F_1$ of \QSVM{} falls faster than that of every baseline. All six comparisons of
+degradation slope favour the baseline, with slope differences from $-0.69$ to $-1.11$ and
+effect sizes above $2.8$ in magnitude.
+
 \subsection{Training-set size}\label{sec:res-n}
+
+\input{tables/crossover_arms}
+\input{figs/fig_learning_curve}
+\input{tables/ref_arm}
+
+We vary $N$ from $100$ to $10^4$ under the natural class prior and score every model on the full
+KDDTest$^+$ set (Fig.~\ref{fig:learning-curve}a,~c). All seven models use the same
+four-component input, so the comparison ranks learners on one embedding.
+
+At $N=100$ the ranking is XGBoost $0.7802$, random forest $0.7695$, \QSVM{}-\Zmap{} $0.7613$,
+SVM-RBF $0.7296$, linear SVM $0.7261$, \QSVM{} $0.6989$. The quantum kernel is next to last and
+its difference from XGBoost, $-0.0812$, is the largest in the sweep. At $N=10^4$ the order is
+\QSVM{} $0.7855$, \QSVM{}-\Zmap{} $0.7787$, SVM-RBF $0.7740$, random forest $0.7728$, XGBoost
+$0.7706$. The difference against XGBoost changes sign between $N=2000$ and $N=5000$
+($-0.0129$ to $+0.0100$) and is significant at $N=5000$ ($p_{\mathrm{Holm}}=0.027$, $d_z=1.22$)
+and at $N=10^4$ ($+0.0149$, $p_{\mathrm{Holm}}=0.0078$, $d_z=1.07$).
+
+\emph{Re-tuning.} Table~\ref{tab:crossover-arms} repeats the sweep with hyper-parameters held
+at the values selected once. All six baseline--arm combinations change sign between $N=2000$
+and $N=5000$, the same step as in the re-tuned arm, so the reversal does not depend on
+re-tuning at each $N$.
+
+\emph{Baselines.} The reversal differs by baseline. Against SVM-RBF the difference turns
+positive, but no cell of the sweep reaches significance after correction; we found no training
+size at which the quantum kernel beat the RBF kernel. Against XGBoost significance is reached
+for $N\geq5000$, against the random forest only at $N=10^4$, and against the linear and
+polynomial kernels from $N=1000$ and $N=2000$ respectively.
+
+\emph{Class prior of the training pool.} We repeated the sweep with the rare classes (R2L and
+U2R) enriched twelvefold to $10\%$ of each subset (Fig.~\ref{fig:learning-curve}b,~d). This pool
+cannot be sampled beyond $N=2000$: at $N=5000$ the ten runs would share $59\%$ of their rare
+records. The enriched arm therefore stops one step before the interval in which the sign changes
+under the natural prior, and the design cannot tell whether enrichment removes the reversal. On
+the five sizes both arms share ($N=100$ to $2000$), the natural arm finds the tree ensembles
+significantly ahead in $8$ of $10$ cells (all except $N=2000$). In the enriched arm the
+difference against both ensembles has the same negative sign in $9$ of $10$ cells, but none
+reaches significance. Over all $30$ shared cells the sign agrees in $22$, and the enriched arm
+reaches a verdict in $4$ cells against $12$ for the natural arm. A sweep restricted to
+$N\leq2000$ under either prior would not have reached the sizes at which \QSVM{} ranks first.
+
+\emph{Full-feature reference.} Table~\ref{tab:ref-arm} adds XGBoost and a random forest trained
+on all $122$ one-hot features, on the same subsets and seeds, outside the paired protocol.
+Full-feature XGBoost peaks at $\refArmXgbPeak$ at $N=\refArmXgbPeakN$ and reaches
+$\refArmXgbTenK$ at $N=10^4$. Against it, the difference of \QSVM{} is $\refArmDeltaXgbFiveK$ at
+$N=5000$ and $\refArmDeltaXgbTenK$ at $N=10^4$. Both intervals contain zero, so no significant
+difference was detected; the design has no equivalence margin and cannot show that the two
+models perform equally. Against the full-feature random forest, \QSVM{} is ahead at $N=10^4$
+($\refArmDeltaRfTenK$). Trained on the whole $125{,}973$-record partition, full-feature XGBoost
+reaches $0.804$ (Sec.~\ref{sec:protocol}), above every four-qubit result in this paper. The
+reversal is thus a property of the shared four-component embedding. Given the raw record, a tree
+ensemble is not beaten by the four-qubit kernel at any size we tested.
 
 \subsection{Rare attack classes}\label{sec:res-rare}
 
+The macro average can hide the classes an operator cares most about, so we report the $F_1$
+score of the rare classes (R2L and U2R together) separately. At $N=10^4$ under the natural
+prior it is SVM-RBF $0.585$, \QSVM{} $0.507$, \QSVM{}-\Zmap{} $0.421$, XGBoost $0.334$, random
+forest $0.331$, SVM-poly2 $0.109$ and linear SVM $0.089$. The quantum kernel detects rare attacks
+much better than either tree ensemble, a difference the macro average does not show. SVM-RBF is
+higher still, by $0.078$.
+
+This result and the enriched-pool sweep of Sec.~\ref{sec:res-n} measure different things. Here
+the metric is rare-class $F_1$ at $N=10^4$; there it is macro-$F_1$ at $N\leq2000$, where the
+tree ensembles score higher. The two findings are compatible: at small $N$ the ensembles lead on
+the overall score, and at large $N$ the RBF and quantum kernels lead on the rare classes.
+
 \subsection{Transfer to UNSW-NB15}\label{sec:res-unsw}
+
+\input{figs/fig_unsw_transfer}
+
+We applied the selection rule to UNSW-NB15 with the same thresholds and constants
+(Fig.~\ref{fig:c1-selection}, bottom). It returns $n^{\ast}=6$, with $V=0.9044$,
+$\mathrm{KTA}=0.1986$ and $60$ two-qubit gates. On ten independent subsets it returns
+$n^{\ast}=6$ in $10/10$ cases at tolerance $\varepsilon\in\{0.02,0.05\}$ and in $7/10$ at
+$\varepsilon=0.1$, where the other three give $n^{\ast}=5$.
+
+The training-size reversal does not reproduce (Fig.~\ref{fig:unsw-transfer}). At $N=10^4$,
+\QSVM{} is ahead of SVM-RBF ($+0.0401$, $p_{\mathrm{Holm}}=0.0059$) and of its \Zmap{} control
+($+0.0449$, $p_{\mathrm{Holm}}=0.0020$). XGBoost has the higher mean at every size ($-0.0204$ at
+$N=10^4$, significant), and the difference against either tree ensemble never changes sign.
+
+\subsection{Test records duplicated in the training data}\label{sec:res-dedup}
+
+\input{tables/dedup_sensitivity}
+
+A test record whose raw features equal those of a training record can reward memorisation.
+Such records are $2.9\%$ of the NSL-KDD test set and $25.3\%$ of the UNSW-NB15 test set
+(Table~\ref{tab:dedup}). To check whether they drive the comparisons above, we retrained all
+seven models at every $N$ and in every run with their stored hyper-parameters, kept the
+per-record predictions, and scored them on the full test set and on the test set with duplicates
+removed.
+
+The retraining reproduced the stored predictions, to within one test record, in all $120$
+UNSW-NB15 trainings and in $246$ of $260$ NSL-KDD trainings. In ten of the remaining fourteen,
+the original training subset could not be rebuilt exactly; in the other four, one model differs
+on two or three of the $22{,}544$ test records. In every case both sides of the comparison use
+the retrained models.
+
+Removing duplicates reversed the direction of no cell (Table~\ref{tab:dedup}). Four of the
+$108$ cells changed verdict, all of them between significant and inconclusive and all with
+Holm-adjusted $p$ close to $0.05$ before removal. On NSL-KDD under the natural prior, the
+comparison with the random forest at $N=5000$ became inconclusive ($+0.0080$,
+$p_{\mathrm{Holm}}=0.049$, to $+0.0062$, $p_{\mathrm{Holm}}=0.16$). In the original runs this
+cell was already inconclusive ($p_{\mathrm{Holm}}=0.065$), so the natural-prior counts after
+removal equal those of the regime map in Sec.~\ref{sec:regime}. In the enriched arm the
+comparison with \QSVM{}-\Zmap{} at $N=1000$ became significant in favour of the control
+($-0.0234$ $[-0.043,-0.003]$, $p_{\mathrm{Holm}}=0.037$). On UNSW-NB15 two cells at $N=5000$
+became inconclusive: against SVM-poly2 ($+0.038$ $[-0.001,+0.078]$) and against XGBoost
+($-0.015$ $[-0.030,+0.001]$), both at $p_{\mathrm{Holm}}=0.064$. The main comparative findings
+hold on the de-duplicated test sets. On NSL-KDD, \QSVM{} remains significantly ahead of XGBoost
+at $N=5000$ and $N=10^4$ and of the random forest at $N=10^4$. On UNSW-NB15 the difference
+against both ensembles stays negative at every $N$.
 
 \subsection{Circuit width and Gram-matrix concentration}\label{sec:res-width}
 
+\input{figs/fig_width}
+
+Sec.~\ref{sec:res-embed} showed that a larger feature budget requires a wider circuit. We
+repeated the training-size sweep at $K=80$, where the rule returns $n^{\ast}=8$. All $48$
+paired comparisons (six baselines, eight training sizes) favour the classical baseline
+(Fig.~\ref{fig:width}a). The entanglement ablation also changes sign: at eight qubits \QSVM{}
+scores below its \Zmap{} control at every size, by $0.082$ to $0.171$ macro-$F_1$.
+
+We measured how the Gram matrix changes with width. Let $s(n)$ be the standard deviation of
+its off-diagonal entries. Fitting $s(n)\propto n^{-\alpha}$ over $n=4,\dots,10$ at $K=20$ gives
+$\alpha_{\ZZ}=0.590$ and $\alpha_{\Zmap}=0.292$, a ratio of $2.02$. A simple count of phase terms
+matches this ratio: the \ZZ{} map has $\binom{n}{2}$ pairwise terms and $n$ single-qubit terms,
+the \Zmap{} map only the $n$ single-qubit terms. At $K=80$ the fitted exponents are $0.75$ and
+$0.23$, a ratio of $3.32$ (Fig.~\ref{fig:width}b), and over the same range the \ZZ{} kernel loses
+$49\%$ of its off-diagonal dispersion against $18\%$ for the \Zmap{} kernel. The count predicts
+which map concentrates faster at both budgets, but it predicts the ratio only at $K=20$.
+
+Across the seven widths, off-diagonal dispersion and macro-$F_1$ are correlated with $r=+0.77$
+($95\%$ CI $[+0.04,+0.96]$, $p=0.04$) for the \ZZ{} kernel and $r=+0.32$ ($[-0.57,+0.87]$,
+$p=0.48$) for the \Zmap{} kernel, which concentrates little (Fig.~\ref{fig:width}c). The first
+interval only just excludes zero. The difference between the two correlations is not
+significant ($z=0.97$, $p=0.33$), so the data do not show that the association is specific to
+the concentrating map. These are observational results over seven widths: lower dispersion
+goes with lower macro-$F_1$, and we have not shown that one causes the other. A power law fitted
+over this range cannot be distinguished from an exponential decay. The observations are
+compatible with the kernel concentration analysed by Thanasilp \emph{et al.}
+\cite{thanasilp2024}, who prove that kernel values concentrate exponentially in the number of
+qubits under conditions that include high expressivity, entanglement and noise.
+
+Cirillo \emph{et al.} \cite{qmi2026}, studying quantum classifiers for intrusion detection on
+ToN\_IoT under noise models derived from IBM backends, report the best balance between
+performance and cost at $20$ to $35$ CNOT gates. Our four-qubit operating point uses $24$
+two-qubit gates, inside that range, and the degradation we observe appears at $112$. Their
+results include backend noise. Our width results come from exact, noiseless simulation, so in
+our setting the degradation occurs without any gate error. We did not test
+lower-noise hardware, other feature maps or bandwidth scaling, and we draw no conclusion about
+whether such changes would extend the useful range of widths.
+
 \subsection{Simulated hardware noise}\label{sec:res-noise}
+
+We checked the operating point under one backend-derived noise model. In each of the ten runs,
+both maps were trained on a stratified subset of $200$ training records, with the
+regularisation constant selected for the main runs ($C=3$ for both), and scored on the
+$300$-record test split. We computed each Gram matrix three ways: by exact statevector
+simulation, by sampling with $512$ shots per kernel entry without noise, and by sampling with
+$512$ shots under the noise model of \texttt{FakeManilaV2} (gate, readout and
+gate-duration-dependent relaxation errors). For the noisy case we transpiled the circuits to
+the backend's coupling map, which gives the \ZZ{} circuit $44$ CNOT gates and depth $59$. The
+smaller training subset explains why the statevector scores below differ from those of
+Sec.~\ref{sec:res-ent}.
+
+The mean macro-$F_1$ of \QSVM{} is $0.8329$ under statevector simulation, $0.8363$ with finite
+shots and $0.8501$ with noise; for \QSVM{}-\Zmap{} it is $0.8309$, $0.8323$ and $0.8307$.
+Relative to statevector simulation, \QSVM{} changes by $+0.0172$ $[+0.0021,+0.0324]$
+($p=0.027$, $d_z=0.81$) under noise and \QSVM{}-\Zmap{} by $-0.0002$ $[-0.0115,+0.0111]$. We do
+not count the first as an improvement: $p=0.027$ is above the first Holm threshold of any family
+this check could be assigned to, from the two noise-versus-ideal comparisons ($0.05/2$) to all
+nine comparisons it contains ($0.05/9$).
+
+The Gram matrix changes more than the score. The relative Frobenius distance between the noisy
+and the exact Gram matrix averages $0.602$ for \QSVM{} and $0.165$ for \QSVM{}-\Zmap{}, and
+alignment falls from $0.194$ to $0.149$ for \QSVM{} and from $0.070$ to $0.068$ for the control.
+Under this one noise model, at this circuit depth and with $512$ shots, we detected no loss of
+macro-$F_1$. The check covers a single simulated backend and does not establish how the kernel
+would behave on physical hardware or under other noise models.

@@ -68,7 +68,9 @@ RULES: list[tuple[str, callable]] = [
     # also be qualified." Ta chi chay mo phong khong nhieu, khong thu phan cung tot hon.
     ("phan cung tot hon khong mo rong duoc (chua kiem)",
      lambda s: re.search(r"\b(better|improved|future|lower-noise)\s+hardware\b", s, re.I)
-     and re.search(r"\b(not|cannot|never|rather than|no amount)\b", s, re.I)),
+     and re.search(r"\b(not|cannot|never|rather than|no amount)\b", s, re.I)
+     # Cau da rao dung kieu R3 doi (noi ro chua thu, khong ket luan) thi bo qua
+     and not re.search(r"\b(did not test|have not tested|no conclusion)\b", s, re.I)),
     # 17/15/78 la BH ap len p da hieu chinh Holm (hieu chinh hai lan); so dung
     # trong results/nslkdd/regime_map_multiplicity.csv
     ("so BH cu 17/15/78 (hieu chinh hai lan)",

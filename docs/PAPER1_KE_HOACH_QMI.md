@@ -102,6 +102,17 @@ từ trang hướng dẫn tác giả của Springer), hình dùng lại từ `pa
    Chưa compile thử trên Overleaf. Danh mục tham khảo vẫn kiểu IEEE (`thebibliography`).
 2. Viết lại từng mục theo thứ tự: kết quả → bản đồ regime → phương pháp → giới thiệu và liên quan (đối
    chiếu Cirillo 2026) → giới hạn → kết luận → tóm tắt (viết cuối, khi số đã chốt).
+   **Kết quả xong 20-11** (`sections/04_results.tex`, ~2.300 từ; hình `figs/`, bảng `tables/` sinh bằng
+   `runners/make_qmi_tables.py`). Thêm tiểu mục bỏ dòng test trùng train (`sec:res-dedup`, bảng
+   `tab:dedup`: 4/108 ô đổi, không ô nào đổi chiều). Kiểm: `audit_c4.py` 100/100, `audit_figures.py` 36/36,
+   số mới (nhiễu, tấn công hiếm, bỏ trùng, nhánh tăng mẫu) đối chiếu CSV bằng tay; audit chữ 0 (luật "phần
+   cứng tốt hơn" thêm ngoại lệ cho câu đã rào "did not test / no conclusion").
+   Sửa so với bản cũ: nhiễu ghi đúng giao thức (200 dòng train, C = 3, 44 CNOT sau transpile; giải thích vì
+   sao 0,8329 ≠ 0,8469); Cirillo: tập chính là ToN_IoT (bản cũ ghi "cùng tập"), bỏ câu "suy giảm sau ~60
+   cổng" và "họ quy cho lỗi cổng" vì chưa đối chiếu lại bài họ.
+   Humanizer đã sửa: (1) Not X but Y ("K = 20 không phải tối ưu"); (2) câu kết lặp ý (4 chỗ: ablation, dịch
+   chuyển, UNSW, độ rộng); (4) câu dẫn trống ("Four further analyses…"); (11) bị động ở mục nhiễu.
+   Methods phải thêm: bảng `tab:protocol`, số 0,804, định nghĩa frozen / tuned (ghi trong `03_methods.tex`).
 3. Mỗi mục xong thì chạy hai máy kiểm: `audit_wording_r3.py paper/paper1_qmi` (chữ) và kiểm số đối chiếu
    CSV; bảng số sinh bằng script, không gõ tay.
    Thêm soát giọng văn theo skill Humanizer (`~/projects/channel_3_asian_explained/.claude/skills/humanizer/SKILL.md`,
@@ -132,5 +143,4 @@ và bỏ (b) "chủ nhân tự viết, Claude chỉ soát" vì tốn thời gian
 
 ## Cần chủ nhân
 
-- **Thư từ chối 11-11-2026 nguyên văn** (nhất là ý R3): máy chỉ có bản tóm tắt trong bộ nhớ.
-  Dán vào `docs/Review_R1_tu_choi.md` (giống `docs/Review.md` của vòng trước).
+- Không có việc chờ (thư từ chối đã lưu ở `docs/Review_R1_tu_choi.md` ngày 20-11).
