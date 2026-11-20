@@ -3,7 +3,15 @@ all_110,110,none,25,24,61,0.001953125
 all_110,110,holm_within_family,21,21,68,0.001953125
 all_110,110,bh_block,21,18,71,0.001953125
 all_110,110,holm_block,0,0,110,0.001953125
+counted_109,109,none,24,24,61,0.001953125
+counted_109,109,holm_within_family,20,21,68,0.001953125
+counted_109,109,bh_block,20,18,71,0.001953125
+counted_109,109,holm_block,0,0,109,0.001953125
 c4_natural_42,42,none,11,11,20,0.001953125
 c4_natural_42,42,holm_within_family,11,9,22,0.001953125
 c4_natural_42,42,bh_block,11,8,23,0.001953125
 c4_natural_42,42,holm_block,0,0,42,0.001953125
+other_counted_67,67,none,13,13,41,0.001953125
+other_counted_67,67,holm_within_family,9,12,46,0.001953125
+other_counted_67,67,bh_block,9,11,47,0.001953125
+other_counted_67,67,holm_block,0,0,67,0.001953125

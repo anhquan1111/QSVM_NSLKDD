@@ -1,11 +1,12 @@
 % =====================================================================
 %  Regime map (ban nhap Claude 20-11, chu nhan va thay Van sua lai giong van).
 %  Nguon: paper/paper1/sections/06_regimemap.tex (~1130 tu). Muc tieu ~800 tu.
-%  So: results/nslkdd/regime_map_rows.csv (110 o); do nhay hieu chinh:
+%  So: results/nslkdd/regime_map_rows.csv (110 o, dem 109: o dKTA la kiem tra co che,
+%  ve rong ruot tren Hinh 10, khong dem; chot 20-11 theo tu van Fable); do nhay hieu chinh:
 %  results/nslkdd/regime_map_multiplicity.csv (bang sinh bang make_qmi_tables.py).
 %  Da ap: 1.3 (bo "parity"); 1.4(d) khoi 42 o tu nhien (11/9/22) dua len truoc,
-%  tong 110 o (21/21/68) de sau, noi ro gop hai protocol; R3 do nhay theo cach
-%  hieu chinh (BH ca khoi 21/18/71, KHONG phai 17/15/78 cu; Holm ca khoi 0 o);
+%  tong 109 o (20/21/68) de sau, noi ro gop hai protocol; R3 do nhay theo cach
+%  hieu chinh (BH ca khoi 20/18/71, KHONG phai 17/15/78 cu; Holm ca khoi 0 o);
 %  R3 bo "closed from above by the physics ... better hardware".
 %  Ba o doi sang khong ket luan duoi BH (tinh tung o tu p tho, 20-11): RF N=500,
 %  RF N=1000 (tu nhien), XGBoost o 70% tan cong. Khong o nghieng QSVM nao doi.
@@ -18,17 +19,20 @@
 \input{tables/multiplicity}
 
 Fig.~\ref{fig:regime-map} places the controlled comparisons on NSL-KDD from
-Sec.~\ref{sec:results} in one map of $110$ cells. Each cell is a paired comparison of \QSVM{}
+Sec.~\ref{sec:results} in one map. Each cell is a paired comparison of \QSVM{}
 with one baseline under one condition, with a verdict from the Holm-adjusted Wilcoxon test within
-its baseline family (Sec.~\ref{sec:stats}).
+its baseline family (Sec.~\ref{sec:stats}). One cell compares the kernel--target alignment of the
+\ZZ{} and \Zmap{} kernels rather than a classification score (Sec.~\ref{sec:res-ent}). It checks
+the mechanism behind the entanglement ablation, so the map shows it with a hollow marker and
+the counts below leave it out, which leaves $109$ cells.
 
 The cells do not share one protocol (Table~\ref{tab:protocol}). Forty-two come from the
 training-set-size sweep under the natural class prior, scored on the full KDDTest$^+$ set. In
 this block $11$ cells favour \QSVM{}, $9$ favour the classical baseline and $22$ are
-inconclusive. The other $68$ cells use the rare-enriched training pool: $30$ from the enriched
-sweep, scored on the full test set, and $38$ from the entanglement and shift experiments, scored
-on test sets of $300$ or $1000$ records. They split $10$, $12$ and $46$. Over all $110$ cells the
-count is $21$, $21$ and $68$. A difference estimated on $300$ test records is less precise than
+inconclusive. The other $67$ cells use the rare-enriched training pool: $30$ from the enriched
+sweep, scored on the full test set, and $37$ from the entanglement and shift experiments, scored
+on test sets of $300$ or $1000$ records. They split $9$, $12$ and $46$. Over all $109$ cells the
+count is $20$, $21$ and $68$. A difference estimated on $300$ test records is less precise than
 one estimated on $22{,}544$, so we take the natural-prior block as the main result and the full
 map as a summary across protocols. Removing test records duplicated in the training data leaves
 the counts of the natural-prior block unchanged (Sec.~\ref{sec:res-dedup}).
@@ -36,17 +40,17 @@ the counts of the natural-prior block unchanged (Sec.~\ref{sec:res-dedup}).
 \subsection{Sensitivity to the multiplicity correction}\label{sec:regime-mult}
 
 Table~\ref{tab:multiplicity} recounts the verdicts from the raw $p$ of each cell under four
-corrections. With a Benjamini--Hochberg correction over all $110$ cells the count is $21$, $18$
+corrections. With a Benjamini--Hochberg correction over all $109$ cells the count is $20$, $18$
 and $71$. The three cells that change all move from a classical verdict to inconclusive: the
 random forest at $N=500$ and $N=1000$ under the natural prior, and XGBoost at a $70\%$ attack
 fraction. Every cell that favours \QSVM{} within families also does so under
-Benjamini--Hochberg. Within the natural-prior block, the correction over all $110$ cells gives
+Benjamini--Hochberg. Within the natural-prior block, the correction over all $109$ cells gives
 $11$, $7$ and $24$, since both random-forest cells lie in it; applied to the $42$ cells of that
 block alone it changes one cell, giving $11$, $8$ and $23$.
 
-Holm over a whole block rejects no cell, for $110$ cells or for $42$. With ten runs the smallest
+Holm over a whole block rejects no cell, for $109$ cells or for $42$. With ten runs the smallest
 two-sided Wilcoxon $p$ is $2/2^{10}=0.00195$, while the first Holm threshold is
-$0.05/110=0.00045$ ($0.05/42=0.0012$ for the natural block). This is a limit set by the number
+$0.05/109=0.00046$ ($0.05/42=0.0012$ for the natural block). This is a limit set by the number
 of runs and says nothing about whether the differences are zero; family-wise control over the
 whole map would need more runs per cell. In what follows we name the corrections under which
 each statement holds.

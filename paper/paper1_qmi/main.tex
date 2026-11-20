@@ -71,8 +71,8 @@ The protocol varies one factor at a time (circuit width, entanglement, test dist
 training-set size), tunes every model by cross-validation, pairs each comparison over ten
 runs, and scores on the official test sets with and without test records duplicated in the
 training data. Under the natural class prior, 11 of the 42 training-size comparisons favour the
-quantum kernel, 9 favour a classical baseline and 22 are inconclusive; over all 110 comparisons
-the counts are 21, 21 and 68. On NSL-KDD, on a shared four-component embedding, the quantum kernel is behind XGBoost below 2,000 training records and significantly ahead from
+quantum kernel, 9 favour a classical baseline and 22 are inconclusive; over all 109 comparisons
+the counts are 20, 21 and 68. On NSL-KDD, on a shared four-component embedding, the quantum kernel is behind XGBoost below 2,000 training records and significantly ahead from
 5,000. This reversal remains after duplicated test records are removed, but it does not appear
 on UNSW-NB15, and against XGBoost trained on all 122 features no significant difference was
 detected from 5,000 records. A gate-cost rule for choosing the circuit width, set on NSL-KDD, selects six qubits

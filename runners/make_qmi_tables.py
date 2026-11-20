@@ -145,20 +145,24 @@ def dedup() -> None:
 
 
 def multiplicity() -> None:
-    """Dem verdict cua ban do regime theo bon cach hieu chinh (R3), 110 o va 42 o tu nhien."""
+    """Dem verdict cua ban do regime theo bon cach hieu chinh (R3), 109 o duoc dem va 42 o tu nhien.
+
+    109 = 110 o tru o dKTA (ZZ - Z): o do la kiem tra co che, ve tren Hinh 10 nhung khong dem.
+    """
     src = "results/nslkdd/regime_map_multiplicity.csv"
     d = pd.read_csv(ROOT / src).set_index(["block", "correction"])
-    rows = [("none", r"None (raw $p\le0.05$)"),
+    rows = [("none", r"None (raw $p\le0.05$ only)"),
             ("holm_within_family", "Holm within baseline family"),
             ("bh_block", r"Benjamini--Hochberg over the block"),
             ("holm_block", "Holm over the block")]
-    blocks = [("all_110", "All cells"), ("c4_natural_42", "Natural prior, full test")]
+    blocks = [("counted_109", "Counted cells"), ("c4_natural_42", "Natural prior, full test")]
     p_min = d.min_raw_p.min()
     body = [
         r"\begin{table}[t]", r"\centering",
         r"\caption{Verdict counts of the regime map under four multiplicity corrections, recomputed",
         r"from the raw Wilcoxon $p$ of each cell. Counts are favouring \QSVM{} / favouring the classical",
-        r"baseline / inconclusive. Holm within the baseline family is the convention used elsewhere in",
+        r"baseline / inconclusive. The alignment cell of the map is a mechanism check and is not counted.",
+        r"Holm within the baseline family is the convention used elsewhere in",
         rf"the paper. With ten runs the smallest attainable two-sided $p$ is ${p_min:.5f}$, so Holm over a",
         r"whole block cannot reject any cell.}",
         r"\label{tab:multiplicity}", r"\footnotesize", r"\setlength{\tabcolsep}{4pt}",

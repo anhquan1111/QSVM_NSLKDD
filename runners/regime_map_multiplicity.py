@@ -10,7 +10,8 @@ p) tu file thong ke goc cua tung o roi tinh lai bon cach dem:
 
     khong hieu chinh | Holm trong ho (so chinh) | BH tren ca khoi | Holm tren ca khoi
 
-cho ca 110 o va rieng khoi 42 o tu nhien (C4 natural).
+cho ca 110 o, 109 o duoc dem (bo o dKTA co che), khoi 42 o tu nhien (C4 natural)
+va 67 o con lai.
 
     uv run python runners/regime_map_multiplicity.py
     -> results/nslkdd/regime_map_multiplicity.csv
@@ -94,8 +95,14 @@ def main() -> int:
         print("Thieu p tho")
         return 1
     out = []
+    # O dKTA (ZZ - Z) la kiem tra co che, khong phai so sanh do chinh xac: ban QMI
+    # van ve no tren Hinh 10 nhung khong dem (chot 20-11). "all_110" giu de doi chieu.
+    counted = rows[rows.metric != "ZZ_minus_Z_KTA"]
+    natural = rows.source == "c4_pairwise_statistics_natural.csv"
     blocks = {"all_110": rows,
-              "c4_natural_42": rows[rows.source == "c4_pairwise_statistics_natural.csv"]}
+              "counted_109": counted,
+              "c4_natural_42": rows[natural],
+              "other_counted_67": counted[counted.source != "c4_pairwise_statistics_natural.csv"]}
     for block, d in blocks.items():
         p, est = d.raw_p.to_numpy(), d.estimate.to_numpy()
         methods = {

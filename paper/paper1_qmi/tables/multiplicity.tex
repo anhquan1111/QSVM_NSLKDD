@@ -3,7 +3,8 @@
 \centering
 \caption{Verdict counts of the regime map under four multiplicity corrections, recomputed
 from the raw Wilcoxon $p$ of each cell. Counts are favouring \QSVM{} / favouring the classical
-baseline / inconclusive. Holm within the baseline family is the convention used elsewhere in
+baseline / inconclusive. The alignment cell of the map is a mechanism check and is not counted.
+Holm within the baseline family is the convention used elsewhere in
 the paper. With ten runs the smallest attainable two-sided $p$ is $0.00195$, so Holm over a
 whole block cannot reject any cell.}
 \label{tab:multiplicity}
@@ -11,12 +12,12 @@ whole block cannot reject any cell.}
 \setlength{\tabcolsep}{4pt}
 \begin{tabular}{@{}l cc@{}}
 \toprule
-Correction & All cells (110) & Natural prior, full test (42) \\
+Correction & Counted cells (109) & Natural prior, full test (42) \\
 \midrule
-None (raw $p\le0.05$ only) & 25/24/61 & 11/11/20 \\
-Holm within baseline family & 21/21/68 & 11/9/22 \\
-Benjamini--Hochberg over the block & 21/18/71 & 11/8/23 \\
-Holm over the block & 0/0/110 & 0/0/42 \\
+None (raw $p\le0.05$ only) & 24/24/61 & 11/11/20 \\
+Holm within baseline family & 20/21/68 & 11/9/22 \\
+Benjamini--Hochberg over the block & 20/18/71 & 11/8/23 \\
+Holm over the block & 0/0/109 & 0/0/42 \\
 \bottomrule
 \end{tabular}
 \end{table}

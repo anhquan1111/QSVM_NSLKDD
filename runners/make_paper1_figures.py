@@ -12,6 +12,7 @@ khong bao gio chi dua vao mau -- dieu bat buoc voi ban in den trang.
 
 from __future__ import annotations
 
+import sys
 import json
 from pathlib import Path
 
@@ -110,17 +111,19 @@ def tidy(ax):
     ax.tick_params(length=2.5, width=0.7)
 
 
-def save(fig, name):
+def save(fig, name, out=None):
     """Ghi ra dia roi TRA VE fig, de notebook con hien duoc inline.
 
     `plt.close` chi go fig khoi trinh quan ly cua pyplot; doi tuong van ve
     lai duoc bang `display(fig)`, nen dong o day khong mat gi ma tranh
     duoc viec giu hang chuc figure trong bo nho.
     """
+    out = OUT if out is None else out
+    out.mkdir(parents=True, exist_ok=True)
     for ext in ("pdf", "png"):
-        fig.savefig(OUT / f"{name}.{ext}")
+        fig.savefig(out / f"{name}.{ext}")
     plt.close(fig)
-    print(f"  -> {OUT.relative_to(ROOT)}/{name}.pdf  (+ .png)")
+    print(f"  -> {out.relative_to(ROOT)}/{name}.pdf  (+ .png)")
     return fig
 
 
@@ -517,11 +520,21 @@ ROW_LABEL = {
 }
 
 
-def _row_label(r) -> str:
+# Ban QMI (chot 20-11): o dKTA la kiem tra co che, van ve nhung rong ruot va
+# khong dem; "temporal" doi thanh "harder records" vi KDDTest-21 loc theo do kho.
+MECHANISM_METRIC = "ZZ_minus_Z_KTA"
+QMI_OUT = ROOT / "paper" / "paper1_qmi" / "figs_revision"
+
+
+def _row_label(r, qmi: bool = False) -> str:
     key = (r.contribution, r.metric)
+    if qmi and r.metric == MECHANISM_METRIC:
+        return "KTA,  ZZ $-$ Z  (not counted)"
     if key in ROW_LABEL:
         return ROW_LABEL[key]
     if r.contribution == "C3":
+        if qmi and r.regime == "temporal":
+            return "harder records,  KDDTest$^{-21}$"
         if r.regime == "prior_shift":
             return f"prior shift,  {r.condition.replace('attack_', '').replace('pct', '%')} attack"
         if r.regime == "temporal":
@@ -533,9 +546,9 @@ def _row_label(r) -> str:
     return f"{r.regime.split('_')[-1]},  $N$ = {fmt_n(int(r.condition.split('=')[1]))}"
 
 
-def figure10():
+def figure10(qmi: bool = False):
     d = pd.read_csv(ROOT / "results/nslkdd/regime_map_rows.csv")
-    d["row"] = d.apply(_row_label, axis=1)
+    d["row"] = d.apply(_row_label, axis=1, qmi=qmi)
     cols = ["QSVM_Z", "SVM_Linear", "SVM_Poly2", "SVM_RBF", "RandomForest", "XGBoost"]
 
     # Bo cuc: moi nhom mot dong tieu de in dam, roi den cac dong du lieu.
@@ -555,7 +568,8 @@ def figure10():
         y += 0.55
     ymax = y - 0.55
 
-    fig, ax = plt.subplots(figsize=(7.16, 3.75))
+    # Ban QMI cao hon: 27 dong nhan co 7.5 pt chen nhau o 3.75 in (loi tu ban TETC).
+    fig, ax = plt.subplots(figsize=(7.16, 5.6 if qmi else 3.75))
     for side in ("top", "right", "left", "bottom"):
         ax.spines[side].set_visible(False)
 
@@ -567,6 +581,10 @@ def figure10():
         if key not in ys or r.baseline not in cols:
             continue
         st = VERDICT_STYLE[r.verdict]
+        if qmi and r.metric == MECHANISM_METRIC:
+            ax.plot([cols.index(r.baseline)], [ys[key]], marker=st["marker"], ms=st["ms"],
+                    mfc=SURFACE, mec=st["color"], mew=1.3, ls="none", zorder=5)
+            continue
         ax.plot([cols.index(r.baseline)], [ys[key]], marker=st["marker"], ms=st["ms"],
                 color=st["color"], mec=SURFACE, mew=1.0, ls="none", zorder=5)
 
@@ -584,7 +602,8 @@ def figure10():
     ax.set_ylim(ymax, -0.6)
     ax.tick_params(length=0)
 
-    counts = d.verdict.value_counts()
+    counted = d[d.metric != MECHANISM_METRIC] if qmi else d
+    counts = counted.verdict.value_counts()
     handles = [Line2D([], [], ls="none", marker=VERDICT_STYLE[k]["marker"],
                       ms=VERDICT_STYLE[k]["ms"], color=VERDICT_STYLE[k]["color"],
                       mec=SURFACE, mew=1.0,
@@ -595,11 +614,13 @@ def figure10():
 
     fig.suptitle("Regime map: where the quantum kernel helps, and where it does not",
                  x=0.012, y=0.985, ha="left", fontsize=10, fontweight="bold", color=INK)
-    fig.text(0.012, 0.925, "Verdict of QSVM-ZZ against each baseline "
-                           "(paired over 10 runs, Holm-corrected within family)",
-             ha="left", fontsize=7.5, color=INK_MUTED)
-    fig.tight_layout(rect=(0, 0.01, 1, 0.895))
-    return save(fig, "fig10_regime_map")
+    sub_text = ("Verdict of QSVM-ZZ against each baseline "
+                "(paired over 10 runs, Holm-corrected within family)")
+    if qmi:
+        sub_text += f";  {len(counted)} cells counted, hollow marker not counted"
+    fig.text(0.012, 0.925, sub_text, ha="left", fontsize=7.5, color=INK_MUTED)
+    fig.tight_layout(rect=(0, 0.01, 1, 0.93 if qmi else 0.895))
+    return save(fig, "fig10_regime_map", out=QMI_OUT if qmi else None)
 
 
 # --------------------------------------------------------------------------
@@ -979,6 +1000,11 @@ def figure12():
 
 
 if __name__ == "__main__":
+    if "--qmi" in sys.argv:
+        # Chi hinh rieng cua ban QMI, ghi vao paper/paper1_qmi/figs_revision/
+        # (make_qmi_zip.py lay o do truoc paper1/): khong dung hinh ban TETC.
+        figure10(qmi=True)
+        raise SystemExit(0)
     print("Sinh hinh cho ban revision paper 1")
     figure4()
     figure5()
