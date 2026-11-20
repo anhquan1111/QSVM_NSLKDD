@@ -1,11 +1,80 @@
-% Nguon: paper/paper1/sections/07_limitations.tex (~1270 tu). Muc tieu ~800 tu.
-% Phai doi:
-%  - 1.1: bo cau "617 on features alone" va "We have not re-scored ... per-row
-%    predictions were not retained" (dong 122-123 cu). Thay bang ket qua bo
-%    dong trung: khong o nao doi chieu; NSL-KDD 1/72 o C4, UNSW 2/36.
-%    So trung dung: 664 (41 dac trung), 610 (+ nhan tan cong), 617 (+ nhan nhi phan);
-%    UNSW 25,3 %. Cau viet san cho 10/260 lan huan luyen khong dung lai duoc
-%    tap train goc: xem docs/PAPER1_GD1_KET_QUA.md muc 1.1.
-%  - 1.2: dong 77-89 cu (exponential, causal).
-%  - 1.5: chi mot mo hinh nhieu, khong suy rong sang phan cung that.
+% =====================================================================
+%  Limitations (ban nhap Claude 20-11, chu nhan va thay Van sua lai giong van).
+%  Nguon: paper/paper1/sections/07_limitations.tex (~1270 tu). Ban nay ~760 tu.
+%  Khong lap lai so do cua Results: chi gom rui ro, tro ve muc co so.
+%  Moi con so o day da co o Methods / Results / Regime map (da doi chieu CSV).
+%  Da ap: 1.1 (bo "617 on features alone" va "We have not re-scored ...";
+%  so trung 664 o Methods; 10/260 lan huan luyen dung lai); 1.2 (do rong:
+%  quan he, khong nhan qua; khong "exponential"); 1.5 + R3 (nhieu chi mot cau
+%  hinh: FakeManilaV2, 512 shot, 200/300 dong; khong ket luan phan cung tot hon).
+%  Them so voi ban cu: suc manh thong ke (10 run, Holm ca khoi 0 o, khong co
+%  kiem dinh tuong duong); QSVM chua chay o toan bo tap train; nhan nhi phan
+%  (R2L/U2R chi cham la attack); trung gan dung va trung trong tap train khong
+%  bo (code khong co drop_duplicates tren dong du lieu, kiem 20-11).
+%  Bo: "NISQ-aware" (bai moi khong dung chu nay); "duong chay phan cung trong
+%  code" (chua kiem); 47,3 % trung trong UNSW train (chua doi chieu lai).
+% =====================================================================
 \section{Limitations}\label{sec:limits}
+
+\emph{Simulation, not hardware.} Every kernel in this study was computed by classical
+simulation, and no circuit was executed on a quantum processor. The main results use exact
+statevector fidelities, which carry neither sampling error nor gate error. The noise check of
+Sec.~\ref{sec:res-noise} adds both for one configuration: the four-qubit operating point, one
+backend-derived noise model (\texttt{FakeManilaV2}), $512$ shots per kernel entry, $200$
+training and $300$ test records. Its result applies to that configuration only. Effects outside
+the noise model, such as drift of the device calibration between characterisation and
+execution, are not represented, and the check says nothing about other backends, deeper
+circuits or larger training sets. The cost model of Sec.~\ref{sec:featuremap} counts logical
+two-qubit gates. Routing onto the simulated backend raises the four-qubit circuit from $24$ to
+$44$ CNOT gates, and this overhead depends on the coupling map of the device. The width
+results of Sec.~\ref{sec:res-width} were obtained without noise, so they show that the decline with width occurs without gate error. They do not show
+what hardware with lower error rates, another feature map or a rescaled bandwidth would do,
+since we tested none of these.
+
+\emph{Statistical power.} Each comparison rests on ten paired runs. The smallest two-sided
+Wilcoxon $p$-value that ten runs can produce is $0.00195$, above the Holm threshold of
+$0.05/110$ for the whole map, which is why that correction returns no verdict at all
+(Sec.~\ref{sec:regime-mult}). The median absolute difference among inconclusive cells is
+$0.014$ macro-$F_1$ (Sec.~\ref{sec:regime}), and ten runs resolve only part of the differences
+of that size. We did not run equivalence tests, so no inconclusive cell should be read as
+evidence that two models perform equally. Cells near the threshold can change verdict when the data change
+slightly: removing duplicated test records moved four of $108$ cells across it
+(Sec.~\ref{sec:res-dedup}).
+
+\emph{Training-set size.} The quantum kernel was trained on at most $10^4$ records at four
+qubits and $2\times10^4$ at eight, and never on a full training partition ($125{,}973$ records
+for NSL-KDD). The Gram matrix grows with the square of $N$, which set this limit. The
+reversal against the tree ensembles is observed at $N=5000$ and $N=10^4$; we did not test
+whether it holds at larger $N$. The classical reference trained on the whole partition
+(XGBoost, macro-$F_1$ $0.804$) is a single point, not a paired comparison. The
+enriched pool stops at $N=2000$ because the ten runs would otherwise share most of their rare
+records, so the question whether enrichment removes the reversal remains open.
+
+\emph{Data.} Both datasets are older public benchmarks, and the task is binary throughout. R2L
+and U2R are evaluated as part of the attack class; the rare-class scores of
+Sec.~\ref{sec:res-rare} measure how often those records are detected as attacks, not whether
+they are told apart from other attack types. A multi-class formulation was not tested, and the
+rare-class analysis exists only for NSL-KDD. Our duplicate check removes test records whose raw
+features exactly equal those of a training record. Near-duplicates, and repeated records within
+the training partition, were not removed. In $10$ of the $260$ NSL-KDD trainings of that
+check the original training subset could not be rebuilt exactly, and both sides of the
+comparison use the rebuilt subset. Absolute scores are measured on the official test
+partitions and are not comparable to studies that report results on random splits of the
+training data.
+
+\emph{Design choices held fixed.} The study uses one feature map, the \ZZ{} map with two
+repetitions and full entanglement, and its entanglement-free control. The feature budget $K=20$
+is the largest at which the selection rule returns four qubits; it is not the accuracy optimum
+of the classical proxy (Sec.~\ref{sec:res-embed}). The thresholds of the selection rule were
+set on NSL-KDD and applied unchanged to UNSW-NB15, where its choice of $n^{\ast}=6$ holds in
+$10/10$ subsets at $\varepsilon\le0.05$ and in $7/10$ at $\varepsilon=0.1$. Other feature maps,
+other repetition counts or other thresholds could move the boundaries of the regime map. The
+link between Gram-matrix dispersion and macro-$F_1$ was measured at seven widths and a single
+training-set size, and we report it only as an association.
+
+\emph{Baselines.} The classical baselines are linear, polynomial and RBF support vector
+machines, a random forest and XGBoost, all tuned by the same procedure as the quantum kernel.
+We did not include CatBoost or deep tabular models such as TabNet or FT-Transformer. A fair comparison with the latter
+would need its own tuning-budget protocol, and adding it would turn a controlled kernel
+benchmark into a survey of tabular methods. The regime map therefore locates the quantum kernel
+relative to these five learners, not relative to the strongest tabular method available.

@@ -149,6 +149,16 @@ từ trang hướng dẫn tác giả của Springer), hình dùng lại từ `pa
    (4) phóng đại ("widening destroys the kernel", "changes what the field believes"); câu kết hoành tráng.
    Còn chờ: gỡ `carducci2026` khỏi danh mục khi soát tham khảo; chưa đối chiếu lại toàn văn Bowles / Schnabel /
    Gillani (bảng định vị lấy nguyên từ bản TETC).
+   **Giới hạn xong 20-11** (`sections/06_limitations.tex`, ~760 từ, 6 đoạn: mô phỏng không phải phần cứng,
+   sức mạnh thống kê, cỡ tập train, dữ liệu, lựa chọn thiết kế cố định, baseline). Không lặp số của Kết quả,
+   chỉ trỏ về mục; mọi số đã có ở Phương pháp / Kết quả / Bản đồ. Thêm so với bản cũ: 10 run không bác bỏ
+   được ô nào dưới Holm cả khối, không có kiểm định tương đương; QSVM chưa chạy ở toàn bộ tập train; nhãn
+   nhị phân (R2L/U2R chỉ chấm là attack); trùng gần đúng và trùng trong tập train không bỏ (code không có
+   `drop_duplicates` trên dòng dữ liệu). Bỏ: "NISQ-aware", câu "code có sẵn đường chạy phần cứng" (chưa
+   kiểm), 47,3 % trùng trong train UNSW (chưa đối chiếu lại). Sửa sai lý của nháp: câu "thứ hạng độ rộng
+   theo chi phí có thể đổi trên thiết bị khác" (quy tắc chỉ dùng việc chi phí tăng theo n).
+   Humanizer đã sửa: (2) câu lặp ý ("An inconclusive cell is therefore…"); bộ ba "persists, widens or
+   closes"; không có câu kết hoành tráng.
 3. Mỗi mục xong thì chạy hai máy kiểm: `audit_wording_r3.py paper/paper1_qmi` (chữ) và kiểm số đối chiếu
    CSV; bảng số sinh bằng script, không gõ tay.
    Thêm soát giọng văn theo skill Humanizer (`~/projects/channel_3_asian_explained/.claude/skills/humanizer/SKILL.md`,
