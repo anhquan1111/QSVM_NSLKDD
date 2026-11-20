@@ -4,6 +4,7 @@ Ghi vao paper/paper1_qmi/tables/ (bo chu "submitted version", nhan muc moi):
     crossover_arms.tex   <- results/nslkdd/c4_revision/c4_pairwise_statistics_natural_all_arms.csv
     ref_arm.tex          <- results/nslkdd/c4_revision/ref_arm_fullfeat.csv + c4_per_run_natural_refit_per_N.csv
     dedup_sensitivity.tex <- results/{nslkdd,unsw}/c4_dedup/dedup_verdict_changes.csv
+    multiplicity.tex     <- results/nslkdd/regime_map_multiplicity.csv
 
     uv run python runners/make_qmi_tables.py
 
@@ -143,11 +144,42 @@ def dedup() -> None:
     write("dedup_sensitivity.tex", src, body)
 
 
+def multiplicity() -> None:
+    """Dem verdict cua ban do regime theo bon cach hieu chinh (R3), 110 o va 42 o tu nhien."""
+    src = "results/nslkdd/regime_map_multiplicity.csv"
+    d = pd.read_csv(ROOT / src).set_index(["block", "correction"])
+    rows = [("none", r"None (raw $p\le0.05$)"),
+            ("holm_within_family", "Holm within baseline family"),
+            ("bh_block", r"Benjamini--Hochberg over the block"),
+            ("holm_block", "Holm over the block")]
+    blocks = [("all_110", "All cells"), ("c4_natural_42", "Natural prior, full test")]
+    p_min = d.min_raw_p.min()
+    body = [
+        r"\begin{table}[t]", r"\centering",
+        r"\caption{Verdict counts of the regime map under four multiplicity corrections, recomputed",
+        r"from the raw Wilcoxon $p$ of each cell. Counts are favouring \QSVM{} / favouring the classical",
+        r"baseline / inconclusive. Holm within the baseline family is the convention used elsewhere in",
+        rf"the paper. With ten runs the smallest attainable two-sided $p$ is ${p_min:.5f}$, so Holm over a",
+        r"whole block cannot reject any cell.}",
+        r"\label{tab:multiplicity}", r"\footnotesize", r"\setlength{\tabcolsep}{4pt}",
+        r"\begin{tabular}{@{}l cc@{}}", r"\toprule",
+        "Correction & " + " & ".join(
+            f"{lab} ({int(d.loc[(b, 'none'), 'n_cells'])})" for b, lab in blocks) + r" \\",
+        r"\midrule"]
+    for key, lab in rows:
+        cells = [f"{int(d.loc[(b, key), 'quantum'])}/{int(d.loc[(b, key), 'classical'])}/"
+                 f"{int(d.loc[(b, key), 'inconclusive'])}" for b, _ in blocks]
+        body.append(f"{lab} & " + " & ".join(cells) + r" \\")
+    body += [r"\bottomrule", r"\end{tabular}", r"\end{table}"]
+    write("multiplicity.tex", src, body)
+
+
 def main() -> int:
     OUT.mkdir(exist_ok=True)
     crossover_arms()
     ref_arm()
     dedup()
+    multiplicity()
     return 0
 
 

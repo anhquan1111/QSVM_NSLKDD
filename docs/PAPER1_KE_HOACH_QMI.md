@@ -113,6 +113,17 @@ từ trang hướng dẫn tác giả của Springer), hình dùng lại từ `pa
    Humanizer đã sửa: (1) Not X but Y ("K = 20 không phải tối ưu"); (2) câu kết lặp ý (4 chỗ: ablation, dịch
    chuyển, UNSW, độ rộng); (4) câu dẫn trống ("Four further analyses…"); (11) bị động ở mục nhiễu.
    Methods phải thêm: bảng `tab:protocol`, số 0,804, định nghĩa frozen / tuned (ghi trong `03_methods.tex`).
+   **Bản đồ regime xong 20-11** (`sections/05_regime_map.tex`, ~860 từ; hình `figs/fig_regime_map.tex`
+   caption mới; bảng `tab:multiplicity` sinh từ `regime_map_multiplicity.csv`). Khối 42 ô tự nhiên
+   (11/9/22) đứng trước tổng 110 ô (21/21/68), nói rõ 68 ô từ pool tăng mẫu (10/12/46). Tiểu mục độ nhạy
+   hiệu chỉnh (R3): BH cả khối 21/18/71, ba ô đổi đều từ "nghiêng cổ điển" sang "không kết luận" (RF
+   N = 500, 1000 tự nhiên; XGBoost ở 70 % tấn công), không ô nghiêng QSVM nào đổi; Holm cả khối 0 ô vì
+   p nhỏ nhất 0,00195. Mỗi khuyến nghị ghi rõ đứng được dưới cách hiệu chỉnh nào. Đối chiếu từng ô bằng
+   p thô; SVM-RBF không ô nào nghiêng QSVM kể cả không hiệu chỉnh (p thô nhỏ nhất phía dương 0,13).
+   Bỏ so với bản cũ: "parity"; "closed from above by the physics … better hardware"; câu "điều kiện hay
+   gặp nhất trong tài liệu" (ô 50/50, không có nguồn); câu "ranh giới … sẽ đúng ngoài hai tập" (nói quá).
+   Humanizer đã sửa: (1) Not X but Y ("not seeing more; it is resolving less"); (4) phóng đại ý nghĩa
+   ("the honest summary", "correct and useless", "sharpest … least expected"); câu kết hoành tráng cuối mục.
 3. Mỗi mục xong thì chạy hai máy kiểm: `audit_wording_r3.py paper/paper1_qmi` (chữ) và kiểm số đối chiếu
    CSV; bảng số sinh bằng script, không gõ tay.
    Thêm soát giọng văn theo skill Humanizer (`~/projects/channel_3_asian_explained/.claude/skills/humanizer/SKILL.md`,

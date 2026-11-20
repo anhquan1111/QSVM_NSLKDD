@@ -1,10 +1,105 @@
-% Nguon: paper/paper1/sections/06_regimemap.tex (~1130 tu). Muc tieu ~800 tu.
-% So: results/nslkdd/regime_map_rows.csv (110 o).
-% Phai doi: 1.3 dong 50-52 cu (parity); 1.4(d): khoi 42 o tu nhien (11/9/22)
-% dua len truoc, tong 110 o (21/21/68) de sau va noi ro gop hai protocol.
-% R3: khuyen nghi phai kem do nhay theo cach hieu chinh. So: results/nslkdd/
-% regime_map_multiplicity.csv (BH ca khoi 21/18/71, KHONG phai 17/15/78 cu; Holm
-% ca khoi 0 o vi 10 run cho p nho nhat 0,00195 > 0,05/110). Xem 1.4(e).
-% R3: bo "closed from above by the physics ... rather than ... better hardware"
-% (dong 97-100 cu).
+% =====================================================================
+%  Regime map (ban nhap Claude 20-11, chu nhan va thay Van sua lai giong van).
+%  Nguon: paper/paper1/sections/06_regimemap.tex (~1130 tu). Muc tieu ~800 tu.
+%  So: results/nslkdd/regime_map_rows.csv (110 o); do nhay hieu chinh:
+%  results/nslkdd/regime_map_multiplicity.csv (bang sinh bang make_qmi_tables.py).
+%  Da ap: 1.3 (bo "parity"); 1.4(d) khoi 42 o tu nhien (11/9/22) dua len truoc,
+%  tong 110 o (21/21/68) de sau, noi ro gop hai protocol; R3 do nhay theo cach
+%  hieu chinh (BH ca khoi 21/18/71, KHONG phai 17/15/78 cu; Holm ca khoi 0 o);
+%  R3 bo "closed from above by the physics ... better hardware".
+%  Ba o doi sang khong ket luan duoi BH (tinh tung o tu p tho, 20-11): RF N=500,
+%  RF N=1000 (tu nhien), XGBoost o 70% tan cong. Khong o nghieng QSVM nao doi.
+%  Bo cau ban cu khong co nguon: "dieu kien hay gap nhat trong tai lieu" (o 50/50)
+%  va "ranh gioi do so hang pha du doan se dung ngoai hai tap".
+% =====================================================================
 \section{Regime map}\label{sec:regime}
+
+\input{figs/fig_regime_map}
+\input{tables/multiplicity}
+
+Fig.~\ref{fig:regime-map} places the controlled comparisons on NSL-KDD from
+Sec.~\ref{sec:results} in one map of $110$ cells. Each cell is a paired comparison of \QSVM{}
+with one baseline under one condition, with a verdict from the Holm-adjusted Wilcoxon test within
+its baseline family (Sec.~\ref{sec:stats}).
+
+The cells do not share one protocol (Table~\ref{tab:protocol}). Forty-two come from the
+training-set-size sweep under the natural class prior, scored on the full KDDTest$^+$ set. In
+this block $11$ cells favour \QSVM{}, $9$ favour the classical baseline and $22$ are
+inconclusive. The other $68$ cells use the rare-enriched training pool: $30$ from the enriched
+sweep, scored on the full test set, and $38$ from the entanglement and shift experiments, scored
+on test sets of $300$ or $1000$ records. They split $10$, $12$ and $46$. Over all $110$ cells the
+count is $21$, $21$ and $68$. A difference estimated on $300$ test records is less precise than
+one estimated on $22{,}544$, so we take the natural-prior block as the main result and the full
+map as a summary across protocols. Removing test records duplicated in the training data leaves
+the counts of the natural-prior block unchanged (Sec.~\ref{sec:res-dedup}).
+
+\subsection{Sensitivity to the multiplicity correction}\label{sec:regime-mult}
+
+Table~\ref{tab:multiplicity} recounts the verdicts from the raw $p$ of each cell under four
+corrections. With a Benjamini--Hochberg correction over all $110$ cells the count is $21$, $18$
+and $71$. The three cells that change all move from a classical verdict to inconclusive: the
+random forest at $N=500$ and $N=1000$ under the natural prior, and XGBoost at a $70\%$ attack
+fraction. Every cell that favours \QSVM{} within families also does so under
+Benjamini--Hochberg. The natural-prior block changes by one cell, from $11$, $9$ and $22$ to $11$,
+$8$ and $23$.
+
+Holm over a whole block rejects no cell, for $110$ cells or for $42$. With ten runs the smallest
+two-sided Wilcoxon $p$ is $2/2^{10}=0.00195$, while the first Holm threshold is
+$0.05/110=0.00045$ ($0.05/42=0.0012$ for the natural block). This is a limit set by the number
+of runs and says nothing about whether the differences are zero; family-wise control over the
+whole map would need more runs per cell. In what follows we name the corrections under which
+each statement holds.
+
+\subsection{Where the quantum kernel is ahead}
+
+Under the natural prior, \QSVM{} is ahead of XGBoost at $N\geq5000$, of the random forest at
+$N=10^4$, and of the linear and polynomial kernels from $N=1000$ and $N=2000$. These verdicts hold
+under within-family Holm and under Benjamini--Hochberg. All of them are against models given the
+same four components. Against XGBoost on all $122$ features no significant difference was
+detected at $N=5000$ or $N=10^4$ (Table~\ref{tab:ref-arm}), and full-feature XGBoost trained on
+the whole training partition reaches $0.804$, above every four-qubit result. The comparison that
+favours \QSVM{} is therefore with classical learners on the same embedding.
+
+On a $50/50$ mixture of normal and DoS traffic, \QSVM{} is ahead of all four kernel baselines,
+with effect sizes from $1.56$ to $3.02$, under both corrections; no significant difference was
+detected against the tree ensembles. These cells use the enriched pool and a $1000$-record test
+set and lie outside the natural-prior block.
+
+The rare-class $F_1$ at $N=10^4$ is $0.507$ for \QSVM{} against $0.334$ for XGBoost and $0.331$
+for the random forest, with SVM-RBF higher at $0.585$ (Sec.~\ref{sec:res-rare}). This comparison
+is not a cell of the map.
+
+\subsection{Where it is behind}
+
+Under the natural prior, XGBoost is ahead of \QSVM{} at every $N\leq1000$, by up to $0.081$
+macro-$F_1$ at $N=100$, under both corrections. The random forest is ahead at the same sizes
+within families, and at $N\leq200$ under Benjamini--Hochberg.
+
+Under feature perturbation all six comparisons of degradation slope favour the baseline, with
+effect sizes above $2.8$ in magnitude, under both corrections. On the KDDTest-21 partition the
+\Zmap{} control and the linear and polynomial kernels lose less than \QSVM{}. At a $70\%$ attack
+fraction XGBoost is ahead within families, but the cell is inconclusive under
+Benjamini--Hochberg. All of these cells use the enriched pool and $1000$-record test sets.
+
+Against SVM-RBF, no cell of the training-size sweep favours \QSVM{} under any correction, in
+either training pool. The enriched sweep at $N=2000$ favours SVM-RBF.
+
+Outside the map, all $48$ comparisons at eight qubits ($K=80$) favour the classical baseline
+(Sec.~\ref{sec:res-width}). These come from noiseless simulation. We did not test other feature
+maps, bandwidth scaling or lower-noise hardware, and the map gives no information about them.
+
+\subsection{Reading the map}
+
+Inconclusive cells are the majority. The smallest difference that reached a verdict is $0.010$
+macro-$F_1$, while differences as large as $0.031$ stayed inconclusive when they varied widely
+between runs. The median absolute difference among the $68$ inconclusive cells is $0.014$. Most
+differences in this study are of that size, and ten paired runs resolve only part of them.
+
+The region where \QSVM{} is ahead is bounded on each axis we varied. It needs $N\geq5000$, and
+under the enriched pool we could not sample that far. It holds against learners on the
+four-component embedding, not against XGBoost on the raw record. It appears on NSL-KDD; on
+UNSW-NB15 the difference against the tree ensembles does not change sign at any $N$
+(Sec.~\ref{sec:res-unsw}). An eight-qubit circuit did not extend it. On this evidence, the
+four-qubit kernel is a competitive learner on a fixed low-dimensional embedding when training
+data are plentiful, and we do not present it as a replacement for a classical detector on the
+full feature set.
