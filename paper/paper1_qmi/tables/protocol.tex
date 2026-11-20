@@ -1,0 +1,44 @@
+% Bang giao thuc theo tung thi nghiem (go tay: bang thiet ke, khong phai so do).
+% Viet lai tu paper/paper1/tables/protocol_by_contribution.tex ngay 20-11, doi
+% chieu tung dong voi config va code:
+%   configs/c4_protocol.json (n_grid, pool, test, so run; UNSW o dataset_overrides)
+%   results/nslkdd/c2_revision/c2_config.json (N=1000, test 300)
+%   results/nslkdd/c3_revision/c3_config.json (eval_size 1000)
+%   results/nslkdd/c4_revision/variant_K80n8/ (K=80, n=8, N den 20.000)
+%   runners/run_width_sweep.py (K=20, n=4..10, N=1000 + test 300 cua C2)
+%   runners/run_gram_concentration.py, run_c1_ksens.py (mot tap con 300 dong, seed 42)
+%   results/nslkdd/c2_revision/c2_noise_validation_10run.csv (200 dong train, test 300)
+% Ban cu ghi "Width sweep: enriched, 1000, fixed 300" cho ca Hinh width; thuc ra
+% panel (a) la quet N o K=80 (natural, full test), panel (b) la mot tap con 300 dong.
+\begin{table*}[t]
+\centering
+\caption{Data behind each result. \emph{Natural}: subsets drawn at the class prior of the
+training partition ($0.83\%$ R2L and U2R on NSL-KDD). \emph{Enriched}: R2L and U2R raised to
+$10\%$ of each subset. \emph{Fixed 300}: one stratified $300$-record sample of KDDTest$^+$.
+\emph{Full}: the complete official test set ($22{,}544$ records for NSL-KDD, $82{,}332$ for
+UNSW-NB15). Unless a row says otherwise, every model receives the same $n^{\ast}$-component
+representation.}
+\label{tab:protocol}
+\footnotesize
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{@{}l l l l r@{}}
+\toprule
+Experiment & Training data & $N$ & Test set & Runs \\
+\midrule
+Feature budget $K$ (Fig.~\ref{fig:ksweep}a) & KDDTrain$^+$ & $125{,}973$ & 5-fold CV & 1 \\
+Width rule (Figs.~\ref{fig:ksweep}b, \ref{fig:c1-selection}) & training partition & $300$ & -- & 1 \\
+Entanglement, seven models (Figs.~\ref{fig:ablation}, \ref{fig:perrun}) & enriched & $1000$ & fixed 300 & 10 \\
+Distribution shift (Fig.~\ref{fig:priorshift}) & enriched & $1000$ & $1000$-record mixtures & 10 \\
+Training-set size (Fig.~\ref{fig:learning-curve}a,~c; Table~\ref{tab:crossover-arms}) & natural & $10^2$--$10^4$ & full & 10 \\
+Enriched control (Fig.~\ref{fig:learning-curve}b,~d) & enriched & $10^2$--$2000$ & full & 10 \\
+Rare classes (Sec.~\ref{sec:res-rare}) & natural & $10^4$ & R2L and U2R of full & 10 \\
+Full-feature reference, $122$ features (Table~\ref{tab:ref-arm}) & natural & $10^2$--$10^4$ & full & 10 \\
+UNSW-NB15, $n^{\ast}=6$ (Fig.~\ref{fig:unsw-transfer}) & natural & $10^2$--$10^4$ & full & 10 \\
+Duplicates removed (Table~\ref{tab:dedup}) & as the three sweeps & as the sweeps & full, de-duplicated & 10 \\
+Eight qubits at $K=80$ (Fig.~\ref{fig:width}a) & natural & $10^2$--$2\times10^4$ & full & 10 \\
+Gram concentration (Fig.~\ref{fig:width}b) & KDDTrain$^+$ & $300$ & -- & 1 \\
+Width $n=4,\dots,10$ (Fig.~\ref{fig:width}c) & enriched & $1000$ & fixed 300 & 10 \\
+Simulated noise (Sec.~\ref{sec:res-noise}) & enriched & $200$ & fixed 300 & 10 \\
+\bottomrule
+\end{tabular}
+\end{table*}

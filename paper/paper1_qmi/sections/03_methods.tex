@@ -1,36 +1,220 @@
-% Nguon: 03_framework.tex (~990) + 03b_theory.tex (~1520) + 04_setup.tex (~1300).
-% Muc tieu ~1900 tu; chung minh va dan xuat dai chuyen ra phu luc.
-% Bo han muc "Corrections to the Submitted Version" (03b_theory cu).
-% Phai doi: 1.4(a) o 03b_theory dong 143-145 cu ("every threshold perturbation").
-% Ghi commit hash cua repo o muc tai lap (ban cu de 19beb18).
+% =====================================================================
+%  Methods (ban nhap Claude 20-11, chu nhan va thay Van sua lai giong van).
+%  Nguon: 03_framework.tex (~990) + 03b_theory.tex (~1520) + 04_setup.tex (~1300).
+%  Muc tieu ~1900 tu. Bo: Problem/Assumption, han muc "Corrections to the
+%  Submitted Version", lich su Pareto/J(n)/Theorem 1 (bai moi, khong ke ban cu).
+%  Lemma 1 va chung minh chuyen sang phu luc (app:proofs).
+%  Doi chieu config/code 20-11:
+%   - Nhiem vu la NHI PHAN (label_binary: normal / attack), src/c4_pipeline.py
+%     evaluate_predictions. Ban cu ghi "y_i one of five classes" -> SAI, da sua.
+%     F1 tap hiem: moi dong deu la attack nen F1 = 2R/(1+R) (R = recall).
+%   - Tune per N: 5-fold CV tren chinh N dong train (configs/c4_protocol.json),
+%     KHONG phai tren tap tune 2.000 dong nhu ban cu ghi; 1-SE cho ho SVM/QSVM,
+%     best-mean cho RF/XGB; C cua Z-map = C cua ZZ. Frozen: cung quy trinh mot lan
+%     tren tap tune 2.000 dong (c2_downstream_tuned_parameters.json).
+%   - Q(n) = [n r + 5 * 2 r C(n,2)] / Q(10) = (10n^2 - 8n)/920 khi r = 2
+%     (data/nslkdd/processed_data/c1_selection.json).
+%   - 0,804 / 0,777 / 0,999 / 0,998: results/nslkdd/c4_revision/c4_protocol_vs_literature.csv.
+%   - Ban cu: "Studies reporting ~0.99 are ... using the latter" -> bo (chua kiem).
+%   - Ban cu: "+-0.001 giua cac may" cua XGBoost -> bo (chua do lai); giu n_jobs=1.
+%   - Kernel dang dong khop FidelityStatevectorKernel 4,4e-15 (config); run_c4.py:343
+%     assert 1e-9 tren 150 diem ngau nhien moi lan chay (config ghi 200 mau: sai).
+%   - 1.4(a): UNSW ghi du "10/10 voi eps <= 0,05, 7/10 voi eps = 0,1" (o Ket qua).
+%   - CHUA KIEM: script sinh results/unsw/c4_revision/u1_c1_selection_unsw.json
+%     khong co trong repo; JSON ghi "dung cach lay mau cua C1" (tap train).
+%   - Tag phat hanh: dien khi nop (ban TETC dung tetc-r1).
+% =====================================================================
 \section{Methods}\label{sec:methods}
 
 \subsection{Feature map, kernel and cost}\label{sec:featuremap}
 
+The \ZZ{} feature map on $n$ qubits with $r$ repetitions \cite{havlicek2019} prepares
+\begin{equation}
+\label{eq:featuremap}
+  |\phi(\bm{x})\rangle = \bigl[\,U_{\Phi}(\bm{x})\,H^{\otimes n}\,\bigr]^{r}\,|0\rangle^{\otimes n},
+\end{equation}
+where $H$ is the Hadamard gate and $U_{\Phi}$ is diagonal in the computational basis,
+\begin{equation}
+\label{eq:phase}
+  U_{\Phi}(\bm{x}) = \exp\Bigl(\mathrm{i}\sum_{i=1}^{n} x_i Z_i
+    + \mathrm{i}\!\!\sum_{1\le i<j\le n}\!\!\tfrac{1}{2}\varphi_{ij}(\bm{x})\,Z_iZ_j\Bigr),
+  \qquad \varphi_{ij}(\bm{x}) = 2(\pi-x_i)(\pi-x_j).
+\end{equation}
+The kernel is the squared fidelity
+\begin{equation}
+\label{eq:kernel}
+  K^{\mathrm{Q}}(\bm{x},\bm{x}^{\prime}) = \bigl|\langle\phi(\bm{x}^{\prime})|\phi(\bm{x})\rangle\bigr|^{2},
+\end{equation}
+used in a soft-margin support vector machine on the precomputed Gram matrix
+\cite{cortes1995,scholkopf2002,schuld2019}. We use $r=2$ and pairwise terms between all qubit
+pairs. Removing the pairwise term of Eq.~\eqref{eq:phase} and keeping everything else gives the
+\Zmap{} feature map, the control in every entanglement comparison; we call the two models
+\QSVM{} and \QSVM{}-\Zmap{}.
+
+With all pairs entangled, each repetition places $\binom{n}{2}$ pairwise terms, and each term
+compiles to two CNOT gates, so the circuit has $2r\binom{n}{2}$ two-qubit gates: $24$ at $n=4$
+and $112$ at $n=8$. We charge a circuit the gate count
+\begin{equation}
+\label{eq:cost}
+  Q(n) = \frac{Q_{\mathrm{raw}}(n)}{Q_{\mathrm{raw}}(10)}, \qquad
+  Q_{\mathrm{raw}}(n) = nr + 5\cdot 2r\tbinom{n}{2} = 10n^{2}-8n \quad (r=2),
+\end{equation}
+which weights a two-qubit gate five times a single-qubit rotation and is normalised over the
+candidate widths $n\le10$. The selection rule below uses only the fact that $Q$ increases with
+$n$, so any increasing cost gives the same width. The $\Theta(N^2)$ kernel evaluations needed
+for training are not part of $Q$, since they do not depend on $n$.
+
+Appendix~\ref{app:proofs} gives a second-order expansion of $K^{\mathrm{Q}}$ around
+$\bm{x}^{\prime}=\bm{x}$ for $r=1$. Its leading terms are the squared coordinate differences
+and the squared differences of the pairwise phases. Each phase is a linear combination of
+monomials of degree at most two, the features of a degree-2 polynomial kernel, which is why
+SVM-poly2 is among the baselines. At $r=2$ the
+expansion no longer holds in this form, so we use it only to choose that baseline.
+
 \subsection{Pipeline and embedding-dimension rule}\label{sec:pipeline}
 
+A record passes through one-hot encoding of the categorical fields, an ANOVA $F$-test that
+keeps $K$ features, principal component analysis to $n$ components, and a min--max scaler to
+$[0,\pi]$, the domain of the phases in Eq.~\eqref{eq:phase}. The quantum kernels act on the
+scaled vector $\bm{z}\in[0,\pi]^n$. The classical baselines are a linear, a degree-2
+polynomial and an RBF support vector machine, a random forest and XGBoost; they receive the same
+$n$ principal components, standardised instead of scaled to $[0,\pi]$. The comparison therefore
+ranks learners on one fixed embedding. We report XGBoost and a random forest on all one-hot
+features separately, as a reference outside the paired protocol (Sec.~\ref{sec:res-n}).
+
+Every transformer is fitted on the training records of the run and size at hand and then
+applied to the test records. In the training-set-size sweeps, feature selection, projection and
+scaling are refitted at every $N$, so no representation uses more data than the classifier it
+feeds.
+
+The width $n$ is chosen before any classifier is trained, by a lexicographic rule with no
+weights. Let $\mathcal{N}=\{2,\dots,10\}$, let $V(n)$ be the cumulative explained variance of
+the first $n$ components, and let $\mathrm{KTA}(n)$ be the kernel--target alignment
+\cite{cristianini2002} of the \ZZ{} Gram matrix $G$ with the binary labels
+$\bm{y}\in\{-1,+1\}^m$,
+$\mathrm{KTA}=\langle G,\bm{y}\bm{y}^{\top}\rangle_F/(\|G\|_F\,\|\bm{y}\bm{y}^{\top}\|_F)$,
+computed on a stratified subset of $m=300$ training records.
+
+\begin{definition}[Three-stage selection]
+\label{def:three-stage}
+With thresholds $T=0.85$ and $\varepsilon=0.05$ fixed in advance,
+\begin{align*}
+  \mathcal{N}_1 &= \{\, n \in \mathcal{N} : V(n) \ge T \,\}, \\
+  \mathcal{N}_2 &= \bigl\{\, n \in \mathcal{N}_1 : \mathrm{KTA}(n) \ge
+                   (1-\varepsilon)\max_{m\in\mathcal{N}_1}\mathrm{KTA}(m) \,\bigr\}, \\
+  n^{\ast} &= \arg\min_{n \in \mathcal{N}_2} Q(n).
+\end{align*}
+\end{definition}
+
+Stage~1 keeps widths whose components retain most of the variance, stage~2 keeps those whose
+kernel is close to the best alignment among them, and stage~3 takes the cheapest remaining
+circuit. Higher alignment at comparable training error is associated with a tighter
+generalisation bound \cite{cortes2012}; we use alignment only as a screen and derive no bound
+from it. Wide fidelity kernels also concentrate as the number of qubits grows
+\cite{thanasilp2024}, which is a second reason to prefer the narrowest admissible circuit. With
+$K=20$ the rule returns $n^{\ast}=4$ on NSL-KDD (Sec.~\ref{sec:res-embed}). On UNSW-NB15 we apply
+it unchanged with $K=35$, where it returns $n^{\ast}=6$ (Sec.~\ref{sec:res-unsw}).
+
 \subsection{Data and protocol}\label{sec:protocol}
-% NSL-KDD + UNSW-NB15; quet N; hai phan phoi lop (tu nhien, tang mau hiem).
-% Dinh nghia dong test trung train (1.1): trung 41 dac trung tho.
-% Muc Ket qua (20-11) can o day:
-%  - Bang \label{tab:protocol} (tu paper/paper1/tables/protocol_by_contribution.tex,
-%    bo chu "submitted version"; dong nhieu: 10 run, 200 dong train, test 300).
-%  - So 0,804: XGBoost du 122 dac trung tren ca 125.973 dong (04_setup.tex:24 cu);
-%    Ket qua trich "Sec. protocol" cho so nay.
-%  - Dinh nghia nhanh "tuned per N" va "frozen" (chon mot lan tren tap tune 2.000 dong).
+
+\input{tables/protocol}
+
+\emph{Data.} NSL-KDD \cite{ref4} is used with its official partitions: $125{,}973$ training and
+$22{,}544$ test records, with $41$ features that one-hot encoding expands to $122$. The training
+partition is $53.5\%$ normal traffic, $36.5\%$ DoS, $9.3\%$ Probe, $0.8\%$ R2L and $0.04\%$ U2R.
+UNSW-NB15 \cite{ref25} is used with its official training ($175{,}341$) and test ($82{,}332$)
+sets. The task on both is binary, normal traffic against attack. The main metric is
+macro-$F_1$, the mean of the $F_1$ scores of the two classes. For the rare classes (R2L and U2R
+on NSL-KDD) we report $F_1$ on the test records of those classes. All of them are attacks, so
+this score equals $2R/(1+R)$, where $R$ is their recall.
+
+On the official split absolute scores are lower than the values near $0.99$ often quoted for
+NSL-KDD. Trained on all $122$ features and the whole training partition, XGBoost reaches
+macro-$F_1$ $0.804$ on KDDTest$^+$ and a random forest $0.777$; on a random $80/20$ split
+inside KDDTrain$^+$ the same models reach $0.999$ and $0.998$. We use the official partitions
+throughout, and $0.804$ is the reference for every absolute score in this paper.
+
+A test record is a duplicate when its raw features (the $41$ NSL-KDD features or the $34$
+UNSW-NB15 features, labels excluded) equal those of any training record. This holds for $664$
+of $22{,}544$ NSL-KDD test records ($2.9\%$) and $20{,}851$ of $82{,}332$ UNSW-NB15 test records
+($25.3\%$). Sec.~\ref{sec:res-dedup} repeats the size comparisons without them.
+
+\emph{Subsets and runs.} Each result is computed over ten runs with seeds $100$ to $109$.
+Training subsets are drawn stratified on four labels (normal, DoS, Probe, and R2L and U2R
+together), so that every subset contains at least one rare record. Within a run the subsets are
+nested, $\mathcal{D}_{100}\subset\mathcal{D}_{200}\subset\cdots$, so differences across $N$
+come from added data and not from a new sample. Two training pools are used
+(Table~\ref{tab:protocol}). The \emph{natural} pool keeps the class prior of the training
+partition and is used for the training-set-size sweeps up to $N=10^4$ (NSL-KDD, UNSW-NB15) and
+$2\times10^4$ (eight-qubit sweep). The \emph{enriched} pool raises R2L and U2R to $10\%$ of each
+subset. It is used for the experiments at $N=1000$ and for a control sweep that stops at
+$N=2000$: beyond that, the ten runs would share too many rare records ($59\%$ at $N=5000$) to
+count as independent.
+
+\emph{Test sets.} The training-set-size sweeps are scored on the full official test set. The
+entanglement comparison, the width sweep and the noise check use one stratified sample of $300$
+KDDTest$^+$ records. The shift experiments use $1000$-record test mixtures drawn from KDDTest$^+$
+or, for the temporal shift, from KDDTest-21, at the stated proportions of attack traffic or
+attack type.
+
+\emph{Hyper-parameters.} Every model, quantum and classical, is tuned by the same procedure:
+five-fold stratified cross-validation on macro-$F_1$ over $C\in\{0.1,0.3,0.5,1,3,5,10\}$ for the
+support vector machines, and over a grid of tree count, depth, leaf size, learning rate and
+subsampling for the ensembles. For the support vector machines we take the simplest setting
+within one standard error of the best mean score; for the ensembles, the best mean. Because the
+Gram matrix does not depend on $C$, the quantum kernel is computed once per subset and only the
+classifier is refitted. \QSVM{}-\Zmap{} uses the $C$ selected for \QSVM{}, so the two differ
+only in the feature map. Results are reported for two arms. In the \emph{tuned} arm the search
+runs on the training subset itself, at every $N$ and in every run. In the \emph{frozen} arm it
+runs once on a separate tuning set of $2000$ records, disjoint from all training and test
+subsets, and the selected values ($C=3$ for both quantum kernels) are kept at every $N$.
 
 \subsection{Statistical analysis}\label{sec:stats}
-% Wilcoxon ghep cap trong run, 10 run, Holm trong ho baseline, CI 95 %.
+
+Every comparison is paired within run. For run $i$ we form
+$\Delta_i = m(\text{\QSVM{}}) - m(\text{baseline})$ on the same training subset and the same
+test records, and report the mean of $\Delta$ with a $t$-based $95\%$ confidence interval, a
+two-sided Wilcoxon signed-rank test and the paired effect size $d_z$ \cite{ref32}. Pairing
+removes the subset-to-subset variance that otherwise dominates comparisons of learners on
+resampled data \cite{ref31}.
+
+The $p$-values are Holm-adjusted within baseline families: the \Zmap{} control alone, the three
+classical kernels, and the two tree ensembles. A comparison favours one side when the adjusted
+$p<0.05$ and the interval excludes zero; otherwise it is inconclusive. The \Zmap{} family has one
+member, so its $p$-values are unadjusted. The $110$ comparisons of the regime map fall into $56$
+families, so under a global null at most about $2.8$ families would be expected to contain a
+false verdict.
+Sec.~\ref{sec:regime-mult} therefore also counts the verdicts under Benjamini--Hochberg and
+Holm over the whole map. With ten runs the smallest attainable two-sided Wilcoxon $p$ is
+$2/2^{10}=0.00195$. Correlations are reported with Fisher-$z$ intervals, and two correlations
+are compared with a $z$ test on their Fisher transforms.
 
 \subsection{Implementation and reproducibility}\label{sec:repro}
 
+Experiments use NumPy 2.4, SciPy 1.17, scikit-learn 1.8 \cite{ref30}, XGBoost 3.3, Qiskit 2.3
+\cite{ref29}, qiskit-machine-learning 0.9 and Qiskit Aer 0.17. Kernels are exact statevector
+fidelities. The state of each record is computed once and the Gram matrix is a product of
+state matrices. It agrees with the Qiskit fidelity kernel to within $5\times10^{-15}$, and each
+execution of a sweep stops unless the two agree to $10^{-9}$ on $150$ random inputs. XGBoost runs on one
+thread with the histogram method, since with several threads its result depends on the thread
+count.
+
+Code, protocol files, per-run results and figure scripts are released at
+\url{https://github.com/haodpsut/nisq-qsvm-nids-benchmark} (release tag to be added on
+submission). Four scripts check the reported numbers against the per-run records:
+\texttt{audit\_c4.py} recomputes $100$ statistics with an implementation independent of the
+pipeline, \texttt{audit\_figures.py} re-derives the $36$ plotted quantities,
+\texttt{verify\_lemma1.py} checks the expansion of Appendix~\ref{app:proofs} against the exact
+kernel ($15$ checks) and \texttt{verify\_noise10.py} re-derives the noise check of
+Sec.~\ref{sec:res-noise} ($40$ checks).
+
 \subsection{Use of large language models}\label{sec:llm}
-% Khai bao theo chinh sach AI cua Springer Nature (bat buoc khi LLM soan noi dung).
-% Cau nhap -- chu nhan va thay Van soat lai, ghi dung mo hinh va pham vi:
-% "A large language model (Claude, Anthropic) was used to draft parts of the
-%  manuscript text and analysis scripts under the authors' direction. The authors
-%  rewrote and checked all text, verified every number against the released result
-%  files, and take full responsibility for the content."
-% Bai hoc Paper 2 (thu Wiley 20-11): KHONG viet "AI proposed measurements"; ghi ro
-% tac gia danh gia, chon, kiem lai, dien giai moi phan tich; AI khong tu quyet
-% phuong phap, ket luan, ket qua.
+% Khai bao theo chinh sach AI cua Springer Nature. Chu nhan va thay Van soat
+% lai: ghi dung mo hinh va pham vi; khong viet "AI de xuat phep do" (bai hoc
+% thu Wiley Paper 2, 20-11).
+
+A large language model (Claude, Anthropic) was used under the authors' direction to draft parts
+of the manuscript text and of the analysis and audit scripts. The authors designed the study,
+chose the methods, and checked and interpreted every analysis. They rewrote and checked all
+text, verified every reported number against the released result files, and take full
+responsibility for the content.

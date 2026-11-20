@@ -124,6 +124,21 @@ từ trang hướng dẫn tác giả của Springer), hình dùng lại từ `pa
    gặp nhất trong tài liệu" (ô 50/50, không có nguồn); câu "ranh giới … sẽ đúng ngoài hai tập" (nói quá).
    Humanizer đã sửa: (1) Not X but Y ("not seeing more; it is resolving less"); (4) phóng đại ý nghĩa
    ("the honest summary", "correct and useless", "sharpest … least expected"); câu kết hoành tráng cuối mục.
+   **Phương pháp xong 20-11** (`sections/03_methods.tex`, ~1.700 từ; bảng `tables/protocol.tex` gõ tay,
+   mỗi dòng đối chiếu config/code, ghi nguồn đầu file). Mọi `\ref` trong bài đã có nhãn. Bỏ: Problem /
+   Assumption, mục "Corrections to the Submitted Version", lịch sử Pareto/J(n); Lemma 1 sang phụ lục.
+   **Sai trong bản cũ, đã sửa:** (1) bản cũ ghi nhãn "năm lớp", code dùng nhãn nhị phân (`label_binary`,
+   `src/c4_pipeline.py`); F1 lớp hiếm = 2R/(1+R) vì mọi dòng hiếm đều là attack. (2) Bản cũ ghi nhánh tuned
+   dò trên tập tune 2.000 dòng; thật ra dò bằng 5-fold CV trên chính N dòng train, tập 2.000 dòng chỉ cho nhánh
+   frozen. (3) Bảng giao thức cũ ghi hình độ rộng "enriched, 1000, test 300" cho cả hình; panel (a) thật là quét
+   N ở K = 80 (natural, test đầy đủ, N tới 20.000), panel (b) một tập con 300 dòng. (4) Config ghi kiểm kernel
+   trên 200 mẫu; code kiểm 150 điểm ngẫu nhiên. Bỏ câu chưa kiểm: "các bài báo ~0,99 dùng chia ngẫu nhiên",
+   "XGBoost lệch ±0,001 giữa các máy".
+   Humanizer đã sửa: (4) phóng đại ("not decorative", "mandatory trade"); (1) Not X but Y ở đoạn pipeline;
+   câu tự khen độ chặt ("strictly more conservative").
+   Còn chờ: (a) script sinh `results/unsw/c4_revision/u1_c1_selection_unsw.json` không có trong repo (JSON ghi
+   lấy mẫu kiểu C1 trên tập train, chưa kiểm bằng code); (b) tag phát hành điền khi nộp; (c) đoạn khai LLM
+   chủ nhân và thầy xác nhận; (d) phụ lục phải viết Lemma 1 + chứng minh (Methods trỏ `app:proofs`).
 3. Mỗi mục xong thì chạy hai máy kiểm: `audit_wording_r3.py paper/paper1_qmi` (chữ) và kiểm số đối chiếu
    CSV; bảng số sinh bằng script, không gõ tay.
    Thêm soát giọng văn theo skill Humanizer (`~/projects/channel_3_asian_explained/.claude/skills/humanizer/SKILL.md`,
