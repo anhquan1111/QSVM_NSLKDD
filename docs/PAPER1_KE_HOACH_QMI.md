@@ -186,7 +186,8 @@ từ trang hướng dẫn tác giả của Springer), hình dùng lại từ `pa
    ON EMERGING TOPICS IN COMPUTING 11" ở `ref10`; "K--bler" → Kübler; số trang có dấu cách ("21 954");
    mất gạch nối (quantumenhanced, quantumclassical ×2, kerneltarget, AlNemrat); 28 cặp ngoặc kép thẳng
    → ``…''. `ref29` Qiskit đổi sang Javadi-Abhari et al. 2024, arXiv:2405.08810 (lấy từ `CITATION.bib`
-   của repo Qiskit; chủ nhân gật 20-11). Từ khóa "NISQ" thay bằng "benchmarking" (chủ nhân gật 20-11).
+   của repo Qiskit; chủ nhân gật 20-11). Từ khóa **giữ "NISQ"** (chủ nhân 20-11: tên đề tài NCKH tài trợ bài này có chữ NISQ; đã thử
+   thay bằng "benchmarking" rồi trả lại).
    Còn chờ: chưa mở lại toàn văn Bowles / Schnabel / Gillani; vẫn `thebibliography` kiểu IEEE, chưa sang
    `.bib` + `sn-mathphys-num`.
 3. Mỗi mục xong thì chạy hai máy kiểm: `audit_wording_r3.py paper/paper1_qmi` (chữ) và kiểm số đối chiếu
@@ -229,7 +230,7 @@ và bỏ (b) "chủ nhân tự viết, Claude chỉ soát" vì tốn thời gian
      `regime_map_multiplicity.py`, `make_qmi_tables.py`; `results/nslkdd/c2_revision/` (12 file),
      `results/nslkdd/c4_dedup/` (6), `results/unsw/c4_dedup/` (4), `results/nslkdd/regime_map_multiplicity.csv`.
      Không chép đồ Paper 2, Paper 3 (`p2_*`, `paper3*`).
-  3. Sửa mô tả repo (đang ghi "NISQ-Aware … TETC revision 1"), tạo tag mới, rồi điền tag vào `03_methods.tex`
+  3. Sửa mô tả repo (bỏ phần "TETC-2026-05-0252, revision 1"; chữ NISQ giữ được), tạo tag mới, rồi điền tag vào `03_methods.tex`
      và `declarations.tex` (đang ghi "release tag to be added on submission").
 - Declarations còn trống: lời cảm ơn, xung đột lợi ích, đóng góp từng tác giả (Claude không điền thay).
   Data availability và Code availability đã điền 20-11.
