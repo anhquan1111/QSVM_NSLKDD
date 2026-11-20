@@ -1,4 +1,49 @@
-% Nguon: paper/paper1/sections/08_conclusion.tex (~660 tu). Muc tieu ~350 tu.
-% Phai doi: 1.2 dong 42, 58 cu; 1.3 dong 20-24 cu.
-% Chu nhan / thay Van viet lai bang giong minh.
+% =====================================================================
+%  Conclusion (ban nhap Claude 20-11; chu nhan va thay Van VIET LAI HAN
+%  bang giong minh, theo cach viet (a)).
+%  Nguon: paper/paper1/sections/08_conclusion.tex (~660 tu). Ban nay ~380 tu.
+%  Moi so lay tu Introduction / Results / Regime map (da doi chieu CSV).
+%  Da ap: 1.2 (do rong: "goes with", khong "follows it down", khong nhan qua);
+%  1.3 (bo "parity" voi XGBoost 122 dac trung); 1.4(d) khoi 42 o tu nhien truoc
+%  tong 110 o; BH ca khoi 21/18/71 (khong phai 17/15/78 cu); R3 bo "operating
+%  window is closed from above", bo "useful width is bounded well below where
+%  hardware limits bite" (chua kiem phan cung).
+%  Bo: "NISQ-aware"; "five claims ... withdrawn / erratum" (nhac ban cu);
+%  "released code contains the execution path" (chua kiem); cau "the one we
+%  would most like others to test" (phong dai).
+% =====================================================================
 \section{Conclusion}\label{sec:conclusion}
+
+We compared a four-qubit \ZZ{} quantum kernel with an entanglement-free control and five
+classical learners for binary intrusion detection, varying one factor at a time under a paired,
+symmetrically tuned protocol on NSL-KDD and UNSW-NB15. Under the natural class prior, $11$ of
+the $42$ comparisons of the training-set-size sweep favour the quantum kernel, $9$ favour a
+classical baseline and $22$ are inconclusive. Over all $110$ comparisons the counts are $21$,
+$21$ and $68$, and $21$, $18$ and $71$ under a Benjamini--Hochberg correction over the whole
+map.
+
+The map contains three findings that can be tested on other data. First, on the shared
+four-component embedding, the difference between the quantum kernel and XGBoost changes sign
+between $N=2000$ and $N=5000$ and is significant at $N=5000$ and $N=10^4$. It remains after
+duplicated test records are removed and does not reproduce on UNSW-NB15. Against SVM-RBF no
+training-set size gives a significant difference, and against XGBoost given all $122$ features
+none was detected at $N\ge5000$. Second, the width rule,
+with thresholds set on NSL-KDD, returns $n^{\ast}=6$ on UNSW-NB15 in $10/10$ subsets at
+$\varepsilon\le0.05$ and in $7/10$ at $\varepsilon=0.1$. Third, in noiseless simulation an
+eight-qubit circuit is behind the baseline in all $48$ comparisons, and across seven widths lower off-diagonal
+dispersion of the \ZZ{} Gram matrix goes with lower macro-$F_1$ ($r=+0.77$). The quantum kernel
+also degrades faster than the tree ensembles under a shift of the class prior, and faster than
+every baseline under feature perturbation.
+
+These results come from classical simulation of the circuits, with a single noise model
+checked at a single operating point, and from training sets of at most $10^4$ records at four
+qubits. The median difference among inconclusive comparisons is $0.014$ macro-$F_1$, and ten
+runs per comparison resolve differences of that size only in part.
+
+Three questions remain open. Executing the same kernels on quantum hardware would show whether
+the noise check holds outside simulation. Repeating the width analysis with projected quantum
+kernels \cite{ref19}, whose values are computed from reduced states, would show whether the
+association between dispersion and accuracy is specific to fidelity kernels. Why additional
+training data helps the quantum kernel more than XGBoost on NSL-KDD but not on UNSW-NB15 is
+not answered by this study. The code, protocol files and per-run results are released so that
+each of these can start from the same protocol.

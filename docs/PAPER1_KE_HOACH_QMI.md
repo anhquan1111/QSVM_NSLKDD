@@ -159,6 +159,15 @@ từ trang hướng dẫn tác giả của Springer), hình dùng lại từ `pa
    theo chi phí có thể đổi trên thiết bị khác" (quy tắc chỉ dùng việc chi phí tăng theo n).
    Humanizer đã sửa: (2) câu lặp ý ("An inconclusive cell is therefore…"); bộ ba "persists, widens or
    closes"; không có câu kết hoành tráng.
+   **Kết luận xong 20-11** (`sections/07_conclusion.tex`, ~385 từ; nháp để chủ nhân / thầy viết lại hẳn).
+   Bốn đoạn: làm gì + đếm bản đồ (khối 42 ô trước, BH cả khối 21/18/71); ba phát hiện kiểm được ở dữ liệu
+   khác (đảo chiều so với XGBoost, quy tắc độ rộng chuyển sang UNSW kèm 7/10, mạch 8 qubit thua 48/48 +
+   "goes with"); giới hạn một câu; ba câu hỏi mở (phần cứng, projected kernel \cite{ref19}, vì sao đảo
+   chiều chỉ ở NSL-KDD). Bỏ so với bản cũ: số BH 17/15/78 (hiệu chỉnh hai lần), "parity", "operating window
+   closed from above", "useful width bounded well below where hardware limits bite", "NISQ-aware", câu nhắc
+   rút 5 khẳng định / erratum, "released code contains the execution path".
+   Humanizer đã sửa: (4) phóng đại ("the one we would most like others to test", "specific enough");
+   không câu kết hoành tráng.
 3. Mỗi mục xong thì chạy hai máy kiểm: `audit_wording_r3.py paper/paper1_qmi` (chữ) và kiểm số đối chiếu
    CSV; bảng số sinh bằng script, không gõ tay.
    Thêm soát giọng văn theo skill Humanizer (`~/projects/channel_3_asian_explained/.claude/skills/humanizer/SKILL.md`,
