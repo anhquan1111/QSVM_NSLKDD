@@ -204,7 +204,20 @@ từ trang hướng dẫn tác giả của Springer), hình dùng lại từ `pa
    → f, n'; thêm trích Wilcoxon, Holm, BH, Shaydulin & Wild (39 mục). Agent nói sai một điểm: cổng KTA "không bao
    giờ đổi kết quả" chỉ đúng ở NSL-KDD.
    Còn chờ: (a) ô ΔKTA (ZZ−Z) đang đếm là "favouring QSVM" trong 110 ô, chờ chủ nhân chọn bỏ hay giữ;
-   (b) vì sao UNSW dùng K=35 (chưa tìm ra lý do ghi lại); (c) chưa kiểm bằng code tập dò 2.000 dòng tách biệt.
+   (b) ~~vì sao UNSW dùng K=35~~ đã tìm ra (xem dưới); (c) chưa kiểm bằng code tập dò 2.000 dòng tách biệt.
+   **Tư vấn Fable 5.2 (20-11, chỉ đọc), việc xếp theo lợi/tốn, chờ chủ nhân gật:**
+   1. Tách tấn công KDDTest+ thành kiểu đã thấy trong train (9.083) và kiểu mới (3.750, 17 loại), recall theo N từ
+      dự đoán đã lưu `results/nslkdd/c4_dedup/cache/*.npz`: cổ điển tụt mạnh ở kiểu mới (XGB 0,550→0,376), QSVM tụt ít
+      (0,458→0,426); kiểu đã thấy thì mọi mô hình tăng. Giải thích việc baseline tụt khi N tăng. ~2 giờ, không train.
+   2. Ô ΔKTA: đưa ra khỏi bảng đếm, giữ thành dòng "cơ chế" riêng → 109 ô 20/21/68, khối 42 ô không đổi, khối khác
+      9/12/46; lọc `metric != ZZ_minus_Z_KTA` ở `runners/regime_map_multiplicity.py` và `runners/make_paper1_figures.py`
+      (vẽ fig10), chạy lại, sửa số ở tóm tắt, giới thiệu, bản đồ, kết luận, bảng multiplicity, positioning. ~1–2 giờ.
+   3. K=35 có luật thật, giống NSL-KDD: K nhỏ nhất có macro-F1 của LinearSVC (CV 5 lần, 5.000 dòng) trong 0,01 của
+      mức tốt nhất (`notebooks/unsw/selectkbest_unsw.ipynb`, K=35 F1 0,8813, tốt nhất 0,8896 ở K=100; NSL-KDD ra K=20).
+      Câu "K=20 là K lớn nhất cho 4 qubit" chỉ là nhận xét sau, không phải lý do chọn. Viết lại Phương pháp. 20 phút.
+   4. Lưới C chạm biên: QSVM chọn C=10 (trần lưới) ở 7/10 run tại N=10⁴ cả hai tập; RBF cũng vậy trên NSL-KDD. Gram đã
+      cache, mở lưới tới {30,100} chỉ refit SVC, < 1 giờ.
+   5. Chỉ khi còn thời gian: UNSW chạy n=4 và n=8 để xem n=6 có tốt hơn (3–6 giờ CPU); dò γ của RBF (~1 giờ).
 
 **Đạt khi:**
 - `uv run python runners/audit_wording_r3.py paper/paper1_qmi` ra 0 (không "exponential" về số đo của
