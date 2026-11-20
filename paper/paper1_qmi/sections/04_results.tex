@@ -111,9 +111,24 @@ $0.7706$, linear SVM $0.7335$, SVM-poly2 $0.7114$. The difference against XGBoos
 and at $N=10^4$ ($+0.0149$, $p_{\mathrm{Holm}}=0.0078$, $d_z=1.07$).
 The classical models contribute to this change. \QSVM{} rises at every step, while XGBoost
 peaks at $0.8007$ at $N=1000$ and falls to $0.7706$, the random forest falls from $0.7913$ to
-$0.7728$ over the same range, and SVM-RBF from $0.7919$ at $N=2000$ to $0.7740$. We did not
-establish why more training data lowers the classical scores on this test set. The test set is
+$0.7728$ over the same range, and SVM-RBF from $0.7919$ at $N=2000$ to $0.7740$. The test set is
 fixed, so the intervals reflect variation of the training subset only.
+
+\input{tables/novel_attacks}
+
+KDDTest$^+$ contains $3{,}750$ attack records of $17$ types that never occur in KDDTrain$^+$,
+besides $9{,}083$ attack records of types seen in training. Table~\ref{tab:novel} splits the
+attack recall along this line. On seen types, recall rises or holds from $N=1000$ to $N=10^4$
+for every model except SVM-poly2. On novel types it falls for every model: from $0.550$ to
+$0.376$ for XGBoost, from $0.518$ to $0.356$ for the random forest, from $0.595$ at $N=2000$ to
+$0.447$ for SVM-RBF, and from $0.423$ to $0.335$ for the \Zmap{} control, against $0.458$ to
+$0.426$ for \QSVM{}. Specificity on normal traffic moves by at most $0.05$. The fall of the
+classical scores is therefore concentrated in the novel attack types. At $N=10^4$, \QSVM{} is
+ahead of XGBoost on both groups (seen $+0.021$ $[+0.008,+0.035]$, novel $+0.050$
+$[+0.022,+0.078]$, ten paired runs). Against SVM-RBF it is ahead on seen types ($+0.018$
+$[+0.005,+0.031]$) and on normal traffic ($+0.022$ $[+0.015,+0.028]$) but not on novel types
+($-0.021$ $[-0.087,+0.045]$). We did not test why the classical models lose novel types as the
+training set grows.
 
 \emph{Re-tuning.} Table~\ref{tab:crossover-arms} repeats the sweep with hyper-parameters held
 at the values selected once. All six baseline--arm combinations change sign between $N=2000$

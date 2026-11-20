@@ -5,6 +5,8 @@ Ghi vao paper/paper1_qmi/tables/ (bo chu "submitted version", nhan muc moi):
     ref_arm.tex          <- results/nslkdd/c4_revision/ref_arm_fullfeat.csv + c4_per_run_natural_refit_per_N.csv
     dedup_sensitivity.tex <- results/{nslkdd,unsw}/c4_dedup/dedup_verdict_changes.csv
     multiplicity.tex     <- results/nslkdd/regime_map_multiplicity.csv
+    novel_attacks.tex    <- results/nslkdd/c4_dedup/novel_attack_recall_summary.csv
+                            (sinh bang runners/analyze_novel_attacks.py)
 
     uv run python runners/make_qmi_tables.py
 
@@ -178,12 +180,47 @@ def multiplicity() -> None:
     write("multiplicity.tex", src, body)
 
 
+def tex_int(x) -> str:
+    """So nguyen co dau phan nghin kieu LaTeX: 9083 -> 9{,}083."""
+    return f"{int(x):,}".replace(",", "{,}")
+
+
+def novel_attacks() -> None:
+    """Recall tan cong kieu da gap / kieu moi va do dac hieu tren binh thuong, N=1000 va 10^4."""
+    src = "results/nslkdd/c4_dedup/novel_attack_recall_summary.csv"
+    d = pd.read_csv(ROOT / src).set_index(["model", "N"])
+    models = [("QSVM_ZZ", r"\QSVM{}"), ("QSVM_Z", r"\QSVM{}-\Zmap{}"), ("SVM_Linear", "SVM-linear"),
+              ("SVM_Poly2", "SVM-poly2"), ("SVM_RBF", "SVM-RBF"), ("RandomForest", "Random forest"),
+              ("XGBoost", "XGBoost")]
+    first = d.iloc[0]
+    body = [
+        r"\begin{table}[t]", r"\centering",
+        r"\caption{Recall on KDDTest$^+$ attacks of types present in KDDTrain$^+$ (seen, "
+        rf"${tex_int(first.n_seen)}$ records) and of the ${tex_int(first.n_novel)}$ attack records of types",
+        r"absent from it (novel, $17$ types), and specificity on normal traffic, at two training-set",
+        r"sizes under the natural prior. Mean of ten runs, re-tuned arm.}",
+        r"\label{tab:novel}", r"\footnotesize", r"\setlength{\tabcolsep}{4pt}",
+        r"\begin{tabular}{@{}l cc cc cc@{}}", r"\toprule",
+        r" & \multicolumn{2}{c}{Seen types} & \multicolumn{2}{c}{Novel types} & "
+        r"\multicolumn{2}{c}{Normal (specificity)} \\",
+        r"\cmidrule(lr){2-3}\cmidrule(lr){4-5}\cmidrule(l){6-7}",
+        r"Model & $N=1000$ & $N=10^4$ & $N=1000$ & $N=10^4$ & $N=1000$ & $N=10^4$ \\",
+        r"\midrule"]
+    for key, lab in models:
+        cells = [f"{d.loc[(key, n), m + '_mean']:.3f}"
+                 for m in ("recall_seen", "recall_novel", "specificity_normal") for n in (1000, 10000)]
+        body.append(f"{lab} & " + " & ".join(cells) + r" \\")
+    body += [r"\bottomrule", r"\end{tabular}", r"\end{table}"]
+    write("novel_attacks.tex", src, body)
+
+
 def main() -> int:
     OUT.mkdir(exist_ok=True)
     crossover_arms()
     ref_arm()
     dedup()
     multiplicity()
+    novel_attacks()
     return 0
 
 
