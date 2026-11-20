@@ -205,7 +205,19 @@ từ trang hướng dẫn tác giả của Springer), hình dùng lại từ `pa
    giờ đổi kết quả" chỉ đúng ở NSL-KDD.
    Còn chờ: (a) ô ΔKTA (ZZ−Z) đang đếm là "favouring QSVM" trong 110 ô, chờ chủ nhân chọn bỏ hay giữ;
    (b) ~~vì sao UNSW dùng K=35~~ đã tìm ra (xem dưới); (c) chưa kiểm bằng code tập dò 2.000 dòng tách biệt.
-   **Tư vấn Fable 5.2 (20-11, chỉ đọc), việc xếp theo lợi/tốn, chờ chủ nhân gật:**
+   **Tư vấn Fable 5.2 (20-11, chỉ đọc), việc xếp theo lợi/tốn; chủ nhân gật việc 1–4 (20-11), việc 5 chưa gật.**
+   Kết quả (20-11):
+   - Việc 1 xong: `runners/analyze_novel_attacks.py` → `results/nslkdd/c4_dedup/novel_attack_recall_*.csv`, bảng
+     `tab:novel` (`make_qmi_tables.py`), đoạn mới ở Kết quả thay câu "did not establish why". Số khớp Fable. Thêm điều
+     Fable không nói: so với RBF thì QSVM KHÔNG hơn ở kiểu mới (N=10⁴: −0,021 [−0,087; +0,045]); QSVM hơn RBF nhờ kiểu
+     đã gặp và độ đặc hiệu.
+   - Việc 2 xong: 109 ô 20/21/68; khối khác 9/12/46; BH 20/18/71; 55 họ. Hình 10 bản QMI vẽ riêng
+     (`make_paper1_figures.py --qmi` → `paper/paper1_qmi/figs_revision/`, bản TETC không đụng), cao hơn để hết chữ
+     chồng (lỗi có từ bản TETC), nhãn "temporal" → "harder records".
+   - Việc 3 xong, có sửa Fable: luật plateau 0,01 đúng cho cả hai tập, nhưng chạy trên tập 5.000 dòng giữ hết
+     R2L/U2R. Trên toàn KDDTrain+ (Hình 4a, `c1_ksweep.csv`) cùng luật ra K=30, không phải 20; bài ghi rõ điều này
+     (Phương pháp, Kết quả, Giới hạn, bảng protocol).
+   - Việc 4 đang chạy (hàng đợi việc nặng): `runners/run_cgrid_extension.py`, lưới {0,03 … 100}, N=5000 và 10⁴.
    1. Tách tấn công KDDTest+ thành kiểu đã thấy trong train (9.083) và kiểu mới (3.750, 17 loại), recall theo N từ
       dự đoán đã lưu `results/nslkdd/c4_dedup/cache/*.npz`: cổ điển tụt mạnh ở kiểu mới (XGB 0,550→0,376), QSVM tụt ít
       (0,458→0,426); kiểu đã thấy thì mọi mô hình tăng. Giải thích việc baseline tụt khi N tăng. ~2 giờ, không train.
@@ -250,7 +262,8 @@ và bỏ (b) "chủ nhân tự viết, Claude chỉ soát" vì tốn thời gian
      `.claude/` (cấu hình agent), `docs/PAPER1_final_report.docx`. Gỡ cả trong lịch sử, không chỉ commit xóa.
   2. Thêm các file bản QMI dùng mà repo chưa có (đếm 20-11): `runners/verify_noise10.py` (bài nêu tên),
      `verify_rare_identity.py`, `run_dedup_sensitivity.py`, `analyze_dedup_sensitivity.py`,
-     `regime_map_multiplicity.py`, `make_qmi_tables.py`; `results/nslkdd/c2_revision/` (12 file),
+     `regime_map_multiplicity.py`, `make_qmi_tables.py`, `analyze_novel_attacks.py`, `run_cgrid_extension.py`,
+     `make_paper1_figures.py` (bản có `--qmi`); `results/nslkdd/c4_dedup/novel_attack_recall_*.csv`, `results/nslkdd/c4_cgrid/`; `results/nslkdd/c2_revision/` (12 file),
      `results/nslkdd/c4_dedup/` (6), `results/unsw/c4_dedup/` (4), `results/nslkdd/regime_map_multiplicity.csv`.
      Không chép đồ Paper 2, Paper 3 (`p2_*`, `paper3*`).
   3. Sửa mô tả repo (bỏ phần "TETC-2026-05-0252, revision 1"; chữ NISQ giữ được), tạo tag mới, rồi điền tag vào `03_methods.tex`
