@@ -1,7 +1,105 @@
-% Nguon: paper/paper1/sections/02_background.tex (~1750 tu). Muc tieu ~900 tu.
-% Gop "Quantum kernels" + "QML for IDS" + "Benchmarking"; bo hoac rut gon
-% "Bounded advantage windows". Giu cau thuat lai dinh ly Thanasilp (dong 30 cu).
-% Phai doi: 1.2 dong 35 va 187 cu ("destroys", "mechanism ... predicts").
-% Them doi chieu Cirillo, Esposito, Seo 2026 (QMI) theo bang 1.6:
-%  ho da lam (khong nhan la moi) va 5 diem khac. Trich ho o cho ket qua giong.
+% =====================================================================
+%  Related work (ban nhap Claude 20-11; chu nhan / thay Van sua giong van).
+%  Nguon: paper/paper1/sections/02_background.tex (~1750 tu). Muc tieu ~900 tu.
+%  Da ap: 1.2 (bo "concentration ... destroys it", khong nhan qua); 1.6 (Cirillo:
+%  chi giu dieu da doc trong toan van -- bang 1.6 cua docs/PAPER1_GD1_KET_QUA.md;
+%  bo "suy giam sau ~60 CNOT", "ho quy cho loi cong", "94.60 / 94.13 %" vi chua
+%  doi chieu lai); R2 (dong gop la giao thuc benchmark, khong nhan loi the).
+%  Bo han muc "Bounded advantage windows" (Carducci 2026): nhom chi doc duoc tom
+%  tat, luat chu nhan: tom tat = chua kiem. Muc carducci2026 trong bibliography
+%  con lai -> go khi soat danh muc tham khao.
+%  Bo doan "We take the reviewers' point ..." (AE che nhac phan bien).
+%  Gillani 2026: giu su that cua ban TETC (doc toan van luc do), rut gon; chua
+%  doi chieu lai trong GD 2.
+% =====================================================================
 \section{Related work}\label{sec:related}
+
+\subsection{Quantum kernels}
+
+A quantum kernel maps $\bm{x}$ to a state $|\phi(\bm{x})\rangle$ prepared by a parameterised
+circuit and uses the fidelity between states as a similarity \cite{havlicek2019,schuld2019}.
+The construction belongs to a broader programme of quantum machine learning
+\cite{ref5,ref6,ref7}, and the correspondence between parameterised-circuit models and kernel
+machines \cite{ref9} lets the quantum part be placed inside a classical learner. Separations
+from classical learners have been proved for constructed problems \cite{ref18}, but the
+conditions under which they carry over to data from practice are restrictive \cite{ref19,ref20}.
+
+Two lines of theory bear on what to expect. Alignment-based bounds \cite{cristianini2002,cortes2012}
+state that, at equal empirical risk, a kernel better aligned with the labels admits a tighter
+generalisation guarantee; they do not say whether a given circuit produces such a kernel.
+Thanasilp \emph{et al.} \cite{thanasilp2024} prove that fidelity kernel values concentrate
+exponentially in the number of qubits under conditions that include high expressivity,
+entanglement and noise. The effect is related to the barren plateaus of variational training
+\cite{ref10} and to expressivity \cite{ref21}: the properties that make a feature map
+expressive can also make its Gram matrix uninformative at large width. We measure alignment
+and Gram-matrix dispersion across widths (Sec.~\ref{sec:res-width}) and report how they vary
+with macro-$F_1$; we do not test the conditions of that theorem.
+
+\subsection{Quantum machine learning for intrusion detection}
+
+Quantum kernels and variational classifiers have been applied to network intrusion detection
+in a growing number of studies \cite{ref13,ref14,ref15}, most on NSL-KDD \cite{ref4} or a later
+corpus \cite{ref25}. A 2026 survey \cite{kaissar2026} finds that most approaches rely on
+simulated quantum environments and older datasets and that evaluation practice is inconsistent
+across studies. A common design evaluates one qubit count, one training-set size and one class
+prior, and compares accuracy with a small set of classical baselines.
+
+The closest study is the benchmark of Cirillo \emph{et al.} \cite{qmi2026}. Its main dataset is
+ToN\_IoT, and the best configurations are re-run on NSL-KDD. It evaluates Pegasos-QSVC over
+$378$ configurations and $14$ feature maps, a variational classifier and a hybrid
+quantum--classical network, in ideal simulation and under noise models derived from three IBM
+backends with $1024$ shots, and compares them with an SVM, XGBoost, a random forest and a neural
+network at matched dimension. Results are means and standard deviations over four seeds; the
+study states that it does not aim to demonstrate quantum advantage. Several elements of our
+design were already present there: a quantum SVM for intrusion detection on NSL-KDD with
+simulated backend noise, the comparison of a fully entangled \ZZ{} map with the
+non-entangling \Zmap{} map, projection to four qubits, and tree-ensemble baselines on the
+same number of dimensions. We do not claim these as new. Two of its findings agree with ours.
+The classical models keep the higher peak score, and the best balance between performance and
+cost lies at $20$ to $35$ CNOT gates; our four-qubit circuit uses $24$.
+
+Our design differs from that study in five ways. It sweeps the training-set size from $10^2$
+to $10^4$, where that study uses one class-balanced subsample ($15{,}114$ training records on
+NSL-KDD). It tests every comparison with paired runs and multiplicity correction, where that
+study reports means and standard deviations without a test. It tunes quantum and classical
+models by the same procedure and separates three classical kernels. It measures how the Gram
+matrix changes with circuit width. And it adds UNSW-NB15 and an analysis of test records that
+duplicate training records.
+
+\subsection{Benchmarks of quantum models}
+
+Bowles, Ahmed and Schuld \cite{bowles2024} evaluate twelve quantum models on $160$ mostly
+synthetic datasets in noise-free simulation with up to $18$ qubits, against a multilayer
+perceptron, an RBF-kernel SVM and a convolutional network, and find that the quantum models
+rarely outperform well-tuned classical baselines. Schnabel and Roth \cite{schnabel2024} train
+more than $20{,}000$ tuned models comparing fidelity and projected quantum kernels on five
+families of datasets with up to $15$ qubits, against RBF-kernel baselines, and use correlation
+analysis to find which design choices matter. Neither varies the training-set size: Bowles
+\emph{et al.} use fixed counts per task, and Schnabel and Roth use $240$ training and $60$
+test points throughout.
+
+Gillani \emph{et al.} \cite{gillani2026} benchmark quantum and classical models for intrusion
+detection on four corpora, including NSL-KDD and UNSW-NB15, at eight qubits with an ablation
+over $4$, $6$ and $12$, against five tuned classical baselines including a random forest and
+XGBoost, with Benjamini--Hochberg control over $108$ comparisons on NSL-KDD. They conclude that
+reported quantum gains are largely explained by the classical preprocessing once the same
+preprocessing is given to the classical models. Our results agree that the front-end carries
+most of the performance: given all $122$ features, XGBoost is not beaten by the four-qubit
+kernel at any size we tested (Sec.~\ref{sec:res-n}). They differ on the four-component
+embedding, where the kernel is significantly ahead of both tree ensembles at $N=10^4$. Their
+comparison uses eight qubits, where our kernel loses every comparison (Sec.~\ref{sec:res-width}),
+and the full training partition, which our sweep does not reach. The two designs therefore do
+not overlap where our lead appears, and our data cannot say which difference accounts for the
+gap.
+
+\subsection{Positioning}
+
+\input{tables/positioning}
+
+Table~\ref{tab:positioning} compares this work with the four studies above. On model, datasets,
+circuit width and noise treatment, this work is comparable or narrower. It differs in three
+respects: it sweeps the training-set size, it reports a paired verdict for each condition, and
+its width rule is applied unchanged to a second dataset. The training-set size matters because
+the ranking between \QSVM{} and the strong classical baselines reverses inside
+$N\in[10^2,10^4]$ under the natural prior, so a benchmark at a single $N$ can report either
+outcome. The contribution of this paper is that protocol and the map of verdicts it produces.

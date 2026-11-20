@@ -139,6 +139,16 @@ từ trang hướng dẫn tác giả của Springer), hình dùng lại từ `pa
    Còn chờ: (a) script sinh `results/unsw/c4_revision/u1_c1_selection_unsw.json` không có trong repo (JSON ghi
    lấy mẫu kiểu C1 trên tập train, chưa kiểm bằng code); (b) tag phát hành điền khi nộp; (c) đoạn khai LLM
    chủ nhân và thầy xác nhận; (d) phụ lục phải viết Lemma 1 + chứng minh (Methods trỏ `app:proofs`).
+   **Giới thiệu + Liên quan xong 20-11** (nháp để chủ nhân / thầy viết lại hẳn phần Giới thiệu;
+   `01_introduction.tex` ~820 từ, `02_related.tex` ~950 từ, bảng `tables/positioning.tex` từ novelty matrix cũ).
+   Đóng góp ghi là giao thức benchmark + bản đồ verdict, không nhận lợi thế lượng tử (R2). Cirillo: chỉ giữ điều
+   có trong bảng 1.6; liệt kê thẳng những gì họ đã làm trước ta; 5 điểm khác. Bỏ mục Carducci (chỉ đọc được tóm
+   tắt), bỏ "Relation to the submitted version", bỏ câu "We take the reviewers' point". Gillani: sửa lập luận cũ
+   (bản cũ ngầm nói ta đã thử ở toàn bộ tập train; thật ra QSVM chưa chạy ở 125.973 dòng).
+   Humanizer đã sửa: (1) Not X but Y ("headline is a map, not a number", "not its novelty of apparatus but…");
+   (4) phóng đại ("widening destroys the kernel", "changes what the field believes"); câu kết hoành tráng.
+   Còn chờ: gỡ `carducci2026` khỏi danh mục khi soát tham khảo; chưa đối chiếu lại toàn văn Bowles / Schnabel /
+   Gillani (bảng định vị lấy nguyên từ bản TETC).
 3. Mỗi mục xong thì chạy hai máy kiểm: `audit_wording_r3.py paper/paper1_qmi` (chữ) và kiểm số đối chiếu
    CSV; bảng số sinh bằng script, không gõ tay.
    Thêm soát giọng văn theo skill Humanizer (`~/projects/channel_3_asian_explained/.claude/skills/humanizer/SKILL.md`,

@@ -1,11 +1,85 @@
-% Nguon: paper/paper1/sections/01_introduction.tex (~1030 tu). Muc tieu ~900 tu.
-% Viet SAU ket qua, ban do regime, phuong phap (thu tu GD 2).
-% Phai doi (docs/PAPER1_GD1_KET_QUA.md):
-%  - 1.2: phan do rong mach noi duoc "48/48 nghieng co dien" (can thiep that);
-%    phan Gram matrix chi noi "di cung" (dong 76-79 cu).
-%  - 1.3: bo "parity" (dong 59-67 cu), ghi Delta + CI 95 %.
-%  - 1.4(a): "10/10 voi eps <= 0,05, 7/10 voi eps = 0,1" (dong 72-74 cu).
-%  - 1.4(b): bo "lead" cua nhanh tang mau (dong 67-70 cu).
-%  - Bo han muc "Relation to the submitted version" (AE che nhac ban cu).
-% Chu nhan / thay Van viet lai bang giong minh.
+% =====================================================================
+%  Introduction (ban nhap Claude 20-11; chu nhan / thay Van VIET LAI HAN bang
+%  giong minh -- cach viet (a)). Nguon: paper/paper1/sections/01_introduction.tex
+%  (~1030 tu). Muc tieu ~900 tu.
+%  Da ap: 1.2 (do rong: "48/48" la can thiep that; Gram chi "di cung", khong
+%  nhan qua, khong "destroys"); 1.3 (bo "parity", ghi "no significant
+%  difference"); 1.4(a) (10/10 voi eps <= 0,05, 7/10 voi eps = 0,1); 1.4(b)
+%  (bo "lead" cua nhanh tang mau; ghi 4 so voi 12 o); 1.4(d) (khoi 42 o tu
+%  nhien truoc tong 110 o); R2 (dong gop la giao thuc benchmark co kiem dinh,
+%  khong nhan loi the luong tu); AE (bo "Relation to the submitted version").
+%  Bo so "+0.0008" cua ban cu (khong tim thay trong CSV nhanh tuned).
+% =====================================================================
 \section{Introduction}\label{sec:intro}
+
+Network intrusion detection is an attractive target for quantum machine learning. The data
+are tabular and of moderate dimension, the decision is a classification, and a small gain in
+detection has operational value \cite{ref24}. Classical machine learning and deep learning are
+well established on the task \cite{ref1,ref2,ref3}, which sets the level a quantum method has to
+reach. Quantum kernel methods fit the task well: a feature map prepares a state whose
+fidelities form a positive semi-definite kernel, and that kernel goes into a standard support
+vector machine \cite{havlicek2019,schuld2019}. The quantum part is then a single block inside a
+classical pipeline, and it can be compared with classical learners on equal terms.
+
+Studies that apply quantum kernels and variational classifiers to NSL-KDD \cite{ref4} and later
+corpora \cite{ref25} report results comparable to, and sometimes above, classical baselines
+\cite{ref13,ref14,ref15}. A recent survey \cite{kaissar2026} notes that most of these studies run
+in simulation on older datasets and that evaluation practice differs from study to study. Most
+evaluate at a single operating point: one qubit count, one training-set size, one class prior.
+We find that this choice can decide the result. With the embedding fixed at four principal
+components and only the training-set size varied, the ranking of a quantum kernel against
+tree ensembles and against linear and polynomial kernels reverses. A benchmark run at one size
+can report either an advantage or a deficit.
+
+This paper is an empirical benchmark. We introduce no new kernel or algorithm and do not claim
+a quantum advantage. We ask under which conditions a four-qubit \ZZ{} kernel SVM differs
+significantly from classical learners given the same input, and we report the conditions
+where it does not. The protocol varies one factor at a time. The circuit width is fixed by a
+rule that charges for two-qubit gates, before any classifier is trained. The entangling layer
+is compared with an otherwise identical circuit without it. The test distribution is shifted
+in four ways. The training-set size is swept from $10^2$ to $10^4$ records under the natural
+class prior and under a pool enriched in rare attacks. Every comparison is paired over ten
+runs, quantum and classical models are tuned by the same procedure, $p$-values are adjusted
+for multiple comparisons, and scores are computed on the official test sets, with and without
+test records that duplicate training records. UNSW-NB15 serves as a second dataset.
+
+The results form a map of verdicts. In the $42$ comparisons of the training-set-size sweep
+under the natural prior, $11$ favour the quantum kernel, $9$ favour a classical baseline and
+$22$ are inconclusive; over all $110$ controlled comparisons the counts are $21$, $21$ and $68$.
+Under a Benjamini--Hochberg correction over all $110$, three classical verdicts become
+inconclusive and every verdict favouring the quantum kernel remains. Within the map:
+
+\begin{itemize}
+  \item \textbf{The ranking reverses with training-set size.} Under the natural prior, on the
+    shared four-component embedding, \QSVM{} is next to last at $N=100$ and first at $N=10^4$.
+    Its difference from XGBoost changes sign between $N=2000$ and $N=5000$ whether
+    hyper-parameters are re-tuned at each size or held fixed, and is significant at $N=5000$
+    and $N=10^4$. Against SVM-RBF no size under the natural prior gives a significant
+    difference. Against XGBoost given all $122$ features, no significant difference was
+    detected at $N\ge5000$. The reversal remains after duplicated test records are removed. It
+    does not appear on UNSW-NB15. The rare-enriched pool cannot be sampled beyond $N=2000$, so
+    the design cannot tell whether enrichment removes the reversal; on the sizes both pools
+    share, the enriched arm reaches a verdict in $4$ of $30$ comparisons and the natural arm in
+    $12$.
+  \item \textbf{The width rule transfers.} The rule returns $n^{\ast}=4$ on NSL-KDD and, with the
+    same thresholds, $n^{\ast}=6$ on UNSW-NB15. On ten independent subsets of UNSW-NB15 it
+    returns $n^{\ast}=6$ in $10/10$ cases at tolerance $\varepsilon\le0.05$ and in $7/10$ at
+    $\varepsilon=0.1$.
+  \item \textbf{Wider circuits do worse in noiseless simulation.} A larger feature budget makes
+    the rule choose a wider circuit. At $K=80$, where it returns $n^{\ast}=8$, all $48$ paired
+    comparisons favour the classical baseline. Across widths, the off-diagonal entries of the
+    \ZZ{} Gram matrix become less dispersed faster than those of the control, and lower
+    dispersion goes with lower macro-$F_1$ ($r=+0.77$, $95\%$ CI $[+0.04,+0.96]$, seven
+    widths). This association is observational and compatible with known kernel
+    concentration \cite{thanasilp2024}.
+\end{itemize}
+
+The method also loses in several conditions. It degrades faster than either tree ensemble when
+the class prior of the test data shifts, and it is the least robust of the seven models to
+feature perturbation. Its $F_1$ on the rare attack classes at $N=10^4$ ($0.507$) is well above
+that of the tree ensembles ($0.33$), and below that of an RBF-kernel SVM ($0.585$).
+
+Sec.~\ref{sec:related} places this work among related studies. Sec.~\ref{sec:methods} describes
+the feature map, the width rule, the data and the statistical protocol. Sec.~\ref{sec:results}
+reports the experiments, Sec.~\ref{sec:regime} collects them into the regime map,
+Sec.~\ref{sec:limits} states the limitations and Sec.~\ref{sec:conclusion} concludes.
