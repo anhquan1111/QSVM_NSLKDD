@@ -1,3 +1,101 @@
-% Nguon: paper/paper1/sections/09_appendix.tex (~430 tu) + cac chung minh
-% chuyen tu 03b_theory.tex. Bo 10_biographies.tex (Springer khong dung).
-\section{Proofs}\label{app:proofs}
+% =====================================================================
+%  Phu luc: Lemma 1 + chung minh (ban nhap Claude 20-11).
+%  Nguon: paper/paper1/sections/03b_theory.tex (Lemma, Remark r>=2) va
+%  paper/paper1/sections/09_appendix.tex (chung minh). Bo 10_biographies.tex
+%  (Springer khong dung). Bo doan "structural reading" va cau "SVM-Poly2 is the
+%  sharpest classical comparator ... Sec. confirms" (Methods chi dung Lemma de
+%  chon baseline, khong nhan Poly2 manh nhat).
+%  So kiem: chay lai runners/verify_lemma1.py ngay 20-11, 15/15 PASS, ma thoat 0.
+%  Sua so cu: R^2 o r=2 la 0.73-0.94 (ban cu ghi 0.60-0.94); bac sai so 3.76-3.94
+%  (ban cu ghi 3.9); sai so tai 1e-3 toi da 5.2e-11.
+% =====================================================================
+\section{Local expansion of the kernel}\label{app:proofs}
+
+This appendix states and proves the expansion used in Sec.~\ref{sec:featuremap} to choose the
+polynomial baseline. It holds for one repetition of the feature map; the operating point of the
+study uses two, where it does not hold in this form.
+
+\begin{lemma}[Local expansion of the \ZZ{} kernel at $r=1$]
+\label{lem:expansion}
+Let $r=1$ and let $\bm{x},\bm{x}^{\prime}\in[0,\pi]^n$. As $\bm{x}^{\prime}\to\bm{x}$, the
+kernel of Eq.~\eqref{eq:kernel} satisfies
+\begin{equation}
+\label{eq:expansion}
+  K^{\mathrm{Q}}(\bm{x},\bm{x}^{\prime}) \;=\; 1
+  - \sum_{i=1}^{n}\Delta_i^2
+  - \tfrac{1}{4}\!\!\sum_{1\le i<j\le n}\!\!\Delta\varphi_{ij}^2
+  + O(\|\bm{\Delta}\|^4),
+\end{equation}
+where $\bm{\Delta}:=\bm{x}-\bm{x}^{\prime}$, $\Delta_i := x_i - x_i^{\prime}$ and
+$\Delta\varphi_{ij} := \varphi_{ij}(\bm{x}) - \varphi_{ij}(\bm{x}^{\prime})$.
+\end{lemma}
+
+\begin{proof}
+Write $|+\rangle := H^{\otimes n}|0\rangle^{\otimes n}$. From Eq.~\eqref{eq:featuremap} with
+$r=1$,
+\begin{equation*}
+  K^{\mathrm{Q}}(\bm{x},\bm{x}^{\prime})
+  = \bigl|\langle +|\,U_{\Phi}(\bm{x}^{\prime})^{\dagger}U_{\Phi}(\bm{x})\,
+    |+\rangle\bigr|^{2}.
+\end{equation*}
+Both factors are diagonal in the computational basis, so their product is the diagonal unitary
+$\mathrm{diag}\bigl(e^{\mathrm{i}\theta(\bm{s})}\bigr)$, indexed by the sign vectors
+$\bm{s}\in\{-1,+1\}^{n}$ that label the eigenbasis of the $Z_i$. By Eq.~\eqref{eq:phase},
+\begin{equation}
+\label{eq:theta}
+  \theta(\bm{s}) \;=\; \sum_{i=1}^{n}\Delta_i\,s_i
+  \;+\; \tfrac{1}{2}\!\!\sum_{1\le i<j\le n}\!\!\Delta\varphi_{ij}\,s_is_j .
+\end{equation}
+Since $|+\rangle$ places amplitude $2^{-n/2}$ on every basis state,
+\begin{equation}
+\label{eq:expectation}
+  \langle +|\,U_{\Phi}(\bm{x}^{\prime})^{\dagger}U_{\Phi}(\bm{x})\,|+\rangle
+  \;=\; \mathbb{E}_{\bm{s}}\bigl[e^{\mathrm{i}\theta(\bm{s})}\bigr],
+\end{equation}
+with $\bm{s}$ uniform on $\{-1,+1\}^{n}$. Under this distribution the parity functions $s_i$
+and $s_is_j$ have mean zero and unit variance, and distinct ones are uncorrelated. Hence
+$\mathbb{E}[\theta]=0$ and
+\begin{equation}
+\label{eq:variance}
+  \mathbb{E}[\theta^{2}]
+  \;=\; \sum_{i=1}^{n}\Delta_i^{2}
+  \;+\; \tfrac{1}{4}\!\!\sum_{1\le i<j\le n}\!\!\Delta\varphi_{ij}^{2}.
+\end{equation}
+Since $\varphi_{ij}$ is smooth, $\Delta\varphi_{ij}=O(\|\bm{\Delta}\|)$ and
+$\theta=O(\|\bm{\Delta}\|)$ uniformly in $\bm{s}$. Expanding the exponential and using
+$\mathbb{E}[\theta]=0$,
+\begin{equation*}
+  \mathbb{E}\bigl[e^{\mathrm{i}\theta}\bigr]
+  = 1 - \tfrac{1}{2}\mathbb{E}[\theta^{2}]
+    - \tfrac{\mathrm{i}}{6}\mathbb{E}[\theta^{3}] + O(\|\bm{\Delta}\|^{4}).
+\end{equation*}
+Write the real part as $1-a+O(\|\bm{\Delta}\|^{4})$ with $a=\tfrac{1}{2}\mathbb{E}[\theta^{2}]$,
+and the imaginary part as $b=O(\|\bm{\Delta}\|^{3})$. Then
+\begin{equation*}
+  \bigl|\mathbb{E}[e^{\mathrm{i}\theta}]\bigr|^{2}
+  = (1-a)^{2}+b^{2}+O(\|\bm{\Delta}\|^{4})
+  = 1 - \mathbb{E}[\theta^{2}] + O(\|\bm{\Delta}\|^{4}),
+\end{equation*}
+and substituting Eq.~\eqref{eq:variance} gives Eq.~\eqref{eq:expansion}. The cubic term enters
+only through $b^{2}$, which is of sixth order, so the remainder is $O(\|\bm{\Delta}\|^{4})$.
+\end{proof}
+
+\begin{remark}[Two or more repetitions]
+\label{rem:reps}
+The first step of the proof fails for $r\ge2$. The overlap then contains Hadamard layers
+between diagonal factors, so it is no longer the expectation of a single phase over sign
+vectors, and Eq.~\eqref{eq:expectation} does not apply. The
+quantity $1-K^{\mathrm{Q}}$ is still a quadratic form in $\bm{\Delta}$ to leading order, but it
+cannot be written with the two invariants of Eq.~\eqref{eq:expansion}.
+\end{remark}
+
+\emph{Numerical check.} The script \texttt{verify\_lemma1.py} compares
+Eq.~\eqref{eq:expansion} with the exact statevector kernel, which itself agrees with the Qiskit
+fidelity kernel to within $1.4\times10^{-15}$ at $n=4$ and $n=6$. At $r=1$ and $n=3,4,6$, a
+least-squares fit of $1-K^{\mathrm{Q}} = a\sum_i\Delta_i^2 + b\sum_{i<j}\Delta\varphi_{ij}^2$
+returns $a=1.000$ and $b=0.250$ with $R^{2}=1.000000$. The residual of
+Eq.~\eqref{eq:expansion} falls with fitted order $3.8$ to $3.9$ in $\|\bm{\Delta}\|$ and is at
+most $5.2\times10^{-11}$ at $\|\bm{\Delta}\|=10^{-3}$. At $r=2$ the same two-term fit reaches
+$R^{2}=0.73$ to $0.94$ on three test cases, with coefficients that change sign between them,
+while an unrestricted quadratic form in $\bm{\Delta}$ reaches $R^{2}=0.999996$. All $15$ checks
+of the script pass.

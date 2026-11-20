@@ -173,6 +173,13 @@ từ trang hướng dẫn tác giả của Springer), hình dùng lại từ `pa
    với XGBoost trên cùng embedding 4 thành phần, NSL-KDD, còn sau khi bỏ trùng, không có ở UNSW, không khác
    biệt có ý nghĩa với XGBoost đủ 122 đặc trưng. Không ghi "10/10" (máy kiểm đòi kèm 7/10; tóm tắt chỉ nói
    quy tắc chọn 6 qubit ở UNSW). Câu cuối: mọi kernel tính bằng mô phỏng cổ điển.
+   **Phụ lục xong 20-11** (`sections/appendix.tex`, ~420 từ): Lemma 1 (khai triển bậc hai ở r = 1) + chứng
+   minh đầy đủ + Remark r ≥ 2 + đoạn kiểm số. Chạy lại `runners/verify_lemma1.py`: 15/15 PASS, mã thoát 0.
+   **Sửa số cũ:** R² của dạng hai số hạng ở r = 2 là 0,73–0,94 (bản cũ ghi 0,60–0,94); bậc sai số
+   3,76–3,94 (bản cũ "3,9"); sai số tại ‖Δ‖ = 10⁻³ tối đa 5,2×10⁻¹¹. Chứng minh: phần dư bậc ba vào qua b²
+   là bậc sáu (bản cũ ghi "bậc bốn sau khi bình phương", lỏng). Bỏ câu "SVM-Poly2 là đối thủ cổ điển sắc
+   nhất … Kết quả xác nhận" (Phương pháp chỉ dùng Lemma để chọn baseline). Việc (d) ở mục Phương pháp đã xong.
+   Tổng thân bài (mục 1–7, không tính chú thích hình, bảng) ~7.570 từ, dưới trần 9.000.
 3. Mỗi mục xong thì chạy hai máy kiểm: `audit_wording_r3.py paper/paper1_qmi` (chữ) và kiểm số đối chiếu
    CSV; bảng số sinh bằng script, không gõ tay.
    Thêm soát giọng văn theo skill Humanizer (`~/projects/channel_3_asian_explained/.claude/skills/humanizer/SKILL.md`,
