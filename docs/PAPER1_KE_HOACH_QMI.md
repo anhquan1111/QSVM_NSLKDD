@@ -217,7 +217,13 @@ từ trang hướng dẫn tác giả của Springer), hình dùng lại từ `pa
    - Việc 3 xong, có sửa Fable: luật plateau 0,01 đúng cho cả hai tập, nhưng chạy trên tập 5.000 dòng giữ hết
      R2L/U2R. Trên toàn KDDTrain+ (Hình 4a, `c1_ksweep.csv`) cùng luật ra K=30, không phải 20; bài ghi rõ điều này
      (Phương pháp, Kết quả, Giới hạn, bảng protocol).
-   - Việc 4 đang chạy (hàng đợi việc nặng): `runners/run_cgrid_extension.py`, lưới {0,03 … 100}, N=5000 và 10⁴.
+   - Việc 4 chạy xong 20-11 (`results/nslkdd/c4_cgrid/`, cổng tái hiện lệch ≤ 1,3e-4). Lưới {0,03 … 100}: QSVM chọn
+     30–100, RBF 30–100, linear 0,03, tức lại chạm mép mới. F1 test của QSVM đổi ≤ 0,004; RBF tụt 0,009–0,014 (CV chọn
+     C lớn, test kém hơn). Kết luận ghép cặp (Holm trong họ), lưới cũ → lưới rộng:
+     N=10⁴: XGB Q→Q (+0,0183), RF Q→Q, RBF −→Q (+0,0256), Z −→−. N=5000: XGB Q→− (+0,0099 [−0,0003; +0,0201],
+     pH=0,098), RF Q→−, Z Q→−, RBF −→− (pH 0,027 nhưng CI chạm 0). Lưu ý: "lưới cũ" ở đây là lần chạy lại bỏ trùng
+     (c4_dedup), RF N=5000 ra pH 0,049 trong khi bài (c4_revision) ghi 0,064: hai lần chạy lệch nhẹ.
+     **Chờ chủ nhân quyết cách viết**: câu "significantly ahead from 5,000" ở tóm tắt chỉ còn đứng ở N=10⁴ khi mở lưới.
    1. Tách tấn công KDDTest+ thành kiểu đã thấy trong train (9.083) và kiểu mới (3.750, 17 loại), recall theo N từ
       dự đoán đã lưu `results/nslkdd/c4_dedup/cache/*.npz`: cổ điển tụt mạnh ở kiểu mới (XGB 0,550→0,376), QSVM tụt ít
       (0,458→0,426); kiểu đã thấy thì mọi mô hình tăng. Giải thích việc baseline tụt khi N tăng. ~2 giờ, không train.
