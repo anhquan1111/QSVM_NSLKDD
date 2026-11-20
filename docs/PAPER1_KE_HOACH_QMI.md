@@ -180,6 +180,14 @@ từ trang hướng dẫn tác giả của Springer), hình dùng lại từ `pa
    là bậc sáu (bản cũ ghi "bậc bốn sau khi bình phương", lỏng). Bỏ câu "SVM-Poly2 là đối thủ cổ điển sắc
    nhất … Kết quả xác nhận" (Phương pháp chỉ dùng Lemma để chọn baseline). Việc (d) ở mục Phương pháp đã xong.
    Tổng thân bài (mục 1–7, không tính chú thích hình, bảng) ~7.570 từ, dưới trần 9.000.
+   **Soát danh mục tham khảo xong 20-11** (`bibliography.tex`, 35 mục = 35 khóa được trích). Gỡ 3 mục không
+   ai trích: `carducci2026`, `ref8` (Preskill NISQ), `ref27` (web IBM). Sắp lại theo thứ tự trích đầu tiên
+   (trước đó mục trích đầu tiên đứng thứ 23). Sửa lỗi chép từ PDF có từ bản TETC: đuôi rác "IEEE TRANSACTIONS
+   ON EMERGING TOPICS IN COMPUTING 11" ở `ref10`; "K--bler" → Kübler; số trang có dấu cách ("21 954");
+   mất gạch nối (quantumenhanced, quantumclassical ×2, kerneltarget, AlNemrat); 28 cặp ngoặc kép thẳng
+   → ``…''. Còn chờ: `ref29` Qiskit chỉ ghi "Qiskit Contributors, 2024" (nên đổi sang bài Qiskit chính
+   thức, cần chủ nhân gật); chưa mở lại toàn văn Bowles / Schnabel / Gillani; vẫn `thebibliography` kiểu
+   IEEE, chưa sang `.bib` + `sn-mathphys-num`.
 3. Mỗi mục xong thì chạy hai máy kiểm: `audit_wording_r3.py paper/paper1_qmi` (chữ) và kiểm số đối chiếu
    CSV; bảng số sinh bằng script, không gõ tay.
    Thêm soát giọng văn theo skill Humanizer (`~/projects/channel_3_asian_explained/.claude/skills/humanizer/SKILL.md`,
