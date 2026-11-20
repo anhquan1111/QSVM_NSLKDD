@@ -87,6 +87,13 @@ applied to the test records. In the training-set-size sweeps, feature selection,
 scaling are refitted at every $N$, so no representation uses more data than the classifier it
 feeds.
 
+The budget $K$ is fixed first, by a plateau rule on a linear SVM proxy with $C=1$. For each $K$
+on a grid, the proxy is scored by five-fold stratified cross-validated macro-$F_1$ on a
+$5{,}000$-record training subset that over-represents the rare attack categories, with the
+feature selection refitted inside each fold; the smallest $K$ within $0.01$ of the best score is
+kept. On NSL-KDD this gives $K=20$ (macro-$F_1$ $0.9534$, against $0.9600$ at $K=100$), and on
+UNSW-NB15 it gives $K=35$ ($0.8813$, against $0.8896$ at $K=100$).
+
 The width $n$ is chosen before any classifier is trained, by a lexicographic rule with no
 weights. Let $\mathcal{N}=\{2,\dots,10\}$, let $V(n)$ be the cumulative explained variance of
 the first $n$ components, and let $\mathrm{KTA}(n)$ be the kernel--target alignment

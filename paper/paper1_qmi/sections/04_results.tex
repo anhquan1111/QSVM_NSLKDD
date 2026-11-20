@@ -36,8 +36,11 @@ also the narrowest width that passes the variance gate. Across budgets the same 
 $K=20,40,80,122$ (Fig.~\ref{fig:ksweep}b). With more features retained, the same variance is
 spread over more components, $V(n)$ falls at every $n$, and the variance gate admits only wider
 circuits. Moving from $K=20$ to $K=80$ raises the proxy's macro-$F_1$ by $0.028$ and the
-two-qubit gate count from $24$ to $112$. The study fixes the circuit at four qubits, and of the
-budgets tested $K=20$ is the largest for which the rule returns four; Sec.~\ref{sec:res-width} reports the quantum kernel at $K=80$.
+two-qubit gate count from $24$ to $112$. The budget itself depends on the subset used to choose
+it: the curve of Fig.~\ref{fig:ksweep}(a) is computed on all of KDDTrain$^+$ under the natural
+prior, and on it the $0.01$ plateau rule of Sec.~\ref{sec:pipeline} would give $K=30$ rather than
+$K=20$. We keep $K=20$, which was fixed before the experiments; Sec.~\ref{sec:res-width} reports
+the quantum kernel at $K=80$.
 
 \subsection{Entanglement ablation}\label{sec:res-ent}
 

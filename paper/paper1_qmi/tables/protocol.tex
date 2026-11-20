@@ -1,6 +1,7 @@
 % Bang giao thuc theo tung thi nghiem (go tay: bang thiet ke, khong phai so do).
 % Viet lai tu paper/paper1/tables/protocol_by_contribution.tex ngay 20-11, doi
 % chieu tung dong voi config va code:
+%   notebooks/nslkdd/selectkbest_nslkdd.ipynb (chon K=20: 5000 dong, giu het R2L 995 + U2R 52)
 %   configs/c4_protocol.json (n_grid, pool, test, so run; UNSW o dataset_overrides)
 %   results/nslkdd/c2_revision/c2_config.json (N=1000, test 300)
 %   results/nslkdd/c3_revision/c3_config.json (eval_size 1000)
@@ -25,6 +26,7 @@ representation.}
 \toprule
 Experiment & Training data & $N$ & Test set & Runs \\
 \midrule
+Choice of $K$ (Sec.~\ref{sec:pipeline}) & all R2L, U2R; rest at prior & $5000$ & 5-fold CV & 1 \\
 Feature budget $K$ (Fig.~\ref{fig:ksweep}a) & KDDTrain$^+$ & $125{,}973$ & 5-fold CV & 1 \\
 Width rule (Figs.~\ref{fig:ksweep}b, \ref{fig:c1-selection}) & training partition & $300$ & -- & 1 \\
 Entanglement, seven models (Figs.~\ref{fig:ablation}, \ref{fig:perrun}) & enriched & $1000$ & fixed 300 & 10 \\
