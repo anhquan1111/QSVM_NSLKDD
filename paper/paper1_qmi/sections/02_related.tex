@@ -62,7 +62,7 @@ Our design differs from that study in five ways. It sweeps the training-set size
 to $10^4$, where that study uses one class-balanced subsample ($15{,}114$ training records on
 NSL-KDD). It tests every comparison with paired runs and multiplicity correction, where that
 study reports means and standard deviations without a test. It tunes quantum and classical
-models by the same procedure and separates three classical kernels. It measures how the Gram
+models by cross-validation on the same data and separates three classical kernels. It measures how the Gram
 matrix changes with circuit width. And it adds UNSW-NB15 and an analysis of test records that
 duplicate training records.
 

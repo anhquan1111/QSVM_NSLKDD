@@ -40,7 +40,7 @@ where $H$ is the Hadamard gate and $U_{\Phi}$ is diagonal in the computational b
     + \mathrm{i}\!\!\sum_{1\le i<j\le n}\!\!\tfrac{1}{2}\varphi_{ij}(\bm{x})\,Z_iZ_j\Bigr),
   \qquad \varphi_{ij}(\bm{x}) = 2(\pi-x_i)(\pi-x_j).
 \end{equation}
-The kernel is the squared fidelity
+The kernel is the state fidelity, the squared overlap
 \begin{equation}
 \label{eq:kernel}
   K^{\mathrm{Q}}(\bm{x},\bm{x}^{\prime}) = \bigl|\langle\phi(\bm{x}^{\prime})|\phi(\bm{x})\rangle\bigr|^{2},
@@ -101,16 +101,16 @@ With thresholds $T=0.85$ and $\varepsilon=0.05$ fixed in advance,
 \begin{align*}
   \mathcal{N}_1 &= \{\, n \in \mathcal{N} : V(n) \ge T \,\}, \\
   \mathcal{N}_2 &= \bigl\{\, n \in \mathcal{N}_1 : \mathrm{KTA}(n) \ge
-                   (1-\varepsilon)\max_{m\in\mathcal{N}_1}\mathrm{KTA}(m) \,\bigr\}, \\
+                   (1-\varepsilon)\max_{n'\in\mathcal{N}_1}\mathrm{KTA}(n') \,\bigr\}, \\
   n^{\ast} &= \arg\min_{n \in \mathcal{N}_2} Q(n).
 \end{align*}
 \end{definition}
 
 Stage~1 keeps widths whose components retain most of the variance, stage~2 keeps those whose
 kernel is close to the best alignment among them, and stage~3 takes the cheapest remaining
-circuit. Higher alignment at comparable training error is associated with a tighter
-generalisation bound \cite{cortes2012}; we use alignment only as a screen and derive no bound
-from it. Wide fidelity kernels also concentrate as the number of qubits grows
+circuit. Cortes \emph{et al.} \cite{cortes2012} relate the centred form of alignment to
+generalisation; we use the uncentred alignment above only as a screen and derive no bound from
+it. Wide fidelity kernels also concentrate as the number of qubits grows
 \cite{thanasilp2024}, which is a second reason to prefer the narrowest admissible circuit. With
 $K=20$ the rule returns $n^{\ast}=4$ on NSL-KDD (Sec.~\ref{sec:res-embed}). On UNSW-NB15 we apply
 it unchanged with $K=35$, where it returns $n^{\ast}=6$ (Sec.~\ref{sec:res-unsw}).
@@ -154,14 +154,16 @@ count as independent.
 \emph{Test sets.} The training-set-size sweeps are scored on the full official test set. The
 entanglement comparison, the width sweep and the noise check use one stratified sample of $300$
 KDDTest$^+$ records. The shift experiments use $1000$-record test mixtures drawn from KDDTest$^+$
-or, for the temporal shift, from KDDTest-21, at the stated proportions of attack traffic or
+or, for the harder-record shift, from KDDTest-21, at the stated proportions of attack traffic or
 attack type.
 
-\emph{Hyper-parameters.} Every model, quantum and classical, is tuned by the same procedure:
-five-fold stratified cross-validation on macro-$F_1$ over $C\in\{0.1,0.3,0.5,1,3,5,10\}$ for the
+\emph{Hyper-parameters.} Every model, quantum and classical, is tuned on the same data by
+five-fold stratified cross-validation on macro-$F_1$, over $C\in\{0.1,0.3,0.5,1,3,5,10\}$ for the
 support vector machines, and over a grid of tree count, depth, leaf size, learning rate and
-subsampling for the ensembles. For the support vector machines we take the simplest setting
-within one standard error of the best mean score; for the ensembles, the best mean. Because the
+subsampling for the ensembles. The selection rules differ: for the support vector machines we take the
+simplest setting within one standard error of the best mean score, and for the ensembles the
+best mean. The width of the RBF kernel is left at the scikit-learn default,
+$\gamma=1/(n\,\mathrm{Var}(\bm{x}))$, and is not tuned. Because the
 Gram matrix does not depend on $C$, the quantum kernel is computed once per subset and only the
 classifier is refitted. \QSVM{}-\Zmap{} uses the $C$ selected for \QSVM{}, so the two differ
 only in the feature map. Results are reported for two arms. In the \emph{tuned} arm the search
@@ -172,20 +174,20 @@ subsets, and the selected values ($C=3$ for both quantum kernels) are kept at ev
 \subsection{Statistical analysis}\label{sec:stats}
 
 Every comparison is paired within run. For run $i$ we form
-$\Delta_i = m(\text{\QSVM{}}) - m(\text{baseline})$ on the same training subset and the same
-test records, and report the mean of $\Delta$ with a $t$-based $95\%$ confidence interval, a
-two-sided Wilcoxon signed-rank test and the paired effect size $d_z$ \cite{ref32}. Pairing
+$\Delta_i = f(\text{\QSVM{}}) - f(\text{baseline})$ on the same training subset and the same
+test records, where $f$ is the score (macro-$F_1$ unless stated otherwise), and report the mean of $\Delta$ with a $t$-based $95\%$ confidence interval, a
+two-sided Wilcoxon signed-rank test \cite{wilcoxon1945} and the paired effect size $d_z$ \cite{ref32}. Pairing
 removes the subset-to-subset variance that otherwise dominates comparisons of learners on
 resampled data \cite{ref31}.
 
-The $p$-values are Holm-adjusted within baseline families: the \Zmap{} control alone, the three
+The $p$-values are Holm-adjusted \cite{holm1979} within baseline families: the \Zmap{} control alone, the three
 classical kernels, and the two tree ensembles. A comparison favours one side when the adjusted
 $p<0.05$ and the interval excludes zero; otherwise it is inconclusive. The \Zmap{} family has one
 member, so its $p$-values are unadjusted. The $110$ comparisons of the regime map fall into $56$
 families, so under a global null at most about $2.8$ families would be expected to contain a
 false verdict.
-Sec.~\ref{sec:regime-mult} therefore also counts the verdicts under Benjamini--Hochberg and
-Holm over the whole map. With ten runs the smallest attainable two-sided Wilcoxon $p$ is
+Sec.~\ref{sec:regime-mult} therefore also counts the verdicts under Benjamini--Hochberg
+\cite{benjamini1995} and Holm over the whole map. With ten runs the smallest attainable two-sided Wilcoxon $p$ is
 $2/2^{10}=0.00195$. Correlations are reported with Fisher-$z$ intervals, and two correlations
 are compared with a $z$ test on their Fisher transforms.
 

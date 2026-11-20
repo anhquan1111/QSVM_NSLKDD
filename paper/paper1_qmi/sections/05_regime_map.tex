@@ -40,8 +40,9 @@ corrections. With a Benjamini--Hochberg correction over all $110$ cells the coun
 and $71$. The three cells that change all move from a classical verdict to inconclusive: the
 random forest at $N=500$ and $N=1000$ under the natural prior, and XGBoost at a $70\%$ attack
 fraction. Every cell that favours \QSVM{} within families also does so under
-Benjamini--Hochberg. The natural-prior block changes by one cell, from $11$, $9$ and $22$ to $11$,
-$8$ and $23$.
+Benjamini--Hochberg. Within the natural-prior block, the correction over all $110$ cells gives
+$11$, $7$ and $24$, since both random-forest cells lie in it; applied to the $42$ cells of that
+block alone it changes one cell, giving $11$, $8$ and $23$.
 
 Holm over a whole block rejects no cell, for $110$ cells or for $42$. With ten runs the smallest
 two-sided Wilcoxon $p$ is $2/2^{10}=0.00195$, while the first Holm threshold is
@@ -84,7 +85,7 @@ Benjamini--Hochberg. All of these cells use the enriched pool and $1000$-record 
 Against SVM-RBF, no cell of the training-size sweep favours \QSVM{} under any correction, in
 either training pool. The enriched sweep at $N=2000$ favours SVM-RBF.
 
-Outside the map, all $48$ comparisons at eight qubits ($K=80$) favour the classical baseline
+Outside the map, all $48$ comparisons at eight qubits ($K=80$) favour the baseline, including the \Zmap{} control
 (Sec.~\ref{sec:res-width}). These come from noiseless simulation. We did not test other feature
 maps, bandwidth scaling or lower-noise hardware, and the map gives no information about them.
 

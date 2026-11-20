@@ -39,7 +39,7 @@ rule that charges for two-qubit gates, before any classifier is trained. The ent
 is compared with an otherwise identical circuit without it. The test distribution is shifted
 in four ways. The training-set size is swept from $10^2$ to $10^4$ records under the natural
 class prior and under a pool enriched in rare attacks. Every comparison is paired over ten
-runs, quantum and classical models are tuned by the same procedure, $p$-values are adjusted
+runs, quantum and classical models are tuned by cross-validation on the same subsets, $p$-values are adjusted
 for multiple comparisons, and scores are computed on the official test sets, with and without
 test records that duplicate training records. UNSW-NB15 serves as a second dataset.
 
@@ -61,23 +61,24 @@ inconclusive and every verdict favouring the quantum kernel remains. Within the 
     the design cannot tell whether enrichment removes the reversal; on the sizes both pools
     share, the enriched arm reaches a verdict in $4$ of $30$ comparisons and the natural arm in
     $12$.
-  \item \textbf{The width rule transfers.} The rule returns $n^{\ast}=4$ on NSL-KDD and, with the
+  \item \textbf{The width rule is stable on a second dataset.} The rule returns $n^{\ast}=4$ on NSL-KDD and, with the
     same thresholds, $n^{\ast}=6$ on UNSW-NB15. On ten independent subsets of UNSW-NB15 it
     returns $n^{\ast}=6$ in $10/10$ cases at tolerance $\varepsilon\le0.05$ and in $7/10$ at
     $\varepsilon=0.1$.
   \item \textbf{Wider circuits do worse in noiseless simulation.} A larger feature budget makes
     the rule choose a wider circuit. At $K=80$, where it returns $n^{\ast}=8$, all $48$ paired
-    comparisons favour the classical baseline. Across widths, the off-diagonal entries of the
+    comparisons favour the baseline, including the \Zmap{} control. Across widths, the off-diagonal entries of the
     \ZZ{} Gram matrix become less dispersed faster than those of the control, and lower
     dispersion goes with lower macro-$F_1$ ($r=+0.77$, $95\%$ CI $[+0.04,+0.96]$, seven
     widths). This association is observational and compatible with known kernel
     concentration \cite{thanasilp2024}.
 \end{itemize}
 
-The method also loses in several conditions. It degrades faster than either tree ensemble when
-the class prior of the test data shifts, and it is the least robust of the seven models to
-feature perturbation. Its $F_1$ on the rare attack classes at $N=10^4$ ($0.507$) is well above
-that of the tree ensembles ($0.33$), and below that of an RBF-kernel SVM ($0.585$).
+The method also loses in several conditions. When the test data are $70\%$ attacks, XGBoost is
+significantly ahead of it, and it is the least robust of the seven models to feature
+perturbation. Its $F_1$ on the rare attack classes at $N=10^4$ ($0.507$) is well above
+that of the tree ensembles ($0.33$); an RBF-kernel SVM has a higher mean ($0.585$), but that
+difference is inconclusive.
 
 Sec.~\ref{sec:related} places this work among related studies. Sec.~\ref{sec:methods} describes
 the feature map, the width rule, the data and the statistical protocol. Sec.~\ref{sec:results}

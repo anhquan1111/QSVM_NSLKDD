@@ -195,6 +195,16 @@ từ trang hướng dẫn tác giả của Springer), hình dùng lại từ `pa
    Thêm soát giọng văn theo skill Humanizer (`~/projects/channel_3_asian_explained/.claude/skills/humanizer/SKILL.md`,
    26 dấu hiệu văn AI; chủ nhân 20-11): mỗi mục ghi các dấu hiệu đã sửa. Không có máy chấm điểm, Claude tự soát.
 4. Đọc lại toàn bài một lượt như người phản biện mới (không biết bản cũ).
+   **Lượt 1 xong 20-11** (agent con Opus, chấm "major revision"; 29 cụm số soát, 27 khớp). Claude kiểm lại trên
+   CSV rồi sửa: câu "tree ensemble not beaten" sai (RF-122 thua QSVM ở N=5000, 10⁴) → chỉ XGBoost; bỏ "kém bền
+   hơn cây khi lệch prior" khỏi tóm tắt/giới thiệu/kết luận (Wilcoxon cặp trên mức tụt p=0,11 và 0,43); KDDTest-21
+   là lọc theo độ khó, không phải "temporal"; bỏ "same procedure"/"symmetrically tuned" (luật chọn khác nhau, γ RBF
+   không dò); thêm đoạn baseline cổ điển tụt khi N tăng; cổng KTA không quyết ở NSL-KDD nhưng quyết ở UNSW; BH khối
+   tự nhiên ghi rõ 11/7/24 (BH-110) và 11/8/23 (BH-42); p 0,065 → 0,064; F1 lớp hiếm kèm p; mức σ nhiễu; ký hiệu m
+   → f, n'; thêm trích Wilcoxon, Holm, BH, Shaydulin & Wild (39 mục). Agent nói sai một điểm: cổng KTA "không bao
+   giờ đổi kết quả" chỉ đúng ở NSL-KDD.
+   Còn chờ: (a) ô ΔKTA (ZZ−Z) đang đếm là "favouring QSVM" trong 110 ô, chờ chủ nhân chọn bỏ hay giữ;
+   (b) vì sao UNSW dùng K=35 (chưa tìm ra lý do ghi lại); (c) chưa kiểm bằng code tập dò 2.000 dòng tách biệt.
 
 **Đạt khi:**
 - `uv run python runners/audit_wording_r3.py paper/paper1_qmi` ra 0 (không "exponential" về số đo của

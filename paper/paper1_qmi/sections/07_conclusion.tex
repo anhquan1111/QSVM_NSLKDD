@@ -15,8 +15,8 @@
 \section{Conclusion}\label{sec:conclusion}
 
 We compared a four-qubit \ZZ{} quantum kernel with an entanglement-free control and five
-classical learners for binary intrusion detection, varying one factor at a time under a paired,
-symmetrically tuned protocol on NSL-KDD and UNSW-NB15. Under the natural class prior, $11$ of
+classical learners for binary intrusion detection, varying one factor at a time under a paired
+protocol, with every model tuned by cross-validation, on NSL-KDD and UNSW-NB15. Under the natural class prior, $11$ of
 the $42$ comparisons of the training-set-size sweep favour the quantum kernel, $9$ favour a
 classical baseline and $22$ are inconclusive. Over all $110$ comparisons the counts are $21$,
 $21$ and $68$, and $21$, $18$ and $71$ under a Benjamini--Hochberg correction over the whole
@@ -30,10 +30,9 @@ training-set size gives a significant difference, and against XGBoost given all 
 none was detected at $N\ge5000$. Second, the width rule,
 with thresholds set on NSL-KDD, returns $n^{\ast}=6$ on UNSW-NB15 in $10/10$ subsets at
 $\varepsilon\le0.05$ and in $7/10$ at $\varepsilon=0.1$. Third, in noiseless simulation an
-eight-qubit circuit is behind the baseline in all $48$ comparisons, and across seven widths lower off-diagonal
+eight-qubit circuit is behind every baseline, including the \Zmap{} control, in all $48$ comparisons, and across seven widths lower off-diagonal
 dispersion of the \ZZ{} Gram matrix goes with lower macro-$F_1$ ($r=+0.77$). The quantum kernel
-also degrades faster than the tree ensembles under a shift of the class prior, and faster than
-every baseline under feature perturbation.
+also degrades faster than every baseline under feature perturbation.
 
 These results come from classical simulation of the circuits, with a single noise model
 checked at a single operating point, and from training sets of at most $10^4$ records at four

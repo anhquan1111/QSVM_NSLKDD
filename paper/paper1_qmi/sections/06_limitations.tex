@@ -73,7 +73,9 @@ link between Gram-matrix dispersion and macro-$F_1$ was measured at seven widths
 training-set size, and we report it only as an association.
 
 \emph{Baselines.} The classical baselines are linear, polynomial and RBF support vector
-machines, a random forest and XGBoost, all tuned by the same procedure as the quantum kernel.
+machines, a random forest and XGBoost, all tuned by cross-validation on the same data as the quantum kernel;
+the selection rule differs between the kernel machines and the ensembles
+(Sec.~\ref{sec:protocol}), and the RBF width is not tuned.
 We did not include CatBoost or deep tabular models such as TabNet or FT-Transformer. A fair comparison with the latter
 would need its own tuning-budget protocol, and adding it would turn a controlled kernel
 benchmark into a survey of tabular methods. The regime map therefore locates the quantum kernel
