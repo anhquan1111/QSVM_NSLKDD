@@ -168,6 +168,11 @@ từ trang hướng dẫn tác giả của Springer), hình dùng lại từ `pa
    rút 5 khẳng định / erratum, "released code contains the execution path".
    Humanizer đã sửa: (4) phóng đại ("the one we would most like others to test", "specific enough");
    không câu kết hoành tráng.
+   **Tóm tắt xong 20-11** (`main.tex`, 246 từ, không trích dẫn, không công thức; nháp để chủ nhân / thầy
+   viết lại hẳn). Khối 42 ô tự nhiên (11/9/22) trước tổng 110 ô (21/21/68). Đảo chiều ghi đúng phạm vi: so
+   với XGBoost trên cùng embedding 4 thành phần, NSL-KDD, còn sau khi bỏ trùng, không có ở UNSW, không khác
+   biệt có ý nghĩa với XGBoost đủ 122 đặc trưng. Không ghi "10/10" (máy kiểm đòi kèm 7/10; tóm tắt chỉ nói
+   quy tắc chọn 6 qubit ở UNSW). Câu cuối: mọi kernel tính bằng mô phỏng cổ điển.
 3. Mỗi mục xong thì chạy hai máy kiểm: `audit_wording_r3.py paper/paper1_qmi` (chữ) và kiểm số đối chiếu
    CSV; bảng số sinh bằng script, không gõ tay.
    Thêm soát giọng văn theo skill Humanizer (`~/projects/channel_3_asian_explained/.claude/skills/humanizer/SKILL.md`,

@@ -59,9 +59,27 @@ Telecommunications}, \orgaddress{\city{Saint Petersburg}, \postcode{193232},
 \affil[3]{\orgname{Danang Architecture University}, \orgaddress{\city{Danang},
 \postcode{550000}, \country{Vietnam}}}
 
-% TOM TAT: viet CUOI CUNG, khi so da chot (150-250 tu, khong trich dan,
-% khong cong thuc). Khoi 42 o tu nhien dua len truoc tong 110 o.
-\abstract{Abstract to be written last.}
+% TOM TAT (ban nhap Claude 20-11; chu nhan va thay Van VIET LAI HAN). 150-250
+% tu, khong trich dan, khong cong thuc. Khoi 42 o tu nhien dua len truoc tong
+% 110 o (1.4d). Khong ghi "10/10" (luat audit: phai kem 7/10). Moi so lay tu
+% Introduction / Results (da doi chieu CSV). Khong nhan loi the luong tu (R2).
+\abstract{Quantum kernel methods for intrusion detection are usually evaluated at a single
+operating point, which cannot show when they help. We benchmark a four-qubit
+quantum kernel support vector machine with a ZZ feature map against an entanglement-free
+control and five classical learners for binary intrusion detection on NSL-KDD and UNSW-NB15.
+The protocol varies one factor at a time (circuit width, entanglement, test distribution and
+training-set size), tunes every model by the same procedure, pairs each comparison over ten
+runs, and scores on the official test sets with and without test records duplicated in the
+training data. Under the natural class prior, 11 of the 42 training-size comparisons favour the
+quantum kernel, 9 favour a classical baseline and 22 are inconclusive; over all 110 comparisons
+the counts are 21, 21 and 68. On NSL-KDD, on a shared four-component embedding, the quantum kernel is behind XGBoost below 2,000 training records and significantly ahead from
+5,000. This reversal remains after duplicated test records are removed, but it does not appear
+on UNSW-NB15, and against XGBoost trained on all 122 features no significant difference was
+detected. A gate-cost rule for choosing the circuit width, set on NSL-KDD, selects six qubits
+on UNSW-NB15. In noiseless simulation an eight-qubit circuit is behind the baseline in all 48
+comparisons, and lower dispersion of its Gram matrix goes with lower accuracy. The quantum
+kernel is less robust than the tree ensembles to shifts in the class prior. All kernels
+were computed by classical simulation.}
 
 \keywords{quantum kernel methods, quantum support vector machine, network
 intrusion detection, NISQ, NSL-KDD, UNSW-NB15}
