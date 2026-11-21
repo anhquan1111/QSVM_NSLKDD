@@ -65,7 +65,8 @@ inconclusive and every verdict favouring the quantum kernel remains. Within the 
   \item \textbf{The width rule is stable on a second dataset.} The rule returns $n^{\ast}=4$ on NSL-KDD and, with the
     same thresholds, $n^{\ast}=6$ on UNSW-NB15. On ten independent subsets of UNSW-NB15 it
     returns $n^{\ast}=6$ in $10/10$ cases at tolerance $\varepsilon\le0.05$ and in $7/10$ at
-    $\varepsilon=0.1$.
+    $\varepsilon=0.1$. Stable is not best: on the same subsets an eight-qubit circuit scores
+    higher than the selected six at $N\ge5000$.
   \item \textbf{Wider circuits do worse in noiseless simulation.} A larger feature budget makes
     the rule choose a wider circuit. At $K=80$, where it returns $n^{\ast}=8$, all $48$ paired
     comparisons favour the baseline, including the \Zmap{} control. Across widths, the off-diagonal entries of the

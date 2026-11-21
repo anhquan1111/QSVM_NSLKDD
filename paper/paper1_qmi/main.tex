@@ -73,10 +73,10 @@ runs, and scores on the official test sets with and without duplicated test
 records. Under the natural class prior, 11 of the 42 training-size comparisons favour the
 quantum kernel, 9 favour a classical baseline and 22 are inconclusive; over all 109 comparisons
 the counts are 20, 21 and 68. On NSL-KDD, on a shared four-component embedding, the quantum kernel is behind XGBoost below 2,000 training records and significantly ahead at
-10,000 (at 5,000 only on the pre-set regularisation grid). This reversal remains after duplicated test records are removed, but it does not appear
+10,000 (at 5,000 only on the pre-set regularisation grid). This reversal survives removal of duplicated test records but does not appear
 on UNSW-NB15, and against XGBoost trained on all 122 features no significant difference was
-detected from 5,000 records. A gate-cost rule for choosing the circuit width, set on NSL-KDD, selects six qubits
-on UNSW-NB15. In noiseless simulation an eight-qubit circuit is behind every baseline, including the
+detected from 5,000 records. A gate-cost width rule set on NSL-KDD selects six qubits
+on UNSW-NB15, where eight score higher on large subsets. On NSL-KDD an eight-qubit circuit is behind every baseline, including the
 control, in all 48 comparisons, and lower dispersion of its Gram matrix goes with lower accuracy. Under feature
 perturbation the quantum kernel degrades faster than every baseline. All kernels
 were computed by classical simulation.}

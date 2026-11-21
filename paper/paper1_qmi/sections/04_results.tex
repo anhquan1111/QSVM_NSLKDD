@@ -230,8 +230,19 @@ here: the variance gate admits $n=4,\dots,10$, and only $n=6$ comes within $5\%$
 alignment. On ten independent subsets it returns
 $n^{\ast}=6$ in $10/10$ cases at tolerance $\varepsilon\in\{0.02,0.05\}$ and in $7/10$ at
 $\varepsilon=0.1$, where the other three give $n^{\ast}=5$. This shows that the choice is
-stable across subsets; we did not test whether $n=6$ performs better than other widths on
-UNSW-NB15.
+stable across subsets. It does not show that $n=6$ is the best width.
+% So: results/unsw/c4_revision/width_compare_qsvm.csv, width_compare_pairwise.csv
+% (run_c4.py --n-qubits 4|8, runners/analyze_unsw_width.py); Holm over the two widths at each N.
+We repeated the training-size sweep at $n=4$ and $n=8$ with $K=35$ and the same subsets, and
+compared \QSVM{} with its $n=6$ result run by run (Holm over the two widths at each $N$). At
+$N\geq2000$ the four-qubit circuit scores lower, by $0.034$ to $0.036$
+($p_{\mathrm{Holm}}\leq0.0078$). The eight-qubit circuit scores lower at $N=100$ ($-0.076$
+$[-0.120,-0.033]$) and higher at $N=5000$ ($+0.022$ $[+0.003,+0.042]$,
+$p_{\mathrm{Holm}}=0.037$) and $N=10^4$ ($+0.024$ $[+0.004,+0.043]$, $p_{\mathrm{Holm}}=0.027$).
+The rule thus avoids the narrower circuit but not a wider one that does better on large
+subsets; widths above eight were not run on UNSW-NB15. At all three widths the random forest is
+significantly ahead of \QSVM{} at every $N$, and XGBoost in every cell except one ($n=6$,
+$N=2000$).
 
 The training-size reversal does not reproduce (Fig.~\ref{fig:unsw-transfer}). At $N=10^4$,
 \QSVM{} is ahead of SVM-RBF ($+0.0401$, $p_{\mathrm{Holm}}=0.0059$) and of its \Zmap{} control

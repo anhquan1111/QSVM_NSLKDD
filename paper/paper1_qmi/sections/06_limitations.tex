@@ -77,7 +77,9 @@ comes from a plateau rule on a linear proxy and a subset rich in rare attacks; i
 accuracy optimum of the proxy, and on the full training partition the same rule would give
 $K=30$ (Sec.~\ref{sec:res-embed}). The thresholds of the selection rule were
 set on NSL-KDD and applied unchanged to UNSW-NB15, where its choice of $n^{\ast}=6$ holds in
-$10/10$ subsets at $\varepsilon\le0.05$ and in $7/10$ at $\varepsilon=0.1$. Other feature maps,
+$10/10$ subsets at $\varepsilon\le0.05$ and in $7/10$ at $\varepsilon=0.1$. Stability is not
+optimality: on UNSW-NB15 an eight-qubit circuit scores higher than the selected six at
+$N\ge5000$ (Sec.~\ref{sec:res-unsw}), and wider circuits were not run there. Other feature maps,
 other repetition counts or other thresholds could move the boundaries of the regime map. The
 link between Gram-matrix dispersion and macro-$F_1$ was measured at seven widths and a single
 training-set size, and we report it only as an association.

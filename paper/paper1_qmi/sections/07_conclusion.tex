@@ -30,7 +30,8 @@ not reproduce on UNSW-NB15. Against SVM-RBF no training-set size gives a signifi
 on the pre-set grid, and against XGBoost given all $122$ features
 none was detected at $N\ge5000$. Second, the width rule,
 with thresholds set on NSL-KDD, returns $n^{\ast}=6$ on UNSW-NB15 in $10/10$ subsets at
-$\varepsilon\le0.05$ and in $7/10$ at $\varepsilon=0.1$. Third, in noiseless simulation an
+$\varepsilon\le0.05$ and in $7/10$ at $\varepsilon=0.1$, although on large subsets an
+eight-qubit circuit scores higher there. Third, on NSL-KDD in noiseless simulation an
 eight-qubit circuit is behind every baseline, including the \Zmap{} control, in all $48$ comparisons, and across seven widths lower off-diagonal
 dispersion of the \ZZ{} Gram matrix goes with lower macro-$F_1$ ($r=+0.77$). The quantum kernel
 also degrades faster than every baseline under feature perturbation.
