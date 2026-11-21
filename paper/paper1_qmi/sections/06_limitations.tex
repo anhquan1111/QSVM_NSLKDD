@@ -55,9 +55,11 @@ $N\ge5000$ the selected value often lies on its edge. Widening it at $N=5000$ an
 (Sec.~\ref{sec:res-n}) left the verdicts at $N=10^4$ in place but made the lead over XGBoost at
 $N=5000$ inconclusive, and the wider grid is again reached at its edges in some runs. The other
 cells of the map were not re-tuned on the wider grid. The width $\gamma$ of the RBF kernel was
-tuned only in a separate check (Sec.~\ref{sec:res-n}). There, tuning it made SVM-RBF stronger
-at small $N$, where it then leads \QSVM{} at $N=200$, and weaker at large $N$. At small $N$ the
-map therefore understates SVM-RBF.
+tuned only in a separate check (Sec.~\ref{sec:res-n}). On NSL-KDD, tuning it made SVM-RBF
+stronger at small $N$, where it then leads \QSVM{} at $N=200$, and weaker at large $N$. On
+UNSW-NB15 it made SVM-RBF stronger at large $N$ and removed most of the lead of \QSVM{} over it
+(Sec.~\ref{sec:res-unsw}). Cells against SVM-RBF at small $N$ on NSL-KDD, and at large $N$ on
+UNSW-NB15, therefore understate it.
 
 \emph{Data.} Both datasets are older public benchmarks, and the task is binary throughout. R2L
 and U2R are evaluated as part of the attack class; the rare-class scores of

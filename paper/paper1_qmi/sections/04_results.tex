@@ -246,7 +246,14 @@ $N=2000$).
 
 The training-size reversal does not reproduce (Fig.~\ref{fig:unsw-transfer}). At $N=10^4$,
 \QSVM{} is ahead of SVM-RBF ($+0.0401$, $p_{\mathrm{Holm}}=0.0059$) and of its \Zmap{} control
-($+0.0449$, $p_{\mathrm{Holm}}=0.0020$). XGBoost has the higher mean at every size ($-0.0204$ at
+($+0.0449$, $p_{\mathrm{Holm}}=0.0020$). The lead over SVM-RBF depends on its default width.
+% So: results/unsw/c4_rbf_gamma/rbf_gamma_summary.csv, rbf_gamma_pairwise.csv
+With $\gamma$ tuned as in Sec.~\ref{sec:res-n}, SVM-RBF rises from $0.6899$ to $0.7230$ at
+$N=10^4$, and the difference shrinks to $+0.0071$ $[+0.0005,+0.0137]$
+($p_{\mathrm{Holm}}=0.037$); under the best-mean rule it is inconclusive ($+0.0057$,
+$p_{\mathrm{Holm}}=0.064$), and at $N=2000$ and $N=5000$ it is inconclusive under both rules.
+Unlike on NSL-KDD, the default $\gamma$ is here the less favourable choice for SVM-RBF at
+large $N$. XGBoost has the higher mean at every size ($-0.0204$ at
 $N=10^4$, significant), and the difference against either tree ensemble never changes sign.
 
 \subsection{Test records duplicated in the training data}\label{sec:res-dedup}

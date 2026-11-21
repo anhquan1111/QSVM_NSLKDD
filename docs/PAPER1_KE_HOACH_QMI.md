@@ -241,8 +241,11 @@ từ trang hướng dẫn tác giả của Springer), hình dùng lại từ `pa
    5. Chỉ khi còn thời gian: UNSW chạy n=4 và n=8 để xem n=6 có tốt hơn (3–6 giờ CPU); dò γ của RBF (~1 giờ).
       Chủ nhân gật 21-11. γ NSL-KDD xong (`results/nslkdd/c4_rbf_gamma/`, đã viết vào sec:res-n + Giới hạn +
       Phương pháp): dò γ giúp RBF ở N nhỏ (N=200 RBF hơn QSVM −0,055), làm RBF kém ở N lớn (CV chọn γ 30×, mép
-      lưới; test 0,7721→0,7526 ở 10⁴) → QSVM hơn RBF ở 5000 và 10⁴. Còn chạy: γ UNSW, UNSW n=8, UNSW n=4 (chạy
-      lại: bản đầu dùng nhầm lưới N của NSL-KDD do `run_c4.resolve_grid` tra theo tên đầy đủ, đã sửa).
+      lưới; test 0,7721→0,7526 ở 10⁴) → QSVM hơn RBF ở 5000 và 10⁴. **Xong 21-11** (bản n=4 đầu dùng nhầm lưới N
+      NSL-KDD do `run_c4.resolve_grid` tra theo tên đầy đủ, đã sửa, chạy lại). UNSW bề rộng: n=4 kém n=6 ở N≥2000,
+      n=8 hơn n=6 ở 5000/10⁴ (+0,022/+0,024) → luật ổn định nhưng không chọn bề rộng tốt nhất; cây vẫn hơn QSVM ở mọi
+      bề rộng. γ UNSW: dò γ làm RBF mạnh ở N lớn (0,690→0,723 ở 10⁴), QSVM hơn RBF thu từ +0,040 còn +0,007 (1-SE,
+      pH 0,037; best-mean không kết luận). Đã viết vào res-unsw, res-n, Giới thiệu, Giới hạn, Kết luận, Tóm tắt (249 từ).
       Phân tích: `runners/analyze_rbf_gamma.py`, `runners/analyze_unsw_width.py`; viết vào sec:res-unsw (câu
       "we did not test whether n=6 performs better") và Giới hạn.
 
