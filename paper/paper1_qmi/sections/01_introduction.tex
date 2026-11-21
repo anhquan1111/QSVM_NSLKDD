@@ -53,9 +53,10 @@ inconclusive and every verdict favouring the quantum kernel remains. Within the 
   \item \textbf{The ranking reverses with training-set size.} Under the natural prior, on the
     shared four-component embedding, \QSVM{} is next to last at $N=100$ and first at $N=10^4$.
     Its difference from XGBoost changes sign between $N=2000$ and $N=5000$ whether
-    hyper-parameters are re-tuned at each size or held fixed, and is significant at $N=5000$
-    and $N=10^4$. Against SVM-RBF no size under the natural prior gives a significant
-    difference. Against XGBoost given all $122$ features, no significant difference was
+    hyper-parameters are re-tuned at each size or held fixed, and is significant at $N=10^4$.
+    At $N=5000$ it is significant on the pre-set grid of the regularisation constant $C$ but
+    not when that grid is widened. On the pre-set grid no size under the natural prior gives a
+    significant difference against SVM-RBF. Against XGBoost given all $122$ features, no significant difference was
     detected at $N\ge5000$. The reversal remains after duplicated test records are removed. It
     does not appear on UNSW-NB15. The rare-enriched pool cannot be sampled beyond $N=2000$, so
     the design cannot tell whether enrichment removes the reversal; on the sizes both pools

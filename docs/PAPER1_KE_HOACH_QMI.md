@@ -221,9 +221,12 @@ từ trang hướng dẫn tác giả của Springer), hình dùng lại từ `pa
      30–100, RBF 30–100, linear 0,03, tức lại chạm mép mới. F1 test của QSVM đổi ≤ 0,004; RBF tụt 0,009–0,014 (CV chọn
      C lớn, test kém hơn). Kết luận ghép cặp (Holm trong họ), lưới cũ → lưới rộng:
      N=10⁴: XGB Q→Q (+0,0183), RF Q→Q, RBF −→Q (+0,0256), Z −→−. N=5000: XGB Q→− (+0,0099 [−0,0003; +0,0201],
-     pH=0,098), RF Q→−, Z Q→−, RBF −→− (pH 0,027 nhưng CI chạm 0). Lưu ý: "lưới cũ" ở đây là lần chạy lại bỏ trùng
-     (c4_dedup), RF N=5000 ra pH 0,049 trong khi bài (c4_revision) ghi 0,064: hai lần chạy lệch nhẹ.
-     **Chờ chủ nhân quyết cách viết**: câu "significantly ahead from 5,000" ở tóm tắt chỉ còn đứng ở N=10⁴ khi mở lưới.
+     pH=0,098), RF −→− (fit lại với C cũ ra pH 0,064, khớp bài; con số 0,049 báo trước đó lấy từ F1 cache, sai),
+     Z Q→−, RBF −→− (pH 0,027 nhưng CI chạm 0). Bảng đủ: `results/nslkdd/c4_cgrid/cgrid_pairwise.csv`,
+     `cgrid_chosen_C.csv` (`runners/analyze_cgrid_extension.py`).
+     **Đã viết theo (a)** (21-11, chủ nhân "tiếp tục"): giữ lưới định trước cho mọi kết quả; thêm đoạn "Regularisation
+     grid" ở Kết quả (sec:res-n) và mục "Hyper-parameter grids" ở Giới hạn (kèm γ RBF không dò); tóm tắt, giới thiệu,
+     bản đồ, kết luận đổi thành "ahead at 10,000 (at 5,000 only on the pre-set grid)". Tóm tắt 249 từ.
    1. Tách tấn công KDDTest+ thành kiểu đã thấy trong train (9.083) và kiểu mới (3.750, 17 loại), recall theo N từ
       dự đoán đã lưu `results/nslkdd/c4_dedup/cache/*.npz`: cổ điển tụt mạnh ở kiểu mới (XGB 0,550→0,376), QSVM tụt ít
       (0,458→0,426); kiểu đã thấy thì mọi mô hình tăng. Giải thích việc baseline tụt khi N tăng. ~2 giờ, không train.

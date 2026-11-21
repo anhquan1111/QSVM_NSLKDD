@@ -59,7 +59,8 @@ each statement holds.
 
 Under the natural prior, \QSVM{} is ahead of XGBoost at $N\geq5000$, of the random forest at
 $N=10^4$, and of the linear and polynomial kernels from $N=1000$ and $N=2000$. These verdicts hold
-under within-family Holm and under Benjamini--Hochberg. All of them are against models given the
+under within-family Holm and under Benjamini--Hochberg. The verdict against XGBoost at $N=5000$
+does not survive a wider grid for $C$; the one at $N=10^4$ does (Sec.~\ref{sec:res-n}). All of them are against models given the
 same four components. Against XGBoost on all $122$ features no significant difference was
 detected at $N=5000$ or $N=10^4$ (Table~\ref{tab:ref-arm}), and full-feature XGBoost trained on
 the whole training partition reaches $0.804$, above every four-qubit result. The comparison that
@@ -100,8 +101,8 @@ macro-$F_1$, while differences as large as $0.031$ stayed inconclusive when they
 between runs. The median absolute difference among the $68$ inconclusive cells is $0.014$. Most
 differences in this study are of that size, and ten paired runs resolve only part of them.
 
-The region where \QSVM{} is ahead is bounded on each axis we varied. It needs $N\geq5000$, and
-under the enriched pool we could not sample that far. It holds against learners on the
+The region where \QSVM{} is ahead is bounded on each axis we varied. It needs $N\geq5000$, at $N=5000$ only on the pre-set
+grid for $C$, and under the enriched pool we could not sample that far. It holds against learners on the
 four-component embedding, not against XGBoost on the raw record. It appears on NSL-KDD; on
 UNSW-NB15 the difference against the tree ensembles does not change sign at any $N$
 (Sec.~\ref{sec:res-unsw}). An eight-qubit circuit did not extend it. On this evidence, the

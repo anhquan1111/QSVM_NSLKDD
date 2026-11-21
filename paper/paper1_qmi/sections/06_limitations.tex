@@ -50,6 +50,13 @@ whether it holds at larger $N$. The classical reference trained on the whole par
 enriched pool stops at $N=2000$ because the ten runs would otherwise share most of their rare
 records, so the question whether enrichment removes the reversal remains open.
 
+\emph{Hyper-parameter grids.} The grid for $C$ was fixed before the experiments, and at
+$N\ge5000$ the selected value often lies on its edge. Widening it at $N=5000$ and $N=10^4$
+(Sec.~\ref{sec:res-n}) left the verdicts at $N=10^4$ in place but made the lead over XGBoost at
+$N=5000$ inconclusive, and the wider grid is again reached at its edges in some runs. The other
+cells of the map were not re-tuned on the wider grid. The width $\gamma$ of the RBF kernel was
+not tuned at all, so the RBF baseline may be weaker than it could be.
+
 \emph{Data.} Both datasets are older public benchmarks, and the task is binary throughout. R2L
 and U2R are evaluated as part of the attack class; the rare-class scores of
 Sec.~\ref{sec:res-rare} measure how often those records are detected as attacks, not whether

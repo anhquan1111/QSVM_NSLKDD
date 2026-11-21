@@ -24,9 +24,10 @@ map.
 
 The map contains three findings that can be tested on other data. First, on the shared
 four-component embedding, the difference between the quantum kernel and XGBoost changes sign
-between $N=2000$ and $N=5000$ and is significant at $N=5000$ and $N=10^4$. It remains after
-duplicated test records are removed and does not reproduce on UNSW-NB15. Against SVM-RBF no
-training-set size gives a significant difference, and against XGBoost given all $122$ features
+between $N=2000$ and $N=5000$ and is significant at $N=10^4$; at $N=5000$ it is significant
+only on the pre-set grid for $C$. It remains after duplicated test records are removed and does
+not reproduce on UNSW-NB15. Against SVM-RBF no training-set size gives a significant difference
+on the pre-set grid, and against XGBoost given all $122$ features
 none was detected at $N\ge5000$. Second, the width rule,
 with thresholds set on NSL-KDD, returns $n^{\ast}=6$ on UNSW-NB15 in $10/10$ subsets at
 $\varepsilon\le0.05$ and in $7/10$ at $\varepsilon=0.1$. Third, in noiseless simulation an
