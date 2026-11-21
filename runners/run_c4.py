@@ -148,7 +148,9 @@ def resolve_grid(protocol, spec, regime) -> list[int]:
     Phai la luoi DAY DU chu khong phai tap con dang chay, neu khong thi chuoi long
     nhau se khac nhau giua cac lan chay va cache khong con nhat quan.
     """
-    key = {"NSL-KDD": "nslkdd", "UNSW-NB15": "unsw"}.get(spec.name, "nslkdd")
+    # Bien the K/n doi ten thanh "UNSW-NB15-K35n4"...: tra theo tien to, khong theo
+    # ten day du, neu khong bien the UNSW se roi ve luoi NSL-KDD (loi gap 21-11).
+    key = "unsw" if spec.name.startswith("UNSW-NB15") else "nslkdd"
     ov = protocol.get("dataset_overrides", {}).get(key)
     if ov and regime in ov.get("regimes", {}):
         return list(ov["regimes"][regime]["n_grid"])
