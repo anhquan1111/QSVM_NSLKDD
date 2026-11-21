@@ -170,7 +170,8 @@ support vector machines, and over a grid of tree count, depth, leaf size, learni
 subsampling for the ensembles. The selection rules differ: for the support vector machines we take the
 simplest setting within one standard error of the best mean score, and for the ensembles the
 best mean. The width of the RBF kernel is left at the scikit-learn default,
-$\gamma=1/(n\,\mathrm{Var}(\bm{x}))$, and is not tuned. Because the
+$\gamma=1/(n\,\mathrm{Var}(\bm{x}))$, and is not tuned except in one check
+(Sec.~\ref{sec:res-n}). Because the
 Gram matrix does not depend on $C$, the quantum kernel is computed once per subset and only the
 classifier is refitted. \QSVM{}-\Zmap{} uses the $C$ selected for \QSVM{}, so the two differ
 only in the feature map. Results are reported for two arms. In the \emph{tuned} arm the search

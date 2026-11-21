@@ -55,7 +55,9 @@ $N\ge5000$ the selected value often lies on its edge. Widening it at $N=5000$ an
 (Sec.~\ref{sec:res-n}) left the verdicts at $N=10^4$ in place but made the lead over XGBoost at
 $N=5000$ inconclusive, and the wider grid is again reached at its edges in some runs. The other
 cells of the map were not re-tuned on the wider grid. The width $\gamma$ of the RBF kernel was
-not tuned at all, so the RBF baseline may be weaker than it could be.
+tuned only in a separate check (Sec.~\ref{sec:res-n}). There, tuning it made SVM-RBF stronger
+at small $N$, where it then leads \QSVM{} at $N=200$, and weaker at large $N$. At small $N$ the
+map therefore understates SVM-RBF.
 
 \emph{Data.} Both datasets are older public benchmarks, and the task is binary throughout. R2L
 and U2R are evaluated as part of the attack class; the rare-class scores of

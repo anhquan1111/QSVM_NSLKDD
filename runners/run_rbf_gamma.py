@@ -123,6 +123,10 @@ def main() -> int:
         spec = c4.get_spec(ds)
         data = c4.load_data(ROOT, verbose=False, dataset=ds)
         grid = args.n or rd.resolve_grid(protocol, spec, "natural")
+        # Luoi NSL-KDD co N=20000 nhung ban 4 qubit khong chay muc do: bo N khong co cache
+        cache = ROOT / "results" / ds / "c4_dedup" / "cache"
+        grid = [n for n in grid if (cache / f"{CACHE_PREFIX[ds]}natural_refit_per_N_tuned_per_N"
+                                    f"_N{n}_run{args.runs[0]}.json").exists()]
         per_run, cv = [], []
         for n in grid:
             for run_id in args.runs:
