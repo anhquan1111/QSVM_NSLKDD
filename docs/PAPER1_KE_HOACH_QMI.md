@@ -239,6 +239,12 @@ từ trang hướng dẫn tác giả của Springer), hình dùng lại từ `pa
    4. Lưới C chạm biên: QSVM chọn C=10 (trần lưới) ở 7/10 run tại N=10⁴ cả hai tập; RBF cũng vậy trên NSL-KDD. Gram đã
       cache, mở lưới tới {30,100} chỉ refit SVC, < 1 giờ.
    5. Chỉ khi còn thời gian: UNSW chạy n=4 và n=8 để xem n=6 có tốt hơn (3–6 giờ CPU); dò γ của RBF (~1 giờ).
+      Chủ nhân gật 21-11. γ NSL-KDD xong (`results/nslkdd/c4_rbf_gamma/`, đã viết vào sec:res-n + Giới hạn +
+      Phương pháp): dò γ giúp RBF ở N nhỏ (N=200 RBF hơn QSVM −0,055), làm RBF kém ở N lớn (CV chọn γ 30×, mép
+      lưới; test 0,7721→0,7526 ở 10⁴) → QSVM hơn RBF ở 5000 và 10⁴. Còn chạy: γ UNSW, UNSW n=8, UNSW n=4 (chạy
+      lại: bản đầu dùng nhầm lưới N của NSL-KDD do `run_c4.resolve_grid` tra theo tên đầy đủ, đã sửa).
+      Phân tích: `runners/analyze_rbf_gamma.py`, `runners/analyze_unsw_width.py`; viết vào sec:res-unsw (câu
+      "we did not test whether n=6 performs better") và Giới hạn.
 
 **Đạt khi:**
 - `uv run python runners/audit_wording_r3.py paper/paper1_qmi` ra 0 (không "exponential" về số đo của
