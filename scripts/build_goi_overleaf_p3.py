@@ -30,7 +30,7 @@ ROOT = Path(__file__).resolve().parent.parent
 BAI = ROOT / "paper" / "paper3_aicon"
 RA = BAI / "dist" / "AICON2026_named.zip"
 
-REPO = "https://github.com/anhquan1111/QSVM_NSLKDD"
+REPO = "https://github.com/anhquan1111/aicon2026-tuning-trap"  # repo rieng cua bai (22-11)
 BO_COMMENT = re.compile(r"(?<!\\)%.*$")
 
 KEM = [
