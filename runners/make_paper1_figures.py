@@ -1,7 +1,10 @@
 """Sinh cac hinh cho ban revision cua paper 1 (TETC-2026-05-0252).
 
-Chay:  python runners/make_paper1_figures.py
-Xuat:  paper/paper1/figs_revision/{fig5,fig9,fig10,fig11}.{pdf,png}
+Chay:  python runners/make_paper1_figures.py         (ban TETC, nhu cu)
+       python runners/make_paper1_figures.py --qmi   (ban QMI, 9 hinh fig4-12)
+Xuat:  paper/paper1/figs_revision/fig{4..12}_*.{pdf,png}  (ban TETC)
+       paper/paper1_qmi/figs_revision/fig{4..12}_*.{pdf,png}  (ban QMI: khong
+       tieu de lon, khong dong chu dau hinh -- caption cua bai da noi viec do)
 
 Ghi chu ve mau. Bang mau da qua `scripts/validate_palette.js` cua skill dataviz:
 bon slot duoc nhan manh (blue/orange/aqua/violet) dat moi nguong all-pairs o
@@ -227,7 +230,16 @@ def _assert_nsl_c1_matches_artifact():
         )
 
 
-def figure5():
+# Vi tri nhan n* cua Hinh 5 o ban QMI: (bo du lieu, panel) -> (offset, ha, va).
+QMI_NSTAR_LABEL = {
+    ("NSL-KDD", "V"): ((8, -12), "left", "baseline"),
+    ("UNSW-NB15", "V"): ((-6, 6), "right", "baseline"),
+    ("NSL-KDD", "KTA"): ((7, -15), "left", "baseline"),
+    ("UNSW-NB15", "KTA"): ((-10, 5), "right", "center"),
+}
+
+
+def figure5(qmi: bool = False):
     _assert_nsl_c1_matches_artifact()
     unsw = pd.read_csv(ROOT / "results/unsw/c4_revision/u1_dimension_metrics.csv")
     sel = json.loads((ROOT / "results/unsw/c4_revision/u1_c1_selection_unsw.json").read_text())
@@ -279,8 +291,14 @@ def figure5():
             ax.plot([meta["n_star"]], [ystar], marker="o", ms=6.0, color=BLUE,
                     mec=SURFACE, mew=1.2, zorder=8)
             dy = 15 if col == "Q" else -16
+            xy_off, ha, va = (-4, dy), "center", "baseline"
+            if qmi:
+                # Ban QMI: o vi tri cu nhan n* de len marker n=3 (V, KTA cua
+                # NSL-KDD) va len duong nguong (KTA cua UNSW-NB15). Doi sang
+                # khoang trong ben canh diem duoc chon.
+                xy_off, ha, va = QMI_NSTAR_LABEL.get((dname, col), (xy_off, ha, va))
             ax.annotate(f"$n^\\ast\\!=\\!{meta['n_star']}$", (meta["n_star"], ystar),
-                        textcoords="offset points", xytext=(-4, dy), ha="center",
+                        textcoords="offset points", xytext=xy_off, ha=ha, va=va,
                         fontsize=7.5, color=INK, fontweight="bold", zorder=9)
 
             ax.set_ylabel(ylab, labelpad=2)
@@ -306,10 +324,11 @@ def figure5():
     ]
     fig.legend(handles=handles, loc="lower center", ncol=5, bbox_to_anchor=(0.5, -0.075),
                handlelength=1.8, columnspacing=1.4, labelcolor=INK_2)
-    fig.suptitle("Three-stage dimension selection reproduces on an unseen dataset",
-                 x=0.012, ha="left", fontsize=10, fontweight="bold", color=INK)
-    fig.tight_layout(rect=(0.035, 0.0, 1, 0.945))
-    return save(fig, "fig5_c1_dimension_selection")
+    if not qmi:
+        fig.suptitle("Three-stage dimension selection reproduces on an unseen dataset",
+                     x=0.012, ha="left", fontsize=10, fontweight="bold", color=INK)
+    fig.tight_layout(rect=(0.035, 0.0, 1, 1.0 if qmi else 0.945))
+    return save(fig, "fig5_c1_dimension_selection", out=_out(qmi))
 
 
 # --------------------------------------------------------------------------
@@ -414,7 +433,7 @@ def _curve_legend(fig, y, ncol=7):
                handlelength=2.4, columnspacing=1.1, labelcolor=INK_2)
 
 
-def figure9():
+def figure9(qmi: bool = False):
     base = ROOT / "results/nslkdd/c4_revision"
     nat = load_curve(base / "c4_per_run_natural_refit_per_N.csv", "tuned_per_N", "full_kddtest_plus")
     mat = load_curve(base / "c4_per_run_matched_refit_per_N.csv", "tuned_per_N", "full_kddtest_plus")
@@ -461,13 +480,14 @@ def figure9():
                         ha="center", va="bottom", fontsize=7.5, color=INK_2)
 
     _curve_legend(fig, y=-0.02, ncol=8)
-    fig.suptitle("Enriching rare attacks removes the crossover: NSL-KDD",
-                 x=0.012, ha="left", fontsize=10, fontweight="bold", color=INK)
-    fig.tight_layout(rect=(0, 0.035, 1, 0.95))
-    return save(fig, "fig9_learning_curve_nslkdd")
+    if not qmi:
+        fig.suptitle("Enriching rare attacks removes the crossover: NSL-KDD",
+                     x=0.012, ha="left", fontsize=10, fontweight="bold", color=INK)
+    fig.tight_layout(rect=(0, 0.035, 1, 1.0 if qmi else 0.95))
+    return save(fig, "fig9_learning_curve_nslkdd", out=_out(qmi))
 
 
-def figure11():
+def figure11(qmi: bool = False):
     base = ROOT / "results/unsw/c4_revision"
     cur = load_curve(base / "c4_per_run_unsw_natural_refit_per_N.csv", "tuned_per_N", "full_test")
     pairs = load_pairs(base / "c4_pairwise_statistics_natural.csv", "tuned_per_N", "full_test")
@@ -500,10 +520,11 @@ def figure11():
                      linespacing=1.35, fontsize=7, color=INK_2)
 
     _curve_legend(fig, y=-0.03, ncol=8)
-    fig.suptitle("On UNSW-NB15 the quantum kernel beats classical kernels, not tree ensembles",
-                 x=0.012, y=0.995, ha="left", fontsize=10, fontweight="bold", color=INK)
-    fig.tight_layout(rect=(0, 0.045, 1, 0.945))
-    return save(fig, "fig11_unsw_transfer")
+    if not qmi:
+        fig.suptitle("On UNSW-NB15 the quantum kernel beats classical kernels, not tree ensembles",
+                     x=0.012, y=0.995, ha="left", fontsize=10, fontweight="bold", color=INK)
+    fig.tight_layout(rect=(0, 0.045, 1, 1.0 if qmi else 0.945))
+    return save(fig, "fig11_unsw_transfer", out=_out(qmi))
 
 
 # --------------------------------------------------------------------------
@@ -513,6 +534,12 @@ GROUP_TITLE = {
     "C2": "C2 · kernel level",
     "C3": "C3 · distribution shift",
     "C4": "C4 · sample complexity",
+}
+# Ban QMI: ten nhom theo noi dung, khong dung ma noi bo C2/C3/C4.
+GROUP_TITLE_QMI = {
+    "C2": "Kernel level",
+    "C3": "Distribution shift",
+    "C4": "Training-set size",
 }
 ROW_LABEL = {
     ("C2", "ZZ_minus_Z_KTA"): "KTA,  ZZ $-$ Z",
@@ -524,6 +551,11 @@ ROW_LABEL = {
 # khong dem; "temporal" doi thanh "harder records" vi KDDTest-21 loc theo do kho.
 MECHANISM_METRIC = "ZZ_minus_Z_KTA"
 QMI_OUT = ROOT / "paper" / "paper1_qmi" / "figs_revision"
+
+
+def _out(qmi: bool):
+    """Thu muc ghi hinh: ban QMI vao paper1_qmi/figs_revision, ban cu giu OUT."""
+    return QMI_OUT if qmi else None
 
 
 def _row_label(r, qmi: bool = False) -> str:
@@ -543,7 +575,11 @@ def _row_label(r, qmi: bool = False) -> str:
             return "feature perturbation (slope)"
         if r.regime == "attack_composition":
             return "attack mix,  50% normal / 50% DoS"
-    return f"{r.regime.split('_')[-1]},  $N$ = {fmt_n(int(r.condition.split('=')[1]))}"
+    pool = r.regime.split('_')[-1]
+    if qmi and pool == "matched":
+        # Bai goi nhom nay la "rare-enriched pool", khong phai "matched".
+        pool = "rare-enriched"
+    return f"{pool},  $N$ = {fmt_n(int(r.condition.split('=')[1]))}"
 
 
 def figure10(qmi: bool = False):
@@ -559,7 +595,9 @@ def figure10(qmi: bool = False):
     y = 0.0
     for contrib in ["C2", "C3", "C4"]:
         sub = d[d.contribution == contrib]
-        ticks.append(y); labels.append(GROUP_TITLE[contrib]); bold.append(True)
+        ticks.append(y)
+        labels.append((GROUP_TITLE_QMI if qmi else GROUP_TITLE)[contrib])
+        bold.append(True)
         y += 1.05
         for row in sub["row"].drop_duplicates():
             ys[(contrib, row)] = y
@@ -612,21 +650,22 @@ def figure10(qmi: bool = False):
     ax.legend(handles=handles, loc="upper center", bbox_to_anchor=(0.5, -0.02),
               ncol=3, labelcolor=INK_2, handletextpad=0.4, columnspacing=2.0)
 
-    fig.suptitle("Regime map: where the quantum kernel helps, and where it does not",
-                 x=0.012, y=0.985, ha="left", fontsize=10, fontweight="bold", color=INK)
-    sub_text = ("Verdict of QSVM-ZZ against each baseline "
-                "(paired over 10 runs, Holm-corrected within family)")
-    if qmi:
-        sub_text += f";  {len(counted)} cells counted, hollow marker not counted"
-    fig.text(0.012, 0.925, sub_text, ha="left", fontsize=7.5, color=INK_MUTED)
-    fig.tight_layout(rect=(0, 0.01, 1, 0.93 if qmi else 0.895))
-    return save(fig, "fig10_regime_map", out=QMI_OUT if qmi else None)
+    # Ban QMI: bo tieu de va dong chu dau hinh; caption cua bai da ghi cach doc
+    # va so o duoc dem (109, o rong ruot khong dem).
+    if not qmi:
+        fig.suptitle("Regime map: where the quantum kernel helps, and where it does not",
+                     x=0.012, y=0.985, ha="left", fontsize=10, fontweight="bold", color=INK)
+        sub_text = ("Verdict of QSVM-ZZ against each baseline "
+                    "(paired over 10 runs, Holm-corrected within family)")
+        fig.text(0.012, 0.925, sub_text, ha="left", fontsize=7.5, color=INK_MUTED)
+    fig.tight_layout(rect=(0, 0.01, 1, 1.0 if qmi else 0.895))
+    return save(fig, "fig10_regime_map", out=_out(qmi))
 
 
 # --------------------------------------------------------------------------
 # Fig 4 -- quet K cho tang SelectKBest
 # --------------------------------------------------------------------------
-def figure4():
+def figure4(qmi: bool = False):
     """Quet K: (a) K mua duoc gi ve do chinh xac, (b) K doi lai bao nhieu qubit.
 
     Hinh cu chi quet K trong {4, 6, 8, 10, 20} roi goi K=20 la "elbow". Mo rong
@@ -692,21 +731,24 @@ def figure4():
     ax.set_ylabel("Qubits for 85% variance")
     ax.set_title("(b) What it costs", loc="left", color=INK, pad=6)
 
-    fig.suptitle("The accuracy a larger $K$ buys is paid for in qubits",
-                 x=0.012, y=0.995, ha="left", fontsize=10, fontweight="bold",
-                 color=INK)
-    fig.text(0.012, 0.895, "Five-fold stratified CV on the full training set; "
-                           "SelectKBest refit inside each fold. $K=20$ (dashed) "
-                           "is the value inherited from the submitted protocol.",
-             ha="left", fontsize=7.5, color=INK_MUTED)
-    fig.tight_layout(rect=(0, 0.01, 1, 0.86), w_pad=2.6)
-    return save(fig, "fig4_selectkbest_sweep")
+    # Ban QMI: bo tieu de va dong chu dau hinh (dong nay con chu "submitted
+    # protocol" cua ban TETC); caption cua bai ghi duong dut la K=20.
+    if not qmi:
+        fig.suptitle("The accuracy a larger $K$ buys is paid for in qubits",
+                     x=0.012, y=0.995, ha="left", fontsize=10, fontweight="bold",
+                     color=INK)
+        fig.text(0.012, 0.895, "Five-fold stratified CV on the full training set; "
+                               "SelectKBest refit inside each fold. $K=20$ (dashed) "
+                               "is the value inherited from the submitted protocol.",
+                 ha="left", fontsize=7.5, color=INK_MUTED)
+    fig.tight_layout(rect=(0, 0.01, 1, 1.0 if qmi else 0.86), w_pad=2.6)
+    return save(fig, "fig4_selectkbest_sweep", out=_out(qmi))
 
 
 # --------------------------------------------------------------------------
 # Fig 6 -- ablation entanglement (thay hinh KTA cu)
 # --------------------------------------------------------------------------
-def figure6():
+def figure6(qmi: bool = False):
     """Ablation ZZ vs Z, tu du lieu C2 revision (10 run, ghep cap theo run).
 
     Hinh cu ve KTA cua ca nam kernel voi thanh sai so tren 5 run. Ban revision
@@ -756,9 +798,12 @@ def figure6():
                     capsize=4, zorder=6)
         ax.plot(vals, np.full(len(vals), y) + 0.17, ls="none", marker="o", ms=3,
                 color=colour, alpha=0.35, zorder=4)
+        # Ban QMI: nen trang sau chu de vach x=0 khong cat ngang dong so.
         ax.annotate(f"{m:+.4f}  [{m - e:+.4f}, {m + e:+.4f}]", (m, y),
                     xytext=(0, -15), textcoords="offset points", ha="center",
-                    fontsize=7, color=INK_2)
+                    fontsize=7, color=INK_2, zorder=7 if qmi else 3,
+                    bbox=(dict(boxstyle="square,pad=0.15", fc=SURFACE, ec="none")
+                          if qmi else None))
     ax.set_yticks(range(len(rows)))
     ax.set_yticklabels([r[0] for r in reversed(rows)], fontsize=9)
     ax.set_ylim(-0.55, len(rows) - 0.35)
@@ -766,16 +811,17 @@ def figure6():
     ax.set_title("(b) Paired effect with 95% CI", loc="left", color=INK, pad=6)
     ax.grid(False, axis="y")
 
-    fig.suptitle("Entanglement moves the kernel geometry far more than the score",
-                 x=0.012, y=0.995, ha="left", fontsize=10, fontweight="bold", color=INK)
-    fig.tight_layout(rect=(0, 0.03, 1, 0.945))
-    return save(fig, "fig6_entanglement_ablation")
+    if not qmi:
+        fig.suptitle("Entanglement moves the kernel geometry far more than the score",
+                     x=0.012, y=0.995, ha="left", fontsize=10, fontweight="bold", color=INK)
+    fig.tight_layout(rect=(0, 0.03, 1, 1.0 if qmi else 0.945))
+    return save(fig, "fig6_entanglement_ablation", out=_out(qmi))
 
 
 # --------------------------------------------------------------------------
 # Fig 7 -- phan bo F1 tung run cho ca bay model
 # --------------------------------------------------------------------------
-def figure7():
+def figure7(qmi: bool = False):
     """Phan bo F1 tung run, 10 run, ca bay model -- co ca RF va XGBoost."""
     d = pd.read_csv(ROOT / "results/nslkdd/c2_revision/c2_per_run.csv")
     order = d.groupby("model")["f1_macro"].mean().sort_values().index.tolist()
@@ -803,20 +849,21 @@ def figure7():
     ax.grid(False, axis="y")
     ax.grid(True, axis="x", color=GRID, lw=0.6)
 
-    fig.suptitle("With strong tabular baselines the quantum kernel no longer leads",
-                 x=0.012, y=0.995, ha="left", fontsize=10, fontweight="bold", color=INK)
-    fig.text(0.012, 0.90, "Dots are individual runs; markers are the mean with a 95% "
-                          "confidence interval. The intervals overlap: this is an "
-                          "ordering of point estimates, not a significant separation.",
-             ha="left", fontsize=7.5, color=INK_MUTED)
-    fig.tight_layout(rect=(0, 0.01, 1, 0.87))
-    return save(fig, "fig7_per_run_f1")
+    if not qmi:
+        fig.suptitle("With strong tabular baselines the quantum kernel no longer leads",
+                     x=0.012, y=0.995, ha="left", fontsize=10, fontweight="bold", color=INK)
+        fig.text(0.012, 0.90, "Dots are individual runs; markers are the mean with a 95% "
+                              "confidence interval. The intervals overlap: this is an "
+                              "ordering of point estimates, not a significant separation.",
+                 ha="left", fontsize=7.5, color=INK_MUTED)
+    fig.tight_layout(rect=(0, 0.01, 1, 1.0 if qmi else 0.87))
+    return save(fig, "fig7_per_run_f1", out=_out(qmi))
 
 
 # --------------------------------------------------------------------------
 # Fig 8 -- dich chuyen prior lop
 # --------------------------------------------------------------------------
-def figure8():
+def figure8(qmi: bool = False):
     """Dich chuyen prior lop, tu C3 revision (10 run, 7 model, 3 dieu kien)."""
     d = pd.read_csv(ROOT / "results/nslkdd/c3_revision/c3_prior_shift_per_run.csv")
     frac = {"attack_30pct": 30, "attack_50pct": 50, "attack_70pct": 70}
@@ -871,17 +918,18 @@ def figure8():
     ax.grid(False, axis="y")
     ax.grid(True, axis="x", color=GRID, lw=0.6)
 
-    fig.suptitle("Under class-prior shift the quantum kernel degrades more than the trees",
-                 x=0.012, y=0.995, ha="left", fontsize=10, fontweight="bold", color=INK)
-    fig.tight_layout(rect=(0, 0.01, 1, 0.945))
-    return save(fig, "fig8_prior_shift")
+    if not qmi:
+        fig.suptitle("Under class-prior shift the quantum kernel degrades more than the trees",
+                     x=0.012, y=0.995, ha="left", fontsize=10, fontweight="bold", color=INK)
+    fig.tight_layout(rect=(0, 0.01, 1, 1.0 if qmi else 0.945))
+    return save(fig, "fig8_prior_shift", out=_out(qmi))
 
 
 
 # --------------------------------------------------------------------------
 # Fig 12 -- mo rong mach lam hong loi the, va do duoc vi sao
 # --------------------------------------------------------------------------
-def figure12():
+def figure12(qmi: bool = False):
     """Chay lai C4 o K=80 (luat C1 doi hoi n*=8) va do do tap trung cua Gram.
 
     Day la cau tra loi truc tiep cho R3-4 ("tat ca thi nghiem deu o so qubit
@@ -982,7 +1030,9 @@ def figure12():
     # legend o goc phai-duoi, la vung khong co diem nao.
     ax.set_xlabel("Off-diagonal Gram std.")
     ax.set_ylabel("Macro-$F_1$")
-    ax.set_title("(c) Dispersion predicts $F_1$", loc="left", color=INK, pad=6)
+    # Ban QMI: tieu de trung tinh, vi day chi la tuong quan quan sat duoc.
+    ax.set_title("(c) Dispersion vs. macro-$F_1$" if qmi else "(c) Dispersion predicts $F_1$",
+                 loc="left", color=INK, pad=6)
     ylo, yhi = ax.get_ylim()
     ax.set_ylim(ylo - 0.22 * (yhi - ylo), yhi)
     # Goc phai-duoi: cum ZZ nam ben trai, cum Z nam cao hon: khong diem nao o day.
@@ -991,19 +1041,24 @@ def figure12():
               handletextpad=0.5, borderaxespad=0.4)
 
     _curve_legend(fig, y=-0.015, ncol=8)
-    fig.suptitle("Widening the circuit destroys the quantum kernel, and the "
-                 "kernel geometry says why",
-                 x=0.012, y=0.995, ha="left", fontsize=10, fontweight="bold",
-                 color=INK)
-    fig.tight_layout(rect=(0, 0.035, 1, 0.955), h_pad=2.4)
-    return save(fig, "fig12_width_concentration")
+    if not qmi:
+        fig.suptitle("Widening the circuit destroys the quantum kernel, and the "
+                     "kernel geometry says why",
+                     x=0.012, y=0.995, ha="left", fontsize=10, fontweight="bold",
+                     color=INK)
+    fig.tight_layout(rect=(0, 0.035, 1, 1.0 if qmi else 0.955), h_pad=2.4)
+    return save(fig, "fig12_width_concentration", out=_out(qmi))
 
 
 if __name__ == "__main__":
     if "--qmi" in sys.argv:
-        # Chi hinh rieng cua ban QMI, ghi vao paper/paper1_qmi/figs_revision/
+        # Ca 9 hinh cua ban QMI, ghi vao paper/paper1_qmi/figs_revision/
         # (make_qmi_zip.py lay o do truoc paper1/): khong dung hinh ban TETC.
-        figure10(qmi=True)
+        print("Sinh hinh cho ban QMI cua paper 1")
+        for fn in (figure4, figure5, figure6, figure7, figure8, figure9,
+                   figure10, figure11, figure12):
+            fn(qmi=True)
+        print("Xong.")
         raise SystemExit(0)
     print("Sinh hinh cho ban revision paper 1")
     figure4()

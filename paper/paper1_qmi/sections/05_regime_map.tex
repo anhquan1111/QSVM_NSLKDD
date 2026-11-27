@@ -58,9 +58,10 @@ each statement holds.
 \subsection{Where the quantum kernel is ahead}
 
 Under the natural prior, \QSVM{} is ahead of XGBoost at $N\geq5000$, of the random forest at
-$N=10^4$, and of the linear and polynomial kernels from $N=1000$ and $N=2000$. These verdicts hold
-under within-family Holm and under Benjamini--Hochberg. The verdict against XGBoost at $N=5000$
-does not survive a wider grid for $C$; the one at $N=10^4$ does (Sec.~\ref{sec:res-n}). All of them are against models given the
+$N=10^4$, of the linear and polynomial kernels from $N=1000$ and $N=2000$, and of its \Zmap{}
+control at $N=5000$. These verdicts hold under within-family Holm and under Benjamini--Hochberg.
+The verdicts against XGBoost and against the \Zmap{} control at $N=5000$ do not survive a wider
+grid for $C$; the one against XGBoost at $N=10^4$ does (Sec.~\ref{sec:res-n}). All of them are against models given the
 same four components. Against XGBoost on all $122$ features no significant difference was
 detected at $N=5000$ or $N=10^4$ (Table~\ref{tab:ref-arm}), and full-feature XGBoost trained on
 the whole training partition reaches $0.804$, above every four-qubit result. The comparison that
@@ -87,10 +88,10 @@ effect sizes above $2.8$ in magnitude, under both corrections. On the KDDTest-21
 fraction XGBoost is ahead within families, but the cell is inconclusive under
 Benjamini--Hochberg. All of these cells use the enriched pool and $1000$-record test sets.
 
-Against SVM-RBF, no cell of the training-size sweep favours \QSVM{} under any correction, in
-either training pool. The enriched sweep at $N=2000$ favours SVM-RBF.
+With the default RBF width and the pre-set grid for $C$, no cell of the training-size sweep
+against SVM-RBF favours \QSVM{} under any correction, in either training pool. The enriched sweep at $N=2000$ favours SVM-RBF.
 
-Outside the map, all $48$ comparisons at eight qubits ($K=80$) favour the baseline, including the \Zmap{} control
+Outside the map, all $48$ NSL-KDD comparisons at eight qubits ($K=80$) favour the baseline, including the \Zmap{} control
 (Sec.~\ref{sec:res-width}). These come from noiseless simulation. We did not test other feature
 maps, bandwidth scaling or lower-noise hardware, and the map gives no information about them.
 
@@ -105,7 +106,7 @@ The region where \QSVM{} is ahead is bounded on each axis we varied. It needs $N
 grid for $C$, and under the enriched pool we could not sample that far. It holds against learners on the
 four-component embedding, not against XGBoost on the raw record. It appears on NSL-KDD; on
 UNSW-NB15 the difference against the tree ensembles does not change sign at any $N$
-(Sec.~\ref{sec:res-unsw}). An eight-qubit circuit did not extend it. On this evidence, the
+(Sec.~\ref{sec:res-unsw}). On NSL-KDD an eight-qubit circuit did not extend it. On this evidence, the
 four-qubit kernel is a competitive learner on a fixed low-dimensional embedding when training
 data are plentiful, and we do not present it as a replacement for a classical detector on the
 full feature set.

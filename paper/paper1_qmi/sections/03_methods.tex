@@ -49,7 +49,7 @@ used in a soft-margin support vector machine on the precomputed Gram matrix
 \cite{cortes1995,scholkopf2002,schuld2019}. We use $r=2$ and pairwise terms between all qubit
 pairs. Removing the pairwise term of Eq.~\eqref{eq:phase} and keeping everything else gives the
 \Zmap{} feature map, the control in every entanglement comparison; we call the two models
-\QSVM{} and \QSVM{}-\Zmap{}.
+\QSVM{} and \QSVMZ{}.
 
 With all pairs entangled, each repetition places $\binom{n}{2}$ pairwise terms, and each term
 compiles to two CNOT gates, so the circuit has $2r\binom{n}{2}$ two-qubit gates: $24$ at $n=4$
@@ -82,10 +82,11 @@ $n$ principal components, standardised instead of scaled to $[0,\pi]$. The compa
 ranks learners on one fixed embedding. We report XGBoost and a random forest on all one-hot
 features separately, as a reference outside the paired protocol (Sec.~\ref{sec:res-n}).
 
-Every transformer is fitted on the training records of the run and size at hand and then
-applied to the test records. In the training-set-size sweeps, feature selection, projection and
-scaling are refitted at every $N$, so no representation uses more data than the classifier it
-feeds.
+No transformer is fitted on test records. In the training-set-size sweeps, feature selection,
+projection and scaling are refitted on the training subset at every $N$ and in every run, so no
+representation uses more data than the classifier it feeds. The entanglement comparison, the
+shift experiments, the width sweep and the noise check use one set of transformers, fitted once
+on the whole of KDDTrain$^+$ and then applied to their training and test records.
 
 The budget $K$ is fixed first, by a plateau rule on a linear SVM proxy with $C=1$. For each $K$
 on a grid, the proxy is scored by five-fold stratified cross-validated macro-$F_1$ on a
@@ -170,10 +171,10 @@ support vector machines, and over a grid of tree count, depth, leaf size, learni
 subsampling for the ensembles. The selection rules differ: for the support vector machines we take the
 simplest setting within one standard error of the best mean score, and for the ensembles the
 best mean. The width of the RBF kernel is left at the scikit-learn default,
-$\gamma=1/(n\,\mathrm{Var}(\bm{x}))$, and is not tuned except in one check
-(Sec.~\ref{sec:res-n}). Because the
+$\gamma=1/(n\,\mathrm{Var}(\bm{x}))$, and is not tuned except in one check on each dataset
+(Secs.~\ref{sec:res-n} and~\ref{sec:res-unsw}). Because the
 Gram matrix does not depend on $C$, the quantum kernel is computed once per subset and only the
-classifier is refitted. \QSVM{}-\Zmap{} uses the $C$ selected for \QSVM{}, so the two differ
+classifier is refitted. \QSVMZ{} uses the $C$ selected for \QSVM{}, so the two differ
 only in the feature map. Results are reported for two arms. In the \emph{tuned} arm the search
 runs on the training subset itself, at every $N$ and in every run. In the \emph{frozen} arm it
 runs once on a separate tuning set of $2000$ records, disjoint from all training and test
@@ -204,10 +205,10 @@ are compared with a $z$ test on their Fisher transforms.
 Experiments use NumPy 2.4, SciPy 1.17, scikit-learn 1.8 \cite{ref30}, XGBoost 3.3, Qiskit 2.3
 \cite{ref29}, qiskit-machine-learning 0.9 and Qiskit Aer 0.17. Kernels are exact statevector
 fidelities. The state of each record is computed once and the Gram matrix is a product of
-state matrices. It agrees with the Qiskit fidelity kernel to within $5\times10^{-15}$, and each
+state matrices. It agrees with the Qiskit fidelity kernel to within $6\times10^{-15}$, and each
 execution of a sweep stops unless the two agree to $10^{-9}$ on $150$ random inputs. XGBoost runs on one
-thread with the histogram method, since with several threads its result depends on the thread
-count.
+thread with the histogram method. With row subsampling its predictions were nevertheless not
+reproduced when the models were retrained on a different machine (Sec.~\ref{sec:res-dedup}).
 
 Code, protocol files, per-run results and figure scripts are released at
 \url{https://github.com/haodpsut/nisq-qsvm-nids-benchmark} (release tag to be added on

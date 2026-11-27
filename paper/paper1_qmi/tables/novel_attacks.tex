@@ -3,7 +3,7 @@
 \centering
 \caption{Recall on KDDTest$^+$ attacks of types present in KDDTrain$^+$ (seen, $9{,}083$ records) and of the $3{,}750$ attack records of types
 absent from it (novel, $17$ types), and specificity on normal traffic, at two training-set
-sizes under the natural prior. Mean of ten runs, re-tuned arm.}
+sizes under the natural prior. Mean of ten runs, tuned arm.}
 \label{tab:novel}
 \footnotesize
 \setlength{\tabcolsep}{4pt}
@@ -14,7 +14,7 @@ sizes under the natural prior. Mean of ten runs, re-tuned arm.}
 Model & $N=1000$ & $N=10^4$ & $N=1000$ & $N=10^4$ & $N=1000$ & $N=10^4$ \\
 \midrule
 \QSVM{} & 0.728 & 0.786 & 0.458 & 0.426 & 0.935 & 0.924 \\
-\QSVM{}-\Zmap{} & 0.710 & 0.762 & 0.423 & 0.335 & 0.955 & 0.968 \\
+\QSVMZ{} & 0.710 & 0.762 & 0.423 & 0.335 & 0.955 & 0.968 \\
 SVM-linear & 0.611 & 0.622 & 0.445 & 0.390 & 0.982 & 0.977 \\
 SVM-poly2 & 0.641 & 0.579 & 0.419 & 0.347 & 0.971 & 0.988 \\
 SVM-RBF & 0.706 & 0.768 & 0.500 & 0.447 & 0.948 & 0.902 \\

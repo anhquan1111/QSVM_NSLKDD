@@ -50,7 +50,7 @@ def crossover_arms() -> None:
         r"\caption{Paired mean difference in macro-$F_1$, \QSVM{} minus baseline, over ten runs on the",
         r"full KDDTest$^+$ set under the natural class prior. \emph{Frozen}: hyper-parameters held at the",
         r"values selected once on the tuning set; \emph{tuned}: every model, quantum and classical,",
-        r"re-tuned at each $N$.",
+        r"tuned at each $N$.",
         rf"All six baseline--arm combinations change sign at the same step, $N={ns[ns.index(flip) - 1]}$ to",
         rf"$N={flip}$ (bold row).}}",
         r"\label{tab:crossover-arms}", r"\footnotesize", r"\setlength{\tabcolsep}{4pt}",
@@ -189,7 +189,7 @@ def novel_attacks() -> None:
     """Recall tan cong kieu da gap / kieu moi va do dac hieu tren binh thuong, N=1000 va 10^4."""
     src = "results/nslkdd/c4_dedup/novel_attack_recall_summary.csv"
     d = pd.read_csv(ROOT / src).set_index(["model", "N"])
-    models = [("QSVM_ZZ", r"\QSVM{}"), ("QSVM_Z", r"\QSVM{}-\Zmap{}"), ("SVM_Linear", "SVM-linear"),
+    models = [("QSVM_ZZ", r"\QSVM{}"), ("QSVM_Z", r"\QSVMZ{}"), ("SVM_Linear", "SVM-linear"),
               ("SVM_Poly2", "SVM-poly2"), ("SVM_RBF", "SVM-RBF"), ("RandomForest", "Random forest"),
               ("XGBoost", "XGBoost")]
     first = d.iloc[0]
@@ -198,7 +198,7 @@ def novel_attacks() -> None:
         r"\caption{Recall on KDDTest$^+$ attacks of types present in KDDTrain$^+$ (seen, "
         rf"${tex_int(first.n_seen)}$ records) and of the ${tex_int(first.n_novel)}$ attack records of types",
         r"absent from it (novel, $17$ types), and specificity on normal traffic, at two training-set",
-        r"sizes under the natural prior. Mean of ten runs, re-tuned arm.}",
+        r"sizes under the natural prior. Mean of ten runs, tuned arm.}",
         r"\label{tab:novel}", r"\footnotesize", r"\setlength{\tabcolsep}{4pt}",
         r"\begin{tabular}{@{}l cc cc cc@{}}", r"\toprule",
         r" & \multicolumn{2}{c}{Seen types} & \multicolumn{2}{c}{Novel types} & "

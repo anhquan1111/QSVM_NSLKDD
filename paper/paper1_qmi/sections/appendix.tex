@@ -62,7 +62,7 @@ $\mathbb{E}[\theta]=0$ and
   \;+\; \tfrac{1}{4}\!\!\sum_{1\le i<j\le n}\!\!\Delta\varphi_{ij}^{2}.
 \end{equation}
 Since $\varphi_{ij}$ is smooth, $\Delta\varphi_{ij}=O(\|\bm{\Delta}\|)$ and
-$\theta=O(\|\bm{\Delta}\|)$ uniformly in $\bm{s}$. Expanding the exponential and using
+$\theta=O(\|\bm{\Delta}\|)$ uniformly in $\bm{s}$. Expanding $e^{\mathrm{i}\theta}$ and using
 $\mathbb{E}[\theta]=0$,
 \begin{equation*}
   \mathbb{E}\bigl[e^{\mathrm{i}\theta}\bigr]
@@ -91,7 +91,7 @@ cannot be written with the two invariants of Eq.~\eqref{eq:expansion}.
 
 \emph{Numerical check.} The script \texttt{verify\_lemma1.py} compares
 Eq.~\eqref{eq:expansion} with the exact statevector kernel, which itself agrees with the Qiskit
-fidelity kernel to within $1.4\times10^{-15}$ at $n=4$ and $n=6$. At $r=1$ and $n=3,4,6$, a
+fidelity kernel to within $6\times10^{-15}$ at $n=4$ and $n=6$ (Sec.~\ref{sec:repro}). At $r=1$ and $n=3,4,6$, a
 least-squares fit of $1-K^{\mathrm{Q}} = a\sum_i\Delta_i^2 + b\sum_{i<j}\Delta\varphi_{ij}^2$
 returns $a=1.000$ and $b=0.250$ with $R^{2}=1.000000$. The residual of
 Eq.~\eqref{eq:expansion} falls with fitted order $3.8$ to $3.9$ in $\|\bm{\Delta}\|$ and is at

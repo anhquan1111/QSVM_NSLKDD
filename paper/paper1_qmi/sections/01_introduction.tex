@@ -53,10 +53,10 @@ inconclusive and every verdict favouring the quantum kernel remains. Within the 
   \item \textbf{The ranking reverses with training-set size.} Under the natural prior, on the
     shared four-component embedding, \QSVM{} is next to last at $N=100$ and first at $N=10^4$.
     Its difference from XGBoost changes sign between $N=2000$ and $N=5000$ whether
-    hyper-parameters are re-tuned at each size or held fixed, and is significant at $N=10^4$.
+    hyper-parameters are tuned at each size or held fixed, and is significant at $N=10^4$.
     At $N=5000$ it is significant on the pre-set grid of the regularisation constant $C$ but
-    not when that grid is widened. On the pre-set grid no size under the natural prior gives a
-    significant difference against SVM-RBF. Against XGBoost given all $122$ features, no significant difference was
+    not when that grid is widened. On the pre-set grid and with the default RBF width, no size
+    under the natural prior gives a significant difference against SVM-RBF. Against XGBoost given all $122$ features, no significant difference was
     detected at $N\ge5000$. The reversal remains after duplicated test records are removed. It
     does not appear on UNSW-NB15. The rare-enriched pool cannot be sampled beyond $N=2000$, so
     the design cannot tell whether enrichment removes the reversal; on the sizes both pools
@@ -67,7 +67,7 @@ inconclusive and every verdict favouring the quantum kernel remains. Within the 
     returns $n^{\ast}=6$ in $10/10$ cases at tolerance $\varepsilon\le0.05$ and in $7/10$ at
     $\varepsilon=0.1$. Stable is not best: on the same subsets an eight-qubit circuit scores
     higher than the selected six at $N\ge5000$.
-  \item \textbf{Wider circuits do worse in noiseless simulation.} A larger feature budget makes
+  \item \textbf{On NSL-KDD, wider circuits do worse in noiseless simulation.} A larger feature budget makes
     the rule choose a wider circuit. At $K=80$, where it returns $n^{\ast}=8$, all $48$ paired
     comparisons favour the baseline, including the \Zmap{} control. Across widths, the off-diagonal entries of the
     \ZZ{} Gram matrix become less dispersed faster than those of the control, and lower
@@ -77,7 +77,8 @@ inconclusive and every verdict favouring the quantum kernel remains. Within the 
 \end{itemize}
 
 The method also loses in several conditions. When the test data are $70\%$ attacks, XGBoost is
-significantly ahead of it, and it is the least robust of the seven models to feature
+ahead of it within its baseline family; under Benjamini--Hochberg over the whole map that cell is
+inconclusive. The quantum kernel is also the least robust of the seven models to feature
 perturbation. Its $F_1$ on the rare attack classes at $N=10^4$ ($0.507$) is well above
 that of the tree ensembles ($0.33$); an RBF-kernel SVM has a higher mean ($0.585$), but that
 difference is inconclusive.

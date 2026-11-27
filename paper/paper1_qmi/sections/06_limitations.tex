@@ -5,7 +5,7 @@
 %  Moi con so o day da co o Methods / Results / Regime map (da doi chieu CSV).
 %  Da ap: 1.1 (bo "617 on features alone" va "We have not re-scored ...";
 %  so trung 664 o Methods; 10/260 lan huan luyen dung lai); 1.2 (do rong:
-%  quan he, khong nhan qua; khong "exponential"); 1.5 + R3 (nhieu chi mot cau
+%  quan he, khong nhan qua; chi khop luat luy thua); 1.5 + R3 (nhieu chi mot cau
 %  hinh: FakeManilaV2, 512 shot, 200/300 dong; khong ket luan phan cung tot hon).
 %  Them so voi ban cu: suc manh thong ke (10 run, Holm ca khoi 0 o, khong co
 %  kiem dinh tuong duong); QSVM chua chay o toan bo tap train; nhan nhi phan
@@ -27,7 +27,7 @@ execution, are not represented, and the check says nothing about other backends,
 circuits or larger training sets. The cost model of Sec.~\ref{sec:featuremap} counts logical
 two-qubit gates. Routing onto the simulated backend raises the four-qubit circuit from $24$ to
 $44$ CNOT gates, and this overhead depends on the coupling map of the device. The width
-results of Sec.~\ref{sec:res-width} were obtained without noise, so they show that the decline with width occurs without gate error. They do not show
+results of Sec.~\ref{sec:res-width} were obtained without noise, so they show that on NSL-KDD the decline with width occurs without gate error. They do not show
 what hardware with lower error rates, another feature map or a rescaled bandwidth would do,
 since we tested none of these.
 
@@ -52,9 +52,9 @@ records, so the question whether enrichment removes the reversal remains open.
 
 \emph{Hyper-parameter grids.} The grid for $C$ was fixed before the experiments, and at
 $N\ge5000$ the selected value often lies on its edge. Widening it at $N=5000$ and $N=10^4$
-(Sec.~\ref{sec:res-n}) left the verdicts at $N=10^4$ in place but made the lead over XGBoost at
-$N=5000$ inconclusive, and the wider grid is again reached at its edges in some runs. The other
-cells of the map were not re-tuned on the wider grid. The width $\gamma$ of the RBF kernel was
+(Sec.~\ref{sec:res-n}) left the verdicts at $N=10^4$ in place but made the leads over XGBoost
+and over the \Zmap{} control at $N=5000$ inconclusive, and the wider grid is again reached at
+its edges in some runs. The other cells of the map were not tuned on the wider grid. The width $\gamma$ of the RBF kernel was
 tuned only in a separate check (Sec.~\ref{sec:res-n}). On NSL-KDD, tuning it made SVM-RBF
 stronger at small $N$, where it then leads \QSVM{} at $N=200$, and weaker at large $N$. On
 UNSW-NB15 it made SVM-RBF stronger at large $N$ and removed most of the lead of \QSVM{} over it
@@ -68,8 +68,9 @@ they are told apart from other attack types. A multi-class formulation was not t
 rare-class analysis exists only for NSL-KDD. Our duplicate check removes test records whose raw
 features exactly equal those of a training record. Near-duplicates, and repeated records within
 the training partition, were not removed. In $10$ of the $260$ NSL-KDD trainings of that
-check the original training subset could not be rebuilt exactly, and both sides of the
-comparison use the rebuilt subset. Absolute scores are measured on the official test
+check the original training subset could not be rebuilt exactly, and XGBoost with row
+subsampling did not reproduce its earlier predictions; both sides of each comparison use the
+retrained models. Absolute scores are measured on the official test
 partitions and are not comparable to studies that report results on random splits of the
 training data.
 
@@ -89,7 +90,7 @@ training-set size, and we report it only as an association.
 \emph{Baselines.} The classical baselines are linear, polynomial and RBF support vector
 machines, a random forest and XGBoost, all tuned by cross-validation on the same data as the quantum kernel;
 the selection rule differs between the kernel machines and the ensembles
-(Sec.~\ref{sec:protocol}), and the RBF width is not tuned.
+(Sec.~\ref{sec:protocol}), and the RBF width is not tuned in the main runs.
 We did not include CatBoost or deep tabular models such as TabNet or FT-Transformer. A fair comparison with the latter
 would need its own tuning-budget protocol, and adding it would turn a controlled kernel
 benchmark into a survey of tabular methods. The regime map therefore locates the quantum kernel
