@@ -290,3 +290,29 @@ và bỏ (b) "chủ nhân tự viết, Claude chỉ soát" vì tốn thời gian
   Data availability và Code availability đã điền 20-11.
 - Đoạn khai LLM (`sec:llm`) giữ nguyên bản nháp; câu "authors rewrote and checked all text" chỉ đúng sau khi
   chủ nhân và thầy Vân viết lại Tóm tắt, Giới thiệu, Kết luận.
+
+## Quy trình nộp QMI (27-11-2026)
+
+Không nộp TETC nữa: TETC từ chối 11-11-2026 và cấm nộp lại bài đã bị từ chối. Nộp Quantum Machine Intelligence.
+Nguồn: trang submission-guidelines của QMI (journal 42484) và chính sách Springer Nature, đọc 27-11. Cổng nộp
+`submission.springernature.com/new-submission/42484/3` máy không mở được: tên hệ thống, cách tải (zip hay từng file),
+có bắt PDF kèm không thì xem khi đăng nhập.
+
+| # | Việc | Ai | Đạt khi |
+|---|---|---|---|
+| 1 | Tải `paper/paper1_qmi/build/Paper1_QMI_overleaf.zip` lên Overleaf, compile pdfLaTeX | Quân | PDF không lỗi, không hình tràn lề, bảng không vỡ |
+| 2 | Đọc lại PDF như phản biện mới; viết lại Tóm tắt, Giới thiệu, Kết luận bằng giọng mình | Quân, thầy Vân | Câu "authors rewrote and checked all text" ở `sec:llm` đúng sự thật |
+| 3 | Declarations: Acknowledgements, Competing interests (thường "The authors declare no competing interests."), Author contributions (tự do hoặc CRediT) | Quân, các tác giả | Không còn mục trống; Funding đã có (T2026-02-10TN) |
+| 4 | Repo `haodpsut/nisq-qsvm-nids-benchmark`: gỡ file riêng tư, thêm file bản QMI, tạo tag (mục "Cần chủ nhân") | anh Phúc Hảo | Thay "release tag to be added on submission" ở `03_methods.tex` và `declarations.tex` bằng tag thật, dựng lại zip |
+| 5 | Thư gửi biên tập (cover letter): nói bài mới, không phải bản sửa của bài nào; khác Cirillo et al. 2026 ở đâu; bản trước đã bị TETC từ chối (minh bạch, tùy thầy Vân quyết) | Quân, thầy Vân | Thầy Vân duyệt |
+| 6 | Chuẩn bị form: ORCID 5 tác giả (khuyên có, không bắt), email trường, gợi ý phản biện (tùy chọn, độc lập, có email trường) | Quân | Đủ thông tin trước khi mở cổng |
+| 7 | Nộp: tải nguồn LaTeX (bắt buộc file nguồn sửa được) + PDF nếu cổng hỏi; khai lại competing interests, author contributions, funding trong form; preprint: chưa đăng thì khai "không" | Quân (tác giả liên hệ) | Có mã bài (manuscript ID) |
+| 8 | Chọn đường xuất bản sau khi được nhận: đăng thường (không phí). Open access tốn 3490 USD: không chọn nếu chưa hỏi | Quân | |
+
+Lưu ý:
+- AI: trang QMI bảo chỉnh văn không cần khai, chính sách Springer Nature mới bảo vẫn mô tả; bài đã có `sec:llm` nên giữ.
+  Không được để AI tự viết phần Kết quả, Thảo luận hay tạo nhận định khoa học (mức "đỏ" của Springer).
+- Trích dẫn: trang QMI tả kiểu tên–năm, bài dùng `sn-mathphys-num` (số) của chính mẫu Springer; chưa kiểm có bị trả về
+  không. Mẫu LaTeX là "khuyến nghị", nên giữ kiểu số, biên tập đòi thì đổi.
+- Tóm tắt 150–250 từ (hiện 249), từ khóa 4–6 (hiện 6).
+- Mỗi lần sửa bài: `audit_wording_r3.py` ra 0, tóm tắt ≤ 250, rồi `make_qmi_zip.py` dựng lại zip.
